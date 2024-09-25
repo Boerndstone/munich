@@ -96,6 +96,9 @@ class Rock
     #[ORM\Column(nullable: true)]
     private ?bool $train = null;
 
+    #[ORM\OneToMany(mappedBy: 'rock', targetEntity: RockTranslation::class, cascade: ['persist', 'remove'])]
+    private Collection $translations;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -349,6 +352,7 @@ class Rock
     public function __construct()
     {
         $this->routes = new ArrayCollection();
+        $this->translations = new ArrayCollection();
     }
 
     /**
@@ -411,6 +415,36 @@ class Rock
     public function setTrain(?bool $train): static
     {
         $this->train = $train;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RockTranslation>
+     */
+    public function getTranslations(): Collection
+    {
+        return $this->translations;
+    }
+
+    public function addTranslation(RockTranslation $translation): static
+    {
+        if (!$this->translations->contains($translation)) {
+            $this->translations->add($translation);
+            $translation->setRock($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTranslation(RockTranslation $translation): static
+    {
+        if ($this->translations->removeElement($translation)) {
+            // set the owning side to null (unless already changed)
+            if ($translation->getRock() === $this) {
+                $translation->setRock(null);
+            }
+        }
 
         return $this;
     }

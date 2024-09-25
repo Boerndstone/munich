@@ -22,6 +22,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
 
 class FrontendController extends AbstractController
 {
@@ -61,13 +64,25 @@ class FrontendController extends AbstractController
         ]);
     }
 
-    #[Route('/', name: 'index')]
+    #[Route(
+        path: '/',
+        name: 'index',
+        defaults: ['_locale' => 'de'],
+        requirements: ['_locale' => 'de']
+    )]
+    #[Route(
+        path: '/en',
+        name: 'index_en',
+        defaults: ['_locale' => 'en'],
+        requirements: ['_locale' => 'en']
+    )]
     public function index(
         AreaRepository $areaRepository,
         RockRepository $rockRepository,
         RoutesRepository $routesRepository,
         CommentRepository $commentRepository,
-        Request $request
+        Request $request,
+        TranslatorInterface $translator
     ): Response {
 
         $latestRoutes = $routesRepository->latestRoutes();
@@ -124,7 +139,20 @@ class FrontendController extends AbstractController
         ]);
     }
 
-    #[Route('/{areaSlug}/{slug}', name: 'show_rock')]
+    // #[Route('/{areaSlug}/{slug}', name: 'show_rock')]
+
+    #[Route(
+        path: '/{areaSlug}/{slug}',
+        name: 'show_rock',
+        defaults: ['_locale' => 'de'],
+        requirements: ['_locale' => 'de']
+    )]
+    #[Route(
+        path: '/en/{areaSlug}/{slug}',
+        name: 'show_rock_en',
+        defaults: ['_locale' => 'en'],
+        requirements: ['_locale' => 'en']
+    )]
     public function showRock(
         AreaRepository $areaRepository,
         RoutesRepository $routesRepository,
@@ -135,7 +163,8 @@ class FrontendController extends AbstractController
         $areaSlug,
         $slug,
         FooterAreas $footerAreas,
-        Packages $assetPackages
+        Packages $assetPackages,
+        Request $request
     ): Response {
 
         $rockId = $rockRepository->getRockId($slug);
@@ -145,11 +174,15 @@ class FrontendController extends AbstractController
         $rockName = $rock->getSlug();
         $areaName = $rock->getArea();
 
-        $rockDescription = $rock->getDescription();
+        // $rockDescription = $rock->getDescription();
 
         $rocks = $rockRepository->getRockInformation($slug);
         $routes = $rockRepository->getRoutesTopo($slug);
         $comments = $rockRepository->getCommentsForRoutes($slug);
+
+        $locale = $request->getLocale();
+        $rockDescription = $rockRepository->findWithTranslations($slug, $locale);
+        $rockDescriptionArray = $rockDescription[0]['description'];
 
         foreach ($routes as &$route) {
             $route['routeComment'] = [];
@@ -164,7 +197,6 @@ class FrontendController extends AbstractController
                 }
             }
         }
-
 
         $galleryItems = $photosRepository->findPhotosForRock($rockId);
 
@@ -199,12 +231,14 @@ class FrontendController extends AbstractController
             'areaSlug' => $areaSlug,
             'rocks' => $rocks,
             'rockName' => $rockName,
-            'rockDescription,' => $rockDescription,
+            // 'rockDescription,' => $rockDescription,
+            'description' => $rockDescriptionArray,
             'routes' => $routes,
             'routesRepository' => $routesRepository,
             'topos' => $topos,
             'sideBar' => $sideBar,
-            'jsonData' => $jsonData
+            'jsonData' => $jsonData,
+            'locale' => $locale,
         ]);
     }
 }

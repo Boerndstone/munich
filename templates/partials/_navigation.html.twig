@@ -67,6 +67,9 @@
 								<span class="ms-1 d-none d-md-block">Fels</span>
 							</button>
 							{{ include('partials/_offcanvasRockInfo.html.twig', [ rocks ]) }}
+						{% elseif description is defined %}
+							{{ description}}
+
 						{% endif %}
 						<a href="{{ path('app_login') }}" title="Login" class="d-flex align-items-center">
 							<div class="user"></div>

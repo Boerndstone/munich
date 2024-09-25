@@ -7203,7 +7203,11 @@
             "description": "Provides tools to internationalize your application",
             "homepage": "https://symfony.com",
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/symfony/translation/tree/v7.1.6"
+=======
+                "source": "https://github.com/symfony/translation/tree/v7.0.10"
+>>>>>>> 97e70dd (started with translation)
             },
             "funding": [
                 {
@@ -7219,7 +7223,11 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2024-09-28T12:35:13+00:00"
+=======
+            "time": "2024-07-26T12:31:22+00:00"
+>>>>>>> 97e70dd (started with translation)
         },
         {
             "name": "symfony/translation-contracts",

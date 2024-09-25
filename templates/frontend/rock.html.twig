@@ -40,6 +40,14 @@
 									{{ rock.rockName }}
 									{# <span class="helmet-icon"></span> #}
 								</h1>
+
+								<div class="language-switcher">
+									<a href="{{ path('show_rock_en', { 'areaSlug': rock.areaSlug, 'slug': rock.rockSlug }) }}">English</a>
+									|
+									<a href="{{ path('show_rock', { 'areaSlug': rock.areaSlug, 'slug': rock.rockSlug }) }}">Deutsch</a>
+								</div>
+
+
 								<nav class="mt-1" aria-label="breadcrumb">
 									<ol class="breadcrumb text-black fw-normal mb-0" style="font-size: 12px">
 										<li class="breadcrumb-item">

@@ -15,7 +15,29 @@ login:
 show_rock:
   path: /{areaSlug}/{slug}
   controller: App\Controller\FrontendController::showRock
+  defaults: { _locale: "de" }
+  requirements:
+    _locale: "de"
+
+show_rock_en:
+  path: /en/{areaSlug}/{slug}
+  controller: App\Controller\FrontendController::showRock
+  defaults: { _locale: "en" }
+  requirements:
+    _locale: "en"
 
 show_rocks:
   path: /{slug}
   controller: App\Controller\FrontendController::showRocksArea
+
+# Default route configuration for German locale
+index:
+  path: /
+  controller: App\Controller\FrontendController::index
+  defaults: { _locale: "de" }
+
+# Route configuration for English locale
+index_en:
+  path: /en
+  controller: App\Controller\FrontendController::index
+  defaults: { _locale: "en" }

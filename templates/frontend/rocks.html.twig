@@ -36,7 +36,10 @@
 						<h1 class="h3 mb-0 fw-bold text-black">
 							{{ areaName }}
 						</h1>
-						{% include 'partials/_collapseMap.html.twig' with { collapseId: 'collapseAreaMap', ariaControls: 'collapseAreaMap' } %}
+						<div>
+							{% include 'partials/_collapseWeather.html.twig' with { collapseId: 'collapseWeather', ariaControls: 'collapseWeather' } %}
+							{% include 'partials/_collapseMap.html.twig' with { collapseId: 'collapseAreaMap', ariaControls: 'collapseAreaMap' } %}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -46,6 +49,43 @@
 				<div class="collapse mt-3" id="collapseAreaMap">
 					<div id="areaMap" class="z-10 mb-3" style="width: 100%; height: 500px;">
 						{{ include('pageParts/areaMap.html.twig') }}
+					</div>
+				</div>
+				<div class="collapse mt-3" id="collapseWeather">
+					<div id="areaMap" class="z-10 mb-3">
+						<div class="card py-2 mb-2 card-body">
+							<div {{ stimulus_controller('weather') }} data-weather-area-lat="{{ areaLat }}" data-weather-area-lng="{{ areaLng }}">
+								<h6 class="mb-2">Wetter</h6>
+								<div class="current-weather d-flex align-items-center">
+									<div class="icon icon-weather"></div>
+									<div id="temperature"></div>
+								</div>
+								<div class="forecast row">
+									<div class="day col-3 card card-body m-2">
+										<div class="forecast-text"></div>
+										<div class="d-flex align-items-center">
+											<div class="icon icon-weather"></div>
+											<div class="temp"></div>
+										</div>
+									</div>
+									<div class="day col-3 card card-body m-2">
+										<div class="forecast-text"></div>
+										<div class="d-flex align-items-center">
+											<div class="icon icon-weather"></div>
+											<div class="temp"></div>
+										</div>
+									</div>
+									<div class="day col-3 card card-body m-2">
+										<div class="forecast-text"></div>
+										<div class="d-flex align-items-center">
+											<div class="icon icon-weather"></div>
+											<div class="temp"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
 					</div>
 				</div>
 				<div class="row" data-controller="filter">
@@ -155,6 +195,7 @@
 								</div>
 							</div>
 						</div>
+
 					</div>
 				</div>
 			</section>

@@ -117,6 +117,12 @@ $success: rgb(20 83 45);
 }
 
 // Icons
+.icon-weather {
+    img {
+        width: 50px;
+        height: 50px;
+    }
+}
 .icon-content-size {
     width: 20px;
     height: 20px;
@@ -226,6 +232,11 @@ $success: rgb(20 83 45);
 .trash {
     @extend .icon-content-size;
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m20.37 8.91l-1 1.73l-12.13-7l1-1.73l3.04 1.75l1.36-.37l4.33 2.5l.37 1.37zM6 19V7h5.07L18 11v8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2m2 0h8v-6.8L10.46 9H8z" /></svg>');
+    background-repeat: no-repeat;
+}
+.weather {
+    @extend .icon-content-size;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="rgb(255 255 255)" d="M6 19a5 5 0 0 1-5-5a5 5 0 0 1 5-5c1-2.35 3.3-4 6-4c3.43 0 6.24 2.66 6.5 6.03L19 11a4 4 0 0 1 4 4a4 4 0 0 1-4 4zm13-6h-2v-1a5 5 0 0 0-5-5c-2.5 0-4.55 1.82-4.94 4.19C6.73 11.07 6.37 11 6 11a3 3 0 0 0-3 3a3 3 0 0 0 3 3h13a2 2 0 0 0 2-2a2 2 0 0 0-2-2" /></svg>');
     background-repeat: no-repeat;
 }
 

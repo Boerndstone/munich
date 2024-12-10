@@ -65,6 +65,9 @@ class Area
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $rockResponsibility = null;
 
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $railwayStation = null;
+
     public function __construct()
     {
         $this->rocks = new ArrayCollection();
@@ -245,6 +248,18 @@ class Area
     public function setRockResponsibility(?string $rockResponsibility): static
     {
         $this->rockResponsibility = $rockResponsibility;
+
+        return $this;
+    }
+
+    public function getRailwayStation(): ?array
+    {
+        return $this->railwayStation;
+    }
+
+    public function setRailwayStation(?array $railwayStation): self
+    {
+        $this->railwayStation = $railwayStation;
 
         return $this;
     }

@@ -9,6 +9,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
+use App\Form\Type\JsonFieldType;
 
 class AreaCrudController extends AbstractCrudController
 {
@@ -154,5 +156,14 @@ class AreaCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->setColumns('col-12')
             ->setHelp('Wenn es einen verantwortlichen Felsbetreuer gibt, dann wird dieser bei der Gebietsübersicht angezeigt.');
+
+        yield CodeEditorField::new('railway_station')
+            ->setFormType(JsonFieldType::class)
+            ->setLanguage('js')
+            ->setLabel('Bahnhof')
+            ->hideOnIndex()
+            ->hideOnDetail()
+            ->setColumns('col-12')
+            ->setHelp('Längen- und Breitengrad werden als Json Objekt gespeichert [lat, lng].');
     }
 }

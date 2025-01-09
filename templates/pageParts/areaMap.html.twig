@@ -21,7 +21,6 @@
 {% set intialZoom = intialZoom|merge([areaLat, areaLng, areaZoom]) %}
 {% set railwayStation = areaRailwayStation %}
 
-
  <script>
 
     var markersArea = {{ marker|json_encode|raw }}
@@ -43,10 +42,16 @@
     	iconAnchor: [20, 20] // Center the icon
 	});
 
+
 	{% if areaRailwayStation is not empty %}
-		var trainStationLatLng = {{ railwayStation|json_encode|raw }};
-		var trainStationMarker = L.marker(trainStationLatLng, { icon: trainStationIcon }).addTo(areaMap);
+		var railwayStations = {{ railwayStation|json_encode|raw }};
+		railwayStations.map((station) => {
+			var coord = station.coordinates;
+			console.log(coord);
+			var trainStationMarker = L.marker(coord, { icon: trainStationIcon }).addTo(areaMap);
+		});
 	{% endif %}
+
 
 	for (var i = 0; i < markersArea.length; i++) {
 		marker = new L.marker([markersArea[i][0],markersArea[i][1]])
@@ -60,5 +65,4 @@
 			areaMap.invalidateSize();
 		}, 40);
 	});
-
 </script>

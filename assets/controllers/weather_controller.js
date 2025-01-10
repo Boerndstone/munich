@@ -34,7 +34,6 @@ export default class extends Controller {
         });
       }
 
-      console.log(formattedDate);
       const celsius = Math.round(currentWeatherData.main.temp);
       document.querySelector(
         "#temperature"
@@ -75,12 +74,8 @@ export default class extends Controller {
           forecastDay.main.temp
         )}°C`;
       }
-
-      console.log(currentWeatherData);
-      console.log(forecastData);
       // You can now use currentWeatherData and forecastData to update your UI
     } catch (error) {
-      console.error("Failed to fetch weather data:", error);
     }
   }
 }

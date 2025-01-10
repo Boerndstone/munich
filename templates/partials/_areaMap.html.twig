@@ -1,0 +1,30 @@
+{% set marker = [] %}
+{% for rock in rocks %}
+	{% set pictureElement = '' %}
+	{% if rock.previewImage is not empty %}
+		{% set pictureElement = '
+        <picture>
+            <source type="image/webp" srcset="https://www.munichclimbs.de/build/images/rock/' ~ rock.previewImage ~ 'area-map.webp, https://www.munichclimbs.de/build/images/rock/' ~ rock.previewImage ~ 'area-map@2x.webp 2x, https://www.munichclimbs.de/build/images/rock/' ~ rock.previewImage ~ 'area-map@3x.webp 3x" loading="lazy">
+            <img src="https://www.munichclimbs.de/build/images/rock/' ~ rock.previewImage ~ 'area-map.webp" alt="Klettergebiet, ' ~ areaName ~ ', Fels: ' ~ rock.rockName ~ '" title="Klettergebiet, ' ~ areaName ~ ', Fels: ' ~ rock.rockName ~ '">
+        </picture>
+    ' %}
+	{% endif %}
+	{% set rockName = '
+		<a href="' ~ path('show_rock', { 'areaSlug': rock.areaSlug, slug: rock.rockSlug }) ~ '">
+			<h6 class="font-semibold mb-2">' ~ rock.rockName ~ '</h6>
+			<div style="background-size: cover; background-position: center; width: 150px; height: 150px;">
+				' ~ pictureElement ~ '
+			</div>
+		</a>
+	' %}
+
+	{% set rockImage = '' %}
+	{% set marker = marker|merge([[ rock.rockLat, rock.rockLng, rockName, rockImage ]]) %}
+{% endfor %}
+{% set intialZoom = [] %}
+{% set intialZoom = intialZoom|merge([areaLat, areaLng, areaZoom]) %}
+{% set railwayStation = areaRailwayStation %}
+
+<div data-controller="map" data-map-markers-area="{{ marker|json_encode|e('html_attr') }}" data-map-zoom="{{ intialZoom|json_encode|e('html_attr') }}" data-map-railway-stations="{{ railwayStation|json_encode|e('html_attr') }}">
+	<div id="areaMap" data-map-target="map" style="height: 500px;"></div>
+</div>

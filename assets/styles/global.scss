@@ -517,3 +517,10 @@ input[data-autocomplete-target="input"]:focus {
     height: 0;
     padding-bottom: 65%;
 }
+
+.leaflet-top.leaflet-right .info.legend {
+    right: 200px;
+    /* Adjust this value to move the legend more to the left */
+    top: 10px;
+    /* Adjust this value to move the legend vertically */
+}

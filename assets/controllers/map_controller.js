@@ -32,7 +32,7 @@ export default class extends Controller {
     if (railwayStations && railwayStations.length > 0) {
       railwayStations.forEach((station) => {
         const coord = station.coordinates;
-        const latLng = [coord[1], coord[0]]; // Swap lng and lat to lat and lng
+        const latLng = [coord[0], coord[1]]; // Swap lng and lat to lat and lng
         const marker = L.marker(latLng, { icon: trainStationIcon }).addTo(
           areaMap
         );

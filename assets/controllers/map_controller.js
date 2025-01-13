@@ -67,7 +67,7 @@ export default class extends Controller {
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" id="toggleRailwayStations" checked>
                 <label class="form-check-label" for="toggleRailwayStations">
-                  Bahnöfe
+                  Bahnhöfe
                 </label>
               </div>
         </div>

@@ -9,7 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 
 class TopoCrudController extends AbstractCrudController
@@ -113,6 +112,12 @@ class TopoCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->hideOnDetail()
             ->setColumns('col-12');
+        yield Field::new('pathCollection')
+            ->setLabel('Tourenpfade')
+            ->hideOnIndex()
+            ->hideOnDetail()
+            ->setColumns('col-12')
+            ->setTemplatePath('admin/field/path_collection.html.twig'); // Use custom template
         // Hier macht ein Association Field für die Topo Id bei der Route Sinn!
         // In Entiy anlegen.
         yield Field::new('number')

@@ -1,0 +1,5 @@
+{# filepath: templates/admin/field/path_collection.html.twig #}
+{% set formatted_value = value|replace({'], [': '],\n['}) %}
+<pre>
+    {{ formatted_value|e('html') }}
+</pre>

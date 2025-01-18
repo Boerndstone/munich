@@ -524,3 +524,41 @@ input[data-autocomplete-target="input"]:focus {
     top: 10px;
     /* Adjust this value to move the legend vertically */
 }
+
+.number-circle {
+    r: 17px;
+}
+
+.number-text {
+    font-size: 22px;
+}
+
+.end-dot {
+    r: 10px;
+    fill: white;
+}
+
+.stroke-behavior {
+    stroke-width: 5;
+}
+.route-path-border {
+    stroke-width: 6;
+}
+
+@include media-breakpoint-up(lg) {
+    .number-circle {
+        r: 15px;
+    }
+    .number-text {
+        font-size: 18px;
+    }
+    .stroke-behavior {
+        stroke-width: 4;
+    }
+    .route-path-border {
+        stroke-width: 5;
+    }
+    .end-dot {
+        r: 7px;
+    }
+}

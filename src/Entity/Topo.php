@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\TopoRepository;
+use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -32,6 +33,15 @@ class Topo
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private int $number;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $path = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $pathCollection = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
 
     public function getId(): ?int
     {
@@ -108,5 +118,49 @@ class Topo
         $this->number = $number;
 
         return $this;
+    }
+
+    public function getPath(): ?array
+    {
+        return $this->path;
+    }
+
+    public function setPath(?array $path): static
+    {
+        $this->path = $path;
+
+        return $this;
+    }
+
+    public function getPathCollection(): ?string
+    {
+        return $this->pathCollection;
+    }
+
+    public function setPathCollection(?string $pathCollection): static
+    {
+        $this->pathCollection = $pathCollection;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function onPreUpdate()
+    {
+        $this->updatedAt = new \DateTime();
     }
 }

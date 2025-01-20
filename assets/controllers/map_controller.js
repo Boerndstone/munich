@@ -7,7 +7,7 @@ export default class extends Controller {
   connect() {
     const markersArea = JSON.parse(this.data.get("markersArea"));
     const zoom = JSON.parse(this.data.get("zoom"));
-    const railwayStations = JSON.parse(this.data.get("railwayStations"));
+    const locations = JSON.parse(this.data.get("railwayStations"));
 
     const areaMap = L.map(this.mapTarget).setView([zoom[0], zoom[1]], zoom[2]);
 
@@ -27,16 +27,30 @@ export default class extends Controller {
       iconAnchor: [20, 20], // Center the icon
     });
 
+    const campingIcon = L.divIcon({
+      html: `<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="currentColor" d="M19 7h-8v7H3V5H1v15h2v-3h18v3h2v-9a4 4 0 0 0-4-4M7 13a3 3 0 0 0 3-3a3 3 0 0 0-3-3a3 3 0 0 0-3 3a3 3 0 0 0 3 3"/></svg>`,
+      className: "railway-station-icon",
+      iconSize: [40, 40], // Adjust size to include padding
+      iconAnchor: [20, 20], // Center the icon
+    });
+
     // Add railway station markers
-    const railwayStationMarkers = [];
-    if (railwayStations && railwayStations.length > 0) {
-      railwayStations.forEach((station) => {
-        const coord = station.coordinates;
-        const latLng = [coord[0], coord[1]]; // Swap lng and lat to lat and lng
-        const marker = L.marker(latLng, { icon: trainStationIcon }).addTo(
-          areaMap
-        );
-        railwayStationMarkers.push(marker);
+    const trainMarkers = [];
+    const campingMarkers = [];
+    if (locations && locations.length > 0) {
+      locations.forEach((location) => {
+        if (location.coordinates) {
+          const latLng = [location.coordinates[0], location.coordinates[1]];
+          const marker = L.marker(latLng, { icon: trainStationIcon }).addTo(
+            areaMap
+          );
+          trainMarkers.push(marker);
+        }
+        if (location.camping) {
+          const latLng = [location.camping[0], location.camping[1]];
+          const marker = L.marker(latLng, { icon: campingIcon }).addTo(areaMap);
+          campingMarkers.push(marker);
+        }
       });
     }
 
@@ -59,17 +73,23 @@ export default class extends Controller {
         <div class="card-body">
           <h5 class="card-title">Legende</h5>
           <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="toggleMarkers" checked>
-                <label class="form-check-label" for="toggleMarkers">
-                  Felsen
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="toggleRailwayStations" checked>
-                <label class="form-check-label" for="toggleRailwayStations">
-                  Bahnhöfe
-                </label>
-              </div>
+              <input class="form-check-input" type="checkbox" value="" id="toggleMarkers" checked>
+              <label class="form-check-label" for="toggleMarkers">
+                Felsen
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="toggleRailwayStations" checked>
+              <label class="form-check-label" for="toggleRailwayStations">
+                Bahnhöfe
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="toggleCamping" checked>
+              <label class="form-check-label" for="toggleCamping">
+                Schlafen
+              </label>
+            </div>
         </div>
       </div>
       `;
@@ -96,7 +116,20 @@ export default class extends Controller {
       .getElementById("toggleRailwayStations")
       .addEventListener("change", function (e) {
         const isChecked = e.target.checked;
-        railwayStationMarkers.forEach((marker) => {
+        trainMarkers.forEach((marker) => {
+          if (isChecked) {
+            marker.addTo(areaMap);
+          } else {
+            areaMap.removeLayer(marker);
+          }
+        });
+      });
+
+    document
+      .getElementById("toggleCamping")
+      .addEventListener("change", function (e) {
+        const isChecked = e.target.checked;
+        campingMarkers.forEach((marker) => {
           if (isChecked) {
             marker.addTo(areaMap);
           } else {

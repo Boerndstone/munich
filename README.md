@@ -12,3 +12,7 @@
     - 2400 3x 1600 2x 800 1x
   - Mobil
     - 1440 3x 960 2x 480 1x
+
+### Rebase
+
+- git pull origin main --rebase

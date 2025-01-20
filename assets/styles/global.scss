@@ -536,6 +536,8 @@ input[data-autocomplete-target="input"]:focus {
 .end-dot {
     r: 10px;
     fill: white;
+    stroke: black;
+    stroke-width: 1px;
 }
 
 .stroke-behavior {

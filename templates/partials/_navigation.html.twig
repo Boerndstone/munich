@@ -52,7 +52,7 @@
 							<span class="d-none d-md-inline-block">munichclimbs</span>
 						</a>
 					</div>
-					<div class="col-8 col-md-6">
+					<div class="col-6 col-md-6">
 						<form class="w-100 mb-0">
 							<div data-controller="autocomplete" data-autocomplete-url-value="/search" style="position: relative;">
 								<input data-autocomplete-target="input" data-action="input->autocomplete#search" name="q" placeholder="Felssuche ..." type="search" class="form-control form-control-sm border-black text-black w-100">
@@ -60,40 +60,30 @@
 							</div>
 						</form>
 					</div>
-					<div class="col-3 d-flex align-items-center justify-content-end">
-						{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty %}
-							<button class="btn btn-sm btn-primary d-flex me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
-								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 24 24"><path fill="currentColor" d="M11 7v2h2V7zm3 10v-2h-1v-4h-3v2h1v2h-1v2zm8-5c0 5.5-4.5 10-10 10S2 17.5 2 12S6.5 2 12 2s10 4.5 10 10m-2 0c0-4.42-3.58-8-8-8s-8 3.58-8 8s3.58 8 8 8s8-3.58 8-8"/></svg>
-								<span class="ms-1 d-none d-md-block">Fels</span>
-							</button>
-							{{ include('partials/_offcanvasRockInfo.html.twig', [ rocks ]) }}
-						{% elseif app.request.attributes.get('_route') == 'show_rock_en' %}
+					<div class="col-5 col-md-3 d-flex align-items-center justify-content-end">
+						{% if rocks is defined and rocks is not empty %}
 							<button class="btn btn-sm btn-primary d-flex me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
 								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 24 24"><path fill="currentColor" d="M11 7v2h2V7zm3 10v-2h-1v-4h-3v2h1v2h-1v2zm8-5c0 5.5-4.5 10-10 10S2 17.5 2 12S6.5 2 12 2s10 4.5 10 10m-2 0c0-4.42-3.58-8-8-8s-8 3.58-8 8s3.58 8 8 8s8-3.58 8-8"/></svg>
 								<span class="ms-1 d-none d-md-block">Fels</span>
 							</button>
 							{{ include('partials/_offcanvasRockInfo.html.twig', [ rocks ]) }}
 						{% endif %}
-
-
 						<div class="dropdown me-3">
-							<button class="btn btn-sm btn-secondary d-flex dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-								<div class="earth d-inline-block"></div>
-								<span class="ms-1 d-none d-md-block">{{ app.request.locale }}</span>
-								<div class="chevron-down d-inline-block"></div>
+							<button class="btn btn-sm btn-success d-flex dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+								<div class="earth d-inline-block" style="stroke: white"></div>
+								<div class="chevron-down d-inline-block text-white"></div>
 							</button>
-							<ul class="language-switcher dropdown-menu">
+							<ul class="px-3 dropdown-menu">
 								{% for rock in rocks %}
 									<li>
-										<a href="{{ path('show_rock_en', { 'areaSlug': rock.areaSlug, 'slug': rock.rockSlug }) }}">English</a>
-									</li>
-									<li>
-										<a href="{{ path('show_rock', { 'areaSlug': rock.areaSlug, 'slug': rock.rockSlug }) }}">Deutsch</a>
+										<a href="{{ path('show_rock', { 'areaSlug': rock.areaSlug, 'slug': rock.rockSlug }) }}">de</a>
+										|
+										<a href="{{ path('show_rock_en', { 'areaSlug': rock.areaSlug, 'slug': rock.rockSlug }) }}">en</a>
 									</li>
 								{% endfor %}
 							</ul>
 						</div>
-
 						<a href="{{ path('app_login') }}" title="Login" class="d-flex align-items-center">
 							<div class="user"></div>
 						</a>

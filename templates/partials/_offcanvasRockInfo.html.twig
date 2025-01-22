@@ -1,8 +1,7 @@
 {% for rock in rocks %}
 	<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
 		<div class="offcanvas-header">
-			<h5 class="offcanvas-title fw-bold" id="offcanvasRightLabel">{{ rock.rockName }}
-				{{description}}</h5>
+			<h5 class="offcanvas-title fw-bold" id="offcanvasRightLabel">{{ rock.rockName }}</h5>
 			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		</div>
 		<div class="offcanvas-body">
@@ -124,12 +123,17 @@
 					<div class="accordion-item">
 						<h2 class="accordion-header">
 							<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBeschreibung" aria-expanded="false" aria-controls="collapseBeschreibung">
-								Beschreibung
+								{{ 'description'|trans }}
 							</button>
 						</h2>
 						<div id="collapseBeschreibung" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-							<div class="accordion-body fw-medium py-0">
-								<p class="small">{{ rock.rockDescription }}</p>
+							<div
+								class="accordion-body fw-medium py-0">
+								{# <p class="small">{{ rock.rockDescription }}</p> #}
+								{% if description is defined %}
+									<p class="small">{{description}}</p>
+								{% endif %}
+
 							</div>
 						</div>
 					</div>

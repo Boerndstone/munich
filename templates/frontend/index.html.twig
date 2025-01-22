@@ -17,13 +17,6 @@
 			<section>
 				<div class="p-3 mb-3 rounded shadow-3 alert-light d-flex align-items-center justify-content-between bg-white">
 					<h1 class="h2 mb-0 fw-bold text-black">{{ 'Klettergebiete um München'|trans }}</h1>
-					<div class="language-switcher">
-						<a href="{{ path('index_en') }}">English</a>
-						|
-						<a href="{{ path('index') }}">Deutsch</a>
-					</div>
-
-
 					{% include 'partials/_collapseMap.html.twig' with { collapseId: 'collapseMap', ariaControls: 'collapseMap' } %}
 				</div>
 				<div class="collapse mt-3" id="collapseMap">

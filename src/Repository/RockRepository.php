@@ -272,4 +272,19 @@ class RockRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+
+    public function hasTranslationDescription($slug, $locale)
+    {
+        return (bool) $this->createQueryBuilder('r')
+            ->select('COUNT(t.id)')
+            ->leftJoin('r.translations', 't')
+            ->andWhere('r.slug = :slug')
+            ->andWhere('t.locale = :locale')
+            ->andWhere('t.description IS NOT NULL')
+            ->setParameter('slug', $slug)
+            ->setParameter('locale', $locale)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

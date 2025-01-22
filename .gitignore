@@ -25,5 +25,7 @@ yarn-error.log
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
 
+composer.lock
+symfony.lock
 
 .DS_Store

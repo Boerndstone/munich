@@ -183,6 +183,7 @@ class FrontendController extends AbstractController
         $locale = $request->getLocale();
         $rockDescription = $rockRepository->findWithTranslations($slug, $locale);
         $rockDescriptionArray = $rockDescription[0]['description'];
+        $hasTranslationDescription = $rockRepository->hasTranslationDescription($slug, $locale);
 
         foreach ($routes as &$route) {
             $route['routeComment'] = [];
@@ -231,7 +232,7 @@ class FrontendController extends AbstractController
             'areaSlug' => $areaSlug,
             'rocks' => $rocks,
             'rockName' => $rockName,
-            // 'rockDescription,' => $rockDescription,
+            'hasTranslationDescription' => $hasTranslationDescription,
             'description' => $rockDescriptionArray,
             'routes' => $routes,
             'routesRepository' => $routesRepository,

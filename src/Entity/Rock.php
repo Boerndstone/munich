@@ -60,8 +60,8 @@ class Rock
     #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
     private ?string $season = null;
 
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
-    private int $childFriendly;
+    #[ORM\Column(nullable: true)]
+    private ?bool $childFriendly = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private int $sunny;
@@ -250,12 +250,12 @@ class Rock
         return $this;
     }
 
-    public function getchildFriendly(): ?string
+    public function getchildFriendly(): ?bool
     {
         return $this->childFriendly;
     }
 
-    public function setchildFriendly(?string $childFriendly): self
+    public function setchildFriendly(?bool $childFriendly): self
     {
         $this->childFriendly = $childFriendly;
 

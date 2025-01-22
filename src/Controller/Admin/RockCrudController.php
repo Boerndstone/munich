@@ -151,13 +151,12 @@ class RockCrudController extends AbstractCrudController
             ->setColumns('col-12')
             ->setHelp('Beschreibung des Zustiegs zum Fels.');
 
-        yield Field::new('train')
+        yield BooleanField::new('train')
             ->setLabel('Anfahrt mit Zug möglich')
             ->hideOnIndex()
             ->hideOnDetail()
             ->setColumns('col-12')
-            ->setHelp('Ist der Fels gut mit dem Zug erreicht.')
-            ->setTemplatePath('admin/field/votes.html.twig');
+            ->setHelp('Ist der Fels gut mit dem Zug erreicht.');
 
 
         yield ChoiceField::new('zone')
@@ -218,15 +217,8 @@ class RockCrudController extends AbstractCrudController
             ])
             ->setColumns('col-12');
 
-        yield ChoiceField::new('child_friendly')
+        yield BooleanField::new('child_friendly')
             ->setLabel('Kinderfreundlich')
-            ->renderAsNativeWidget()
-            ->setChoices([
-                'keine Angaben' => '',
-                'gut geeignet' => '1',
-                'teils geeignet' => '2',
-                'ungeeignet' => '3',
-            ])
             ->hideOnIndex()
             ->hideOnDetail()
             ->setColumns('col-12')

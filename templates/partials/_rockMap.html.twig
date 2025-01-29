@@ -9,9 +9,8 @@
 	}
 </style>
 
-<script>
+ <script>
 	var markersRock = {{ marker|json_encode|raw }}
-console.log(markersRock);
 
 var lat = Number(markersRock[0])
 var lng = Number(markersRock[1])

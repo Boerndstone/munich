@@ -114,7 +114,7 @@
 					{% for topoName, routes in groupedRoutes %}
 						<div class="card mt-3 overflow-hidden" id="{{ topoName|custom_replace|lower }}">
 							<div class="card-body p-0">
-								<section>
+								<section data-controller="route-information-tooltip">
 									{% set hasWithSector = false %}
 									{% for route in routes %}
 										{% if route.withSector is not null and route.withSector %}
@@ -133,7 +133,8 @@
 									<table class="table table-striped mb-0 small fw-medium">
 										<tbody>
 											{% for route in routes %}
-												<tr>
+												<tr data-route-id="{{loop.index}}" data-route-information="{{ route.routeName }} {{ route.routeGrade }}">
+
 													<td class="py-2">
 														<span class="mb-0 pb-0" style="line-height: 0;">{{loop.index}}</span>
 													</td>

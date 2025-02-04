@@ -34,7 +34,8 @@ export default class extends Controller {
           placement: "top",
         });
 
-        path.element.addEventListener("click", () => {
+        path.element.addEventListener("click", (event) => {
+          event.stopPropagation();
           if (activeTooltip && activeTooltip !== tooltip) {
             activeTooltip.hide();
           }
@@ -64,6 +65,17 @@ export default class extends Controller {
                 : null;
           }
         });
+      }
+    });
+
+    document.addEventListener("click", () => {
+      if (activeTooltip) {
+        activeTooltip.hide();
+        activeTooltip = null;
+      }
+      if (activeStrokeElement) {
+        activeStrokeElement.style.stroke = ""; // Reset active stroke element color
+        activeStrokeElement = null;
       }
     });
   }

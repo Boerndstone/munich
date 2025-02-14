@@ -122,6 +122,60 @@ class AreaRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
     }
 
+    public function sidebarNavigationNew()
+    {
+        $qb = $this->createQueryBuilder('area')
+            ->select('area.id', 'area.name', 'area.image', 'rock.id AS rockId', 'rock.name AS rockName', 'rock.slug AS rockSlug')
+            ->leftJoin('area.rocks', 'rock')
+            ->where('area.online = 1')
+            ->orderBy('area.sequence');
+
+        $result = $qb->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+
+        $groupedResult = [];
+
+        foreach ($result as $row) {
+            $areaId = $row['id'];
+            $areaName = $row['name'];
+            $image = $row['image'];
+            $rockId = $row['rockId'];
+            $rockName = $row['rockName'];
+            $rockSlug = $row['rockSlug'];
+
+            if (!isset($groupedResult[$areaId])) {
+                $groupedResult[$areaId] = [
+                    'id' => $areaId,
+                    'name' => $areaName,
+                    'image' => $image,
+                    'rocks' => [],
+                ];
+            }
+
+            if ($rockId !== null) {
+                $groupedResult[$areaId]['rocks'][] = [
+                    'rockId' => $rockId,
+                    'rockName' => $rockName,
+                    'rockSlug' => $rockSlug,
+                ];
+            }
+        }
+
+        return array_values($groupedResult); // Re-index the array
+    }
+
+    // public function sidebarNavigation()
+    // {
+    //     $qb = $this->createQueryBuilder('area')
+    //         ->select('area.id', 'area.name as areaName', 'area.image', 'rock.id', 'rock.name')
+    //         ->leftJoin('area.rocks', 'rock')
+    //         ->addSelect('rock.id', 'rock.name as rockName')
+    //         ->where('area.online = 1')
+    //         ->orderBy('area.sequence');
+
+    //     //return  $qb->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+    //     return $qb->getQuery()->getResult();
+    // }
+
     public function getAreasFooter()
     {
         $qb = $this->createQueryBuilder('area')

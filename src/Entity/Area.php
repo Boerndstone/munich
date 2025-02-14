@@ -5,10 +5,12 @@ namespace App\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\AreaRepository;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\Get;
@@ -59,6 +61,7 @@ class Area
     private ?string $orientation = null;
 
     #[ORM\OneToMany(mappedBy: 'area', targetEntity: Rock::class, fetch: 'EXTRA_LAZY')]
+    #[ApiFilter(SearchFilter::class, properties: ['rock.id' => 'exact'])]
     private Collection $rocks;
 
     #[ORM\OneToMany(mappedBy: 'area', targetEntity: Routes::class, fetch: 'EXTRA_LAZY')]

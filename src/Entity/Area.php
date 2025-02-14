@@ -150,12 +150,24 @@ class Area
         return $this->routes;
     }
 
+    #[Groups(['areas:read'])]
+    public function getRoutesCount(): int
+    {
+        return $this->routes->count();
+    }
+
     /**
      * @return Collection|Rock[]
      */
     public function getRocks(): Collection
     {
         return $this->rocks;
+    }
+
+    #[Groups(['areas:read'])]
+    public function getRocksCount(): int
+    {
+        return $this->rocks->count();
     }
 
     public function addRock(Rock $rock): self

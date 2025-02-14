@@ -16,7 +16,7 @@
         "easycorp/easyadmin-bundle": "^4.12",
         "gedmo/doctrine-extensions": "^3.10",
         "league/html-to-markdown": "^5.1",
-        "nelmio/cors-bundle": "^2.3",
+        "nelmio/cors-bundle": "^2.5",
         "pagerfanta/doctrine-orm-adapter": "^3.3",
         "pagerfanta/twig": "^3.3",
         "phpdocumentor/reflection-docblock": "^5.3",

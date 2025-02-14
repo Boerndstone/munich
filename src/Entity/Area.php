@@ -2,25 +2,38 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-
-use App\Repository\AreaRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\AreaRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
 
 #[ORM\Entity(repositoryClass: AreaRepository::class)]
 #[ApiResource(
+    shortName: 'Gebiete',
+    description: 'This show the list of all areas stored in the database',
     operations: [
-        new Get(normalizationContext: ['groups' => ['area:read']]), // Single item
-        new GetCollection(normalizationContext: ['groups' => ['area:read']]), // Collection
+        new Get(
+            uriTemplate: '/areas/{id}',
+            security: "is_granted('ROLE_SUPER_ADMIN')",
+            securityMessage: 'Sorry, but you are not the object owner.'
+        ),
+        new GetCollection(
+            uriTemplate: '/areas',
+            security: "is_granted('ROLE_SUPER_ADMIN')",
+            securityMessage: "'Sorry, but you are not the object owner.'"
+        ),
+    ],
+    normalizationContext: [
+        'groups' => ['areas:read'],
     ]
 )]
+
 class Area
 {
     #[ORM\Id]
@@ -38,6 +51,7 @@ class Area
     #[Assert\NotNull(message: 'Die URL darf nicht leer sein und darf keine Umlaute enthalten!')]
     #[Assert\Length(minMessage: 'Die URL sollte mehr als zwei Zeichen enthalten!', min: 2)]
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(['area:read'])]
     private ?string $slug = null;
 
     #[Assert\NotNull(message: 'Die Angabe zur Lage darf nicht leer sein.')]

@@ -112,7 +112,6 @@ class FrontendController extends AbstractController
         FooterAreas $footerAreas
     ): Response {
 
-        $areas = $footerAreas->getFooterAreas();
         $areaName = $area->getName();
         $areaSlug = $area->getSlug();
         $areaLat = $area->getLat();
@@ -124,9 +123,7 @@ class FrontendController extends AbstractController
         $sideBar = $areaRepository->sidebarNavigation();
         $rocks = $rockRepository->getRocksInformation($slug);
 
-
         return $this->render('frontend/rocks.html.twig', [
-            'areas' => $areas,
             'areaName' => $areaName,
             'areaSlug' => $areaSlug,
             'areaLat' => $areaLat,
@@ -162,9 +159,7 @@ class FrontendController extends AbstractController
         #[MapEntity] Rock $rock,
         $areaSlug,
         $slug,
-        FooterAreas $footerAreas,
-        Packages $assetPackages,
-        Request $request
+        Packages $assetPackages
     ): Response {
 
         $rockId = $rockRepository->getRockId($slug);
@@ -219,7 +214,6 @@ class FrontendController extends AbstractController
 
         $sideBar = $areaRepository->sidebarNavigation();
 
-        $areas = $footerAreas->getFooterAreas();
 
         if ($rock->getOnline() == 0) {
             throw $this->createNotFoundException('The rock does not exist');
@@ -232,8 +226,12 @@ class FrontendController extends AbstractController
             'areaSlug' => $areaSlug,
             'rocks' => $rocks,
             'rockName' => $rockName,
+<<<<<<< HEAD
             'hasTranslationDescription' => $hasTranslationDescription,
             'description' => $rockDescriptionArray,
+=======
+            'felsBeschreibung' => $felsBeschreibung,
+>>>>>>> eeb9bdb (rebase with main)
             'routes' => $routes,
             'routesRepository' => $routesRepository,
             'topos' => $topos,

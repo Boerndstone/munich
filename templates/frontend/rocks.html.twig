@@ -201,5 +201,6 @@
 			</section>
 		</div>
 		{% include 'partials/_footer.html.twig' with {'areas': areas} %}
+		{{ render(controller('App\\Controller\\FrontendController::recentArticles')) }}
 	</main>
 {% endblock %}

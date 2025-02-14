@@ -2,7 +2,6 @@
 {% set setTitle = 'Munichclimbs | Klettergebiet ' ~ areaName ~	' | Fels ' ~ slug|custom_replace %}
 
 {% block meta_tags %}
-	<meta name="description" content="{% for rock in rocks %}{{ rock.rockDescription}}{% endfor %}"/>
 	<meta name="robots" content="index,follow"/>
 	<meta property="og:site_name" content="{{ setTitle }}"/>
 	<meta property="og:title" content="{{ setTitle }}"/>

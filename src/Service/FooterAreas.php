@@ -15,7 +15,7 @@ class FooterAreas
 
     public function getFooterAreas(): array
     {
-        // return ['areas' => $areas];
-        return $this->areaRepository->getAreasFooter();
+        $areas = $this->areaRepository->getAreasFooter();
+        return $areas;
     }
 }

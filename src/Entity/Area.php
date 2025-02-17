@@ -17,22 +17,9 @@ use ApiPlatform\Metadata\Get;
 
 #[ORM\Entity(repositoryClass: AreaRepository::class)]
 #[ApiResource(
-    shortName: 'Gebiete',
-    description: 'This show the list of all areas stored in the database',
     operations: [
-        new Get(
-            uriTemplate: '/areas/{id}',
-            security: "is_granted('ROLE_SUPER_ADMIN')",
-            securityMessage: 'Sorry, but you are not the object owner.'
-        ),
-        new GetCollection(
-            uriTemplate: '/areas',
-            security: "is_granted('ROLE_SUPER_ADMIN')",
-            securityMessage: "'Sorry, but you are not the object owner.'"
-        ),
-    ],
-    normalizationContext: [
-        'groups' => ['areas:read'],
+        new Get(normalizationContext: ['groups' => ['area:read']]), // Single item
+        new GetCollection(normalizationContext: ['groups' => ['area:read']]), // Collection
     ]
 )]
 

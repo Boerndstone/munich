@@ -78,40 +78,38 @@
 									<td>{{"child.friendly"|trans}}:</td>
 									<td>
 										{% if rock.rockChild == 1 %}
-											gut geeignet
-										{% elseif rock.rockChild == 2 %}
-											teils geeignet
-										{% elseif rock.rockChild == 3 %}
-											ungeeignet
+											{{"child.friendly.good"|trans}}
 										{% else %}
-											keine Angaben
+											{{"child.friendly.bad"|trans}}
 										{% endif %}
 									</td>
 								</tr>
 								<tr>
-									<td>Regengeschützt:</td>
+									<td>{{"rain.proof"|trans}}:</td>
 									<td>
 										{% if rock.rockRain == 1 %}
-											regensicher
+											{{"rain.proof.good"|trans}}
 										{% elseif rock.rockRain == 2 %}
-											kaum regensicher
+											{{"rain.proof.medium"|trans}}
 										{% elseif rock.rockRain == 3 %}
-											nicht regensicher
+											{{"rain.proof.not"|trans}}
+										{% else %}
+											{{"rain.proof.bad"|trans}}
 										{% endif %}
 									</td>
 								</tr>
 								<tr>
-									<td>GPS:</td>
+									<td>{{"gps"|trans}}:</td>
 									<td>{{ rock.rockLat }},
 										{{ rock.rockLng }}</td>
 								</tr>
 								<tr>
-									<td>Jahreszeit:</td>
+									<td>{{"season"|trans}}:</td>
 									<td>{{ rock.rockSeason}}</td>
 								</tr>
 								{% if rock.rockZone %}
 									<tr>
-										<td>Zone:</td>
+										<td>{{"zone"|trans}}:</td>
 										<td>{{ rock.rockZone }}</td>
 									</tr>
 								{% endif %}
@@ -140,7 +138,7 @@
 					<div class="accordion-item">
 						<h2 class="accordion-header" id="headingZustieg">
 							<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseZustieg" aria-expanded="false" aria-controls="collapseZustieg">
-								Anfahrt &amp; Zustieg
+								{{ 'arrival.and.access'|trans }}
 							</button>
 						</h2>
 						<div id="collapseZustieg" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -153,7 +151,7 @@
 				<div class="accordion-item">
 					<h2 class="accordion-header">
 						<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRockMap" aria-expanded="false" aria-controls="collapseRockMap">
-							Karte
+							{{ 'map'|trans }}
 						</button>
 					</h2>
 					<div id="collapseRockMap" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -168,7 +166,7 @@
 					<div class="accordion-item">
 						<h2 class="accordion-header" id="headingNaturschutz">
 							<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNaturschutz" aria-expanded="false" aria-controls="collapseNaturschutz">
-								Kletterregelung &amp; Naturschutz
+								{{"climbing.regulations"|trans}}
 							</button>
 						</h2>
 						<div id="collapseNaturschutz" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -182,7 +180,7 @@
 					<div class="accordion-item">
 						<h2 class="accordion-header" id="headingBilder">
 							<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBilder" aria-expanded="false" aria-controls="collapseBilder">
-								Bilder
+								{{"images"|trans}}
 							</button>
 						</h2>
 						<div id="collapseBilder" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -201,7 +199,7 @@
 				<div class="accordion-item">
 					<h2 class="accordion-header" id="headingBilder">
 						<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLegend" aria-expanded="false" aria-controls="collapseLegend">
-							Zeichenerklärung
+							{{"explanation.symbols"|trans}}
 						</button>
 					</h2>
 					<div id="collapseLegend" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -211,7 +209,7 @@
 									<td>
 										<div class="star d-inline-block"></div>
 									</td>
-									<td>Schöne Tour</td>
+									<td>{{"nice.route"|trans}}</td>
 								</tr>
 								<tr>
 									<td>
@@ -220,7 +218,7 @@
 											<div class="star d-inline-block"></div>
 										</div>
 									</td>
-									<td>Sehr schöne Tour</td>
+									<td>{{"very.nice.route"|trans}}</td>
 								</tr>
 								<tr>
 									<td>
@@ -230,31 +228,31 @@
 											<div class="star"></div>
 										</div>
 									</td>
-									<td>Traumtour</td>
+									<td>{{"dream.route"|trans}}</td>
 								</tr>
 								<tr>
 									<td>
 										<div class="trash"></div>
 									</td>
-									<td>Sch...tour</td>
+									<td>{{"shit.route"|trans}}</td>
 								</tr>
 								<tr>
 									<td>
 										<div class="exclamation d-inline-block"></div>
 									</td>
-									<td>Schlecht abgesichert!</td>
+									<td>{{"bad.routeprotection"|trans}}</td>
 								</tr>
 								<tr>
 									<td>
 										<div class="skull d-inline-block"></div>
 									</td>
-									<td>Gefährlich abgesichert!</td>
+									<td>{{"dangerous.routeprotection"|trans}}</td>
 								</tr>
 								<tr>
 									<td>
 										<div class="loose-rock d-inline-block"></div>
 									</td>
-									<td>Felsqualität nicht ideal. Vorsicht Steine!</td>
+									<td>{{"rock.quality"|trans}}</td>
 								</tr>
 							</table>
 						</div>

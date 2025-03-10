@@ -49,9 +49,11 @@ class Area
 
     #[ORM\OneToMany(mappedBy: 'area', targetEntity: Rock::class, fetch: 'EXTRA_LAZY')]
     #[ApiFilter(SearchFilter::class, properties: ['rock.id' => 'exact'])]
+    #[Groups(['area:read'])]
     private Collection $rocks;
 
     #[ORM\OneToMany(mappedBy: 'area', targetEntity: Routes::class, fetch: 'EXTRA_LAZY')]
+    #[Groups(['area:read'])]
     private Collection $routes;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]

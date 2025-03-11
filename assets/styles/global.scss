@@ -578,6 +578,11 @@ input[data-autocomplete-target="input"]:focus {
     display: none;
 }
 
-// .dropdown-menu {
-//     --bs-dropdown-min-width: 100px;
-// }
+.active-item, .list-group-item:hover {
+    background-color: rgba(7, 89, 133, 0.9);
+}
+
+.active-item a,
+.list-group-item:hover a {
+    color: white;
+}

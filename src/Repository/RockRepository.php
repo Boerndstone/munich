@@ -41,27 +41,6 @@ class RockRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Rocks[] Returns an array of Rocks objects
-     */
-    public function findSearchTerm(string $search = null): array
-    {
-        $queryBuilder = $this->createQueryBuilder('rock')
-            // ->addCriteria(self::createApprovedCriteria())
-            ->orderBy('rock.id', 'ASC')
-            ->innerJoin('rock.area', 'area')
-            ->addSelect('rock');
-        if ($search) {
-            $queryBuilder->andWhere('rock.name LIKE :searchTerm OR area.name LIKE :searchTerm')
-                ->setParameter('searchTerm', '%' . $search . '%');
-        }
-
-        return $queryBuilder
-            // ->setMaxResults(10)
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
      * @return AreaName[] Returns an array of Rocks objects
      */
     public function findRocksAreaName($areaSlug): array
@@ -256,6 +235,7 @@ class RockRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('r')
             ->where('r.name LIKE :query')
+            ->andWhere('r.online = 1')
             ->setParameter('query', "%$query%")
             ->getQuery()
             ->getResult();

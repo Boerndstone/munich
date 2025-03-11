@@ -130,23 +130,12 @@ class RoutesRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function getToposWithRoutes($rockName, $counter)
-    {
-        return $this->createQueryBuilder('routes')
-            ->select('routes.name')
-            ->where('rock.name = :rockName')
-            ->innerJoin('routes.rock', 'routes_rock')
-            // ->innerJoin('routes.rock', 'routes_rock')
-            ->setParameter('rockName', $rockName)
-            ->setParameter('counter', $counter)
-            ->getQuery()
-            ->getResult();
-    }
-
     public function search($query)
     {
         return $this->createQueryBuilder('r')
             ->where('r.name LIKE :query')
+            ->andWhere('rock.online = 1')
+            ->innerJoin('r.rock', 'rock')
             ->setParameter('query', "%$query%")
             ->getQuery()
             ->getResult();

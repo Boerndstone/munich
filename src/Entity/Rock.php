@@ -3,13 +3,24 @@
 namespace App\Entity;
 
 use App\Repository\RockRepository;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\Get;
 
 #[ORM\Entity(repositoryClass: RockRepository::class)]
+#[ApiResource(
+    operations: [
+        new Get(normalizationContext: ['groups' => ['rock:read']]), // Single item
+        new GetCollection(normalizationContext: ['groups' => ['rock:read']]), // Collection
+    ]
+)]
 class Rock
 {
     #[ORM\Id]
@@ -20,12 +31,14 @@ class Rock
     #[Assert\NotBlank(message: 'Felsname darf nicht leer sein!')]
     #[Assert\Length(minMessage: 'Felsname sollte mehr als zwei Zeichen enthalten!', min: 2)]
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(['rock:read'])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'rock', targetEntity: Routes::class, fetch: 'EXTRA_LAZY')]
     private Collection $routes;
 
     #[ORM\ManyToOne(targetEntity: Area::class, inversedBy: 'rocks')]
+    #[Groups(['rock:read'])]
     private ?Area $area = null;
 
     #[Assert\NotNull(message: 'URL darf nicht leer sein und darf keine Umlaute enthalten!')]

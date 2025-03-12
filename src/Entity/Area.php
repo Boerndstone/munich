@@ -34,7 +34,7 @@ class Area
     #[Assert\NotBlank(message: 'Der Name des Gebiets darf nicht leer sein!')]
     #[Assert\Length(minMessage: 'Der Gebietsname sollte mehr als zwei Zeichen enthalten!', min: 2)]
     #[ORM\Column(type: Types::STRING, length: 255)]
-    #[Groups(['area:read'])]
+    #[Groups(['rock:read', 'area:read'])]
     private ?string $name = null;
 
     #[Assert\NotNull(message: 'Die URL darf nicht leer sein und darf keine Umlaute enthalten!')]

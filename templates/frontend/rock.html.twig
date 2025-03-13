@@ -34,13 +34,22 @@
 				<div class="container my-3 position-absolute" style="top: 0; right: 0; left:0;">
 					<div class="bg-image pb-3 rounded ">
 						<div class="p-3 rounded shadow-3 alert-light d-flex align-items-center justify-content-between" style="background-color: rgba(255, 255, 255, 0.6);">
-							<div class="d-flex flex-column">
-								<h1 class="h2 mb-0 fw-bold text-black">
-									{{ rock.rockName }}
-									{# <span class="helmet-icon"></span> #}
-								</h1>
+							<div class="d-flex flex-column w-100">
+								<div class="d-flex align-items-center justify-content-between">
+									<h1 class="h2 mb-0 fw-bold text-black">
+										{{ rock.rockName }}
+									</h1>
+									{% if hasTranslationDescription %}
+										<span id="form-check-language">
+											<div class="form-check form-switch">
+												<input
+												class="form-check-input" type="checkbox" role="switch" id="languageSwitch" onchange="location.href=this.checked ? '{{ path('show_rock_en', { 'areaSlug': rock.areaSlug, 'slug': rock.rockSlug }) }}' : '{{ path('show_rock', { 'areaSlug': rock.areaSlug, 'slug': rock.rockSlug }) }}'" {% if app.request.locale == 'en' %} checked {% endif %}>
+											{# <label class="form-check-label" for="languageSwitch">{{ app.request.locale == 'en' ? 'en' : 'de' }}</label> #}
+											</div>
+										</span>
 
-
+									{% endif %}
+								</div>
 								<nav class="mt-1" aria-label="breadcrumb">
 									<ol class="breadcrumb text-black fw-normal mb-0" style="font-size: 12px">
 										<li class="breadcrumb-item">

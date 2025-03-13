@@ -586,3 +586,45 @@ input[data-autocomplete-target="input"]:focus {
 .list-group-item:hover a {
     color: white;
 }
+
+#form-check-language {
+    .form-switch .form-check-input {
+        position: relative;
+        width: 3rem;
+        height: 1.5rem;
+        background-color: #e9ecef;
+        border: 1px solid #ced4da;
+        border-radius: 1.5rem;
+        transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    }
+
+    .form-switch .form-check-input::before {
+        content: 'DE';
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+    }
+
+    .form-switch .form-check-input:checked::before {
+        content: 'EN';
+        left: 0.5rem;
+        right: auto;
+    }
+
+    .form-switch .form-check-input::after {
+        content: '';
+        position: absolute;
+        transform: translateY(-50%);
+        transition: left 0.15s ease-in-out, right 0.15s ease-in-out;
+    }
+
+    .form-switch .form-check-input:not(:checked)::after {
+        left: 0.25rem;
+    }
+
+    .form-switch .form-check-input:checked::after {
+        right: 0.25rem;
+    }
+}

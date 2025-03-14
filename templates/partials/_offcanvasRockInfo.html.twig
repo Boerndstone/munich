@@ -2,8 +2,6 @@
 	<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
 		<div class="offcanvas-header">
 			<h5 class="offcanvas-title fw-bold" id="offcanvasRightLabel">{{ rock.rockName }}</h5>
-
-
 			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		</div>
 		<div class="offcanvas-body">
@@ -128,10 +126,11 @@
 						</h2>
 						<div id="collapseBeschreibung" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 							<div class="accordion-body fw-medium py-0">
-								{% if description is defined %}
+								{% if description is defined and description is not null %}
 									<p class="small">{{description}}</p>
+								{% else %}
+									<p class="small">{{rock.rockDescription|raw}}</p>
 								{% endif %}
-
 							</div>
 						</div>
 					</div>
@@ -144,8 +143,12 @@
 							</button>
 						</h2>
 						<div id="collapseZustieg" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-							<div class="accordion-body fw-medium py-0 small">
-								{{ rock.rockAccess|raw }}
+							<div class="accordion-body fw-medium py-0">
+								{% if access is defined and access is not null %}
+									<p class="small">{{access}}</p>
+								{% else %}
+									<p class="small">{{rock.rockAccess|raw}}</p>
+								{% endif %}
 							</div>
 						</div>
 					</div>
@@ -172,8 +175,12 @@
 							</button>
 						</h2>
 						<div id="collapseNaturschutz" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-							<div class="accordion-body fw-medium py-0 small">
-								{{ rock.rockNature|raw }}
+							<div class="accordion-body fw-medium py-0">
+								{% if nature is defined and nature is not null %}
+									<p class="small">{{nature}}</p>
+								{% else %}
+									<p class="small">{{rock.rockNature|raw}}</p>
+								{% endif %}
 							</div>
 						</div>
 					</div>
@@ -191,77 +198,76 @@
 									<div class="col-3 col-md-4 mb-1">
 										<a class="lg-item" data-target="lg-item" data-src="{{ data.src }}">
 											<img src="{{ data.thumb }}" class="w-100 shadow-1-strong mb-3" alt="{{ data.subHtml }}"/>
-										</a>
-									</div>
-								{% endfor %}
-							</div>
-						</div>
-					</div>
-				{% endif %}
-				<div class="accordion-item">
-					<h2 class="accordion-header" id="headingBilder">
-						<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLegend" aria-expanded="false" aria-controls="collapseLegend">
-							{{"explanation.symbols"|trans}}
-						</button>
-					</h2>
-					<div id="collapseLegend" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-						<div class="accordion-body row mx-0" data-controller="off-canvas-gallery">
-							<table class="table table-sm fw-medium small">
-								<tr>
-									<td>
-										<div class="star d-inline-block"></div>
-									</td>
-									<td>{{"nice.route"|trans}}</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="d-flex">
-											<div class="star d-inline-block"></div>
-											<div class="star d-inline-block"></div>
-										</div>
-									</td>
-									<td>{{"very.nice.route"|trans}}</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="d-flex">
-											<div class="star"></div>
-											<div class="star"></div>
-											<div class="star"></div>
-										</div>
-									</td>
-									<td>{{"dream.route"|trans}}</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="trash"></div>
-									</td>
-									<td>{{"shit.route"|trans}}</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="exclamation d-inline-block"></div>
-									</td>
-									<td>{{"bad.routeprotection"|trans}}</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="skull d-inline-block"></div>
-									</td>
-									<td>{{"dangerous.routeprotection"|trans}}</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="loose-rock d-inline-block"></div>
-									</td>
-									<td>{{"rock.quality"|trans}}</td>
-								</tr>
-							</table>
+										</p>
+									</a>
+								</div>
+							{% endfor %}
 						</div>
 					</div>
 				</div>
-
+			{% endif %}
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="headingBilder">
+					<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLegend" aria-expanded="false" aria-controls="collapseLegend">
+						{{"explanation.symbols"|trans}}
+					</button>
+				</h2>
+				<div id="collapseLegend" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+					<div class="accordion-body row mx-0" data-controller="off-canvas-gallery">
+						<table class="table table-sm fw-medium small">
+							<tr>
+								<td>
+									<div class="star d-inline-block"></div>
+								</td>
+								<td>{{"nice.route"|trans}}</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="d-flex">
+										<div class="star d-inline-block"></div>
+										<div class="star d-inline-block"></div>
+									</div>
+								</td>
+								<td>{{"very.nice.route"|trans}}</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="d-flex">
+										<div class="star"></div>
+										<div class="star"></div>
+										<div class="star"></div>
+									</div>
+								</td>
+								<td>{{"dream.route"|trans}}</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="trash"></div>
+								</td>
+								<td>{{"shit.route"|trans}}</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="exclamation d-inline-block"></div>
+								</td>
+								<td>{{"bad.routeprotection"|trans}}</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="skull d-inline-block"></div>
+								</td>
+								<td>{{"dangerous.routeprotection"|trans}}</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="loose-rock d-inline-block"></div>
+								</td>
+								<td>{{"rock.quality"|trans}}</td>
+							</tr>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-{% endfor %}
+</div>{% endfor %}

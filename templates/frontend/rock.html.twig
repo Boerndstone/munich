@@ -42,12 +42,9 @@
 									{% if hasTranslationDescription %}
 										<span id="form-check-language">
 											<div class="form-check form-switch">
-												<input
-												class="form-check-input" type="checkbox" role="switch" id="languageSwitch" onchange="location.href=this.checked ? '{{ path('show_rock_en', { 'areaSlug': rock.areaSlug, 'slug': rock.rockSlug }) }}' : '{{ path('show_rock', { 'areaSlug': rock.areaSlug, 'slug': rock.rockSlug }) }}'" {% if app.request.locale == 'en' %} checked {% endif %}>
-											{# <label class="form-check-label" for="languageSwitch">{{ app.request.locale == 'en' ? 'en' : 'de' }}</label> #}
+												<input class="form-check-input" type="checkbox" role="switch" id="languageSwitch" onchange="location.href=this.checked ? '{{ path('show_rock_en', { 'areaSlug': rock.areaSlug, 'slug': rock.rockSlug }) }}' : '{{ path('show_rock', { 'areaSlug': rock.areaSlug, 'slug': rock.rockSlug }) }}'" {% if app.request.locale == 'en' %} checked {% endif %}>
 											</div>
 										</span>
-
 									{% endif %}
 								</div>
 								<nav class="mt-1" aria-label="breadcrumb">

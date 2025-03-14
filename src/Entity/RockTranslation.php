@@ -23,6 +23,12 @@ class RockTranslation
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $access = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $nature = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +66,30 @@ class RockTranslation
     public function setDescription(string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getAccess(): ?string
+    {
+        return $this->access;
+    }
+
+    public function setAccess(?string $access): static
+    {
+        $this->access = $access;
+
+        return $this;
+    }
+
+    public function getNature(): ?string
+    {
+        return $this->nature;
+    }
+
+    public function setNature(?string $nature): static
+    {
+        $this->nature = $nature;
 
         return $this;
     }

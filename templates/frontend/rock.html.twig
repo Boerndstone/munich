@@ -5,7 +5,12 @@
 	<meta name="robots" content="index,follow"/>
 	<meta property="og:site_name" content="{{ setTitle }}"/>
 	<meta property="og:title" content="{{ setTitle }}"/>
+	<meta property="place:location:longitude" content="{{ rockLng }}">
+	<meta property="place:location:latitude" content="{{ rockLat }}">
 	<meta property="og:type" content="website"/>
+	<meta property="og:image" content="https://www.munichclimbs.de/build/images/rock/{{ rockPreviewImage }}@3x.webp">
+
+
 	<meta property="og:url" content="https://munichclimbs.de/Kletterfels/{{ slug }}"/>
 	<meta property="og:description" content="{% for rock in rocks %}{{ rock.rockDescription}}{% endfor %}"/>
 	<meta name="keywords" content="Klettertouren {{ slug|custom_replace }}: {% for route in routes %}{{ route.routeName}} {{ route.routeGrade}}{% if loop.last == false  %}, {% else %}{% endif %}{% endfor %}"/>

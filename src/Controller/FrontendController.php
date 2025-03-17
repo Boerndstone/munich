@@ -172,6 +172,9 @@ class FrontendController extends AbstractController
         $topos = $topoRepository->getTopos($rockId);
 
         $rockName = $rock->getSlug();
+        $rockLng = $rock->getLng() !== null ? $rock->getLng() : null;
+        $rockLat = $rock->getLat() !== null ? $rock->getLat() : null;
+        $rockPreviewImage = $rock->getPreviewImage() !== null ? $rock->getPreviewImage() : null;
         $areaName = $rock->getArea();
 
         // $rockDescription = $rock->getDescription();
@@ -236,6 +239,9 @@ class FrontendController extends AbstractController
             'slug' => $slug,
             'areaSlug' => $areaSlug,
             'rocks' => $rocks,
+            'rockLng' => $rockLng,
+            'rockLat' => $rockLat,
+            'rockPreviewImage' => $rockPreviewImage,
             'rockName' => $rockName,
             'hasTranslationDescription' => $hasTranslationDescription,
             'description' => $rockDescriptionArray['description'],

@@ -1,5 +1,6 @@
 import { Controller } from "stimulus";
 import L from "leaflet";
+import { info } from "autoprefixer";
 
 export default class extends Controller {
   static targets = ["map"];
@@ -7,8 +8,7 @@ export default class extends Controller {
   connect() {
     const markersArea = JSON.parse(this.data.get("markersArea"));
     const zoom = JSON.parse(this.data.get("zoom"));
-    const locations = JSON.parse(this.data.get("railwayStations"));
-
+    const information = JSON.parse(this.data.get("railwayStations"));
     const areaMap = L.map(this.mapTarget).setView([zoom[0], zoom[1]], zoom[2]);
 
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -36,19 +36,34 @@ export default class extends Controller {
 
     // Add railway station markers
     const trainMarkers = [];
-    const campingMarkers = [];
-    if (locations && locations.length > 0) {
-      locations.forEach((location) => {
-        if (location.coordinates) {
-          const latLng = [location.coordinates[0], location.coordinates[1]];
-          const marker = L.marker(latLng, { icon: trainStationIcon }).addTo(
-            areaMap
-          );
+    if (information.trainStations && information.trainStations.length > 0) {
+      information.trainStations.forEach((trainStation) => {
+        if (trainStation) {
+          const latLng = [trainStation.lat, trainStation.lng];
+          const marker = L.marker(latLng, { icon: trainStationIcon })
+            .bindPopup(
+              `<b>Haltestelle ${trainStation.name}</b><br>${
+                trainStation.link
+                  ? `<a href="${trainStation.link}" target="_blank">Link zum Fahrplan</a>`
+                  : ""
+              }`
+            )
+            .addTo(areaMap);
           trainMarkers.push(marker);
         }
-        if (location.camping) {
-          const latLng = [location.camping[0], location.camping[1]];
-          const marker = L.marker(latLng, { icon: campingIcon }).addTo(areaMap);
+      });
+    }
+    // Add camping site markers
+    const campingMarkers = [];
+    if (information.campingSites && information.campingSites.length > 0) {
+      information.campingSites.forEach((campingSite) => {
+        if (campingSite) {
+          const latLng = [campingSite.lat, campingSite.lng];
+          const marker = L.marker(latLng, { icon: campingIcon })
+            .bindPopup(
+              `<b>Campingplatz ${campingSite.name}</b><br><a href="${campingSite.link}" target="_blank">${campingSite.link}</a>`
+            )
+            .addTo(areaMap);
           campingMarkers.push(marker);
         }
       });

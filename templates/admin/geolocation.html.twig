@@ -2,10 +2,9 @@
 
 {% block head_stylesheets %}
 	{{ parent() }}
-	<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-	<link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css"/>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"/>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
 {% endblock %}
-
 
 {% block content %}
 	<style>
@@ -19,79 +18,22 @@
 		}
 	</style>
 
-	<div class="container">
+	<div class="container" data-controller="admin-draw-map">
 		<div class="row">
 			<div class="col">
-				<div id="map"></div>
+				<div id="map" data-admin-draw-map-target="map"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-6">
+				<button class="btn btn-primary" id="exportBtn" data-admin-draw-map-target="exportButton" data-action="admin-draw-map#exportDrawings" style="clear: both;">
+					Export Drawings
+				</button>
+			</div>
+			<div class="col-6">
+				<label for="coordinates" class="form-label">Koordinaten</label>
+				<textarea class="form-control" id="coordinates" rows="5" data-admin-draw-map-target="coordinates"></textarea>
 			</div>
 		</div>
 	</div>
-
-	<div class="container text-center">
-		<div class="row">
-			<div class="col">
-				<button class="btn btn-primary" id="exportBtn" style="clear: both;">Export Drawings</button>
-			</div>
-		</div>
-	</div>
-
-
-	<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-	<script src="https://unpkg.com/leaflet-draw"></script>
-	<script>
-		var map = L.map("map").setView([
-49.01, 11.95
-
-], 16);
-
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {attribution: "© OpenStreetMap contributors"}).addTo(map);
-
-// Add parking marker
-// var parkingMarker = L.marker([48.867891, 11.093123]).addTo(map);
-// parkingMarker.bindPopup("<b>Parking</b>").openPopup();
-
-var drawControl = new L.Control.Draw({
-draw: {
-polyline: true,
-polygon: true,
-rectangle: true,
-circle: true,
-marker: true
-},
-edit: {
-featureGroup: new L.FeatureGroup()
-}
-});
-
-map.addControl(drawControl);
-
-var featureGroup = new L.FeatureGroup().addTo(map);
-
-map.on("draw:created", function (event) {
-var layer = event.layer;
-featureGroup.addLayer(layer);
-});
-
-document.getElementById("exportBtn").addEventListener("click", function () {
-var drawings = [];
-
-// Add parking marker as the first marker
-// var startMarker = {
-//     type: "Point",
-//     coordinates: [48.867891, 11.093123],
-// };
-// drawings.push(startMarker);
-
-featureGroup.eachLayer(function (layer) {
-var drawingInfo = {
-type: layer.toGeoJSON().geometry.type,
-coordinates: layer.toGeoJSON().geometry.coordinates
-};
-drawings.push(drawingInfo);
-});
-
-console.log(drawings);
-});
-	</script>
-
 {% endblock %}

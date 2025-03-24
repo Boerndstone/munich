@@ -60,6 +60,7 @@
         "@popperjs/core": "^2.11.2",
         "babel-plugin-syntax-jsx": "^6.18.0",
         "leaflet": "^1.9.4",
+        "leaflet-draw": "^1.0.4",
         "lightgallery": "^2.7.2",
         "natives": "^1.1.6",
         "node-sass-import": "^1.0.5",

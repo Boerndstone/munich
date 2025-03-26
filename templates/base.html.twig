@@ -27,7 +27,11 @@
 		rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
 	 <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
 	</head>
-	<body id="body" {% block body_attributes %} {% endblock %} class="{% block bodyclass %}{% endblock %}"> {% block body %}{% endblock %}
+	<body id="body" {% block body_attributes %} {% endblock %} class="{% block bodyclass %}{% endblock %}">
+		<div data-controller="scroll-progress" class="bg-primary fixed-top" style="height: 3px; z-index: 10000;"></div>
+
+		{% block body %}{% endblock %}
+
 
 		<div {{ stimulus_controller('cookie-consent') }}></div>
 

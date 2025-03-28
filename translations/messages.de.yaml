@@ -1,5 +1,8 @@
 # Navigation
 rock: "Fels"
+search: "Suche nach Felsen/Routen"
+copyright: "Alle Rechte vorbehalten."
+ecopoint: "Von München zum Klettern ins Nördliche Frankenjura?<br/>Infos wie das mit ÖPNV geht, bietet Ecopoint Frankenjura."
 
 # Rock Offcanvas Rock Descritpion
 description: "Beschreibung"
@@ -20,7 +23,7 @@ rain.proof.good: "regensicher"
 rain.proof.medium: "kaum regensicher"
 rain.proof.not: "nicht regensicher"
 gps: "GPS"
-season: "Best season"
+season: "Beste Jahreszeit"
 zone: "Zone"
 arrival.and.access: "Anfahrt & Zustieg"
 map: "Karte"

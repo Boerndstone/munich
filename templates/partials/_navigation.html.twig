@@ -70,11 +70,9 @@
 					</div>
 					<div class="col-2 col-md-3 d-flex align-items-center justify-content-end">
 						{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty  %}
-							<button class="btn btn-sm btn-primary d-flex" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
-								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 24 24"><path fill="currentColor" d="M11 7v2h2V7zm3 10v-2h-1v-4h-3v2h1v2h-1v2zm8-5c0 5.5-4.5 10-10 10S2 17.5 2 12S6.5 2 12 2s10 4.5 10 10m-2 0c0-4.42-3.58-8-8-8s-8 3.58-8 8s3.58 8 8 8s8-3.58 8-8"/></svg>
-								<span class="ms-1 d-none d-md-block">{{ "rock"|trans }}</span>
-							</button>
-							{{ include('partials/_offcanvasRockInfo.html.twig', [ rocks ]) }}
+							{% for rock in rocks %}
+								{{ include('partials/_language_switch.html.twig', { hasTranslationDescription: hasTranslationDescription }) }}
+							{% endfor %}
 						{% endif %}
 					</div>
 				</div>

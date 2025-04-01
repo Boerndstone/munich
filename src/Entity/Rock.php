@@ -31,7 +31,7 @@ class Rock
     #[Assert\NotBlank(message: 'Felsname darf nicht leer sein!')]
     #[Assert\Length(minMessage: 'Felsname sollte mehr als zwei Zeichen enthalten!', min: 2)]
     #[ORM\Column(type: Types::STRING, length: 255)]
-    #[Groups(['rock:read'])]
+    #[Groups(['area:read', 'rock:read'])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'rock', targetEntity: Routes::class, fetch: 'EXTRA_LAZY')]
@@ -44,6 +44,7 @@ class Rock
     #[Assert\NotNull(message: 'URL darf nicht leer sein und darf keine Umlaute enthalten!')]
     #[Assert\Length(minMessage: 'URL sollte mehr als zwei Zeichen enthalten!', min: 2)]
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(['area:read', 'rock:read'])]
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::INTEGER)]

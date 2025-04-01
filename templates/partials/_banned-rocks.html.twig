@@ -1,7 +1,7 @@
 {% set currentDate =  "now"|date("z") %}
 {% if currentDate < 181 %}
 	<div class="card">
-		<h2 class="text-white fs-5 fw-light px-3 py-2 mb-2 rounded-top bg-danger">Aktuelle Sperrungen</h2>
+		<h3 class="text-white fs-5 fw-light px-3 py-2 mb-2 rounded-top bg-danger">Aktuelle Sperrungen</h3>
 		<ul class="list-unstyled">
 			{% for bannedRock in banned %}
 				<li class="px-3 mb-2 hover:bg-gray-300" style="line-height: 1.3rem;">

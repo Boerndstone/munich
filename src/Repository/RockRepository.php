@@ -244,7 +244,7 @@ class RockRepository extends ServiceEntityRepository
     public function findWithTranslations($slug, $locale)
     {
         return $this->createQueryBuilder('r')
-            ->select('t.description, t.access, t.nature')
+            ->select('t.description, t.access, t.nature, t.flowers')
             ->leftJoin('r.translations', 't')
             ->andWhere('r.slug = :slug')
             ->andWhere('t.locale = :locale')

@@ -29,6 +29,9 @@ class RockTranslation
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $nature = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $flowers = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,6 +93,18 @@ class RockTranslation
     public function setNature(?string $nature): static
     {
         $this->nature = $nature;
+
+        return $this;
+    }
+
+    public function getFlowers(): ?string
+    {
+        return $this->flowers;
+    }
+
+    public function setFlowers(?string $flowers): static
+    {
+        $this->flowers = $flowers;
 
         return $this;
     }

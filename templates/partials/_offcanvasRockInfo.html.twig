@@ -190,6 +190,22 @@
 						</div>
 					</div>
 				{% endif %}
+				{% if flowers is defined and flowers is not null %}
+					<div class="accordion-item">
+						<h2 class="accordion-header" id="headingNaturschutz">
+							<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFlowers" aria-expanded="false" aria-controls="collapseFlowers">
+								<div class="rock-general-flowers text-black me-2"></div>
+								{{"plants"|trans}}
+							</button>
+						</h2>
+						<div id="collapseFlowers" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+							<div class="accordion-body fw-medium py-0">
+								<p class="small">{{flowers|raw}}</p>
+							</div>
+						</div>
+					</div>
+				{% endif %}
+
 				{% if jsonData %}
 					<div class="accordion-item">
 						<h2 class="accordion-header" id="headingBilder">

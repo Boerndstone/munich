@@ -189,6 +189,7 @@ class FrontendController extends AbstractController
             'description' => $rockDescription[0]['description'] ?? null,
             'access' => $rockDescription[0]['access'] ?? null,
             'nature' => $rockDescription[0]['nature'] ?? null,
+            'flowers' => $rockDescription[0]['flowers'] ?? null,
         ];
 
         $hasTranslationDescription = $rockRepository->hasTranslationDescription($slug, $locale);
@@ -247,6 +248,7 @@ class FrontendController extends AbstractController
             'description' => $rockDescriptionArray['description'],
             'access' => $rockDescriptionArray['access'],
             'nature' => $rockDescriptionArray['nature'],
+            'flowers' => $rockDescriptionArray['flowers'],
             'routes' => $routes,
             'routesRepository' => $routesRepository,
             'topos' => $topos,

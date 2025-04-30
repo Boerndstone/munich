@@ -578,8 +578,11 @@ input[data-autocomplete-target="input"]:focus {
 
 .number-text {
     font-size: 22px;
+    font-weight: normal;
+    text-anchor: middle;
+    dominant-baseline: middle;
 }
-.number-text:hover {
+.tooltip-trigger:hover {
     cursor: pointer;
 }
 

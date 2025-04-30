@@ -3,7 +3,7 @@ import { Tooltip } from "bootstrap";
 
 export default class extends Controller {
   connect() {
-    const svgElements = this.element.querySelectorAll(".number-text");
+    const svgElements = this.element.querySelectorAll(".tooltip-trigger");
     const pathIds = Array.from(svgElements).map((element) => ({
       pathId: element.getAttribute("data-path-id"),
       element: element,

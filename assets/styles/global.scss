@@ -505,6 +505,20 @@ a {
     object-fit: contain;
 }
 
+.lg-backdrop {
+    z-index: 2040;
+}
+.lg-outer {
+    z-index: 2050;
+}
+.lg-next,
+.lg-prev {
+    z-index: 5060;
+}
+.lg-outer .lg-item.lg-current {
+    z-index: 3060;
+}
+
 input[data-autocomplete-target="input"]:focus {
     border: 2px solid $primary;
     box-shadow: none;

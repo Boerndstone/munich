@@ -684,3 +684,9 @@ input[data-autocomplete-target="input"]:focus {
         right: 0.25rem;
     }
 }
+
+.banned {
+    .card-body {
+        border: 1px solid #b91c1c;
+    }
+}

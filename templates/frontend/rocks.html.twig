@@ -1,9 +1,10 @@
 {% extends 'base.html.twig' %}
 {% set setTitle = 'Munichclimbs | Klettergebiet ' ~ areaName %}
+{% set currentDate =  "now"|date("z") %}
+
 
 {% block meta_tags %}
 	<meta name="description" content="Felsen im Klettergebiet {{ areaName }}: {% for rock in rocks %}{{ rock.rockName }}{% if loop.last == false  %}, {% else %} {% endif %} {% endfor %}"/>
-
 	<meta name="robots" content="index,follow"/>
 	<meta property="og:site_name" content="{{ setTitle }}"/>
 	<meta property="og:title" content="{{ setTitle }}"/>
@@ -92,8 +93,7 @@
 					<div class="col-12 col-md-8 order-2 order-lg-1">
 						<div class="row">
 							{% for rock in rocks %}
-								<div class="col-12 rock-item" data-child-friendly="{{ rock.rockChild == 1 ? 'true' : 'false' }}" data-rock-sunny="{{ rock.rockSunny == 3 ? 'true' : 'false' }}" data-rock-rain="{{ rock.rockRain == 1 ? 'true' : 'false' }}" data-rock-train="{{ rock.rockTrain == 1 ? 'true' : 'false' }}">
-
+								<div class="col-12 rock-item {% if currentDate < 181 and rock.banned > 0 %}banned{% endif %}" data-child-friendly="{{ rock.rockChild == 1 ? 'true' : 'false' }}" data-rock-sunny="{{ rock.rockSunny == 3 ? 'true' : 'false' }}" data-rock-rain="{{ rock.rockRain == 1 ? 'true' : 'false' }}" data-rock-train="{{ rock.rockTrain == 1 ? 'true' : 'false' }}">
 									<a href="{{ path('show_rock', { 'areaSlug': rock.areaSlug, slug: rock.rockSlug }) }}" class="d-block text-black">
 										<div class="card py-2 mb-2 card-body">
 											<div class="row align-items-center">
@@ -112,7 +112,12 @@
 												<div class="col">
 													<div class="overflow-hidden flex-nowrap">
 														<div class="d-flex align-items-bottom justify-content-between">
-															<h6 class="mb-0 text-reset d-inline-block text-truncate text-truncate-rock-name">{{rock.rockName}}</h6>
+															<h6 class="mb-0 text-reset d-inline-block text-truncate text-truncate-rock-name">{{rock.rockName}}
+																{% if currentDate < 181 and rock.banned > 0 %}
+																	<span class="badge fw-light ms-2" style="background-color: #b91c1c;">gesperrt</span>
+
+																{% endif %}
+															</h6>
 															<div class="d-flex align-items-center">
 																<p class="small mb-0">{{ rock.rockHeight }}
 																	m</p>

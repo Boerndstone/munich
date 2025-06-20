@@ -117,6 +117,7 @@ class RockRepository extends ServiceEntityRepository
                 'rock.sunny as rockSunny',
                 'rock.image as rockImage',
                 'rock.previewImage as previewImage',
+                'rock.banned as banned',
                 'area.name as areaName',
                 'area.slug as areaSlug',
                 'COUNT(DISTINCT route.id) AS amountRoutes',

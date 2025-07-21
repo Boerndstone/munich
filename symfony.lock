@@ -13,9 +13,6 @@
             "src/ApiResource/.gitignore"
         ]
     },
-    "composer/package-versions-deprecated": {
-        "version": "1.11.99.1"
-    },
     "connectholland/cookie-consent-bundle": {
         "version": "0.12",
         "recipe": {
@@ -39,14 +36,8 @@
         },
         "files": []
     },
-    "doctrine/cache": {
-        "version": "2.1.1"
-    },
     "doctrine/collections": {
         "version": "1.6.8"
-    },
-    "doctrine/common": {
-        "version": "3.2.1"
     },
     "doctrine/dbal": {
         "version": "3.3.0"
@@ -341,9 +332,6 @@
         "version": "v1.24.0"
     },
     "symfony/polyfill-mbstring": {
-        "version": "v1.24.0"
-    },
-    "symfony/polyfill-php80": {
         "version": "v1.24.0"
     },
     "symfony/polyfill-uuid": {

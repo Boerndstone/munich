@@ -6,15 +6,18 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 use App\Service\AreasService;
+use App\Service\ImageSeoService;
 
 class AppExtension extends AbstractExtension
 {
 
     private AreasService $areasService;
+    private ImageSeoService $imageSeoService;
 
-    public function __construct(AreasService $areasService)
+    public function __construct(AreasService $areasService, ImageSeoService $imageSeoService)
     {
         $this->areasService = $areasService;
+        $this->imageSeoService = $imageSeoService;
     }
 
     public function getFunctions(): array
@@ -23,6 +26,9 @@ class AppExtension extends AbstractExtension
             new TwigFunction('getAreas', [$this, 'getAreas']),
             new TwigFunction('getAreasInformation', [$this, 'getAreasInformation']),
             new TwigFunction('getSidebarAreas', [$this, 'getSidebarAreas']),
+            new TwigFunction('getSocialMediaImageUrl', [$this, 'getSocialMediaImageUrl']),
+            new TwigFunction('getImageAltText', [$this, 'getImageAltText']),
+            new TwigFunction('isImageAccessible', [$this, 'isImageAccessible']),
         ];
     }
 
@@ -39,6 +45,21 @@ class AppExtension extends AbstractExtension
     public function getSidebarAreas(): array
     {
         return $this->areasService->getSidebarAreas();
+    }
+
+    public function getSocialMediaImageUrl(?string $imageName, string $type = 'rock'): ?string
+    {
+        return $this->imageSeoService->getSocialMediaImageUrl($imageName, $type);
+    }
+
+    public function getImageAltText(string $rockName, string $areaName, string $type = 'rock'): string
+    {
+        return $this->imageSeoService->generateImageAltText($rockName, $areaName, $type);
+    }
+
+    public function isImageAccessible(?string $imageName, string $type = 'rock'): bool
+    {
+        return $this->imageSeoService->isImageAccessible($imageName, $type);
     }
 
     public function getFilters(): array

@@ -34,10 +34,7 @@ class FrontendController extends AbstractController
     public function neuesteRouten(
         AreaRepository $areaRepository,
         RoutesRepository $routesRepository,
-        FooterAreas $footerAreas,
     ): Response {
-
-        $areas = $footerAreas->getFooterAreas();
 
         $getDate = date("Y");
         $calculateDate = $getDate - 2;
@@ -46,7 +43,6 @@ class FrontendController extends AbstractController
         $sideBar = $areaRepository->sidebarNavigation();
 
         return $this->render('frontend/neuesteRouten.html.twig', [
-            'areas' => $areas,
             'latestRoutes' => $latestRoutes,
             'sideBar' => $sideBar,
         ]);
@@ -89,14 +85,12 @@ class FrontendController extends AbstractController
         $latestRoutes = $routesRepository->latestRoutes();
         $latestComments = $commentRepository->latestComments();
         $banned = $rockRepository->saisonalGesperrt();
-        $areas = $areaRepository->getAreasInformation();
         $sideBar = $areaRepository->sidebarNavigation();
         $searchTerm = $request->query->get('q');
         $areaRepository->search($searchTerm);
         //dd($searchRoutes);
 
         return $this->render('frontend/index.html.twig', [
-            'areas' => $areas,
             'latestRoutes' => $latestRoutes,
             'latestComments' => $latestComments,
             'banned' => $banned,
@@ -109,11 +103,9 @@ class FrontendController extends AbstractController
         AreaRepository $areaRepository,
         RockRepository $rockRepository,
         #[MapEntity] Area $area,
-        string $slug,
-        FooterAreas $footerAreas
+        string $slug
     ): Response {
 
-        $areas = $footerAreas->getFooterAreas();
         $areaName = $area->getName();
         $areaSlug = $area->getSlug();
         $areaLat = $area->getLat();
@@ -127,7 +119,6 @@ class FrontendController extends AbstractController
 
 
         return $this->render('frontend/rocks.html.twig', [
-            'areas' => $areas,
             'areaName' => $areaName,
             'areaSlug' => $areaSlug,
             'areaLat' => $areaLat,
@@ -164,7 +155,6 @@ class FrontendController extends AbstractController
         #[MapEntity] Rock $rock,
         $areaSlug,
         $slug,
-        FooterAreas $footerAreas,
         Packages $assetPackages,
         Request $request
     ): Response {
@@ -233,15 +223,12 @@ class FrontendController extends AbstractController
 
         $sideBar = $areaRepository->sidebarNavigation();
 
-        $areas = $footerAreas->getFooterAreas();
-
         if ($rock->getOnline() == 0) {
             throw $this->createNotFoundException('The rock does not exist');
         }
 
         return $this->render('frontend/rock.html.twig', [
             'areaName' => $areaName,
-            'areas' => $areas,
             'slug' => $slug,
             'areaSlug' => $areaSlug,
             'rocks' => $rocks,

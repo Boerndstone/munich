@@ -5,28 +5,40 @@ namespace App\Twig;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
-use App\Service\FooterAreas;
+use App\Service\AreasService;
 
 class AppExtension extends AbstractExtension
 {
 
-    private $footerAreas;
+    private AreasService $areasService;
 
-    public function __construct(FooterAreas $footerAreas)
+    public function __construct(AreasService $areasService)
     {
-        $this->footerAreas = $footerAreas;
+        $this->areasService = $areasService;
     }
 
     public function getFunctions(): array
     {
         return [
             new TwigFunction('getAreas', [$this, 'getAreas']),
+            new TwigFunction('getAreasInformation', [$this, 'getAreasInformation']),
+            new TwigFunction('getSidebarAreas', [$this, 'getSidebarAreas']),
         ];
     }
 
-    public function getAreas()
+    public function getAreas(): array
     {
-        return $this->footerAreas->getFooterAreas();
+        return $this->areasService->getFooterAreas();
+    }
+
+    public function getAreasInformation(): array
+    {
+        return $this->areasService->getAreasInformation();
+    }
+
+    public function getSidebarAreas(): array
+    {
+        return $this->areasService->getSidebarAreas();
     }
 
     public function getFilters(): array

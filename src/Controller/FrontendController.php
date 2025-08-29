@@ -32,7 +32,6 @@ class FrontendController extends AbstractController
     // I have to define the static routes before the dynamic routes with $slug otherwise I get a 404 for the static routes!!!
     #[Route('/neuesteRouten', name: 'neuesteRouten')]
     public function neuesteRouten(
-        AreaRepository $areaRepository,
         RoutesRepository $routesRepository,
     ): Response {
 
@@ -40,11 +39,8 @@ class FrontendController extends AbstractController
         $calculateDate = $getDate - 2;
         $latestRoutes = $routesRepository->latestRoutesPage($calculateDate);
 
-        $sideBar = $areaRepository->sidebarNavigation();
-
         return $this->render('frontend/neuesteRouten.html.twig', [
             'latestRoutes' => $latestRoutes,
-            'sideBar' => $sideBar,
         ]);
     }
 
@@ -74,7 +70,6 @@ class FrontendController extends AbstractController
         requirements: ['_locale' => 'en']
     )]
     public function index(
-        AreaRepository $areaRepository,
         RockRepository $rockRepository,
         RoutesRepository $routesRepository,
         CommentRepository $commentRepository,
@@ -85,22 +80,18 @@ class FrontendController extends AbstractController
         $latestRoutes = $routesRepository->latestRoutes();
         $latestComments = $commentRepository->latestComments();
         $banned = $rockRepository->saisonalGesperrt();
-        $sideBar = $areaRepository->sidebarNavigation();
         $searchTerm = $request->query->get('q');
-        $areaRepository->search($searchTerm);
         //dd($searchRoutes);
 
         return $this->render('frontend/index.html.twig', [
             'latestRoutes' => $latestRoutes,
             'latestComments' => $latestComments,
             'banned' => $banned,
-            'sideBar' => $sideBar,
         ]);
     }
 
     #[Route('/{slug}', name: 'show_rocks')]
     public function showRocksArea(
-        AreaRepository $areaRepository,
         RockRepository $rockRepository,
         #[MapEntity] Area $area,
         string $slug
@@ -114,7 +105,6 @@ class FrontendController extends AbstractController
         $areaRailwayStation = $area->getRailwayStation();
         $areaImage = $area->getHeaderImage();
 
-        $sideBar = $areaRepository->sidebarNavigation();
         $rocks = $rockRepository->getRocksInformation($slug);
 
 
@@ -127,7 +117,6 @@ class FrontendController extends AbstractController
             'areaRailwayStation' => $areaRailwayStation,
             'areaImage' => $areaImage,
             'rocks' => $rocks,
-            'sideBar' => $sideBar,
         ]);
     }
 
@@ -146,7 +135,6 @@ class FrontendController extends AbstractController
         requirements: ['_locale' => 'en']
     )]
     public function showRock(
-        AreaRepository $areaRepository,
         RoutesRepository $routesRepository,
         RockRepository $rockRepository,
         TopoRepository $topoRepository,
@@ -221,8 +209,6 @@ class FrontendController extends AbstractController
             ];
         }
 
-        $sideBar = $areaRepository->sidebarNavigation();
-
         if ($rock->getOnline() == 0) {
             throw $this->createNotFoundException('The rock does not exist');
         }
@@ -245,7 +231,6 @@ class FrontendController extends AbstractController
             'groupedRoutes' => $groupedRoutes,
             'routesRepository' => $routesRepository,
             'topos' => $topos,
-            'sideBar' => $sideBar,
             'jsonData' => $jsonData,
             'locale' => $locale,
         ]);

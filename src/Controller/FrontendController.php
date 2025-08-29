@@ -6,6 +6,7 @@ use App\Entity\Area;
 use App\Entity\Rock;
 use App\Entity\Contact;
 use App\Service\FooterAreas;
+use App\Service\RouteGroupingService;
 use App\Form\ContactFormType;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use App\Repository\AreaRepository;
@@ -159,6 +160,7 @@ class FrontendController extends AbstractController
         RockRepository $rockRepository,
         TopoRepository $topoRepository,
         PhotosRepository $photosRepository,
+        RouteGroupingService $routeGroupingService,
         #[MapEntity] Rock $rock,
         $areaSlug,
         $slug,
@@ -208,6 +210,9 @@ class FrontendController extends AbstractController
             }
         }
 
+        // Group routes by topo using the service
+        $groupedRoutes = $routeGroupingService->groupRoutesByTopo($routes);
+
         $galleryItems = $photosRepository->findPhotosForRock($rockId);
 
         // Serialize data to JSON format
@@ -250,6 +255,7 @@ class FrontendController extends AbstractController
             'nature' => $rockDescriptionArray['nature'],
             'flowers' => $rockDescriptionArray['flowers'],
             'routes' => $routes,
+            'groupedRoutes' => $groupedRoutes,
             'routesRepository' => $routesRepository,
             'topos' => $topos,
             'sideBar' => $sideBar,

@@ -32,6 +32,7 @@
 
 		{% block body %}{% endblock %}
 
+		{% include 'partials/_footer.html.twig' with {'areas': getAreas()} %}
 
 		<div {{ stimulus_controller('cookie-consent') }}></div>
 

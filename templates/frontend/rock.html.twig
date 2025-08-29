@@ -109,38 +109,16 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-9">
-					{% set groupedRoutes = {} %}
-					{% for routeData in routes %}
-						{% set topoName = routeData.topoName %}
-						{% set topoNumber = routeData.topoNumber %}
-						{% set topoSvg = routeData.topoSvg %}
-						{% set groupedRoutes = groupedRoutes|merge({
-(topoName): groupedRoutes[topoName]|default([])|merge([{'routeName': routeData.routeName, 'routeRating': routeData.routeRating, 'routeProtection': routeData.routeProtection, 'rockQuality': routeData.rockQuality, 'areaId': routeData.areaId, 'rockId': routeData.rockId, 'routeId': routeData.routeId, 'routefirstAscent': routeData.routefirstAscent, 'routeyearFirstAscent': routeData.routeyearFirstAscent, 'routeDescription': routeData.routeDescription, 'routeComment': routeData.routeComment, 'routeGrade': routeData.routeGrade, 'topoSvg': routeData.topoSvg, 'withSector': routeData.withSector, 'videoLink': routeData.videoLink}]) })
-						%}
-					{% endfor %}
-
-					{% for topoName, routes in groupedRoutes %}
+					{% for topoName, topoData in groupedRoutes %}
 						<div class="card mt-3 overflow-hidden" id="{{ topoName|custom_replace|lower }}">
 							<div class="card-body p-0">
 								<section data-controller="route-information-tooltip">
-									{% set hasWithSector = false %}
-									{% for route in routes %}
-										{% if route.withSector is not null and route.withSector %}
-											{% set hasWithSector = true %}
-										{% endif %}
-									{% endfor %}
-									{% set hasPrinted = false %}
-									{% for route in routes %}
-										{% if not hasPrinted %}
-											{% if route.topoSvg is not empty %}
-												{{ route.topoSvg|raw }}
-											{% endif %}
-											{% set hasPrinted = true %}
-										{% endif %}
-									{% endfor %}
+									{% if topoData.topoSvg is not empty %}
+										{{ topoData.topoSvg|raw }}
+									{% endif %}
 									<table class="table table-striped mb-0 small fw-medium">
 										<tbody>
-											{% for route in routes %}
+											{% for route in topoData.routes %}
 												<tr data-route-id="{{loop.index}}" data-route-information="{{ route.routeName }} {{ route.routeGrade }}">
 
 													<td class="py-2">

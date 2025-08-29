@@ -8,7 +8,7 @@
 				</div>
 				<div class="offcanvas-body">
 					<ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-						{% for area in sideBar %}
+						{% for area in getSidebarAreas() %}
 							<li class="nav-item my-2">
 								<a class="nav-link text-black" data-bs-toggle="collapse" href="#{{ area.name|custom_replace }}" title="Klettergebiet {{ area.name }}" role="button" aria-expanded="false" aria-controls="{{ area.name|custom_replace }}">
 									<img src="https://www.munichclimbs.de/build/images/navigationThumbs/{{ area.image }}.webp" alt="Übersicht Klettergebiete {{ area.name }}." class="rounded me-3" style="width: 18px; height: 18px;" loading="lazy">

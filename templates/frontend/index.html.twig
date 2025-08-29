@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
 {% block meta_tags %}
-	<meta name="description" content="Klettern rund um München. Hier werden die Klettergebiete rund um München vorgestellt: {% for area in areas %}{{area.name}}{% if loop.last == false  %}, {% else %}{% endif%}{% endfor %}"/>
+	<meta name="description" content="Klettern rund um München. Hier werden die Klettergebiete rund um München vorgestellt: {% for area in getAreasInformation() %}{{area.name}}{% if loop.last == false  %}, {% else %}{% endif%}{% endfor %}"/>
 	<meta name="robots" content="index,follow"/>
 	<meta property="og:site_name" content="Munichclimbs">
 	<meta property="og:title" content="Munichclimbs"/>
 	<meta property="og:type" content="website"/>
 	<meta property="og:url" content="https://munichclimbs.de/"/>
-	<meta property="og:description" content="Klettern rund um München. Hier werden die Klettergebiete rund um München vorgestellt: {% for area in areas %}{{area.name}}{% if loop.last == false  %}, {% else %}{% endif%}{% endfor %}"/>
+	<meta property="og:description" content="Klettern rund um München. Hier werden die Klettergebiete rund um München vorgestellt: {% for area in getAreasInformation() %}{{area.name}}{% if loop.last == false  %}, {% else %}{% endif%}{% endfor %}"/>
 {% endblock %}
 
 {% block body %}
@@ -27,7 +27,7 @@
 				<div class="row">
 					<div class="col-md-8">
 						<div class="row">
-							{% for area in areas %}
+							{% for area in getAreasInformation() %}
 								<div class="col-12">
 									<a class="d-block" href="{{ path('show_rocks', { slug: area.slug } ) }}" title="Klettergebiet {{ area.name }}">
 										<div class="card mb-4 p-0 overflow-hidden">

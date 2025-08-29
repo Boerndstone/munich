@@ -1,5 +1,5 @@
 {% set marker = [] %}
-{% for area in areas %}
+{% for area in getAreasInformation() %}
     {% set areaName = '<a href="' ~ path('show_rocks', { slug: area.slug }) ~ '"><h6 class="font-semibold mb-2">' ~ area.name ~ '</h6><div style="background-image: url(\'' ~ asset('build/images/areas/' ~ area.image ~ '.webp') ~ '\'); background-size: cover; background-position: center; width: 200px; height: 133px;"></div></a>' %}
     {% set areaImage = '' %}
     {% set marker = marker|merge([[ area.lat, area.lng, areaName, areaImage ]]) %}

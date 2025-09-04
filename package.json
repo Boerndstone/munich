@@ -26,7 +26,7 @@
         "postcss-import": "^14.0.2",
         "regenerator-runtime": "^0.13.9",
         "sass": "^1.70.0",
-        "sass-loader": "^14.1.0",
+        "sass-loader": "^16.0.1",
         "snarkdown": "^2.0.0",
         "stimulus": "^3.2.1",
         "stimulus-scroll-to": "^4.1.0",

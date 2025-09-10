@@ -97,6 +97,9 @@ class RoutesCrudController extends AbstractCrudController
         yield Field::new('id')
             ->hideonForm()
             ->hideonIndex();
+        yield Field::new('nr')
+            ->setLabel('Reihenfolge')
+            ->setColumns('col-12');
         yield Field::new('name')
             ->setLabel('Name der Route')
             ->setColumns('col-12');
@@ -169,9 +172,6 @@ class RoutesCrudController extends AbstractCrudController
             ->setLabel('Topo ID')
             ->setColumns('col-12')
             ->hideOnIndex();
-        yield Field::new('nr')
-            ->setLabel('Reihenfolge')
-            ->setColumns('col-12')
-            ->hideOnIndex();
+        
     }
 }

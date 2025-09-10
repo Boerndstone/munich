@@ -4,16 +4,16 @@
 		{% for latestRoute in latestRoutes %}
 			<li class="px-3 mb-2 hover:bg-gray-300" style="line-height: 1.3rem;">
 				<a class="fs-6 text-truncate text-black block" href="{{ path('show_rock', { 'areaSlug': latestRoute.area.slug, slug: latestRoute.rock.slug }) }}">
-					<span class="d-inline-block me-2" style="width: 8px; height: 8px; border-radius: 50%; border: 4px solid #2c5282;"></span>
+					<span class="d-inline-block me-2 list-item-icon"></span>
 					<span class="fw-normal pr-2">{{ latestRoute.name }}</span>
 					<span class="fw-normal">{{ latestRoute.grade }}</span>
-					<span class="fw-light d-block ms-2 text-truncate" style="padding-left: 12px; color: rgba(0,0,0,.6);">{{ latestRoute.rock }}</span>
+					<span class="fw-light d-block ms-2 text-truncate" style="padding-left: 12px;">{{ latestRoute.rock }}</span>
 				</a>
 			</li>
 		{% endfor %}
 	</ul>
 	<hr class="my-2 border-dotted">
-	<a class="d-flex align-items-center text-primary text-sm font-semibold px-3 pb-2 " href="/neuesteRouten">
+	<a class="d-flex align-items-center text-sm font-semibold px-3 pb-2 " href="/neuesteRouten">
 		<span class="chevron-right"></span>Mehr aktuelle Touren
 	</a>
 </div>

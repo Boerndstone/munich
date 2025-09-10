@@ -3,14 +3,14 @@
 		<div class="container">
 			<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
 				<div class="offcanvas-header">
-					<a class="offcanvas-title text-black chelsea-market-regular" id="offcanvasNavbarLabel" href="{{path('index')}}">munichclimbs</a>
+					<a class="offcanvas-title chelsea-market-regular" id="offcanvasNavbarLabel" href="{{path('index')}}">munichclimbs</a>
 					<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 				</div>
 				<div class="offcanvas-body">
 					<ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
 						{% for area in getSidebarAreas() %}
 							<li class="nav-item my-2">
-								<a class="nav-link text-black" data-bs-toggle="collapse" href="#{{ area.name|custom_replace }}" title="Klettergebiet {{ area.name }}" role="button" aria-expanded="false" aria-controls="{{ area.name|custom_replace }}">
+								<a class="nav-link" data-bs-toggle="collapse" href="#{{ area.name|custom_replace }}" title="Klettergebiet {{ area.name }}" role="button" aria-expanded="false" aria-controls="{{ area.name|custom_replace }}">
 									<img src="https://www.munichclimbs.de/build/images/navigationThumbs/{{ area.image }}.webp" alt="Übersicht Klettergebiete {{ area.name }}." class="rounded me-3" style="width: 18px; height: 18px;" loading="lazy">
 									<span class="text-truncate">{{ area.name }}</span>
 								</a>
@@ -19,7 +19,7 @@
 										<ol class="list-group list-group-numbered" style="margin-left: 30px">
 											{% for rock in area.rocks %}
 												<li class="list-group-item list-group-item-action d-flex border-0 px-2">
-													<a href="{{ path('show_rock', { 'areaSlug': area.slug, slug: rock.slug } ) }}" title="Link zum Klettergebiet: {{ rock.name }}" class="nav-link text-black py-0 d-flex justify-content-between align-items-center w-100 ms-2" data-area="Konstein" data-rocks-information="{{ rock.name }}" data-banned="0">{{ rock.name }}</a>
+													<a href="{{ path('show_rock', { 'areaSlug': area.slug, slug: rock.slug } ) }}" title="Link zum Klettergebiet: {{ rock.name }}" class="nav-linkpy-0 d-flex justify-content-between align-items-center w-100 ms-2" data-area="Konstein" data-rocks-information="{{ rock.name }}" data-banned="0">{{ rock.name }}</a>
 												</li>
 											{% endfor %}
 										</ol>
@@ -29,20 +29,20 @@
 						{% endfor %}
 						<hr/>
 						<li class="nav-item my-2">
-							<a class="nav-link text-black d-flex align-items-center" href="{{ path('app_login') }}" title="Login">
+							<a class="nav-link d-flex align-items-center" href="{{ path('app_login') }}" title="Login">
 								<div class="user d-inline-block me-3"></div>
 								<span class="text-truncate">Login</span>
 							</a>
 						</li>
 						<hr/>
 						<li class="nav-item my-2">
-							<a class="nav-link text-black d-flex align-items-center" href="{{ path('datenschutz') }}">
+							<a class="nav-link d-flex align-items-center" href="{{ path('datenschutz') }}">
 								<div class="chart d-inline-block me-3"></div>
 								<span class="text-truncate">Datenschutz</span>
 							</a>
 						</li>
 						<li class="nav-item my-2">
-							<a class="nav-link text-black d-flex align-items-center" href="{{ path('impressum') }}">
+							<a class="nav-link d-flex align-items-center" href="{{ path('impressum') }}">
 								<div class="chart d-inline-block me-3"></div>
 								<div class="text-truncate">Impressum</div>
 							</a>
@@ -56,11 +56,11 @@
 						<button class="navbar-toggler p-0 bg-none border-0 shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
 							<div class="menu"></div>
 						</button>
-						<a href="{{path('index')}}" aria-label="Startseite munichclimbs" class="pb-lg-1 text-dark fs-5 ms-3 chelsea-market-regular">
+						<a href="{{path('index')}}" aria-label="Startseite munichclimbs" class="munich pb-lg-1 fs-5 ms-3 chelsea-market-regular">
 							<span class="d-none d-md-inline-block">munichclimbs</span>
 						</a>
 					</div>
-					<div class="{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty %}col-9{% else %}col-11{% endif %} col-md-6">
+					<div class="{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty %}col-8{% else %}col-9{% endif %} col-md-6">
 						<form class="w-100 mb-0">
 							<div data-controller="autocomplete" data-autocomplete-url-value="/search" style="position: relative;">
 								<input data-autocomplete-target="input" data-action="input->autocomplete#search" name="q" placeholder="{{"search"|trans}}" type="search" class="form-control form-control-sm border-black text-black w-100">
@@ -68,7 +68,19 @@
 							</div>
 						</form>
 					</div>
-					<div class="col-2 col-md-3 d-flex align-items-center justify-content-end">
+					<div class="{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty %}col-3{% else %}col-2{% endif %} col-md-3 d-flex align-items-center justify-content-end">
+						<button 
+							data-controller="theme" 
+							data-action="click->theme#toggle"
+							data-theme-target="toggle"
+							class="btn btn-outline-secondary btn-sm me-2"
+							aria-label="Toggle dark mode"
+							title="Toggle dark mode"
+						>
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+								<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+							</svg>
+						</button>
 						{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty  %}
 							{% for rock in rocks %}
 								{{ include('partials/_language_switch.html.twig', { hasTranslationDescription: hasTranslationDescription }) }}

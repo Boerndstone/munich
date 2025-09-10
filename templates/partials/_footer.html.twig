@@ -1,4 +1,5 @@
-<footer class="text-white py-5 mt-5" style="background-color: rgb(7 89 133);">
+<hr/>
+<footer class="mt-5">
 	<section>
 		<div class="container">
 			<div class="row mt-3">
@@ -7,7 +8,7 @@
 					<div class="d-flex flex-wrap">
 						{% for area in areas %}
 							<p class="w-50">
-								<a class="text-white small" href="{{ path('show_rocks', { slug: area.slug }) }}" title="Klettergebiet {{ area.name }}" data-area="{{ area.name }}">
+								<a class="small" href="{{ path('show_rocks', { slug: area.slug }) }}" title="Klettergebiet {{ area.name }}" data-area="{{ area.name }}">
 									{{ area.name }}
 								</a>
 							</p>
@@ -17,10 +18,10 @@
 				<div class="col-md-2 col-lg-6 mx-auto mb-4">
 					<h4 class="text-uppercase fw-medium mb-4 fs-6">munichclimbs</h4>
 					<p>
-						<a class="text-white small" href="{{ path('datenschutz') }}">Datenschutz</a>
+						<a class="small" href="{{ path('datenschutz') }}">Datenschutz</a>
 					</p>
 					<p>
-						<a class="text-white small" href="{{ path('impressum') }}">Impressum</a>
+						<a class="small" href="{{ path('impressum') }}">Impressum</a>
 					</p>
 					<a href="https://www.treedom.net/de/" target="_blank" class="mt-5 d-block" style="color: #3dd368;">
 						<svg style="color: #3dd368; width: 150px; height: 58px" viewbox="0 0 150 58" xmlns="http://www.w3.org/2000/svg" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" alt="Treedom | Let's green the planet!" title="Treedom | Let's green the planet!" class="tds-svg-icon--fill tds-icon-logo">
@@ -34,7 +35,7 @@
 							</g>
 						</svg>
 					</a>
-					<a href="https://www.ecopoint-frankenjura.de/" target="_blank" class="mt-5 d-block text-white small">
+					<a href="https://www.ecopoint-frankenjura.de/" target="_blank" class="mt-5 d-block small">
 						<img src="https://www.munichclimbs.de/build/images/advertisement/ecopoint.webp" class="img-fluid" style="width: 212px; height: 56px;" alt="Von München zum Klettern ins Nördliche Frankenjura? Infos wie das mit ÖPNV geht, bietet Ecopoint Frankenjura.">
 						<p class="mt-2">
 							<i>{{"ecopoint"|trans|raw}}</i>
@@ -45,7 +46,7 @@
 		</div>
 	</section>
 	<hr/>
-	<p class="text-center text-white p-4 small">Copyright ©
+	<p class="text-center p-4 small">Copyright ©
 		{{ "now"|date("Y") }}
 		munichclimbs.
 		{{"copyright"|trans}}</p>

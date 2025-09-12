@@ -19,7 +19,7 @@
 										<ol class="list-group list-group-numbered" style="margin-left: 30px">
 											{% for rock in area.rocks %}
 												<li class="list-group-item list-group-item-action d-flex border-0 px-2">
-													<a href="{{ path('show_rock', { 'areaSlug': area.slug, slug: rock.slug } ) }}" title="Link zum Klettergebiet: {{ rock.name }}" class="nav-linkpy-0 d-flex justify-content-between align-items-center w-100 ms-2" data-area="Konstein" data-rocks-information="{{ rock.name }}" data-banned="0">{{ rock.name }}</a>
+													<a href="{{ path('show_rock', { 'areaSlug': area.slug, slug: rock.slug } ) }}" title="Link zum Klettergebiet: {{ rock.name }}" class="nav-link py-0 d-flex justify-content-between align-items-center w-100 ms-2" data-area="Konstein" data-rocks-information="{{ rock.name }}" data-banned="0">{{ rock.name }}</a>
 												</li>
 											{% endfor %}
 										</ol>
@@ -68,12 +68,12 @@
 							</div>
 						</form>
 					</div>
-					<div class="{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty %}col-3{% else %}col-2{% endif %} col-md-3 d-flex align-items-center justify-content-end">
+					<div class="{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty %}col-3{% else %}col-2{% endif %} col-md-3 d-flex justify-content-end">
 						<button 
 							data-controller="theme" 
 							data-action="click->theme#toggle"
 							data-theme-target="toggle"
-							class="btn btn-outline-secondary btn-sm me-2"
+							class="btn btn-outline-secondary btn-sm {% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty %}me-2{% endif %}"
 							aria-label="Toggle dark mode"
 							title="Toggle dark mode"
 						>

@@ -2,12 +2,12 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">{{ route.routeName }}
+				<h5 class="modal-title stay-black">{{ route.routeName }}
 					({{ route.routeGrade }})</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				<p class="fw-medium mb-0 d-lg-none">
+				<p class="fw-medium mb-0 d-lg-none stay-black">
 					{% if route.routefirstAscent %}
 						Erstbegeher:
 						{{ route.routefirstAscent }}
@@ -19,7 +19,7 @@
 				{% if route.routeComment %}
 					{% for commentData in route.routeComment %}
 						{{ commentData.comment|raw }}
-						<p class="mt-2 fst-italic text-sm fw-normal">
+						<p class="mt-2 fst-italic text-sm fw-normal stay-black">
 							{% if commentData.username %}
 								{{ commentData.username }}
 								{% if commentData.date %}

@@ -32,7 +32,7 @@
 			<div class="container my-3 position-absolute" style="top: 0; right: 0; left:0;">
 				<div class="bg-image pb-3 rounded ">
 					<div class="p-3 rounded shadow-3 alert-light d-flex align-items-center justify-content-between" style="background-color: rgba(255, 255, 255, 0.6);">
-						<h1 class="h3 mb-0 fw-normal stay-black">
+						<h1 class="h3 mb-0 fw-medium stay-black">
 							{{ areaName }}
 						</h1>
 						<div>
@@ -110,7 +110,7 @@
 												<div class="col">
 													<div class="overflow-hidden flex-nowrap">
 														<div class="d-flex align-items-bottom justify-content-between">
-															<h6 class="mb-0 fw-light d-inline-block text-truncate text-truncate-rock-name">{{rock.rockName}}
+															<h6 class="mb-0 fw-normal d-inline-block text-truncate text-truncate-rock-name">{{rock.rockName}}
 																{% if currentDate < 181 and rock.banned > 0 %}
 																	<span class="badge fw-light ms-2" style="background-color: #b91c1c;">gesperrt</span>
 																{% endif %}

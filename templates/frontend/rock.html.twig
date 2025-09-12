@@ -101,11 +101,11 @@
 						<div class="p-3 rounded shadow-3 alert-light d-flex align-items-center justify-content-between" style="background-color: rgba(255, 255, 255, 0.6);">
 							<div class="d-flex flex-column w-100">
 								<div class="d-flex align-items-center justify-content-between">
-									<h1 class="h2 mb-0 fw-bold text-black">
+									<h1 class="h3 mb-0 fw-medium stay-black">
 										{{ rock.rockName }}
 									</h1>
-									<button class="btn btn-sm btn-primary d-flex" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
-										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 24 24"><path fill="currentColor" d="M11 7v2h2V7zm3 10v-2h-1v-4h-3v2h1v2h-1v2zm8-5c0 5.5-4.5 10-10 10S2 17.5 2 12S6.5 2 12 2s10 4.5 10 10m-2 0c0-4.42-3.58-8-8-8s-8 3.58-8 8s3.58 8 8 8s8-3.58 8-8"/></svg>
+									<button class="btn btn-outline-secondary btn-sm d-flex" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+										<div class="modal-info" style="width: 22px; height: 22px;"></div>
 										<span class="ms-1 d-none d-md-block">{{ "rock"|trans }}</span>
 									</button>
 									{{ include('partials/_offcanvasRockInfo.html.twig', [ rocks ]) }}
@@ -117,10 +117,10 @@
 												<span class="home d-inline-block"></span>
 											</a>
 										</li>
-										<li class="breadcrumb-item">
-											<a href="{{ path('show_rocks', { slug: rock.areaSlug }) }}">{{ rock.areaName }}</a>
+										<li class="breadcrumb-item stay-black">
+											<a class="stay-black"href="{{ path('show_rocks', { slug: rock.areaSlug }) }}">{{ rock.areaName }}</a>
 										</li>
-										<li class="breadcrumb-item active text-black" aria-current="page">{{ rock.rockName }}</li>
+										<li class="breadcrumb-item active stay-black" aria-current="page">{{ rock.rockName }}</li>
 									</ol>
 								</nav>
 							</div>
@@ -212,8 +212,8 @@
 													<td class="py-2">
 														{% if route.routeDescription or route.routeComment %}
 															<div {{ stimulus_controller('modal-route-information') }}>
-																<button class="btn btn-sm btn-white bg-white mb-0 p-0 border-0 shadow-none rounded-circle" data-action="modal-route-information#openModal" data-bs-toggle="modal" data-bs-target="#{{ route.routeName|custom_replace }}">
-																	<div class="info" style="width: 22px; height: 22px"></div>
+																<button class="btn btn-outline-secondary btn-sm px-2 py-0 m-0" data-action="modal-route-information#openModal" data-bs-toggle="modal" data-bs-target="#{{ route.routeName|custom_replace }}">
+																	<span style="font-size: 12px;">i</span>
 																</button>
 																{{ include('partials/_modal-route-information.html.twig') }}
 															</div>

@@ -17,6 +17,30 @@
   --theme-secondary: #6c757d;
   --theme-border: #1a1a1a;
   --theme-shadow: rgba(0, 0, 0, 0.5);
+  /* Blue */
+  --blue-light: #BFDBFE;
+  --blue-base: #3B82F6;
+  --blue-dark: #1E40AF;
+
+  /* Green */
+  --green-light: #BBF7D0;
+  --green-base: oklch(62.7% 0.194 149.214);
+  --green-dark: #166534;
+
+  /* Amber */
+  --amber-light: #FDE68A;
+  --amber-base: oklch(68.1% 0.162 75.834);
+  --amber-dark: #92400E;
+
+  /* Red */
+  --red-light: #FECACA;
+  --red-base: oklch(57.7% .245 27.325);
+  --red-dark: #991B1B;
+
+  /* Purple */
+  --purple-light: #DDD6FE;
+  --purple-base: #8B5CF6;
+  --purple-dark: #4C1D95;
 }
 
 [data-theme="dark"] {
@@ -29,6 +53,30 @@
   --theme-secondary: #6c757d;
   --theme-border: #ffffff;
   --theme-shadow: rgba(255, 255, 255, 0.5);
+  /* Blue */
+  --blue: #3B82F6;
+  --blue-bg: #60A5FA;
+  --blue-text: #1E3A8A;
+
+  /* Green */
+  --green: #22C55E;
+  --green-bg: #4ADE80;
+  --green-text: #14532D;
+
+  /* Amber */
+  --amber: #F59E0B;
+  --amber-bg: #FBBF24;
+  --amber-text: #78350F;
+
+  /* Red */
+  --red: #EF4444;
+  --red-bg: oklch(57.7% .245 27.325);
+  --red-text: #7F1D1D;
+
+  /* Purple */
+  --purple: #8B5CF6;
+  --purple-bg: #A78BFA;
+  --purple-text: #3730A3;
 }
 
 // Apply theme variables
@@ -76,6 +124,36 @@ hr {
 }
 h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .list-unstyled, .text {
     color: var(--theme-text)!important;
+}
+.text-red {
+    color: var(--red-base) !important;
+}
+.text-green {
+    color: var(--green-base) !important;
+}
+.text-amber {
+    color: var(--amber-base) !important;
+}
+.text-purple {
+    color: var(--purple-base) !important;
+}
+.text-blue {
+    color: var(--blue-base) !important;
+}
+.bg-red {
+    background-color: var(--red-base) !important;
+}
+.bg-green {
+    background-color: var(--green-base) !important;
+}
+.bg-amber {
+    background-color: var(--amber-base) !important;
+}
+.bg-purple {
+    background-color: var(--purple-base) !important;
+}
+.bg-blue {
+    background-color: var(--blue-base) !important;
 }
 .leaflet-popup-content, .leaflet-control-zoom-in, .leaflet-control-zoom-out {
     h6 {
@@ -162,6 +240,36 @@ h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .list-unstyl
     }
     h1.stay-black, h5.stay-black, p.stay-black, a.stay-black, li.stay-black {
         color: #000 !important;
+    }
+    .text-red {
+        color: var(--red-base) !important;
+    }
+    .text-green {
+        color: var(--green-base) !important;
+    }
+    .text-amber {
+        color: var(--amber-base) !important;
+    }
+    .text-purple {
+        color: var(--purple-base) !important;
+    }
+    .text-blue {
+        color: var(--blue-base) !important;
+    }
+    .bg-red {
+        background-color: var(--red-base) !important;
+    }
+    .bg-green {
+        background-color: var(--green-base) !important;
+    }
+    .bg-amber {
+        background-color: var(--amber-base) !important;
+    }
+    .bg-purple {
+        background-color: var(--purple-base) !important;
+    }
+    .bg-blue {
+        background-color: var(--blue-base) !important;
     }
     .leaflet-popup-content, .leaflet-control-zoom-in, .leaflet-control-zoom-out {
         h6 {
@@ -422,9 +530,16 @@ $success: rgb(20 83 45);
     @extend .icon-content-size;
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000000" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z" /></svg>');
 }
+.form-switch .form-check-input {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 8 8"><circle r="3" fill="%23000000"/></svg>');
+}
+.form-switch .form-check-input:checked {
+    background-color: black!important;
+    background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-4 -4 8 8%27%3e%3ccircle r=%273%27 fill=%27%23fff%27/%3e%3c/svg%3e');
+}
 [data-theme="dark"] {
     .modal-info {
-        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path fill="%23ffffff" d="M11 7v2h2V7zm3 10v-2h-1v-4h-3v2h1v2h-1v2zm8-5c0 5.5-4.5 10-10 10S2 17.5 2 12S6.5 2 12 2s10 4.5 10 10m-2 0c0-4.42-3.58-8-8-8s-8 3.58-8 8s3.58 8 8 8s8-3.58 8-8"/></svg>');
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="M11 7v2h2V7zm3 10v-2h-1v-4h-3v2h1v2h-1v2zm8-5c0 5.5-4.5 10-10 10S2 17.5 2 12S6.5 2 12 2s10 4.5 10 10m-2 0c0-4.42-3.58-8-8-8s-8 3.58-8 8s3.58 8 8 8s8-3.58 8-8"/></svg>');
     }
     .info {
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="M5 3h14a2 2 0 0 1 2 2v14c0 .53-.21 1.04-.59 1.41c-.37.38-.88.59-1.41.59H5c-.53 0-1.04-.21-1.41-.59C3.21 20.04 3 19.53 3 19V5c0-1.11.89-2 2-2m8 6V7h-2v2zm0 8v-6h-2v6z"/></svg>');
@@ -483,7 +598,13 @@ $success: rgb(20 83 45);
     .chart {
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="M17.45 15.18L22 7.31V21H2V3h2v12.54L9.5 6L16 9.78l4.24-7.33l1.73 1l-5.23 9.05l-6.51-3.75L4.31 19h2.26l4.39-7.56z" /></svg>');
     }
-    
+    .form-switch .form-check-input {
+        background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-4 -4 8 8%27%3e%3ccircle r=%273%27 fill=%27%23ffffff%27/%3e%3c/svg%3e');
+    }
+    .form-switch .form-check-input:checked {
+        background-color: white!important;
+        background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-4 -4 8 8%27%3e%3ccircle r=%273%27 fill=%27%23000%27/%3e%3c/svg%3e');
+    }    
     // Dark theme close button - white
     .btn-close {
         filter: invert(1) grayscale(100%) brightness(200%);
@@ -822,19 +943,6 @@ input[data-autocomplete-target="input"]:focus {
         z-index: 1000;
     }
 }
-
-.form-check-input {
-    border-color: #075985;
-}
-
-.form-check-input:checked {
-    background-color: #15803d;
-}
-
-.form-switch .form-check-input {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 8 8"><circle r="3" fill="rgba(7, 89, 133, 1)" /></svg>');
-}
-
 
 
 .inline-gallery-container {

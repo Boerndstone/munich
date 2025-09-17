@@ -168,15 +168,15 @@
 		{% endfor %}
 		<div class="container">
 			<div class="row">
-				<div class="col-md-9">
+				<div class="col-md-9 p-0 p-md-2">
 					{% for topoName, topoData in groupedRoutes %}
-						<div class="card mt-3 overflow-hidden" id="{{ topoName|custom_replace|lower }}">
+						<div class="card overflow-hidden border-0 rounded-0" id="{{ topoName|custom_replace|lower }}">
 							<div class="card-body p-0">
 								<section data-controller="route-information-tooltip">
 									{% if topoData.topoSvg is not empty %}
 										{{ topoData.topoSvg|raw }}
 									{% endif %}
-									<table class="table table-striped mb-0 small fw-medium">
+									<table class="table mb-0 small fw-medium 0">
 										<tbody>
 											{% for route in topoData.routes %}
 												<tr data-route-id="{{loop.index}}" data-route-information="{{ route.routeName }} {{ route.routeGrade }}">
@@ -212,8 +212,8 @@
 													<td class="py-2">
 														{% if route.routeDescription or route.routeComment %}
 															<div {{ stimulus_controller('modal-route-information') }}>
-																<button class="btn btn-outline-secondary btn-sm px-2 py-0 m-0" data-action="modal-route-information#openModal" data-bs-toggle="modal" data-bs-target="#{{ route.routeName|custom_replace }}">
-																	<span style="font-size: 12px;">i</span>
+																<button class="btn btn-sm m-0 p-0 border-0 shadow-none rounded-circle" data-action="modal-route-information#openModal" data-bs-toggle="modal" data-bs-target="#{{ route.routeName|custom_replace }}">
+																	<div class="modal-info"></div>
 																</button>
 																{{ include('partials/_modal-route-information.html.twig') }}
 															</div>

@@ -1,34 +1,13 @@
-/* @import '~mdb-ui-kit/css/mdb.min.css'; */
-
-body {
-    color: black;
-}
-
 .container {
     max-width: 1024px;
-}
-
-.btn-primary,
-.bg-primary {
-    background-color: rgb(7 89 133) !important;
 }
 
 .text-primary {
     color: rgb(7 89 133) !important;
 }
 
-.btn-danger,
-.bg-danger {
-    background-color: #b91c1c !important;
-}
-
 .text-danger {
     color: #b91c1c !important;
-}
-
-.btn-warning,
-.bg-warning {
-    background-color: rgb(161 98 7) !important;
 }
 
 .text-warning {

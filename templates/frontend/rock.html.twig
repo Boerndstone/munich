@@ -170,7 +170,7 @@
 			<div class="row">
 				<div class="col-md-9 p-0 p-md-2">
 					{% for topoName, topoData in groupedRoutes %}
-						<div class="card overflow-hidden border-0 rounded-0" id="{{ topoName|custom_replace|lower }}">
+						<div class="card mt-1 overflow-hidden border-0 rounded-0" id="{{ topoName|custom_replace|lower }}">
 							<div class="card-body p-0">
 								<section data-controller="route-information-tooltip">
 									{% if topoData.topoSvg is not empty %}

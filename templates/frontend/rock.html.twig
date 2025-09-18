@@ -131,11 +131,6 @@
 			{% if topos is not empty %}
 				<div class="sticky-top" style="top: 50px;">
 					<div class="scrollable-tabs-container container position-relative" {{ stimulus_controller('tabs') }}>
-						<div class="left-arrow">
-							<svg data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-								<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
-							</svg>
-						</div>
 						<ul class="p-0">
 							{% for topo in topos %}
 								<li>
@@ -143,11 +138,6 @@
 								</li>
 							{% endfor %}
 						</ul>
-						<div class="right-arrow active">
-							<svg data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-								<path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
-							</svg>
-						</div>
 					</div>
 				</div>
 			{% endif %}

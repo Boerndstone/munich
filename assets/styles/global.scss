@@ -190,6 +190,9 @@ body, .navbar {
       background-color: white !important;
       color: black !important;
   }
+  .table {
+    border-bottom: 1px solid black !important;
+  }
   .btn {
     background-color: var(--theme-bg-lighter) !important;
     color: var(--theme-text-vise-versa) !important;
@@ -320,6 +323,10 @@ h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-
       .table, .table > :not(caption) > * > * {
           background-color: black !important;
           color: white !important;
+      }
+      .table {
+        border: none !important;
+        border-bottom: 1px solid white !important;
       }
     .btn{
         background-color: var(--theme-bg-lighter) !important;

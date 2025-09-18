@@ -301,6 +301,9 @@ h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-
       background-color: var(--theme-bg) !important;
       border: 1px solid var(--theme-border) !important;
 }
+.border-bottom {
+    border-bottom: var(--bs-border-width) var(--bs-border-style) black !important;
+}
 
 // Theme-aware components
 [data-theme="dark"] {
@@ -654,6 +657,9 @@ $success: var(--green-base);
     .form-switch .form-check-input:checked::before {
         color: black!important;
     }
+    .border-bottom {
+        border-bottom: var(--bs-border-width) var(--bs-border-style) white !important;
+    }
 }
 
 // Light theme close button - black (default Bootstrap)
@@ -759,7 +765,6 @@ $success: var(--green-base);
     z-index: 1000;
     overflow: hidden;
     background: (var(--theme-bg));
-    border-bottom: 1px solid (var(--theme-text));
 }
 .scrollable-tabs-container a.active {
     border-bottom: 2px solid (var(--theme-text));
@@ -767,7 +772,6 @@ $success: var(--green-base);
 [data-theme="dark"] {
     .scrollable-tabs-container {
         background: (var(--theme-bg));
-        border-bottom: 1px solid (var(--theme-text));
     }
     .scrollable-tabs-container a.active {
         border-bottom: 2px solid (var(--theme-text));

@@ -758,14 +758,16 @@ $success: var(--green-base);
     max-width: 1024px;
     z-index: 1000;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.7);
+    background: (var(--theme-bg));
+    border-bottom: 1px solid (var(--theme-text));
 }
 .scrollable-tabs-container a.active {
     border-bottom: 2px solid (var(--theme-text));
 }
 [data-theme="dark"] {
     .scrollable-tabs-container {
-        background: rgba(0, 0, 0, 0.7);
+        background: (var(--theme-bg));
+        border-bottom: 1px solid (var(--theme-text));
     }
     .scrollable-tabs-container a.active {
         border-bottom: 2px solid (var(--theme-text));

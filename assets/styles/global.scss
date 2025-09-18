@@ -219,7 +219,7 @@ hr {
     background-color: var(--theme-text) !important;
     color: var(--theme-bg) !important;
 }
-h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .list-unstyled, .text {
+h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-item.active, .list-unstyled, .text {
       color: var(--theme-text)!important;
   }
   .text-red {

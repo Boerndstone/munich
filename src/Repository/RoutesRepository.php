@@ -265,4 +265,39 @@ class RoutesRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getSingleScalarResult();
     }
+
+    /**
+     * @return Routes[] Returns an array of Routes objects
+     */
+    public function findByIds(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('r')
+            ->leftJoin('r.rock', 'rock')
+            ->leftJoin('r.area', 'area')
+            ->leftJoin('r.relatesToRoute', 'firstAscencionist')
+            ->addSelect('rock', 'area', 'firstAscencionist')
+            ->where('r.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->orderBy('r.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByFirstAscent(string $name): array
+    {
+        return $this->createQueryBuilder('r')
+            ->leftJoin('r.rock', 'rock')
+            ->leftJoin('r.area', 'area')
+            ->leftJoin('r.relatesToRoute', 'firstAscencionist')
+            ->addSelect('rock', 'area', 'firstAscencionist')
+            ->where('r.firstAscent LIKE :name')
+            ->setParameter('name', '%' . $name . '%')
+            ->orderBy('r.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

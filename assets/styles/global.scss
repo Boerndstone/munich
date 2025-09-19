@@ -175,6 +175,8 @@ body, .navbar {
   background-color: var(--theme-bg);
   color: var(--theme-text);
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+.navbar {
   border-bottom: 1px solid var(--theme-border);
 }
 .card {
@@ -309,8 +311,10 @@ h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-
 [data-theme="dark"] {
     body, .navbar {
         background-color: var(--theme-bg) !important;
-        border-bottom: 1px solid var(--theme-border);
         color: var(--theme-text);
+    }
+   .navbar {
+        border-bottom: 1px solid var(--theme-border);
     }
     header {
         border-bottom: 1px solid var(--theme-border);
@@ -422,11 +426,14 @@ h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-
           color: var(--theme-text) !important;
       }
 }
-
+html {
+    height: 100%;
+}
 body {
     font-family: 'Inter', sans-serif;
     font-weight: 400;
     font-style: normal;
+    height: 100%!important;
 }
 
 // General
@@ -582,7 +589,13 @@ $success: var(--green-base);
     background-color: black!important;
     background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-4 -4 8 8%27%3e%3ccircle r=%273%27 fill=%27%23fff%27/%3e%3c/svg%3e');
 }
+footer {
+    background-color: oklch(98.5% 0 0); 
+}
 [data-theme="dark"] {
+    footer {
+        background-color: oklch(20.5% 0 0); 
+    }
     .modal-info {
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="M11 7v2h2V7zm3 10v-2h-1v-4h-3v2h1v2h-1v2zm8-5c0 5.5-4.5 10-10 10S2 17.5 2 12S6.5 2 12 2s10 4.5 10 10m-2 0c0-4.42-3.58-8-8-8s-8 3.58-8 8s3.58 8 8 8s8-3.58 8-8"/></svg>');
     }

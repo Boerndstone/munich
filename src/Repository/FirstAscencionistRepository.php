@@ -39,6 +39,20 @@ class FirstAscencionistRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @return FirstAscencionist[] Returns an array of FirstAscencionist objects
+     */
+    public function findByName(string $name): array
+    {
+        return $this->createQueryBuilder('f')
+            ->where('f.firstName LIKE :name OR f.lastName LIKE :name OR CONCAT(f.firstName, \' \', f.lastName) LIKE :name')
+            ->setParameter('name', '%' . $name . '%')
+            ->orderBy('f.lastName', 'ASC')
+            ->addOrderBy('f.firstName', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return FirstAscencionist[] Returns an array of FirstAscencionist objects
 //     */

@@ -1,0 +1,134 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Suche nach Erstbegeher{% endblock %}
+
+{% block body %}
+{{ include('partials/_navigation.html.twig') }}
+<main>
+    <div class="container my-3">
+        <section>
+            <div class="py-3 mb-3 d-flex align-items-center justify-content-between">
+                <h1 class="h2 mb-0 fw-medium">Suche nach Erstbegeher</h1>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <form method="GET" action="{{ path('app_suche') }}">
+                        <div class="row mb-5">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label for="searchInput" class="form-label">Erstbegeher:</label>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="searchInput" 
+                                        name="q" 
+                                        value="{{ query }}" 
+                                        placeholder="Namen des Erstbegehers..."
+                                        autocomplete="off"
+                                    >
+                                </div>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-outline-secondary  w-100">
+                                    <i class="fas fa-search me-2"></i>Suchen
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Search Results -->
+                    {% if query is not empty %}
+                        <div class="row">
+                            <div class="col-12">
+                                <p class="mb-3 fw-medium stay-black">
+                                    Suchergebnisse für "{{ query }}" <b>{{ routes|length }} Routen gefunden</b>
+                                </p>
+<hr />
+                                {% if routes|length > 0 %}
+                                    <div class="table-responsive">
+                                        <table class="table trable-hover mb-0 small fw-medium 0">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th>Route</th>
+                                                    <th>Fels</th>
+                                                    <th>Gebiet</th>
+                                                    <th>Schwierigkeit</th>
+                                                    <th>Erstbegeher</th>
+                                                    <th>Jahr</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for route in routes %}
+                                                    <tr>
+                                                        <td>
+                                                            {% if route.rock and route.rock.area %}
+                                                                <a href="{{ path('show_rock', {'areaSlug': route.rock.area.slug, 'slug': route.rock.slug}) }}#{{ route.name|replace({' ': ''})|lower }}" 
+                                                                class="text-decoration-none fw-medium">
+                                                                    {{ route.name }}
+                                                                </a>
+                                                            {% else %}
+                                                                <span class="text-decoration-none fw-medium">{{ route.name }}</span>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if route.rock and route.rock.area %}
+                                                                <a href="{{ path('show_rock', {'areaSlug': route.rock.area.slug, 'slug': route.rock.slug}) }}" 
+                                                                class="text-decoration-none">
+                                                                    {{ route.rock.name }}
+                                                                </a>
+                                                            {% elseif route.rock %}
+                                                                <span class="text-muted">{{ route.rock.name }}</span>
+                                                            {% else %}
+                                                                <span class="text-muted">-</span>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if route.area %}
+                                                                <a href="{{ path('show_rocks', {'slug': route.area.slug}) }}" 
+                                                                class="text-decoration-none">
+                                                                    {{ route.area.name }}
+                                                                </a>
+                                                            {% else %}
+                                                                <span class="text-muted">-</span>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if route.grade %}
+                                                                <span class="badge bg-secondary">{{ route.grade }}</span>
+                                                            {% else %}
+                                                                <span class="text-muted">-</span>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if route.firstAscent %}
+                                                                {{ route.firstAscent }}
+                                                            {% else %}
+                                                                <span class="text-muted">-</span>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if route.yearFirstAscent %}
+                                                                {{ route.yearFirstAscent }}
+                                                            {% else %}
+                                                                <span class="text-muted">-</span>
+                                                            {% endif %}
+                                                        </td>
+                                                       
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
+                                        <h5 class="">Keine Routen gefunden</h5>
+                                        <p class="mb-5">Für den Suchbegriff "{{ query }}" wurden keine Routen gefunden. Versuchen Sie es mit einem anderen Namen.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}

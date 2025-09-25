@@ -295,9 +295,83 @@ class RoutesRepository extends ServiceEntityRepository
             ->leftJoin('r.relatesToRoute', 'firstAscencionist')
             ->addSelect('rock', 'area', 'firstAscencionist')
             ->where('r.firstAscent LIKE :name')
+            ->andWhere('(area.online = 1 OR rock.online = 1)')
             ->setParameter('name', '%' . $name . '%')
             ->orderBy('r.name', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    public function findByFirstAscentAndGrades(string $name, array $gradeRanges): array
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->leftJoin('r.rock', 'rock')
+            ->leftJoin('r.area', 'area')
+            ->leftJoin('r.relatesToRoute', 'firstAscencionist')
+            ->addSelect('rock', 'area', 'firstAscencionist')
+            ->where('r.firstAscent LIKE :name')
+            ->setParameter('name', '%' . $name . '%');
+
+        // Build grade conditions based on selected ranges
+        $gradeConditions = [];
+        foreach ($gradeRanges as $range) {
+            $gradeConditions[] = 'r.grade IN (:grades_' . $range . ')';
+            $qb->setParameter('grades_' . $range, $this->getGradesForRange($range));
+        }
+
+        if (!empty($gradeConditions)) {
+            $qb->andWhere('(' . implode(' OR ', $gradeConditions) . ')');
+        }
+
+        return $qb->orderBy('r.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByGrades(array $gradeRanges): array
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->leftJoin('r.rock', 'rock')
+            ->leftJoin('r.area', 'area')
+            ->addSelect('rock', 'area')
+            ->where('(area.online = 1 OR rock.online = 1)');
+
+        // Build grade conditions based on selected ranges using numerical values
+        $gradeConditions = [];
+        foreach ($gradeRanges as $range) {
+            $rangeValues = $this->getNumericalRangeForGrade($range);
+            if (!empty($rangeValues)) {
+                $gradeConditions[] = 'r.gradeNo BETWEEN :min_' . $range . ' AND :max_' . $range;
+                $qb->setParameter('min_' . $range, $rangeValues['min']);
+                $qb->setParameter('max_' . $range, $rangeValues['max']);
+            }
+        }
+
+        if (!empty($gradeConditions)) {
+            $qb->andWhere('(' . implode(' OR ', $gradeConditions) . ')');
+        }
+
+        return $qb->orderBy('r.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    private function getNumericalRangeForGrade(string $range): array
+    {
+        $gradeRanges = [
+            '1' => ['min' => 1, 'max' => 1],      // Grade 1
+            '2' => ['min' => 2, 'max' => 4],      // Grade 2- to 2+
+            '3' => ['min' => 5, 'max' => 7],      // Grade 3- to 3+
+            '4' => ['min' => 8, 'max' => 10],     // Grade 4- to 4+
+            '5' => ['min' => 11, 'max' => 15],    // Grade 5- to 5+/6-
+            '6' => ['min' => 16, 'max' => 20],    // Grade 6- to 6+
+            '7' => ['min' => 21, 'max' => 27],    // Grade 6+/7- to 7+
+            '8' => ['min' => 28, 'max' => 35],   // Grade 7+/8- to 8+
+            '9' => ['min' => 36, 'max' => 43],   // Grade 8+/9- to 9+
+            '10' => ['min' => 44, 'max' => 51],  // Grade 9+/10- to 10+
+            '11' => ['min' => 52, 'max' => 57], // Grade 10+/11- to 11
+        ];
+
+        return $gradeRanges[$range] ?? [];
     }
 }

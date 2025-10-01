@@ -235,9 +235,13 @@ class RockRepository extends ServiceEntityRepository
     public function search($query)
     {
         return $this->createQueryBuilder('r')
+            ->leftJoin('r.area', 'area')
+            ->addSelect('area')
             ->where('r.name LIKE :query')
             ->andWhere('r.online = 1')
             ->setParameter('query', "%$query%")
+            ->orderBy('r.name', 'ASC')
+            ->setMaxResults(10)
             ->getQuery()
             ->getResult();
     }

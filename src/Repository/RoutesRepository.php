@@ -130,16 +130,6 @@ class RoutesRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function search($query)
-    {
-        return $this->createQueryBuilder('r')
-            ->where('r.name LIKE :query')
-            ->andWhere('rock.online = 1')
-            ->innerJoin('r.rock', 'rock')
-            ->setParameter('query', "%$query%")
-            ->getQuery()
-            ->getResult();
-    }
 
     public function findAllClimbedRoutes(): array
     {
@@ -373,5 +363,20 @@ class RoutesRepository extends ServiceEntityRepository
         ];
 
         return $gradeRanges[$range] ?? [];
+    }
+
+    public function search(string $query): array
+    {
+        return $this->createQueryBuilder('r')
+            ->leftJoin('r.rock', 'rock')
+            ->leftJoin('r.area', 'area')
+            ->addSelect('rock', 'area')
+            ->where('r.name LIKE :query')
+            ->andWhere('(area.online = 1 OR rock.online = 1)')
+            ->setParameter('query', '%' . $query . '%')
+            ->orderBy('r.name', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
     }
 }

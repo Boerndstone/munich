@@ -70,7 +70,10 @@
 					<div class="{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty %}col-8{% else %}col-9{% endif %} col-md-6">
 						<form class="w-100 mb-0">
 							<div data-controller="autocomplete" data-autocomplete-url-value="/search" style="position: relative;">
-								<input data-autocomplete-target="input" data-action="input->autocomplete#search" name="q" placeholder="{{"search"|trans}}" type="search" class="form-control form-control-sm border-black text-black w-100">
+								<div class="position-relative">
+									<i class="fas fa-search magnifier position-absolute" style="left: 10px; top: 50%; transform: translateY(-50%); z-index: 10; color: #6c757d;"></i>
+									<input data-autocomplete-target="input" data-action="input->autocomplete#search" name="q" placeholder="{{"search"|trans}}" type="search" class="form-control form-control-sm border-black text-black w-100" style="padding-left: 35px;">
+								</div>
 								<ul class="list-group" data-autocomplete-target="results" style="max-height: 200px; max-height: 200px; display: block; position: absolute; width: 100%;"></ul>
 							</div>
 						</form>

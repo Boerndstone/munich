@@ -106,7 +106,23 @@ class FrontendController extends AbstractController
         $areaImage = $area->getHeaderImage();
 
         $rocks = $rockRepository->getRocksInformation($slug);
+        $routeGrades = $rockRepository->getRouteGradesForRocks($slug);
 
+        // Group route grades by rock slug
+        $gradesByRock = [];
+        foreach ($routeGrades as $gradeData) {
+            $rockSlug = $gradeData['rockSlug'];
+            if (!isset($gradesByRock[$rockSlug])) {
+                $gradesByRock[$rockSlug] = [];
+            }
+            $gradesByRock[$rockSlug][] = $gradeData['gradeNo'];
+        }
+
+        // Add route grades to each rock
+        foreach ($rocks as &$rock) {
+            $rockSlug = $rock['rockSlug'];
+            $rock['routeGrades'] = isset($gradesByRock[$rockSlug]) ? implode(',', $gradesByRock[$rockSlug]) : '';
+        }
 
         return $this->render('frontend/rocks.html.twig', [
             'areaName' => $areaName,

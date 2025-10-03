@@ -219,6 +219,26 @@ class RockRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function getRouteGradesForRocks($areaSlug)
+    {
+        return $this->createQueryBuilder('rock')
+            ->select(
+                'rock.id as rockId',
+                'rock.slug as rockSlug',
+                'route.gradeNo as gradeNo'
+            )
+            ->leftJoin('rock.area', 'area')
+            ->leftJoin('rock.routes', 'route')
+            ->where('area.slug LIKE :areaSlug')
+            ->andWhere('rock.online = 1')
+            ->andWhere('route.gradeNo IS NOT NULL')
+            ->setParameter('areaSlug', $areaSlug)
+            ->orderBy('rock.id', 'ASC')
+            ->addOrderBy('route.gradeNo', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function getCommentsForRoutes($rockSlug)
     {
         return $this->routesRepository->createQueryBuilder('routes')

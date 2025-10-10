@@ -92,6 +92,32 @@ class RoutesCrudController extends AbstractCrudController
             ->setFormOptions(['attr' => ['novalidate' => null]]);
     }
 
+    public function createEntity(string $entityFqcn)
+    {
+        $entity = parent::createEntity($entityFqcn);
+        return $entity;
+    }
+
+    public function persistEntity(\Doctrine\ORM\EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        // Automatically set area from rock if rock is set and area is not
+        if ($entityInstance->getRock() && !$entityInstance->getArea()) {
+            $entityInstance->setArea($entityInstance->getRock()->getArea());
+        }
+        
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity(\Doctrine\ORM\EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        // Automatically set area from rock if rock is set and area is not
+        if ($entityInstance->getRock() && !$entityInstance->getArea()) {
+            $entityInstance->setArea($entityInstance->getRock()->getArea());
+        }
+        
+        parent::updateEntity($entityManager, $entityInstance);
+    }
+
     public function configureFields(string $pageName): iterable
     {
         yield Field::new('id')
@@ -105,7 +131,8 @@ class RoutesCrudController extends AbstractCrudController
             ->setColumns('col-12');
         yield AssociationField::new('area')
             ->setLabel('Gebiet')
-            ->setColumns('col-12');
+            ->setColumns('col-12')
+            ->hideOnForm();
         yield AssociationField::new('rock')
             ->setLabel('Fels')
             ->setColumns('col-12');
@@ -122,7 +149,8 @@ class RoutesCrudController extends AbstractCrudController
             ->hideOnIndex();
         yield AssociationField::new('relatesToRoute')
             ->setLabel('Erstbegeher Neu')
-            ->setColumns('col-12');
+            ->setColumns('col-12')
+            ->hideOnIndex();
         yield Field::new('year_first_ascent')
             ->setLabel('Jahr der Erstbegehung')
             ->setColumns('col-12')

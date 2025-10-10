@@ -163,7 +163,7 @@ class Area
     {
         if (!$this->rocks->contains($rock)) {
             $this->rocks[] = $rock;
-            $rock->setarea($this);
+            $rock->setArea($this);
         }
 
         return $this;
@@ -172,8 +172,8 @@ class Area
     public function removeRock(Rock $rock): self
     {
         // set the owning side to null (unless already changed)
-        if ($this->rocks->removeElement($rock) && $rock->getarea() === $this) {
-            $rock->setarea(null);
+        if ($this->rocks->removeElement($rock) && $rock->getArea() === $this) {
+            $rock->setArea(null);
         }
 
         return $this;

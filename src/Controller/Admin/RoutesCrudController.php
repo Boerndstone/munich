@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Routes;
+use App\Service\GradeTranslationService;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -16,6 +17,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 
 class RoutesCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private GradeTranslationService $gradeTranslationService
+    ) {
+    }
+
     public static function getEntityFqcn(): string
     {
         return Routes::class;
@@ -105,6 +111,11 @@ class RoutesCrudController extends AbstractCrudController
             $entityInstance->setArea($entityInstance->getRock()->getArea());
         }
         
+        // Ensure grade translation happens
+        if ($entityInstance->getGrade()) {
+            $entityInstance->setGradeNoFromGrade($entityInstance->getGrade());
+        }
+        
         parent::persistEntity($entityManager, $entityInstance);
     }
 
@@ -113,6 +124,11 @@ class RoutesCrudController extends AbstractCrudController
         // Automatically set area from rock if rock is set and area is not
         if ($entityInstance->getRock() && !$entityInstance->getArea()) {
             $entityInstance->setArea($entityInstance->getRock()->getArea());
+        }
+        
+        // Ensure grade translation happens
+        if ($entityInstance->getGrade()) {
+            $entityInstance->setGradeNoFromGrade($entityInstance->getGrade());
         }
         
         parent::updateEntity($entityManager, $entityInstance);
@@ -136,9 +152,11 @@ class RoutesCrudController extends AbstractCrudController
         yield AssociationField::new('rock')
             ->setLabel('Fels')
             ->setColumns('col-12');
-        yield Field::new('grade')
+        yield ChoiceField::new('grade')
             ->setLabel('Schwierigkeitsgrad')
-            ->setColumns('col-12');
+            ->setColumns('col-12')
+            ->setChoices($this->getGradeChoices())
+            ->setHelp('Wählen Sie den Schwierigkeitsgrad aus. Der numerische Wert wird automatisch gesetzt.');
         yield Field::new('climbed')
             ->setLabel('Bereits geklettert')
             ->setColumns('col-12')
@@ -179,9 +197,11 @@ class RoutesCrudController extends AbstractCrudController
             ->setColumns('col-12')
             ->hideOnIndex();
         yield Field::new('grade_no')
-            ->setLabel('Grade')
+            ->setLabel('Grade (numerisch)')
             ->setColumns('col-12')
-            ->hideOnIndex();
+            ->hideOnIndex()
+            ->setFormTypeOption('disabled', true)
+            ->setHelp('Dieser Wert wird automatisch basierend auf dem Schwierigkeitsgrad berechnet.');
         yield ChoiceField::new('rating')
             ->setLabel('Schönheit')
             ->setColumns('col-12')
@@ -201,5 +221,20 @@ class RoutesCrudController extends AbstractCrudController
             ->setColumns('col-12')
             ->hideOnIndex();
         
+    }
+
+    /**
+     * Get grade choices for the choice field
+     */
+    private function getGradeChoices(): array
+    {
+        $grades = $this->gradeTranslationService->getAvailableGrades();
+        $choices = [];
+        
+        foreach ($grades as $grade) {
+            $choices[$grade] = $grade;
+        }
+        
+        return $choices;
     }
 }

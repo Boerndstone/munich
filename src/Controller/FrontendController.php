@@ -104,6 +104,7 @@ class FrontendController extends AbstractController
         $areaZoom = $area->getZoom();
         $areaRailwayStation = $area->getRailwayStation();
         $areaImage = $area->getHeaderImage();
+        $areaKletterkonzeption = $area->getKletterkonzeption();
 
         $rocks = $rockRepository->getRocksInformation($slug);
         $routeGrades = $rockRepository->getRouteGradesForRocks($slug);
@@ -132,6 +133,7 @@ class FrontendController extends AbstractController
             'areaZoom' => $areaZoom,
             'areaRailwayStation' => $areaRailwayStation,
             'areaImage' => $areaImage,
+            'areaKletterkonzeption' => $areaKletterkonzeption,
             'rocks' => $rocks,
         ]);
     }

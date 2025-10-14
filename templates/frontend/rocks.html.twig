@@ -32,10 +32,19 @@
 			<div class="container my-3 position-absolute" style="top: 0; right: 0; left:0;">
 				<div class="bg-image pb-3 rounded ">
 					<div class="p-3 rounded shadow-3 alert-light d-flex align-items-center justify-content-between" style="background-color: rgba(255, 255, 255, 0.6);">
-						<h1 class="h3 mb-0 fw-medium stay-black">
-							{{ areaName }}
-						</h1>
+						<div class="d-flex align-items-center">
+							<h1 class="h3 mb-0 fw-medium stay-black me-2">
+								{{ areaName }}
+							</h1>
+							
+						</div>
 						<div>
+						{% if areaKletterkonzeption %}
+								<button class="btn btn-outline-secondary btn-sm" {{ stimulus_controller('modal-route-information') }} data-action="modal-route-information#openModal" data-bs-toggle="modal" data-bs-target="#kletterkonzeptionModal" title="Kletterkonzeption anzeigen">
+									<div class="modal-info"></div>
+								</button>
+								{{ include('partials/_modal-kletterkonzeption.html.twig') }}
+						{% endif %}
 							{% include 'partials/_collapseWeather.html.twig' with { collapseId: 'collapseWeather', ariaControls: 'collapseWeather' } %}
 							{% include 'partials/_collapseMap.html.twig' with { collapseId: 'collapseAreaMap', ariaControls: 'collapseAreaMap' } %}
 						</div>
@@ -45,6 +54,7 @@
 		</div>
 		<div class="container my-3">
 			<section>
+				
 				<div class="collapse mt-3" id="collapseAreaMap">
 					<div id="areaMap" class="z-10 mb-3" style="width: 100%; height: 500px;">
 						{{ include('partials/_areaMap.html.twig') }}

@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use App\Form\Type\JsonFieldType;
 
 class AreaCrudController extends AbstractCrudController
@@ -156,6 +157,12 @@ class AreaCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->setColumns('col-12')
             ->setHelp('Wenn es einen verantwortlichen Felsbetreuer gibt, dann wird dieser bei der Gebietsübersicht angezeigt.');
+        
+        yield TextEditorField::new('kletterkonzeption')
+            ->setLabel('Kletterkonzeption')
+            ->hideOnIndex()
+            ->setColumns('col-12')
+            ->setHelp('Die Kletterkonzeption ist ein HTML-Texteditor, in dem die Kletterkonzeption des Gebietes beschrieben wird.');
 
         yield CodeEditorField::new('railway_station')
             ->setFormType(JsonFieldType::class)

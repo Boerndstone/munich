@@ -84,6 +84,9 @@ class Area
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $railwayStation = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $kletterkonzeption = null;
+
     public function __construct()
     {
         $this->rocks = new ArrayCollection();
@@ -288,6 +291,18 @@ class Area
     public function setRailwayStation(?array $railwayStation): self
     {
         $this->railwayStation = $railwayStation;
+
+        return $this;
+    }
+
+    public function getKletterkonzeption(): ?string
+    {
+        return $this->kletterkonzeption;
+    }
+
+    public function setKletterkonzeption(?string $kletterkonzeption): static
+    {
+        $this->kletterkonzeption = $kletterkonzeption;
 
         return $this;
     }

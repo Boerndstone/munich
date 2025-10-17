@@ -1,11 +1,19 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["input", "results"];
+  static targets = ["input", "results", "searchMode"];
 
   connect() {
     document.addEventListener("click", this.closeDropdown.bind(this));
     this.inputTarget.addEventListener("keydown", this.handleKeydown.bind(this));
+    
+    // Add search mode listener if the target exists
+    if (this.hasSearchModeTarget) {
+      this.searchModeTarget.addEventListener("change", this.onSearchModeChange.bind(this));
+    }
+    
+    // Prevent body scroll when dropdown is open
+    this.originalOverflow = document.body.style.overflow;
   }
 
   disconnect() {
@@ -18,8 +26,16 @@ export default class extends Controller {
 
   search() {
     const query = this.inputTarget.value.trim();
+    const searchMode = this.hasSearchModeTarget ? this.searchModeTarget.value : 'name';
 
-    fetch(`/search?query=${query}`)
+    // Update placeholder based on search mode
+    if (this.hasSearchModeTarget) {
+      this.updatePlaceholder(searchMode);
+    }
+
+    let url = `/search?query=${query}&mode=${searchMode}`;
+
+    fetch(url)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok " + response.statusText);
@@ -27,34 +43,52 @@ export default class extends Controller {
         return response.json();
       })
       .then((results) => {
-        const { rocks, routes } = results;
+        const { rocks, routes, searchMode } = results;
 
         let resultsHtml = "";
 
-        if (rocks.length > 0) {
-          resultsHtml += `<li class="list-group-item" style="font-size: 14px;">Felsen</li>`;
-          resultsHtml += rocks
-            .map(
-              (rock) => `
-            <li class="list-group-item" data-action="autocomplete#goToResult" data-url="${rock.url}">
-              <a class="d-block" style="font-size: 14px;" href="${rock.url}">${rock.name}</a>
-            </li>
-          `
-            )
-            .join("");
-        }
+        // Show different results based on search mode
+        if (searchMode === 'firstascent') {
+          // For first ascent search, show routes with first ascent info
+          if (routes.length > 0) {
+            resultsHtml += `<li class="list-group-item" style="font-size: 14px;">Erstbegeher: ${this.highlightText(query, query)}</li>`;
+            resultsHtml += routes
+              .map(
+                (route) => `
+              <li class="list-group-item" data-action="autocomplete#goToResult" data-url="${route.url}">
+                <a class="d-block" style="font-size: 14px;" href="${route.url}">${this.highlightText(route.name, query)} (${this.highlightText(route.firstAscent, query)}) - ${this.highlightText(route.area, query)} | ${this.highlightText(route.rock, query)}</a>
+              </li>
+            `
+              )
+              .join("");
+          }
+        } else {
+          // Default name search - show both rocks and routes
+          if (rocks.length > 0) {
+            resultsHtml += `<li class="list-group-item" style="font-size: 14px; font-weight: bold;">Felsen</li>`;
+            resultsHtml += rocks
+              .map(
+                (rock) => `
+              <li class="list-group-item" data-action="autocomplete#goToResult" data-url="${rock.url}">
+                <a class="d-block" style="font-size: 14px;" href="${rock.url}">${this.highlightText(rock.name, query)}</a>
+              </li>
+            `
+              )
+              .join("");
+          }
 
-        if (routes.length > 0) {
-          resultsHtml += `<li class="list-group-item" style="font-size: 14px;">Touren</li>`;
-          resultsHtml += routes
-            .map(
-              (route) => `
-            <li class="list-group-item" data-action="autocomplete#goToResult" data-url="${route.url}">
-              <a class="d-block" style="font-size: 14px;" href="${route.url}">${route.area} | ${route.rock} | Route: ${route.name}  </a>
-            </li>
-          `
-            )
-            .join("");
+          if (routes.length > 0) {
+            resultsHtml += `<li class="list-group-item" style="font-size: 14px; font-weight: bold;">Touren</li>`;
+            resultsHtml += routes
+              .map(
+                (route) => `
+              <li class="list-group-item" data-action="autocomplete#goToResult" data-url="${route.url}">
+                <a class="d-block" style="font-size: 14px;" href="${route.url}">${this.highlightText(route.area, query)} | ${this.highlightText(route.rock, query)} | Route: ${this.highlightText(route.name, query)}</a>
+              </li>
+            `
+              )
+              .join("");
+          }
         }
 
         if (resultsHtml === "") {
@@ -62,6 +96,13 @@ export default class extends Controller {
         }
 
         this.resultsTarget.innerHTML = resultsHtml;
+        
+        // If we have results, prevent body scroll and make results scrollable
+        if (resultsHtml !== "" && resultsHtml !== `<li class="list-group-item text-danger">Keine Ergebnisse!</li>`) {
+          document.body.style.overflow = 'hidden';
+          this.resultsTarget.style.maxHeight = '500px';
+          this.resultsTarget.style.overflowY = 'auto';
+        }
       })
       .catch((error) => {
         this.resultsTarget.innerHTML = `<li class="list-group-item text-danger">Error: ${error.message}</li>`;
@@ -109,10 +150,41 @@ export default class extends Controller {
     if (!this.element.contains(event.target)) {
       this.resultsTarget.innerHTML = "";
       this.inputTarget.value = "";
+      // Restore body scroll
+      document.body.style.overflow = this.originalOverflow;
     }
   }
 
   goToResult(event) {
     window.location.href = event.target.dataset.url;
   }
+
+  highlightText(text, query) {
+    if (!query || query.length < 2) return text;
+    
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    return text.replace(regex, '<strong>$1</strong>');
+  }
+
+  updatePlaceholder(mode) {
+    const placeholders = {
+      'name': 'Suche nach Felsen oder Routen...',
+      'firstascent': 'Suche nach Erstbegeher...'
+    };
+    
+    this.inputTarget.placeholder = placeholders[mode] || 'Suche...';
+  }
+
+  onSearchModeChange() {
+    const mode = this.searchModeTarget.value;
+    this.updatePlaceholder(mode);
+    this.clearResults();
+  }
+
+  clearResults() {
+    this.resultsTarget.innerHTML = '';
+    // Restore body scroll when clearing results
+    document.body.style.overflow = this.originalOverflow;
+  }
+
 }

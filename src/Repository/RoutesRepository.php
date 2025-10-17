@@ -318,7 +318,7 @@ class RoutesRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findByGrades(array $gradeRanges): array
+    public function findByGrades(array $gradeRanges, ?string $areaSlug = null): array
     {
         $qb = $this->createQueryBuilder('r')
             ->leftJoin('r.rock', 'rock')
@@ -339,6 +339,12 @@ class RoutesRepository extends ServiceEntityRepository
 
         if (!empty($gradeConditions)) {
             $qb->andWhere('(' . implode(' OR ', $gradeConditions) . ')');
+        }
+
+        // Add area filter if specified
+        if (!empty($areaSlug)) {
+            $qb->andWhere('area.slug = :areaSlug')
+               ->setParameter('areaSlug', $areaSlug);
         }
 
         return $qb->orderBy('r.name', 'ASC')
@@ -365,16 +371,55 @@ class RoutesRepository extends ServiceEntityRepository
         return $gradeRanges[$range] ?? [];
     }
 
-    public function search(string $query): array
+    public function search(string $query, ?string $grade = null): array
     {
-        return $this->createQueryBuilder('r')
+        $qb = $this->createQueryBuilder('r')
             ->leftJoin('r.rock', 'rock')
             ->leftJoin('r.area', 'area')
             ->addSelect('rock', 'area')
             ->where('r.name LIKE :query')
             ->andWhere('(area.online = 1 OR rock.online = 1)')
-            ->setParameter('query', '%' . $query . '%')
-            ->orderBy('r.name', 'ASC')
+            ->setParameter('query', '%' . $query . '%');
+
+        // Add grade filter if specified
+        if (!empty($grade)) {
+            $rangeValues = $this->getNumericalRangeForGrade($grade);
+            if (!empty($rangeValues)) {
+                $qb->andWhere('r.gradeNo BETWEEN :min_grade AND :max_grade')
+                   ->setParameter('min_grade', $rangeValues['min'])
+                   ->setParameter('max_grade', $rangeValues['max']);
+            }
+        }
+
+        return $qb->orderBy('r.name', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function searchByGrade(string $grade, ?string $areaSlug = null): array
+    {
+        $rangeValues = $this->getNumericalRangeForGrade($grade);
+        if (empty($rangeValues)) {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('r')
+            ->leftJoin('r.rock', 'rock')
+            ->leftJoin('r.area', 'area')
+            ->addSelect('rock', 'area')
+            ->where('r.gradeNo BETWEEN :min_grade AND :max_grade')
+            ->andWhere('(area.online = 1 OR rock.online = 1)')
+            ->setParameter('min_grade', $rangeValues['min'])
+            ->setParameter('max_grade', $rangeValues['max']);
+
+        // Add area filter if specified
+        if (!empty($areaSlug)) {
+            $qb->andWhere('area.slug = :areaSlug')
+               ->setParameter('areaSlug', $areaSlug);
+        }
+
+        return $qb->orderBy('r.name', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
             ->getResult();

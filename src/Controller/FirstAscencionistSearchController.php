@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\RoutesRepository;
+use App\Repository\AreaRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,10 +12,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class FirstAscencionistSearchController extends AbstractController
 {
     #[Route('/suche', name: 'app_suche')]
-    public function index(Request $request, RoutesRepository $routesRepository): Response
+    public function index(Request $request, RoutesRepository $routesRepository, AreaRepository $areaRepository): Response
     {
         $query = $request->query->get('q', '');
         $selectedGrades = $request->query->all('grades') ?? [];
+        $selectedArea = $request->query->get('area', '');
         $searchType = $request->query->get('search_type', 'firstascent'); // 'firstascent' or 'grade'
         $page = (int) $request->query->get('page', 1);
         $routes = [];
@@ -42,7 +44,7 @@ class FirstAscencionistSearchController extends AbstractController
             $totalRoutes = count($routes);
         } elseif ($searchType === 'grade' && !empty($selectedGrades)) {
             // Search for routes by grade ranges only (with pagination)
-            $routes = $routesRepository->findByGrades($selectedGrades);
+            $routes = $routesRepository->findByGrades($selectedGrades, $selectedArea);
             $totalRoutes = count($routes);
             
             // Calculate pagination only for grade search
@@ -56,10 +58,15 @@ class FirstAscencionistSearchController extends AbstractController
             }
         }
 
+        // Get all online areas for the dropdown
+        $areas = $areaRepository->getAreasFrontend();
+
         return $this->render('frontend/suche.html.twig', [
             'query' => $query,
             'routes' => $routes,
             'selectedGrades' => $selectedGrades,
+            'selectedArea' => $selectedArea,
+            'areas' => $areas,
             'gradeRanges' => $gradeRanges,
             'searchType' => $searchType,
             'currentPage' => $page,

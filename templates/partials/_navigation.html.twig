@@ -54,7 +54,20 @@
 								<div class="text-truncate">Impressum</div>
 							</a>
 						</li>
+						<hr/>
+						<li class="nav-item my-2">
+							<div class="text-truncate">Theme Mode</div>
+						</li>
+						<div class="mt-2" data-controller="theme">
+							<div class="segment-container border-radius-full color-light">
+								<div class="segment-item" data-theme-target="system" data-action="click->theme#setSystem">System</div>
+								<div class="segment-item" data-theme-target="light" data-action="click->theme#setLight">Light</div>
+								<div class="segment-item" data-theme-target="dark" data-action="click->theme#setDark">Dark</div>
+							</div>
+						</div>
 					</ul>
+					
+					
 				</div>
 			</div>
 			<div class="container p-0">
@@ -67,7 +80,7 @@
 							<span class="d-none d-md-inline-block">munichclimbs</span>
 						</a>
 					</div>
-					<div class="{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty %}col-8{% else %}col-9{% endif %} col-md-6">
+					<div class="{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty %}col-9{% else %}col-9{% endif %} col-md-8">
 						<form class="w-100 mb-0">
 							<div data-controller="autocomplete" data-autocomplete-url-value="/search" style="position: relative;">
 								<div class="d-flex">
@@ -87,19 +100,7 @@
 							</div>
 						</form>
 					</div>
-					<div class="{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty %}col-3{% else %}col-2{% endif %} col-md-3 d-flex justify-content-end">
-						<button 
-							data-controller="theme" 
-							data-action="click->theme#toggle"
-							data-theme-target="toggle"
-							class="btn btn-outline-secondary btn-sm {% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty %}me-2{% endif %}"
-							aria-label="Toggle dark mode"
-							title="Toggle dark mode"
-						>
-							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-								<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-							</svg>
-						</button>
+					<div class="{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty %}col-2{% else %}col-2{% endif %} col-md-1 d-flex justify-content-end">
 						{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty  %}
 							{% for rock in rocks %}
 								{{ include('partials/_language_switch.html.twig', { hasTranslationDescription: hasTranslationDescription }) }}

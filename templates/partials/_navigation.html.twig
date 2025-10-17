@@ -80,7 +80,7 @@
 							<span class="d-none d-md-inline-block">munichclimbs</span>
 						</a>
 					</div>
-					<div class="{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty %}col-9{% else %}col-9{% endif %} col-md-8">
+					<div class="{% if app.request.attributes.get('_route') == 'show_rock' and hasTranslationDescription is defined and hasTranslationDescription or app.request.attributes.get('_route') == 'show_rock_en' and hasTranslationDescription is defined and hasTranslationDescription %}col-9 col-md-8{% else %}col-11 col-md-9{% endif %}">
 						<form class="w-100 mb-0">
 							<div data-controller="autocomplete" data-autocomplete-url-value="/search" style="position: relative;">
 								<div class="d-flex">
@@ -100,11 +100,13 @@
 							</div>
 						</form>
 					</div>
-					<div class="{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty %}col-2{% else %}col-2{% endif %} col-md-1 d-flex justify-content-end">
-						{% if app.request.attributes.get('_route') == 'show_rock' and rocks is defined and rocks is not empty or app.request.attributes.get('_route') == 'show_rock_en' and rocks is defined and rocks is not empty  %}
-							{% for rock in rocks %}
-								{{ include('partials/_language_switch.html.twig', { hasTranslationDescription: hasTranslationDescription }) }}
-							{% endfor %}
+					<div class="{% if app.request.attributes.get('_route') == 'show_rock' and hasTranslationDescription is defined and hasTranslationDescription or app.request.attributes.get('_route') == 'show_rock_en' and hasTranslationDescription is defined and hasTranslationDescription %}col-2{% else %}col-2{% endif %} col-md-1 d-flex justify-content-end">
+						{% if app.request.attributes.get('_route') == 'show_rock' and hasTranslationDescription is defined and hasTranslationDescription or app.request.attributes.get('_route') == 'show_rock_en' and hasTranslationDescription is defined and hasTranslationDescription  %}
+							{{ include('partials/_language_switch.html.twig', { 
+								hasTranslationDescription: hasTranslationDescription,
+								areaSlug: app.request.attributes.get('areaSlug'),
+								rockSlug: app.request.attributes.get('slug')
+							}) }}
 						{% endif %}
 					</div>
 				</div>

@@ -1228,3 +1228,171 @@ input[data-autocomplete-target="input"]:focus {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
+// Area Overlay Styles
+.area-overlay {
+    position: absolute;
+    left: 0;
+    z-index: 2;
+}
+
+.area-overlay-top {
+    top: 1rem;
+}
+
+.area-overlay-bottom {
+    bottom: 1rem;
+}
+
+.area-overlay-content {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.area-title {
+    color: var(--bs-gray-900);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    line-height: 1.2;
+    margin: 0;
+}
+
+// Dark mode adjustments
+[data-theme="dark"] .area-overlay-content {
+    background-color: rgba(33, 37, 41, 0.8);
+}
+
+[data-theme="dark"] .area-title {
+    color: var(--bs-white);
+}
+
+[data-theme="dark"] .area-overlay-content .badge {
+    background-color: var(--bs-primary);
+    color: var(--bs-white);
+}
+
+[data-theme="dark"] .card:hover .area-overlay-content {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+// Grade Distribution Chart Styles
+.grade-distribution {
+    width: 100%;
+    position: absolute;
+    bottom: 10px;
+}
+
+.grade-bars {
+    height: 20px;
+    overflow: visible;
+    background-color: var(--bs-gray-200);
+    position: relative;
+    margin-top: 25px;
+}
+
+.grade-bar {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s ease;
+    min-width: 30px;
+}
+
+// Override background colors with transparency using your CSS variables
+.grade-bar.bg-green {
+    background-color: var(--green-base);
+}
+
+.grade-bar.bg-amber {
+    background-color: var(--amber-base);
+}
+
+.grade-bar.bg-red {
+    background-color: var(--red-base);
+}
+
+.grade-bar[style*="background-color:black"] {
+    background-color: #000000;
+}
+
+.grade-bar[style*="background-color:var(--bs-secondary)"] {
+    background-color: var(--bs-secondary);
+}
+
+.grade-count {
+    color: white;
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
+.grade-label {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.6rem;
+    color: white;
+    white-space: nowrap;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+// Color-specific label backgrounds with transparency
+.grade-bar.bg-green .grade-label {
+    background-color: var(--green-base);
+}
+
+.grade-bar.bg-amber .grade-label {
+    background-color: var(--amber-base);
+}
+
+.grade-bar.bg-red .grade-label {
+    background-color: var(--red-base);
+}
+
+.grade-bar[style*="background-color:black"] .grade-label {
+    background-color: #000000;
+}
+
+.grade-bar[style*="background-color:var(--bs-secondary)"] .grade-label {
+    background-color: var(--bs-secondary);
+}
+
+.grade-label::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 5px;
+    background-color: var(--bs-gray-400);
+}
+
+// Dark mode adjustments for grade distribution
+[data-theme="dark"] .grade-bars {
+    background-color: var(--bs-gray-600);
+}
+
+// Dark mode doesn't need special label styling since we use color-specific backgrounds
+
+[data-theme="dark"] .grade-label::after {
+    background-color: var(--bs-gray-500);
+}
+
+// Total routes badge styling
+.total-routes .badge {
+    background-color: rgba(var(--bs-secondary-rgb), 0.8);
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 15px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+// Desktop grade distribution in card body - same styling as mobile overlay
+.card-body .grade-distribution {
+    position: static;
+    bottom: auto;
+}
+

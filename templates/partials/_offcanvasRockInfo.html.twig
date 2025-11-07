@@ -15,7 +15,7 @@
 					</h2>
 					<div id="collapseAllgemein" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
 						<div class="accordion-body p-0">
-							<table class="table table-striped table-sm fw-medium small border-0">
+							<table class="table table-striped table-sm fw-medium border-0">
 								<tr>
 									<td colspan="2">
 										<div class="d-flex me-2">
@@ -129,9 +129,9 @@
 						<div id="collapseBeschreibung" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 							<div class="accordion-body">
 								{% if description is defined and description is not null %}
-									<p class="small">{{description|raw}}</p>
+									{{description|raw}}
 								{% else %}
-									<p class="small">{{rock.rockDescription|raw}}</p>
+									{{rock.rockDescription|raw}}
 								{% endif %}
 							</div>
 						</div>
@@ -148,9 +148,9 @@
 						<div id="collapseZustieg" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 							<div class="accordion-body">
 								{% if access is defined and access is not null %}
-									<p class="small">{{access|raw}}</p>
+									{{access|raw}}
 								{% else %}
-									<p class="small">{{rock.rockAccess|raw}}</p>
+									{{rock.rockAccess|raw}}
 								{% endif %}
 							</div>
 						</div>
@@ -182,9 +182,9 @@
 						<div id="collapseNaturschutz" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 							<div class="accordion-body">
 								{% if nature is defined and nature is not null %}
-									<p class="small">{{nature|raw}}</p>
+									{{nature|raw}}
 								{% else %}
-									<p class="small">{{rock.rockNature|raw}}</p>
+									{{rock.rockNature|raw}}
 								{% endif %}
 							</div>
 						</div>
@@ -200,7 +200,7 @@
 						</h2>
 						<div id="collapseFlowers" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 							<div class="accordion-body">
-								<p class="small">{{flowers|raw}}</p>
+								{{flowers|raw}}
 							</div>
 						</div>
 					</div>
@@ -237,7 +237,7 @@
 				</h2>
 				<div id="collapseLegend" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 					<div class="accordion-body row mx-0" data-controller="off-canvas-gallery">
-						<table class="table table-sm fw-medium small">
+						<table class="table table-sm fw-medium">
 							<tr>
 								<td>
 									<div class="star d-inline-block"></div>

@@ -181,7 +181,9 @@ body, .navbar {
 }
 .card {
     border: 1px solid var(--theme-shadow);
-    
+}
+.accordion-body {
+font-size: 0.875em;
 }
 .card, .offcanvas, .table, .accordion-item, .accordion-header, .accordion-button {
     background-color: var(--theme-bg-lighter) !important;

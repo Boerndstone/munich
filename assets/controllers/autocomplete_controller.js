@@ -54,11 +54,15 @@ export default class extends Controller {
             resultsHtml += `<li class="list-group-item" style="font-size: 14px;">Erstbegeher: ${this.highlightText(query, query)}</li>`;
             resultsHtml += routes
               .map(
-                (route) => `
-              <li class="list-group-item" data-action="autocomplete#goToResult" data-url="${route.url}">
-                <a class="d-block" style="font-size: 14px;" href="${route.url}">${this.highlightText(route.name, query)} (${this.highlightText(route.firstAscent, query)}) - ${this.highlightText(route.area, query)} | ${this.highlightText(route.rock, query)}</a>
+                (route) => {
+                  const routeAnchor = route.name ? `#${route.name.replace(/\s+/g, '').toLowerCase()}` : '';
+                  const fullUrl = route.url + routeAnchor;
+                  return `
+              <li class="list-group-item" data-action="click->autocomplete#goToResult" data-url="${route.url}" data-route-name="${route.name || ''}">
+                <a class="d-block" style="font-size: 14px; cursor: pointer;" href="${fullUrl}">${this.highlightText(route.name, query)} (${this.highlightText(route.firstAscent, query)}) - ${this.highlightText(route.area, query)} | ${this.highlightText(route.rock, query)}</a>
               </li>
-            `
+            `;
+                }
               )
               .join("");
           }
@@ -69,8 +73,8 @@ export default class extends Controller {
             resultsHtml += rocks
               .map(
                 (rock) => `
-              <li class="list-group-item" data-action="autocomplete#goToResult" data-url="${rock.url}">
-                <a class="d-block" style="font-size: 14px;" href="${rock.url}">${this.highlightText(rock.name, query)}</a>
+              <li class="list-group-item" data-action="click->autocomplete#goToResult" data-url="${rock.url}">
+                <a class="d-block" style="font-size: 14px; cursor: pointer;">${this.highlightText(rock.name, query)}</a>
               </li>
             `
               )
@@ -81,11 +85,15 @@ export default class extends Controller {
             resultsHtml += `<li class="list-group-item" style="font-size: 14px; font-weight: bold;">Touren</li>`;
             resultsHtml += routes
               .map(
-                (route) => `
-              <li class="list-group-item" data-action="autocomplete#goToResult" data-url="${route.url}">
-                <a class="d-block" style="font-size: 14px;" href="${route.url}">${this.highlightText(route.area, query)} | ${this.highlightText(route.rock, query)} | Route: ${this.highlightText(route.name, query)}</a>
+                (route) => {
+                  const routeAnchor = route.name ? `#${route.name.replace(/\s+/g, '').toLowerCase()}` : '';
+                  const fullUrl = route.url + routeAnchor;
+                  return `
+              <li class="list-group-item" data-action="click->autocomplete#goToResult" data-url="${route.url}" data-route-name="${route.name || ''}">
+                <a class="d-block" style="font-size: 14px; cursor: pointer;" href="${fullUrl}">${this.highlightText(route.area, query)} | ${this.highlightText(route.rock, query)} | Route: ${this.highlightText(route.name, query)}</a>
               </li>
-            `
+            `;
+                }
               )
               .join("");
           }
@@ -135,7 +143,8 @@ export default class extends Controller {
       event.preventDefault();
       if (index >= 0) {
         const activeItem = items[index];
-        window.location.href = activeItem.dataset.url;
+        const url = this.buildUrl(activeItem);
+        window.location.href = url;
       }
     }
 
@@ -156,7 +165,23 @@ export default class extends Controller {
   }
 
   goToResult(event) {
-    window.location.href = event.target.dataset.url;
+    event.preventDefault();
+    // Get the <li> element that has the data-url attribute
+    const listItem = event.currentTarget || event.target.closest('li[data-url]');
+    if (listItem) {
+      const url = this.buildUrl(listItem);
+      window.location.href = url;
+    }
+  }
+
+  buildUrl(listItem) {
+    let url = listItem.dataset.url;
+    // If it's a route (has data-route-name), append the route anchor
+    if (listItem.dataset.routeName) {
+      const routeAnchor = `#${listItem.dataset.routeName.replace(/\s+/g, '').toLowerCase()}`;
+      url = url + routeAnchor;
+    }
+    return url;
   }
 
   highlightText(text, query) {

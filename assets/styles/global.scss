@@ -308,6 +308,13 @@ h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-
 .border-bottom {
     border-bottom: var(--bs-border-width) var(--bs-border-style) black !important;
 }
+.route-highlight {
+    background-color: rgba(211, 211, 211, 0.2) !important;
+    
+    &, td {
+        background-color: rgba(211, 211, 211, 0.2) !important;
+    }
+}
 
 // Theme-aware components
 [data-theme="dark"] {

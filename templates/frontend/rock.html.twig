@@ -169,7 +169,7 @@
 									<table class="table mb-0 small fw-medium 0">
 										<tbody>
 											{% for route in topoData.routes %}
-												<tr data-route-id="{{loop.index}}" data-route-information="{{ route.routeName }} {{ route.routeGrade }}">
+												<tr id="{{ route.routeName|replace({' ': ''})|lower }}" data-route-id="{{loop.index}}" data-route-information="{{ route.routeName }} {{ route.routeGrade }}">
 
 													<td class="py-2">
 														<span class="mb-0 pb-0" style="line-height: 0;">{{loop.index}}</span>
@@ -221,4 +221,30 @@
 			</div>
 		</div>
 	</main>
+	<script>
+		// Handle smooth scrolling to route anchors with offset for fixed navigation
+		document.addEventListener('DOMContentLoaded', function() {
+			const hash = window.location.hash;
+			if (hash) {
+				const targetElement = document.querySelector(hash);
+				if (targetElement) {
+					// Add highlight class
+					targetElement.classList.add('route-highlight');
+					
+					// Wait for page to be fully rendered
+					setTimeout(() => {
+						const navigationHeight = 50; // Height of fixed navigation bar
+						const extraOffset = 10; // Extra space for better visibility
+						const elementTop = targetElement.getBoundingClientRect().top + window.pageYOffset;
+						const offsetPosition = elementTop - navigationHeight - extraOffset;
+						
+						window.scrollTo({
+							top: Math.max(0, offsetPosition),
+							behavior: 'smooth'
+						});
+					}, 100);
+				}
+			}
+		});
+	</script>
 {% endblock %}

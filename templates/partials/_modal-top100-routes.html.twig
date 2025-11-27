@@ -1,0 +1,79 @@
+<div id="top100RoutesModal" class="modal fade" tabindex="-1" aria-hidden="true" aria-labelledby="top100RoutesModalLabel" data-modal-route-information-target="modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title stay-black" id="top100RoutesModalLabel">Top 100 schwierigste Routen - {{ areaName }}</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="table-responsive">
+					<table class="table table-sm">
+						<thead>
+							<tr>
+								<th scope="col" style="width: 5%;">#</th>
+								<th scope="col">Route</th>
+								<th scope="col">Fels</th>
+								<th scope="col">Schwierigkeit</th>
+								<th scope="col">Erstbegeher</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for route in top100Routes %}
+								<tr>
+									<td>{{ loop.index }}</td>
+									<td>
+										<div class="d-flex items-bottom">
+											{% if route.rock and route.rock.area %}
+												<a href="{{ path('show_rock', {'areaSlug': route.rock.area.slug, 'slug': route.rock.slug}) }}#{{ route.name|replace({' ': ''})|lower }}" 
+												class="text-decoration-none fw-medium me-1">
+													{{ route.name|raw }}
+												</a>
+											{% else %}
+												<span class="text-decoration-none fw-medium me-1">{{ route.name }}</span>
+											{% endif %}
+											<span class="mb-0 pb-0" style="line-height: 0;" data-controller="routeparams" data-routeparams-rating="{{ route.rating }}" data-routeparams-protection="{{ route.protection }}" data-routeparams-route-rock-quality="{{ route.rockQuality }}">
+												<span data-routeparams-target="rating"></span>
+												<span data-routeparams-target="protection"></span>
+												<span data-routeparams-target="route-rock-quality"></span>
+											</span>
+										</div>
+									</td>
+									<td>
+										{% if route.rock and route.rock.area %}
+											<a href="{{ path('show_rock', {'areaSlug': route.rock.area.slug, 'slug': route.rock.slug}) }}" 
+											class="text-decoration-none">
+												{{ route.rock.name }}
+											</a>
+										{% elseif route.rock %}
+											<span class="text-muted">{{ route.rock.name }}</span>
+										{% else %}
+											<span class="text-muted">-</span>
+										{% endif %}
+									</td>
+									<td>
+										{% if route.grade %}
+											<span class="badge bg-secondary">{{ route.grade }}</span>
+										{% else %}
+											<span class="text-muted">-</span>
+										{% endif %}
+									</td>
+									<td>
+										{% if route.firstAscent %}
+											{{ route.firstAscent }}
+											{% if route.yearFirstAscent %}
+												<small class="text-muted">({{ route.yearFirstAscent }})</small>
+											{% endif %}
+										{% else %}
+											<span class="text-muted">-</span>
+										{% endif %}
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

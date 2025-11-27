@@ -424,4 +424,28 @@ class RoutesRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Get the top 100 most difficult routes in an area
+     * Ordered by gradeNo descending (highest difficulty first)
+     * 
+     * @param Area $area
+     * @return Routes[]
+     */
+    public function findTop100ByArea(Area $area): array
+    {
+        return $this->createQueryBuilder('r')
+            ->leftJoin('r.rock', 'rock')
+            ->leftJoin('r.area', 'area')
+            ->addSelect('rock', 'area')
+            ->where('r.area = :area')
+            ->andWhere('r.gradeNo IS NOT NULL')
+            ->andWhere('rock.online = 1')
+            ->setParameter('area', $area)
+            ->orderBy('r.gradeNo', 'DESC')
+            ->addOrderBy('r.name', 'ASC')
+            ->setMaxResults(100)
+            ->getQuery()
+            ->getResult();
+    }
 }

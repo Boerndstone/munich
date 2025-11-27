@@ -93,6 +93,7 @@ class FrontendController extends AbstractController
     #[Route('/{slug}', name: 'show_rocks')]
     public function showRocksArea(
         RockRepository $rockRepository,
+        RoutesRepository $routesRepository,
         #[MapEntity] Area $area,
         string $slug
     ): Response {
@@ -108,6 +109,7 @@ class FrontendController extends AbstractController
 
         $rocks = $rockRepository->getRocksInformation($slug);
         $routeGrades = $rockRepository->getRouteGradesForRocks($slug);
+        $top100Routes = $routesRepository->findTop100ByArea($area);
 
         // Group route grades by rock slug
         $gradesByRock = [];
@@ -135,6 +137,7 @@ class FrontendController extends AbstractController
             'areaImage' => $areaImage,
             'areaKletterkonzeption' => $areaKletterkonzeption,
             'rocks' => $rocks,
+            'top100Routes' => $top100Routes,
         ]);
     }
 

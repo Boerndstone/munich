@@ -5,7 +5,13 @@ export default class extends Controller {
   static targets = ["modal"];
 
   openModal(event) {
-    const modal = new Modal(this.modalTarget);
-    modal.show();
+    if (this.hasModalTarget) {
+      // Get existing modal instance or create a new one
+      let modalInstance = Modal.getInstance(this.modalTarget);
+      if (!modalInstance) {
+        modalInstance = new Modal(this.modalTarget);
+      }
+      modalInstance.show();
+    }
   }
 }

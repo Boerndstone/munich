@@ -40,10 +40,16 @@
 						</div>
 						<div>
 						{% if areaKletterkonzeption %}
-								<button class="btn btn-outline-secondary btn-sm" {{ stimulus_controller('modal-route-information') }} data-action="modal-route-information#openModal" data-bs-toggle="modal" data-bs-target="#kletterkonzeptionModal" title="Kletterkonzeption anzeigen">
-									<div class="modal-info"></div>
-								</button>
-								{{ include('partials/_modal-kletterkonzeption.html.twig') }}
+							<button class="btn btn-outline-secondary btn-sm" {{ stimulus_controller('modal-route-information') }} data-action="modal-route-information#openModal" data-bs-toggle="modal" data-bs-target="#kletterkonzeptionModal" title="Kletterkonzeption anzeigen">
+								<div class="modal-info"></div>
+							</button>
+							{{ include('partials/_modal-kletterkonzeption.html.twig') }}
+						{% endif %}
+						{% if top100Routes is not empty %}
+							<button class="btn btn-outline-secondary btn-sm" {{ stimulus_controller('modal-route-information') }} data-action="modal-route-information#openModal" data-bs-toggle="modal" data-bs-target="#top100RoutesModal" title="Top 100 schwierigste Routen anzeigen">
+								<div class="top-routes-icon"></div>
+							</button>
+							{{ include('partials/_modal-top100-routes.html.twig') }}
 						{% endif %}
 							{% include 'partials/_collapseWeather.html.twig' with { collapseId: 'collapseWeather', ariaControls: 'collapseWeather' } %}
 							{% include 'partials/_collapseMap.html.twig' with { collapseId: 'collapseAreaMap', ariaControls: 'collapseAreaMap' } %}

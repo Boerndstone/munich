@@ -98,7 +98,7 @@ class RoutesCrudController extends AbstractCrudController
             ->setFormOptions(['attr' => ['novalidate' => null]]);
     }
 
-    public function createEntity(string $entityFqcn)
+    public function createEntity(string $entityFqcn): Routes
     {
         $entity = parent::createEntity($entityFqcn);
         return $entity;

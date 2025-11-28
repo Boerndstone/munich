@@ -113,7 +113,7 @@ class CommentCrudController extends AbstractCrudController
             ->hideOnIndex();
     }
 
-    public function createEntity(string $entityFqcn)
+    public function createEntity(string $entityFqcn): Comment
     {
         $comment = new Comment();
         $comment->setUser($this->getUser()); // set the user

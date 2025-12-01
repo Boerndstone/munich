@@ -101,8 +101,9 @@
 								</tr>
 								<tr>
 									<td>{{"gps"|trans}}:</td>
-									<td>{{ rock.rockLat }},
-										{{ rock.rockLng }}</td>
+									<td>
+										{{ rock.rockLat }}, {{ rock.rockLng }}
+									</td>
 								</tr>
 								<tr>
 									<td>{{"season"|trans}}:</td>
@@ -167,6 +168,16 @@
 						<div class="accordion-body p-0">
 							<div id="rockMap" class="z-10 mb-3" style="width: 100%; aspect-ratio: 16/16;">
 								{{ include('partials/_rockMap.html.twig') }}
+							</div>
+							<div class="mt-1 mb-2 d-flex align-items-center px-1">
+								<a href="https://www.google.com/maps?q={{ rock.rockLat }},{{ rock.rockLng }}" target="_blank" rel="noopener noreferrer" class="d-flex align-items-center">
+									<span class="external-link d-inline-block"></span>
+									<span>Google Maps</span>
+								</a>,
+								<a href="https://www.openstreetmap.org/?mlat={{ rock.rockLat }}&mlon={{ rock.rockLng }}&zoom=15" target="_blank" rel="noopener noreferrer" class="d-flex align-items-center">
+									<span class="external-link ms-2 d-inline-block"></span>
+									<span>OpenStreetMap</span>
+								</a>
 							</div>
 						</div>
 					</div>

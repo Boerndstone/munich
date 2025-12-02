@@ -194,15 +194,19 @@ class RoutesCrudController extends AbstractCrudController
         
         // Auto-set nr if not set and rock is set
         if ($entityInstance->getRock() && $entityInstance->getNr() === null) {
-            $maxNr = $entityManager->createQueryBuilder()
-                ->select('MAX(r.nr)')
-                ->from(\App\Entity\Routes::class, 'r')
-                ->where('r.rock = :rock')
-                ->setParameter('rock', $entityInstance->getRock())
-                ->getQuery()
-                ->getSingleScalarResult();
-            
-            $entityInstance->setNr(($maxNr ?? 0) + 1);
+            static $maxNrCache = [];
+            $rockId = $entityInstance->getRock()->getId();
+            if (!isset($maxNrCache[$rockId])) {
+                $maxNrCache[$rockId] = $entityManager->createQueryBuilder()
+                    ->select('MAX(r.nr)')
+                    ->from(\App\Entity\Routes::class, 'r')
+                    ->where('r.rock = :rock')
+                    ->setParameter('rock', $entityInstance->getRock())
+                    ->getQuery()
+                    ->getSingleScalarResult();
+            }
+            $entityInstance->setNr(($maxNrCache[$rockId] ?? 0) + 1);
+            $maxNrCache[$rockId] = $entityInstance->getNr();
         }
         
         parent::persistEntity($entityManager, $entityInstance);

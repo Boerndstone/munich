@@ -283,7 +283,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const rockId = {{ rockId }};
+            const rockId = {{ rockId|e('js') }};
             const tbody = document.getElementById('routes-tbody-' + rockId);
             
             // Filter functionality

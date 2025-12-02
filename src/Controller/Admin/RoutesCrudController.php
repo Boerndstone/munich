@@ -116,64 +116,31 @@ class RoutesCrudController extends AbstractCrudController
                 }
             }
             
-            // Set name if provided
-            $name = $request->query->get('name');
-            if ($name) {
-                $entity->setName($name);
-            }
-            
-            // Set grade if provided
-            $grade = $request->query->get('grade');
-            if ($grade) {
-                $entity->setGrade($grade);
-            }
-            
-            // Set first ascent if provided
-            $firstAscent = $request->query->get('first_ascent');
-            if ($firstAscent !== null) {
-                $entity->setFirstAscent($firstAscent);
-            }
-            
-            // Set year first ascent if provided
-            $yearFirstAscent = $request->query->get('year_first_ascent');
-            if ($yearFirstAscent !== null && $yearFirstAscent !== '') {
-                $entity->setYearFirstAscent((int)$yearFirstAscent);
-            }
-            
-            // Set protection if provided
-            $protection = $request->query->get('protection');
-            if ($protection !== null && $protection !== '') {
-                $entity->setProtection((int)$protection);
-            }
-            
-            // Set rating if provided
-            $rating = $request->query->get('rating');
-            if ($rating !== null && $rating !== '') {
-                $entity->setRating((int)$rating);
-            }
-            
-            // Set topo ID if provided
-            $topoId = $request->query->get('topo_id');
-            if ($topoId !== null && $topoId !== '') {
-                $entity->setTopoId((int)$topoId);
-            }
-            
-            // Set description if provided
-            $description = $request->query->get('description');
-            if ($description !== null) {
-                $entity->setDescription($description);
-            }
-            
-            // Set climbed if provided
-            $climbed = $request->query->get('climbed');
-            if ($climbed !== null) {
-                $entity->setClimbed((bool)$climbed);
-            }
-            
-            // Set rock quality if provided
-            $rockQuality = $request->query->get('rock_quality');
-            if ($rockQuality !== null) {
-                $entity->setRockQuality((bool)$rockQuality);
+            // Configuration for property setting from query
+            $propertyConfig = [
+                ['name'            , 'setName'         , null      , false],
+                ['grade'           , 'setGrade'        , null      , false],
+                ['first_ascent'    , 'setFirstAscent'  , null      , true ],
+                ['year_first_ascent', 'setYearFirstAscent', 'int'   , true ],
+                ['protection'      , 'setProtection'   , 'int'     , true ],
+                ['rating'          , 'setRating'       , 'int'     , true ],
+                ['topo_id'         , 'setTopoId'       , 'int'     , true ],
+                ['description'     , 'setDescription'  , null      , true ],
+                ['climbed'         , 'setClimbed'      , 'bool'    , true ],
+                ['rock_quality'    , 'setRockQuality'  , 'bool'    , true ],
+            ];
+
+            foreach ($propertyConfig as [$queryKey, $setter, $cast, $allowEmpty]) {
+                $value = $request->query->get($queryKey);
+                $hasValue = $allowEmpty ? ($value !== null && $value !== '') : ($value);
+                if ($hasValue) {
+                    if ($cast === 'int') {
+                        $value = (int)$value;
+                    } elseif ($cast === 'bool') {
+                        $value = (bool)$value;
+                    }
+                    $entity->$setter($value);
+                }
             }
         }
         

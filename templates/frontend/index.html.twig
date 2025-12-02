@@ -1,13 +1,18 @@
 {% extends 'base.html.twig' %}
 
 {% block meta_tags %}
-	<meta name="description" content="Klettern rund um München. Hier werden die Klettergebiete rund um München vorgestellt: {% for area in getAreasInformation() %}{{area.name}}{% if loop.last == false  %}, {% else %}{% endif%}{% endfor %}"/>
-	<meta name="robots" content="index,follow"/>
-	<meta property="og:site_name" content="Munichclimbs">
-	<meta property="og:title" content="Munichclimbs"/>
-	<meta property="og:type" content="website"/>
-	<meta property="og:url" content="https://munichclimbs.de/"/>
-	<meta property="og:description" content="Klettern rund um München. Hier werden die Klettergebiete rund um München vorgestellt: {% for area in getAreasInformation() %}{{area.name}}{% if loop.last == false  %}, {% else %}{% endif%}{% endfor %}"/>
+	{% set description = 'Klettern rund um München. Hier werden die Klettergebiete rund um München vorgestellt: ' %}
+	{% for area in getAreasInformation() %}
+		{% set description = description ~ area.name %}
+		{% if loop.last == false %}
+			{% set description = description ~ ', ' %}
+		{% endif %}
+	{% endfor %}
+	{% include 'partials/_meta_tags.html.twig' with {
+		'title': 'Munichclimbs',
+		'description': description,
+		'url': 'https://munichclimbs.de/'
+	} %}
 {% endblock %}
 
 {% block body %}

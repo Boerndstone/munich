@@ -1,0 +1,64 @@
+{# 
+	Meta Tags Partial
+	Usage: {% include 'partials/_meta_tags.html.twig' with {
+		'title': 'Page Title',
+		'description': 'Page description',
+		'url': 'https://example.com/page',
+		'keywords': 'keyword1, keyword2',
+		'image': 'image-url',
+		'image_alt': 'Image alt text',
+		'latitude': '48.123',
+		'longitude': '11.456',
+		'area_name': 'Area Name',
+		'type': 'rock|area|index' # determines which structured data to include
+	} %}
+#}
+
+{# Basic SEO #}
+<meta name="description" content="{{ description }}"/>
+{% if keywords is defined and keywords is not empty %}
+<meta name="keywords" content="{{ keywords }}"/>
+{% endif %}
+<meta name="robots" content="index,follow"/>
+<meta name="author" content="Munichclimbs"/>
+
+{# Open Graph / Facebook #}
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="{{ url }}"/>
+<meta property="og:title" content="{{ title }}"/>
+<meta property="og:description" content="{{ description }}"/>
+{% if image is defined and image is not empty %}
+<meta property="og:image" content="{{ image }}"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+{% if image_alt is defined and image_alt is not empty %}
+<meta property="og:image:alt" content="{{ image_alt }}"/>
+{% endif %}
+{% endif %}
+<meta property="og:site_name" content="Munichclimbs"/>
+<meta property="og:locale" content="de_DE"/>
+
+{# Twitter Card #}
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="{{ title }}"/>
+<meta name="twitter:description" content="{{ description }}"/>
+{% if image is defined and image is not empty %}
+<meta name="twitter:image" content="{{ image }}"/>
+{% if image_alt is defined and image_alt is not empty %}
+<meta name="twitter:image:alt" content="{{ image_alt }}"/>
+{% endif %}
+{% endif %}
+
+{# Location Schema (for rock pages) #}
+{% if latitude is defined and latitude is not empty and longitude is defined and longitude is not empty %}
+<meta property="place:location:latitude" content="{{ latitude }}"/>
+<meta property="place:location:longitude" content="{{ longitude }}"/>
+{% endif %}
+
+{# Additional SEO #}
+{% if area_name is defined and area_name is not empty %}
+<meta name="geo.region" content="DE-BY"/>
+<meta name="geo.placename" content="{{ area_name }}"/>
+{% endif %}
+<link rel="canonical" href="{{ url }}"/>
+

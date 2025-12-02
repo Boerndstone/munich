@@ -2,45 +2,31 @@
 {% set setTitle = 'Munichclimbs | Klettergebiet ' ~ areaName ~	' | Fels ' ~ slug|custom_replace %}
 
 {% block meta_tags %}
-	<!-- Basic SEO -->
-	<meta name="description" content="{% for rock in rocks %}{{ rock.rockDescription|striptags|slice(0, 160) }}{% endfor %}"/>
-	<meta name="keywords" content="Klettern, Kletterfels, {{ slug|custom_replace }}, {{ areaName }}, Klettertouren, {% for route in routes %}{{ route.routeName}} {{ route.routeGrade}}{% if loop.last == false  %}, {% else %}{% endif %}{% endfor %}"/>
-	<meta name="robots" content="index,follow"/>
-	<meta name="author" content="Munichclimbs"/>
-	
-	<!-- Open Graph / Facebook -->
-	<meta property="og:type" content="website"/>
-	<meta property="og:url" content="https://munichclimbs.de/Kletterfels/{{ slug }}"/>
-	<meta property="og:title" content="{{ setTitle }}"/>
-	<meta property="og:description" content="{% for rock in rocks %}{{ rock.rockDescription|striptags|slice(0, 160) }}{% endfor %}"/>
+	{% set description = '' %}
+	{% for rock in rocks %}
+		{% set description = rock.rockDescription|striptags|slice(0, 160) %}
+	{% endfor %}
+	{% set keywords = 'Klettern, Kletterfels, ' ~ slug|custom_replace ~ ', ' ~ areaName ~ ', Klettertouren' %}
+	{% for route in routes %}
+		{% set keywords = keywords ~ ', ' ~ route.routeName ~ ' ' ~ route.routeGrade %}
+	{% endfor %}
+	{% set image = '' %}
+	{% set image_alt = '' %}
 	{% if rockPreviewImage is not empty and isImageAccessible(rockPreviewImage, 'rock') %}
-	<meta property="og:image" content="{{ getSocialMediaImageUrl(rockPreviewImage, 'rock') }}"/>
-	<meta property="og:image:width" content="1200"/>
-	<meta property="og:image:height" content="630"/>
-	<meta property="og:image:alt" content="{{ getImageAltText(slug|custom_replace, areaName, 'rock') }}"/>
+		{% set image = getSocialMediaImageUrl(rockPreviewImage, 'rock') %}
+		{% set image_alt = getImageAltText(slug|custom_replace, areaName, 'rock') %}
 	{% endif %}
-	<meta property="og:site_name" content="Munichclimbs"/>
-	<meta property="og:locale" content="de_DE"/>
-	
-	<!-- Twitter Card -->
-	<meta name="twitter:card" content="summary_large_image"/>
-	<meta name="twitter:title" content="{{ setTitle }}"/>
-	<meta name="twitter:description" content="{% for rock in rocks %}{{ rock.rockDescription|striptags|slice(0, 160) }}{% endfor %}"/>
-	{% if rockPreviewImage is not empty and isImageAccessible(rockPreviewImage, 'rock') %}
-	<meta name="twitter:image" content="{{ getSocialMediaImageUrl(rockPreviewImage, 'rock') }}"/>
-	<meta name="twitter:image:alt" content="{{ getImageAltText(slug|custom_replace, areaName, 'rock') }}"/>
-	{% endif %}
-	
-	<!-- Location Schema -->
-	{% if rockLat is not empty and rockLng is not empty %}
-	<meta property="place:location:latitude" content="{{ rockLat }}"/>
-	<meta property="place:location:longitude" content="{{ rockLng }}"/>
-	{% endif %}
-	
-	<!-- Additional SEO -->
-	<meta name="geo.region" content="DE-BY"/>
-	<meta name="geo.placename" content="{{ areaName }}"/>
-	<link rel="canonical" href="https://munichclimbs.de/Kletterfels/{{ slug }}"/>
+	{% include 'partials/_meta_tags.html.twig' with {
+		'title': setTitle,
+		'description': description,
+		'url': 'https://munichclimbs.de/Kletterfels/' ~ slug,
+		'keywords': keywords,
+		'image': image,
+		'image_alt': image_alt,
+		'latitude': rockLat,
+		'longitude': rockLng,
+		'area_name': areaName
+	} %}
 {% endblock %}
 
 {% block title %}

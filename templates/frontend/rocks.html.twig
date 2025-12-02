@@ -3,13 +3,21 @@
 {% set currentDate =  "now"|date("z") %}
 
 {% block meta_tags %}
-	<meta name="description" content="Felsen im Klettergebiet {{ areaName }}: {% for rock in rocks %}{{ rock.rockName }}{% if loop.last == false  %}, {% else %} {% endif %} {% endfor %}"/>
-	<meta name="robots" content="index,follow"/>
-	<meta property="og:site_name" content="{{ setTitle }}"/>
-	<meta property="og:title" content="{{ setTitle }}"/>
-	<meta property="og:type" content="website"/>
-	<meta property="og:url" content="https://munichclimbs.de/Klettergebiet/{{ areaSlug }}"/>
-	<meta property="og:description" content="Felsen im Klettergebiet {{ areaName }}: {% for rock in rocks %}{{ rock.rockName }}{% if loop.last == false  %}, {% else %} {% endif %} {% endfor %}"/>
+	{% set description = 'Felsen im Klettergebiet ' ~ areaName ~ ': ' %}
+	{% for rock in rocks %}
+		{% set description = description ~ rock.rockName %}
+		{% if loop.last == false %}
+			{% set description = description ~ ', ' %}
+		{% else %}
+			{% set description = description ~ ' ' %}
+		{% endif %}
+	{% endfor %}
+	{% include 'partials/_meta_tags.html.twig' with {
+		'title': setTitle,
+		'description': description,
+		'url': 'https://munichclimbs.de/Klettergebiet/' ~ areaSlug,
+		'area_name': areaName
+	} %}
 {% endblock %}
 
 {% block title %}

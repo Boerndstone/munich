@@ -101,6 +101,49 @@ class RoutesCrudController extends AbstractCrudController
     public function createEntity(string $entityFqcn): Routes
     {
         $entity = parent::createEntity($entityFqcn);
+        
+        // Handle quick-add from rock page
+        $request = $this->container->get('request_stack')->getCurrentRequest();
+        if ($request) {
+            $rockId = $request->query->get('rockId') ?? $request->query->get('rock');
+            if ($rockId) {
+                $rock = $this->container->get('doctrine')->getRepository(\App\Entity\Rock::class)->find($rockId);
+                if ($rock) {
+                    $entity->setRock($rock);
+                    if (!$entity->getArea() && $rock->getArea()) {
+                        $entity->setArea($rock->getArea());
+                    }
+                }
+            }
+            
+            // Configuration for property setting from query
+            $propertyConfig = [
+                ['name'            , 'setName'         , null      , false],
+                ['grade'           , 'setGrade'        , null      , false],
+                ['first_ascent'    , 'setFirstAscent'  , null      , true ],
+                ['year_first_ascent', 'setYearFirstAscent', 'int'   , true ],
+                ['protection'      , 'setProtection'   , 'int'     , true ],
+                ['rating'          , 'setRating'       , 'int'     , true ],
+                ['topo_id'         , 'setTopoId'       , 'int'     , true ],
+                ['description'     , 'setDescription'  , null      , true ],
+                ['climbed'         , 'setClimbed'      , 'bool'    , true ],
+                ['rock_quality'    , 'setRockQuality'  , 'bool'    , true ],
+            ];
+
+            foreach ($propertyConfig as [$queryKey, $setter, $cast, $allowEmpty]) {
+                $value = $request->query->get($queryKey);
+                $hasValue = $allowEmpty ? ($value !== null && $value !== '') : ($value);
+                if ($hasValue) {
+                    if ($cast === 'int') {
+                        $value = (int)$value;
+                    } elseif ($cast === 'bool') {
+                        $value = (bool)$value;
+                    }
+                    $entity->$setter($value);
+                }
+            }
+        }
+        
         return $entity;
     }
 
@@ -114,6 +157,23 @@ class RoutesCrudController extends AbstractCrudController
         // Ensure grade translation happens
         if ($entityInstance->getGrade()) {
             $entityInstance->setGradeNoFromGrade($entityInstance->getGrade());
+        }
+        
+        // Auto-set nr if not set and rock is set
+        if ($entityInstance->getRock() && $entityInstance->getNr() === null) {
+            static $maxNrCache = [];
+            $rockId = $entityInstance->getRock()->getId();
+            if (!isset($maxNrCache[$rockId])) {
+                $maxNrCache[$rockId] = $entityManager->createQueryBuilder()
+                    ->select('MAX(r.nr)')
+                    ->from(\App\Entity\Routes::class, 'r')
+                    ->where('r.rock = :rock')
+                    ->setParameter('rock', $entityInstance->getRock())
+                    ->getQuery()
+                    ->getSingleScalarResult();
+            }
+            $entityInstance->setNr(($maxNrCache[$rockId] ?? 0) + 1);
+            $maxNrCache[$rockId] = $entityInstance->getNr();
         }
         
         parent::persistEntity($entityManager, $entityInstance);

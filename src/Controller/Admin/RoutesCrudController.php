@@ -101,6 +101,82 @@ class RoutesCrudController extends AbstractCrudController
     public function createEntity(string $entityFqcn): Routes
     {
         $entity = parent::createEntity($entityFqcn);
+        
+        // Handle quick-add from rock page
+        $request = $this->container->get('request_stack')->getCurrentRequest();
+        if ($request) {
+            $rockId = $request->query->get('rockId') ?? $request->query->get('rock');
+            if ($rockId) {
+                $rock = $this->container->get('doctrine')->getRepository(\App\Entity\Rock::class)->find($rockId);
+                if ($rock) {
+                    $entity->setRock($rock);
+                    if (!$entity->getArea() && $rock->getArea()) {
+                        $entity->setArea($rock->getArea());
+                    }
+                }
+            }
+            
+            // Set name if provided
+            $name = $request->query->get('name');
+            if ($name) {
+                $entity->setName($name);
+            }
+            
+            // Set grade if provided
+            $grade = $request->query->get('grade');
+            if ($grade) {
+                $entity->setGrade($grade);
+            }
+            
+            // Set first ascent if provided
+            $firstAscent = $request->query->get('first_ascent');
+            if ($firstAscent !== null) {
+                $entity->setFirstAscent($firstAscent);
+            }
+            
+            // Set year first ascent if provided
+            $yearFirstAscent = $request->query->get('year_first_ascent');
+            if ($yearFirstAscent !== null && $yearFirstAscent !== '') {
+                $entity->setYearFirstAscent((int)$yearFirstAscent);
+            }
+            
+            // Set protection if provided
+            $protection = $request->query->get('protection');
+            if ($protection !== null && $protection !== '') {
+                $entity->setProtection((int)$protection);
+            }
+            
+            // Set rating if provided
+            $rating = $request->query->get('rating');
+            if ($rating !== null && $rating !== '') {
+                $entity->setRating((int)$rating);
+            }
+            
+            // Set topo ID if provided
+            $topoId = $request->query->get('topo_id');
+            if ($topoId !== null && $topoId !== '') {
+                $entity->setTopoId((int)$topoId);
+            }
+            
+            // Set description if provided
+            $description = $request->query->get('description');
+            if ($description !== null) {
+                $entity->setDescription($description);
+            }
+            
+            // Set climbed if provided
+            $climbed = $request->query->get('climbed');
+            if ($climbed !== null) {
+                $entity->setClimbed((bool)$climbed);
+            }
+            
+            // Set rock quality if provided
+            $rockQuality = $request->query->get('rock_quality');
+            if ($rockQuality !== null) {
+                $entity->setRockQuality((bool)$rockQuality);
+            }
+        }
+        
         return $entity;
     }
 
@@ -114,6 +190,19 @@ class RoutesCrudController extends AbstractCrudController
         // Ensure grade translation happens
         if ($entityInstance->getGrade()) {
             $entityInstance->setGradeNoFromGrade($entityInstance->getGrade());
+        }
+        
+        // Auto-set nr if not set and rock is set
+        if ($entityInstance->getRock() && $entityInstance->getNr() === null) {
+            $maxNr = $entityManager->createQueryBuilder()
+                ->select('MAX(r.nr)')
+                ->from(\App\Entity\Routes::class, 'r')
+                ->where('r.rock = :rock')
+                ->setParameter('rock', $entityInstance->getRock())
+                ->getQuery()
+                ->getSingleScalarResult();
+            
+            $entityInstance->setNr(($maxNr ?? 0) + 1);
         }
         
         parent::persistEntity($entityManager, $entityInstance);

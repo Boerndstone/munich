@@ -9,14 +9,37 @@ export default class extends Controller {
     }
 
     connect() {
-        if (this.hasTbodyTarget && typeof Sortable !== 'undefined') {
+        if (!this.hasTbodyTarget) {
+            console.error('[RoutesSortable] Tbody target not found. Cannot initialize sortable.');
+            return;
+        }
+
+        if (typeof Sortable === 'undefined') {
+            console.error('[RoutesSortable] SortableJS library is not loaded. Please ensure sortablejs is installed and imported.');
+            this.showInitializationError('SortableJS-Bibliothek konnte nicht geladen werden.');
+            return;
+        }
+
+        try {
             this.sortable = new Sortable(this.tbodyTarget, {
                 handle: '.drag-handle',
                 animation: 150,
                 onEnd: (evt) => {
                     this.handleSortEnd();
+                },
+                onError: (evt) => {
+                    console.error('[RoutesSortable] Sortable error:', evt);
                 }
             });
+
+            if (!this.sortable) {
+                throw new Error('Sortable initialization returned null/undefined');
+            }
+
+            console.log('[RoutesSortable] Successfully initialized drag-and-drop for routes');
+        } catch (error) {
+            console.error('[RoutesSortable] Failed to initialize Sortable:', error);
+            this.showInitializationError('Drag-and-Drop konnte nicht initialisiert werden: ' + error.message);
         }
     }
 
@@ -27,10 +50,34 @@ export default class extends Controller {
     }
 
     handleSortEnd() {
+        if (!this.hasTbodyTarget) {
+            console.error('[RoutesSortable] Tbody target not found during sort end');
+            return;
+        }
+
         const routeIds = Array.from(this.tbodyTarget.querySelectorAll('tr[data-route-id]')).map(tr => {
-            return parseInt(tr.getAttribute('data-route-id'));
-        });
-        
+            const routeId = tr.getAttribute('data-route-id');
+            const parsed = parseInt(routeId);
+            if (isNaN(parsed)) {
+                console.warn('[RoutesSortable] Invalid route ID:', routeId);
+            }
+            return parsed;
+        }).filter(id => !isNaN(id));
+
+        if (routeIds.length === 0) {
+            console.error('[RoutesSortable] No valid route IDs found');
+            alert('Fehler: Keine gültigen Routen-IDs gefunden.');
+            return;
+        }
+
+        if (!this.reorderUrlValue) {
+            console.error('[RoutesSortable] Reorder URL not set');
+            alert('Fehler: Reorder-URL ist nicht konfiguriert.');
+            return;
+        }
+
+        console.log('[RoutesSortable] Saving new route order:', routeIds);
+
         fetch(this.reorderUrlValue, {
             method: 'POST',
             headers: {
@@ -39,7 +86,12 @@ export default class extends Controller {
             },
             body: JSON.stringify({ routeIds: routeIds })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 // Update the displayed numbers (nr is now 3rd column, topoId is 2nd)
@@ -51,15 +103,18 @@ export default class extends Controller {
                     }
                 });
                 
+                console.log('[RoutesSortable] Successfully saved route order');
                 // Show success message
                 this.showSuccessMessage();
             } else {
-                alert('Fehler beim Speichern der Reihenfolge: ' + (data.message || 'Unbekannter Fehler'));
+                const errorMsg = data.message || 'Unbekannter Fehler';
+                console.error('[RoutesSortable] Server returned error:', errorMsg);
+                alert('Fehler beim Speichern der Reihenfolge: ' + errorMsg);
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            alert('Fehler beim Speichern der Reihenfolge');
+            console.error('[RoutesSortable] Network or parsing error:', error);
+            alert('Fehler beim Speichern der Reihenfolge: ' + error.message);
         });
     }
 
@@ -77,6 +132,20 @@ export default class extends Controller {
         this.element.prepend(alert);
         
         setTimeout(() => alert.remove(), 3000);
+    }
+
+    showInitializationError(message) {
+        // Remove existing error alerts
+        const existingAlert = this.element.querySelector('.alert-danger');
+        if (existingAlert) {
+            existingAlert.remove();
+        }
+
+        // Create and show error message
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-danger alert-dismissible fade show mt-2';
+        alert.innerHTML = '<strong>Fehler!</strong> ' + message + ' <small>(Drag-and-Drop ist nicht verfügbar)</small><button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+        this.element.prepend(alert);
     }
 }
 

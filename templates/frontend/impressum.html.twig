@@ -15,55 +15,45 @@
 				</div>
 			</section>
 			<section>
-				<div class="row">
-					<div class="col-12">
-						<div class="card">
-							<div class="card-body">
-								<p class="card-text">
-									<span class="font-semibold">Copyright:</span><br>
-									© 2013 munichclimbs.com<br>
-									Alle Rechte vorbehalten.</p>
-								<p class="card-text">Inhaltlich verantwortlich gemäß § 6 MDStV:</p>
-								<p class="card-text">Bernd Ullmann<br>
-									Petra-Kelly-Str. 29<br>
-									80797 München<br>
-									admin@munichclimbs.de</p>
-								<p class="card-text">Konzeption und Design:<br>
-									Bernd Ullmann</p>
+				<p>
+					<span class="font-semibold">Copyright:</span><br>
+					© 2013 munichclimbs.com<br>
+					Alle Rechte vorbehalten.</p>
+				<p>Inhaltlich verantwortlich gemäß § 6 MDStV:</p>
+				<p>Bernd Ullmann<br>
+					Petra-Kelly-Str. 29<br>
+					80797 München<br>
+					admin@munichclimbs.de</p>
+				<p>Konzeption und Design:<br>
+					Bernd Ullmann</p>
 
-								<p class="card-text">Technische Umsetzung:<br>
-									Bernd Ullmann | www.berndullmann.de<br>
-								</p><hr class="my-5">
-								<h5 class="card-title">WICHTIGE HINWEISE:</h5>
-								<p class="card-text">Klettern ist eine Risikosportart, Fehler beim Ausüben der Sportart können mit schweren Verletzungen oder sogar tödlich enden.
-									<br>
-									Die Informationen auf www.munichclimbs.de sind nach bestem Wissen recherchiert. Trotzdem können Fehler und Ungenauigkeiten NICHT vollständig ausgeschlossen werden.
-									<br>
-									Alle Angaben erfolgen ohne Gewähr. Eine Haftung für Schäden, die sich aus der Verwendung der veröffentlichten Inhalte ergeben, ist ausgeschlossen.<br>
-									Die Website www.munichclimbs.de ist ein freiwilliges NICHT-kommerzielles Informationsangebot über die Klettergebiete rund um München.</p>
-							</div>
-						</div>
-						<div class="card my-3">
-							<div class="card-body">
-								<h5 class="card-title">Kontakt</h5>
-								<h6 class="card-subtitle mb-4 text-body-secondary">Du hast Fragen, Anregungen, Ergänzungen? Bitte schreib uns!</h6>
-								{% for message in app.flashes('success') %}
-									<div class="alert alert-success">{{ message }}</div>
-								{% endfor %}
-								{% for message in app.flashes('error') %}
-									<div class="alert alert-danger" role="alert">
-										{{ message }}
-									</div>
-								{% endfor %}
-
-								{{ form_start(contactForm, {'attr': {'novalidate': 'novalidate', 'data-turbo': 'false'}}) }}
-								{{ form_widget(contactForm) }}
-								<button type="submit" class="btn btn-success">Nachricht senden!</button>
-								{{ form_end(contactForm) }}
-							</div>
-						</div>
+				<p>Technische Umsetzung:<br>
+					Bernd Ullmann | www.berndullmann.de<br>
+				</p>
+				<hr class="my-5">
+				<h5>WICHTIGE HINWEISE:</h5>
+				<p>Klettern ist eine Risikosportart, Fehler beim Ausüben der Sportart können mit schweren Verletzungen oder sogar tödlich enden.
+					<br>
+					Die Informationen auf www.munichclimbs.de sind nach bestem Wissen recherchiert. Trotzdem können Fehler und Ungenauigkeiten NICHT vollständig ausgeschlossen werden.
+					<br>
+					Alle Angaben erfolgen ohne Gewähr. Eine Haftung für Schäden, die sich aus der Verwendung der veröffentlichten Inhalte ergeben, ist ausgeschlossen.<br>
+					Die Website www.munichclimbs.de ist ein freiwilliges NICHT-kommerzielles Informationsangebot über die Klettergebiete rund um München.</p>
+				<hr class="my-5">
+				<h5>Kontakt</h5>
+				<h6 class="card-subtitle mb-4 text-body-secondary">Du hast Fragen, Anregungen, Ergänzungen? Bitte schreib uns!</h6>
+				{% for message in app.flashes('success') %}
+					<div class="alert alert-success">{{ message }}</div>
+				{% endfor %}
+				{% for message in app.flashes('error') %}
+					<div class="alert alert-danger" role="alert">
+						{{ message }}
 					</div>
-				</div>
+				{% endfor %}
+
+				{{ form_start(contactForm, {'attr': {'novalidate': 'novalidate', 'data-turbo': 'false'}}) }}
+				{{ form_widget(contactForm) }}
+				<button type="submit" class="btn btn-success text-green mb-5">Nachricht senden!</button>
+				{{ form_end(contactForm) }}
 			</section>
 		</div>
 	</main>

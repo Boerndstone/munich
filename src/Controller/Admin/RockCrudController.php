@@ -121,7 +121,7 @@ class RockCrudController extends AbstractCrudController
             ->setHelp('Zu welchem Gebiet der Fels gehört.');
 
         yield CollectionField::new('routes')
-            ->setLabel('Routen')
+            ->setLabel(false)
             ->onlyOnDetail()
             ->setTemplatePath('admin/field/routes.html.twig')
             ->addCssClass('field-address')

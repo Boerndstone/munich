@@ -304,19 +304,39 @@ class RockCrudController extends AbstractCrudController
         }
 
         $routeIds = $data['routeIds'];
+        
+        if (empty($routeIds)) {
+            return new JsonResponse(['success' => false, 'message' => 'No route IDs provided'], 400);
+        }
+
         $rock = $entityManager->getRepository(Rock::class)->find($rockId);
         
         if (!$rock) {
             return new JsonResponse(['success' => false, 'message' => 'Rock not found'], 404);
         }
 
+        // Fetch all routes in a single query to avoid N+1 problem
+        $routes = $routesRepository->findBy([
+            'id' => $routeIds,
+            'rock' => $rock
+        ]);
+
+        if (count($routes) !== count($routeIds)) {
+            return new JsonResponse(['success' => false, 'message' => 'Some routes were not found or do not belong to this rock'], 400);
+        }
+
+        // Create a map of route ID to route object for O(1) lookup
+        $routesMap = [];
+        foreach ($routes as $route) {
+            $routesMap[$route->getId()] = $route;
+        }
+
         // Update the nr field for each route based on the new order
         // The display will sort by topoId first, then by nr
         foreach ($routeIds as $index => $routeId) {
-            $route = $routesRepository->find($routeId);
-            if ($route && $route->getRock() === $rock) {
-                $route->setNr($index + 1);
-                $entityManager->persist($route);
+            if (isset($routesMap[$routeId])) {
+                $routesMap[$routeId]->setNr($index + 1);
+                $entityManager->persist($routesMap[$routeId]);
             }
         }
 

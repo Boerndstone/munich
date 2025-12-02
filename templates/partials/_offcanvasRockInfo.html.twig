@@ -106,6 +106,13 @@
 									</td>
 								</tr>
 								<tr>
+									<td>{{"show.on.map"|trans}}:</td>
+									<td>
+										<a href="https://www.google.com/maps?q={{ rock.rockLat }},{{ rock.rockLng }}" target="_blank" rel="noopener noreferrer" style="text-decoration: underline; text-decoration-style: dotted;"><span style="display: inline-block; transform: rotate(-45deg);">→</span> Google Maps</a>,<br />
+										<a href="https://www.openstreetmap.org/?mlat={{ rock.rockLat }}&mlon={{ rock.rockLng }}&zoom=15" target="_blank" rel="noopener noreferrer" style="text-decoration: underline; text-decoration-style: dotted;"><span style="display: inline-block; transform: rotate(-45deg);">→</span> OpenStreetMap</a>
+									</td>
+								</tr>
+								<tr>
 									<td>{{"season"|trans}}:</td>
 									<td>{{ rock.rockSeason}}</td>
 								</tr>
@@ -168,16 +175,6 @@
 						<div class="accordion-body p-0">
 							<div id="rockMap" class="z-10 mb-3" style="width: 100%; aspect-ratio: 16/16;">
 								{{ include('partials/_rockMap.html.twig') }}
-							</div>
-							<div class="mt-1 mb-2 d-flex align-items-center px-1">
-								<a href="https://www.google.com/maps?q={{ rock.rockLat }},{{ rock.rockLng }}" target="_blank" rel="noopener noreferrer" class="d-flex align-items-center">
-									<span class="external-link d-inline-block"></span>
-									<span>Google Maps</span>
-								</a>,
-								<a href="https://www.openstreetmap.org/?mlat={{ rock.rockLat }}&mlon={{ rock.rockLng }}&zoom=15" target="_blank" rel="noopener noreferrer" class="d-flex align-items-center">
-									<span class="external-link ms-2 d-inline-block"></span>
-									<span>OpenStreetMap</span>
-								</a>
 							</div>
 						</div>
 					</div>

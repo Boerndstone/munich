@@ -18,6 +18,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Attribute\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\RoutesRepository;
 
 class RockCrudController extends AbstractCrudController
 {
@@ -116,11 +121,11 @@ class RockCrudController extends AbstractCrudController
             ->setHelp('Zu welchem Gebiet der Fels gehört.');
 
         yield CollectionField::new('routes')
-            ->setLabel(false)
+            ->setLabel('Routen')
             ->onlyOnDetail()
             ->setTemplatePath('admin/field/routes.html.twig')
             ->addCssClass('field-address')
-            ->setColumns('col-12 col-md-4');
+            ->setColumns('col-12');
 
 
         yield Field::new('nr')
@@ -287,5 +292,36 @@ class RockCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->hideOnDetail()
             ->setColumns('col-12');
+    }
+
+    #[Route('/admin/rock/{rockId}/routes/reorder', name: 'admin_rock_routes_reorder', methods: ['POST'])]
+    public function reorderRoutes(int $rockId, Request $request, EntityManagerInterface $entityManager, RoutesRepository $routesRepository): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        
+        if (!isset($data['routeIds']) || !is_array($data['routeIds'])) {
+            return new JsonResponse(['success' => false, 'message' => 'Invalid data'], 400);
+        }
+
+        $routeIds = $data['routeIds'];
+        $rock = $entityManager->getRepository(Rock::class)->find($rockId);
+        
+        if (!$rock) {
+            return new JsonResponse(['success' => false, 'message' => 'Rock not found'], 404);
+        }
+
+        // Update the nr field for each route based on the new order
+        // The display will sort by topoId first, then by nr
+        foreach ($routeIds as $index => $routeId) {
+            $route = $routesRepository->find($routeId);
+            if ($route && $route->getRock() === $rock) {
+                $route->setNr($index + 1);
+                $entityManager->persist($route);
+            }
+        }
+
+        $entityManager->flush();
+
+        return new JsonResponse(['success' => true, 'message' => 'Routes reordered successfully']);
     }
 }

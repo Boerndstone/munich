@@ -57,6 +57,7 @@
         "leaflet": "^1.9.4",
         "leaflet-draw": "^1.0.4",
         "lightgallery": "^2.7.2",
+        "sortablejs": "^1.15.6",
         "vanilla-cookieconsent": "3.0.0"
     }
 }

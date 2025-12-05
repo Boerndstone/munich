@@ -461,7 +461,7 @@ class RockCrudController extends AbstractCrudController
                 }
 
                 // Remove stars (★★★, ★★, ★, etc.) from route name
-                $routeName = preg_replace('/[★☆]+[\s]*/', '', $routeName);
+                $routeName = preg_replace('/[★☆]+\s*/', '', $routeName);
                 $routeName = trim($routeName);
 
                 // Look ahead for "Erstbegehung" line (check next 5 lines)

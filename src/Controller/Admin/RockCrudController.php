@@ -409,7 +409,7 @@ class RockCrudController extends AbstractCrudController
                 ]);
             }
 
-            $imported = 0;
+            $routesToImport = [];
             $errors = [];
             $lines = explode("\n", $routesData);
             
@@ -532,19 +532,28 @@ class RockCrudController extends AbstractCrudController
                 $maxNr++;
                 $route->setNr($maxNr);
 
+                // Validate route before persisting
                 try {
                     $entityManager->persist($route);
-                    $imported++;
+                    $routesToImport[] = $route;
                 } catch (\Exception $e) {
-                    $errors[] = "Zeile " . ($lineNumber + 1) . ": Fehler beim Speichern - " . $e->getMessage();
+                    $errors[] = "Zeile " . ($lineNumber + 1) . ": Fehler beim Vorbereiten - " . $e->getMessage();
                 }
             }
 
-            if ($imported > 0) {
-                $entityManager->flush();
-                $this->addFlash('success', $imported === 1
-                    ? "1 Route erfolgreich importiert."
-                    : "$imported Routen erfolgreich importiert.");
+            // Flush all routes at once and only count successful imports
+            $imported = 0;
+            if (count($routesToImport) > 0) {
+                try {
+                    $entityManager->flush();
+                    $imported = count($routesToImport);
+                    $this->addFlash('success', $imported === 1
+                        ? "1 Route erfolgreich importiert."
+                        : "$imported Routen erfolgreich importiert.");
+                } catch (\Exception $e) {
+                    $errors[] = "Fehler beim Speichern in die Datenbank: " . $e->getMessage();
+                    $this->addFlash('error', 'Fehler beim Speichern der Routen. Bitte versuchen Sie es erneut.');
+                }
             }
 
             if (!empty($errors)) {

@@ -520,7 +520,9 @@ class RockCrudController extends AbstractCrudController
 
             if ($imported > 0) {
                 $entityManager->flush();
-                $this->addFlash('success', "$imported Route(n) erfolgreich importiert.");
+                $this->addFlash('success', $imported === 1
+                    ? "1 Route erfolgreich importiert."
+                    : "$imported Routen erfolgreich importiert.");
             }
 
             if (!empty($errors)) {

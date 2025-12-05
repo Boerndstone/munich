@@ -372,10 +372,18 @@ class RockCrudController extends AbstractCrudController
         if ($request->isMethod('POST')) {
             $routesData = $request->request->get('routes_data', '');
             
+            $detailUrl = $adminUrlGenerator
+                ->setDashboard(DashboardController::class)
+                ->setController(RockCrudController::class)
+                ->setAction('detail')
+                ->setEntityId($rockId)
+                ->generateUrl();
+
             if (empty($routesData)) {
                 $this->addFlash('error', 'Keine Daten zum Importieren gefunden.');
                 return $this->render('admin/rock/import_routes.html.twig', [
                     'rock' => $rock,
+                    'detailUrl' => $detailUrl,
                 ]);
             }
 

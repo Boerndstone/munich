@@ -370,6 +370,22 @@ class RockCrudController extends AbstractCrudController
         }
 
         if ($request->isMethod('POST')) {
+            // Validate CSRF token
+            $token = $request->request->get('_token');
+            if (!$this->isCsrfTokenValid('rock_routes_import', $token)) {
+                $this->addFlash('error', 'Ungültiger Sicherheitstoken. Bitte versuchen Sie es erneut.');
+                $detailUrl = $adminUrlGenerator
+                    ->setDashboard(DashboardController::class)
+                    ->setController(RockCrudController::class)
+                    ->setAction('detail')
+                    ->setEntityId($rockId)
+                    ->generateUrl();
+                return $this->render('admin/rock/import_routes.html.twig', [
+                    'rock' => $rock,
+                    'detailUrl' => $detailUrl,
+                ]);
+            }
+
             $routesData = $request->request->get('routes_data', '');
             
             $detailUrl = $adminUrlGenerator
@@ -381,6 +397,12 @@ class RockCrudController extends AbstractCrudController
 
             if (empty($routesData)) {
                 $this->addFlash('error', 'Keine Daten zum Importieren gefunden.');
+                $detailUrl = $adminUrlGenerator
+                    ->setDashboard(DashboardController::class)
+                    ->setController(RockCrudController::class)
+                    ->setAction('detail')
+                    ->setEntityId($rockId)
+                    ->generateUrl();
                 return $this->render('admin/rock/import_routes.html.twig', [
                     'rock' => $rock,
                     'detailUrl' => $detailUrl,

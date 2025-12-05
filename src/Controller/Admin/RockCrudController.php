@@ -411,6 +411,7 @@ class RockCrudController extends AbstractCrudController
 
             $routesToImport = [];
             $errors = [];
+            $skippedLines = [];
             $lines = explode("\n", $routesData);
             
             // Get the current max nr for this rock
@@ -426,6 +427,7 @@ class RockCrudController extends AbstractCrudController
             $gradePattern = '/^([0-9]+[+-]?(\/[0-9]+[+-]?)?|NN|NN\d*)/i';
 
             foreach ($lines as $lineNumber => $line) {
+                $originalLine = $line;
                 $line = trim($line);
                 
                 // Skip empty lines
@@ -440,7 +442,11 @@ class RockCrudController extends AbstractCrudController
 
                 // Check if line starts with a grade pattern
                 if (!preg_match($gradePattern, $line)) {
-                    // This might be a continuation of the previous route name, skip it
+                    // This might be a continuation of the previous route name, but track it for user review
+                    $skippedLines[] = [
+                        'line' => $lineNumber + 1,
+                        'content' => $originalLine
+                    ];
                     continue;
                 }
 
@@ -560,6 +566,15 @@ class RockCrudController extends AbstractCrudController
                 $this->addFlash('warning', count($errors) . " Fehler beim Import:");
                 foreach ($errors as $error) {
                     $this->addFlash('warning', $error);
+                }
+            }
+
+            // Report skipped lines that might be valid routes
+            if (!empty($skippedLines)) {
+                $skippedCount = count($skippedLines);
+                $this->addFlash('info', "$skippedCount Zeile(n) wurden übersprungen, da sie nicht dem erwarteten Format entsprechen (kein Schwierigkeitsgrad am Zeilenanfang):");
+                foreach ($skippedLines as $skipped) {
+                    $this->addFlash('info', "Zeile {$skipped['line']}: " . htmlspecialchars(substr($skipped['content'], 0, 100)) . (strlen($skipped['content']) > 100 ? '...' : ''));
                 }
             }
 

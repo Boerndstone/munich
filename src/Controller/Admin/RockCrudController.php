@@ -20,9 +20,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\RoutesRepository;
+use App\Entity\Routes;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use App\Controller\Admin\DashboardController;
 
 class RockCrudController extends AbstractCrudController
 {
@@ -83,7 +88,13 @@ class RockCrudController extends AbstractCrudController
             ->update(Crud::PAGE_DETAIL, Action::DELETE, function (Action $action) {
                 return $action
                     ->setLabel('Löschen');
-            });
+            })
+            ->add(Crud::PAGE_DETAIL, Action::new('importRoutes', 'Routen importieren')
+                ->linkToRoute('admin_rock_import_routes', function (Rock $rock): array {
+                    return ['rockId' => $rock->getId()];
+                })
+                ->setIcon('fa fa-upload')
+                ->setCssClass('btn btn-primary'));
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -343,5 +354,195 @@ class RockCrudController extends AbstractCrudController
         $entityManager->flush();
 
         return new JsonResponse(['success' => true, 'message' => 'Routes reordered successfully']);
+    }
+
+    #[Route('/admin/rock/{rockId}/routes/import', name: 'admin_rock_import_routes', methods: ['GET', 'POST'])]
+    public function importRoutes(int $rockId, Request $request, EntityManagerInterface $entityManager, AdminUrlGenerator $adminUrlGenerator): Response
+    {
+        $rock = $entityManager->getRepository(Rock::class)->find($rockId);
+        
+        if (!$rock) {
+            $this->addFlash('error', 'Fels nicht gefunden.');
+            return $this->redirect($adminUrlGenerator
+                ->setDashboard(DashboardController::class)
+                ->setController(RockCrudController::class)
+                ->setAction('index')
+                ->generateUrl());
+        }
+
+        if ($request->isMethod('POST')) {
+            $routesData = $request->request->get('routes_data', '');
+            
+            if (empty($routesData)) {
+                $this->addFlash('error', 'Keine Daten zum Importieren gefunden.');
+                return $this->render('admin/rock/import_routes.html.twig', [
+                    'rock' => $rock,
+                ]);
+            }
+
+            $imported = 0;
+            $errors = [];
+            $lines = explode("\n", $routesData);
+            
+            // Get the current max nr for this rock
+            $maxNr = $entityManager->createQueryBuilder()
+                ->select('MAX(r.nr)')
+                ->from(Routes::class, 'r')
+                ->where('r.rock = :rock')
+                ->setParameter('rock', $rock)
+                ->getQuery()
+                ->getSingleScalarResult() ?? 0;
+
+            // Pattern to match grade at the start of a line (e.g., "8+/9-", "7-", "NN", "5+", etc.)
+            $gradePattern = '/^([0-9]+[+-]?(\/[0-9]+[+-]?)?|NN|NN\d*)/i';
+
+            foreach ($lines as $lineNumber => $line) {
+                $line = trim($line);
+                
+                // Skip empty lines
+                if (empty($line)) {
+                    continue;
+                }
+
+                // Skip lines that are clearly not route entries
+                if (preg_match('/^(Erstbegehung|Sport|[\s]*$)/i', $line)) {
+                    continue;
+                }
+
+                // Check if line starts with a grade pattern
+                if (!preg_match($gradePattern, $line)) {
+                    // This might be a continuation of the previous route name, skip it
+                    continue;
+                }
+
+                // Try to split by tab first, then by multiple spaces
+                $parts = preg_split('/\t+/', $line);
+                if (count($parts) < 2) {
+                    // Try splitting by multiple spaces (2 or more)
+                    $parts = preg_split('/\s{2,}/', $line);
+                }
+                
+                // If still no parts, try splitting by single space but only if we have a clear grade pattern
+                if (count($parts) < 2) {
+                    // Try to match grade at start and take everything after as route name
+                    if (preg_match($gradePattern, $line, $matches)) {
+                        $grade = $matches[0];
+                        $routeName = trim(substr($line, strlen($grade)));
+                        if (!empty($routeName)) {
+                            $parts = [$grade, $routeName];
+                        }
+                    }
+                }
+                
+                if (count($parts) < 2) {
+                    $errors[] = "Zeile " . ($lineNumber + 1) . ": Ungültiges Format. Erwartet: 'Grade\tRoute Name' oder 'Grade  Route Name'";
+                    continue;
+                }
+
+                $grade = trim($parts[0]);
+                $routeName = trim($parts[1]);
+
+                // Skip if grade is empty or route name is empty
+                if (empty($grade) || empty($routeName)) {
+                    $errors[] = "Zeile " . ($lineNumber + 1) . ": Grade oder Routenname fehlt";
+                    continue;
+                }
+
+                // Skip "NN" entries without a route name (or handle them differently)
+                if (strtoupper($grade) === 'NN' && (empty($routeName) || strtoupper($routeName) === 'NN')) {
+                    continue;
+                }
+
+                // Remove stars (★★★, ★★, ★, etc.) from route name
+                $routeName = preg_replace('/[★☆]+[\s]*/', '', $routeName);
+                $routeName = trim($routeName);
+
+                // Look ahead for "Erstbegehung" line (check next 5 lines)
+                $firstAscent = null;
+                $yearFirstAscent = null;
+                for ($i = $lineNumber + 1; $i < min($lineNumber + 6, count($lines)); $i++) {
+                    $nextLine = trim($lines[$i]);
+                    if (preg_match('/^Erstbegehung:/i', $nextLine)) {
+                        // Parse "Erstbegehung: K. Tonkovic & R. Müller, 1999"
+                        // Extract the name after "&" and the year
+                        if (preg_match('/Erstbegehung:\s*[^&]*&\s*([^,]+),\s*(\d{4})/i', $nextLine, $matches)) {
+                            $firstAscent = trim($matches[1]);
+                            $yearFirstAscent = (int)$matches[2];
+                        } elseif (preg_match('/Erstbegehung:\s*[^&]*&\s*([^,]+)/i', $nextLine, $matches)) {
+                            // If no year, just get the name after &
+                            $firstAscent = trim($matches[1]);
+                        }
+                        break; // Found Erstbegehung, stop looking
+                    }
+                    // If we hit another route line (starts with grade), stop looking
+                    if (!empty($nextLine) && preg_match($gradePattern, $nextLine)) {
+                        break;
+                    }
+                }
+
+                // Create new route
+                $route = new Routes();
+                $route->setName($routeName);
+                $route->setGrade($grade);
+                $route->setRock($rock);
+                
+                // Set area from rock if available
+                if ($rock->getArea()) {
+                    $route->setArea($rock->getArea());
+                }
+
+                // Set first ascent information if found
+                if ($firstAscent) {
+                    $route->setFirstAscent($firstAscent);
+                }
+                if ($yearFirstAscent) {
+                    $route->setYearFirstAscent($yearFirstAscent);
+                }
+
+                // Set nr (increment from max)
+                $maxNr++;
+                $route->setNr($maxNr);
+
+                try {
+                    $entityManager->persist($route);
+                    $imported++;
+                } catch (\Exception $e) {
+                    $errors[] = "Zeile " . ($lineNumber + 1) . ": Fehler beim Speichern - " . $e->getMessage();
+                }
+            }
+
+            if ($imported > 0) {
+                $entityManager->flush();
+                $this->addFlash('success', "$imported Route(n) erfolgreich importiert.");
+            }
+
+            if (!empty($errors)) {
+                $this->addFlash('warning', count($errors) . " Fehler beim Import:");
+                foreach ($errors as $error) {
+                    $this->addFlash('warning', $error);
+                }
+            }
+
+            if ($imported > 0) {
+                return $this->redirect($adminUrlGenerator
+                    ->setDashboard(DashboardController::class)
+                    ->setController(RockCrudController::class)
+                    ->setAction('detail')
+                    ->setEntityId($rockId)
+                    ->generateUrl());
+            }
+        }
+
+        $detailUrl = $adminUrlGenerator
+            ->setDashboard(DashboardController::class)
+            ->setController(RockCrudController::class)
+            ->setAction('detail')
+            ->setEntityId($rockId)
+            ->generateUrl();
+
+        return $this->render('admin/rock/import_routes.html.twig', [
+            'rock' => $rock,
+            'detailUrl' => $detailUrl,
+        ]);
     }
 }

@@ -28,6 +28,8 @@
                         </p>
 
                         <form method="post" action="{{ path('admin_rock_import_routes', {rockId: rock.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('rock_routes_import') }}">
+                            
                             <div class="form-group mb-3">
                                 <label for="routes_data" class="form-label">Routendaten:</label>
                                 <textarea 

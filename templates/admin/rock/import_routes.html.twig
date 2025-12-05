@@ -1,0 +1,64 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block page_title %}
+    Routen importieren - {{ rock.name }}
+{% endblock %}
+
+{% block main %}
+    <div class="content-header">
+        <div class="content-header-title">
+            <h1 class="title">Routen importieren für: {{ rock.name }}</h1>
+        </div>
+    </div>
+
+    <div class="content-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="text-muted mb-4">
+                            Fügen Sie Ihre Routendaten ein. Das Format sollte sein:<br>
+                            <code>Grade[TAB]Routenname</code> oder <code>Grade  Routenname</code> (mehrere Leerzeichen)
+                        </p>
+                        <p class="text-muted mb-4">
+                            <strong>Beispiel:</strong><br>
+                            <code>6b+	Lauschangriff</code><br>
+                            <code>7a	Ausdauerüberraschung</code><br>
+                            <code>6a+	★★ Starthilfe</code>
+                        </p>
+
+                        <form method="post" action="{{ path('admin_rock_import_routes', {rockId: rock.id}) }}">
+                            <div class="form-group mb-3">
+                                <label for="routes_data" class="form-label">Routendaten:</label>
+                                <textarea 
+                                    id="routes_data" 
+                                    name="routes_data" 
+                                    class="form-control" 
+                                    rows="15" 
+                                    placeholder="6b+	Lauschangriff
+7a	Ausdauerüberraschung
+6a+	★★ Starthilfe"
+                                    required
+                                ></textarea>
+                                <small class="form-text text-muted">
+                                    Jede Zeile sollte eine Route enthalten. Die erste Spalte ist der Schwierigkeitsgrad, die zweite Spalte ist der Routenname.
+                                </small>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-upload"></i> Routen importieren
+                                </button>
+                                <a href="{{ detailUrl }}" 
+                                    class="btn btn-secondary">
+                                    <i class="fa fa-times"></i> Abbrechen
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

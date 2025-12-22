@@ -1,0 +1,181 @@
+{# 
+	JSON-LD Structured Data Partial
+	Usage: {% include 'partials/_json_ld.html.twig' with {
+		'type': 'index|area|rock',
+		'title': 'Page Title',
+		'description': 'Page description',
+		'url': 'https://example.com/page',
+		'image': 'image-url',
+		'areas': [...] (for index page),
+		'rock': {...} (for rock page),
+		'area': {...} (for area page)
+	} %}
+#}
+
+{% if type is not defined %}
+	{% set type = 'index' %}
+{% endif %}
+
+{% if type == 'index' %}
+{# Homepage structured data #}
+<script type="application/ld+json">
+{
+	"@context": "https://schema.org",
+	"@graph": [
+		{
+			"@type": "WebSite",
+			"@id": "https://munichclimbs.de/#website",
+			"url": "https://munichclimbs.de/",
+			"name": "Munichclimbs",
+			"description": "{{ description|default('Klettern rund um München')|e('js') }}",
+			"inLanguage": "de-DE"
+		},
+		{
+			"@type": "Organization",
+			"@id": "https://munichclimbs.de/#organization",
+			"name": "Munichclimbs",
+			"url": "https://munichclimbs.de/",
+			"logo": {
+				"@type": "ImageObject",
+				"url": "https://munichclimbs.de/build/images/favicon/android-chrome-512x512.png"
+			}
+		},
+		{
+			"@type": "WebPage",
+			"@id": "{{ url|default('https://munichclimbs.de/')|e('js') }}#webpage",
+			"url": "{{ url|default('https://munichclimbs.de/')|e('js') }}",
+			"name": "{{ title|default('Munichclimbs')|e('js') }}",
+			"description": "{{ description|default('Klettern rund um München')|e('js') }}",
+			"isPartOf": {
+				"@id": "https://munichclimbs.de/#website"
+			},
+			"about": {
+				"@type": "Thing",
+				"name": "Klettern",
+				"description": "Klettergebiete und Felsen rund um München"
+			},
+			"inLanguage": "de-DE"
+		}
+		{% if areas is defined and areas is iterable %}
+		,{
+			"@type": "ItemList",
+			"name": "Klettergebiete um München",
+			"description": "Übersicht aller Klettergebiete rund um München",
+			"numberOfItems": {{ areas|length }},
+			"itemListElement": [
+				{% for area in areas %}
+				{
+					"@type": "ListItem",
+					"position": {{ loop.index }},
+					"item": {
+						"@type": "SportsActivityLocation",
+						"name": "{{ area.name|e('js') }}",
+						"url": "https://munichclimbs.de/gebiet/{{ area.slug|e('js') }}"
+						{% if area.image is defined and area.image is not empty %},
+						"image": "https://www.munichclimbs.de/uploads/areas/{{ area.image|e('js') }}"
+						{% endif %}
+					}
+				}{% if not loop.last %},{% endif %}
+				{% endfor %}
+			]
+		}
+		{% endif %}
+	]
+}
+</script>
+
+{% elseif type == 'area' %}
+{# Area page structured data #}
+<script type="application/ld+json">
+{
+	"@context": "https://schema.org",
+	"@graph": [
+		{
+			"@type": "WebPage",
+			"@id": "{{ url|e('js') }}#webpage",
+			"url": "{{ url|e('js') }}",
+			"name": "{{ title|e('js') }}",
+			"description": "{{ description|e('js') }}",
+			"isPartOf": {
+				"@id": "https://munichclimbs.de/#website"
+			},
+			"inLanguage": "de-DE"
+		},
+		{
+			"@type": "SportsActivityLocation",
+			"@id": "{{ url|e('js') }}#place",
+			"name": "{{ area.name|default(title)|e('js') }}",
+			"description": "{{ description|e('js') }}",
+			"url": "{{ url|e('js') }}"
+			{% if image is defined and image is not empty %},
+			"image": "{{ image|e('js') }}"
+			{% endif %}
+			{% if latitude is defined and longitude is defined %},
+			"geo": {
+				"@type": "GeoCoordinates",
+				"latitude": {{ latitude }},
+				"longitude": {{ longitude }}
+			}
+			{% endif %},
+			"sport": "Klettern",
+			"address": {
+				"@type": "PostalAddress",
+				"addressRegion": "Bayern",
+				"addressCountry": "DE"
+			}
+		}
+	]
+}
+</script>
+
+{% elseif type == 'rock' %}
+{# Rock page structured data #}
+<script type="application/ld+json">
+{
+	"@context": "https://schema.org",
+	"@graph": [
+		{
+			"@type": "WebPage",
+			"@id": "{{ url|e('js') }}#webpage",
+			"url": "{{ url|e('js') }}",
+			"name": "{{ title|e('js') }}",
+			"description": "{{ description|e('js') }}",
+			"isPartOf": {
+				"@id": "https://munichclimbs.de/#website"
+			},
+			"inLanguage": "de-DE"
+		},
+		{
+			"@type": "SportsActivityLocation",
+			"@id": "{{ url|e('js') }}#place",
+			"name": "{{ rock.name|default(title)|e('js') }}",
+			"description": "{{ description|e('js') }}",
+			"url": "{{ url|e('js') }}"
+			{% if image is defined and image is not empty %},
+			"image": "{{ image|e('js') }}"
+			{% endif %}
+			{% if latitude is defined and longitude is defined %},
+			"geo": {
+				"@type": "GeoCoordinates",
+				"latitude": {{ latitude }},
+				"longitude": {{ longitude }}
+			}
+			{% endif %},
+			"sport": "Klettern",
+			"address": {
+				"@type": "PostalAddress",
+				"addressRegion": "Bayern",
+				"addressCountry": "DE"
+			}
+			{% if area_name is defined and area_name is not empty %},
+			"containedInPlace": {
+				"@type": "SportsActivityLocation",
+				"name": "{{ area_name|e('js') }}"
+			}
+			{% endif %}
+		}
+	]
+}
+</script>
+{% endif %}
+

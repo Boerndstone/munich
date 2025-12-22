@@ -13,6 +13,13 @@
 		'description': description,
 		'url': 'https://munichclimbs.de/'
 	} %}
+	{% include 'partials/_json_ld.html.twig' with {
+		'type': 'index',
+		'title': 'Munichclimbs',
+		'description': description,
+		'url': 'https://munichclimbs.de/',
+		'areas': getAreasInformation()
+	} %}
 {% endblock %}
 
 {% block body %}

@@ -16,3 +16,6 @@
 ### Rebase
 
 - git pull origin main --rebase
+
+### Command to render Sitemap
+-    php bin/console app:generate-sitemap

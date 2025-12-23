@@ -40,3 +40,7 @@ services:
       $defaultLocale: "%locale%"
     tags:
       - { name: kernel.event_subscriber }
+
+  App\Command\GenerateSitemapCommand:
+    arguments:
+      $projectDir: "%kernel.project_dir%"

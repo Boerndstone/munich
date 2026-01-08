@@ -134,11 +134,7 @@
 												<div class="col">
 													<div class="overflow-hidden flex-nowrap">
 														<div class="d-flex align-items-bottom justify-content-between">
-															<h6 class="mb-0 fw-normal d-inline-block text-truncate text-truncate-rock-name">{{rock.rockName}}
-																{% if currentDate < 181 and rock.banned > 0 %}
-																	<span class="badge fw-light ms-2" style="background-color: #b91c1c;">gesperrt</span>
-																{% endif %}
-															</h6>
+															<h6 class="mb-0 fw-normal d-inline-block text-truncate text-truncate-rock-name">{{rock.rockName}}</h6>
 															<div class="d-flex align-items-center">
 																<p class="small mb-0">{{ rock.rockHeight }} m</p>
 																<div class="mx-1 text d-block" style="width: 1px; height: 14px;"></div>
@@ -165,6 +161,13 @@
 																				<div class="progress-bar" role="progressbar" style="width: {{ project }}%; background-color: black" aria-valuenow="{{ project }}" aria-valuemin="0" aria-valuemax="100"></div>
 																			</div>
 																		</div>
+																	</div>
+																	<div class="col text-end">
+																		{% if currentDate < 181 and rock.banned == 1 %}
+																			<span class="badge fw-light " style="background-color: #b91c1c !important;">gesperrt bis: {{ date(date("now")|date("Y") ~ "-01-01")|date_modify("+180 days")|date('d.m.') }}</span>
+																		{% elseif currentDate < 181 and rock.banned == 2 %}
+																			<span class="badge fw-light " style="background-color: #b91c1c !important;">gesperrt bis: {{ date(date("now")|date("Y") ~ "-01-01")|date_modify("+211 days")|date('d.m.') }}</span>
+																		{% endif %}
 																	</div>
 																</div>
 															</div>

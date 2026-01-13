@@ -93,7 +93,19 @@ class RockCrudController extends AbstractCrudController
                     return ['rockId' => $rock->getId()];
                 })
                 ->setIcon('fa fa-upload')
-                ->setCssClass('btn btn-primary'));
+                ->setCssClass('btn btn-primary'))
+            ->add(Crud::PAGE_DETAIL, Action::new('editGeolocation', 'Pfad bearbeiten')
+                ->linkToRoute('admin_rock_geolocation', function (Rock $rock): array {
+                    return ['rockId' => $rock->getId()];
+                })
+                ->setIcon('fa fa-map-marker-alt')
+                ->setCssClass('btn btn-secondary'))
+            ->add(Crud::PAGE_EDIT, Action::new('editGeolocation', 'Pfad bearbeiten')
+                ->linkToRoute('admin_rock_geolocation', function (Rock $rock): array {
+                    return ['rockId' => $rock->getId()];
+                })
+                ->setIcon('fa fa-map-marker-alt')
+                ->setCssClass('btn btn-secondary'));
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -596,6 +608,72 @@ class RockCrudController extends AbstractCrudController
             ->generateUrl();
 
         return $this->render('admin/rock/import_routes.html.twig', [
+            'rock' => $rock,
+            'detailUrl' => $detailUrl,
+        ]);
+    }
+
+    #[Route('/admin/rock/{rockId}/geolocation', name: 'admin_rock_geolocation', methods: ['GET', 'POST'])]
+    public function editGeolocation(int $rockId, Request $request, EntityManagerInterface $entityManager, AdminUrlGenerator $adminUrlGenerator): Response
+    {
+        $rock = $entityManager->getRepository(Rock::class)->find($rockId);
+        
+        if (!$rock) {
+            $this->addFlash('error', 'Fels nicht gefunden.');
+            return $this->redirect($adminUrlGenerator
+                ->setDashboard(DashboardController::class)
+                ->setController(RockCrudController::class)
+                ->setAction('index')
+                ->generateUrl());
+        }
+
+        if ($request->isMethod('POST')) {
+            $token = $request->request->get('_token');
+            if (!$this->isCsrfTokenValid('rock_geolocation', $token)) {
+                $this->addFlash('error', 'Ungültiger Sicherheitstoken. Bitte versuchen Sie es erneut.');
+            } else {
+                $coordinatesJson = $request->request->get('path_coordinates', '');
+                
+                if (!empty($coordinatesJson)) {
+                    try {
+                        $coordinates = json_decode($coordinatesJson, true, 512, \JSON_THROW_ON_ERROR);
+                        $rock->setPathCoordinates($coordinates);
+                        $entityManager->flush();
+                        $this->addFlash('success', 'Pfad-Koordinaten erfolgreich gespeichert.');
+                        
+                        return $this->redirect($adminUrlGenerator
+                            ->setDashboard(DashboardController::class)
+                            ->setController(RockCrudController::class)
+                            ->setAction('detail')
+                            ->setEntityId($rockId)
+                            ->generateUrl());
+                    } catch (\JsonException $e) {
+                        $this->addFlash('error', 'Ungültiges JSON-Format: ' . $e->getMessage());
+                    }
+                } else {
+                    // Allow clearing coordinates
+                    $rock->setPathCoordinates(null);
+                    $entityManager->flush();
+                    $this->addFlash('success', 'Pfad-Koordinaten wurden gelöscht.');
+                    
+                    return $this->redirect($adminUrlGenerator
+                        ->setDashboard(DashboardController::class)
+                        ->setController(RockCrudController::class)
+                        ->setAction('detail')
+                        ->setEntityId($rockId)
+                        ->generateUrl());
+                }
+            }
+        }
+
+        $detailUrl = $adminUrlGenerator
+            ->setDashboard(DashboardController::class)
+            ->setController(RockCrudController::class)
+            ->setAction('detail')
+            ->setEntityId($rockId)
+            ->generateUrl();
+
+        return $this->render('admin/rock/geolocation.html.twig', [
             'rock' => $rock,
             'detailUrl' => $detailUrl,
         ]);

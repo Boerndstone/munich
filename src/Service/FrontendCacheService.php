@@ -22,6 +22,8 @@ class FrontendCacheService
     private const LATEST_ROUTES_TTL = 1800;   // 30 minutes
     private const LATEST_COMMENTS_TTL = 600;  // 10 minutes (comments change more often)
     private const BANNED_ROCKS_TTL = 3600;    // 1 hour
+    private const AREA_ROCKS_TTL = 3600;      // 1 hour
+    private const TOP100_ROUTES_TTL = 3600;   // 1 hour
 
     public function __construct(
         RoutesRepository $routesRepository,
@@ -72,16 +74,6 @@ class FrontendCacheService
     }
 
     /**
-     * Clear all frontend cache
-     */
-    public function clearCache(): void
-    {
-        $this->cache->delete('frontend_latest_routes');
-        $this->cache->delete('frontend_latest_comments');
-        $this->cache->delete('frontend_banned_rocks');
-    }
-
-    /**
      * Clear only the comments cache (useful when new comments are added)
      */
     public function clearCommentsCache(): void
@@ -95,6 +87,69 @@ class FrontendCacheService
     public function clearRoutesCache(): void
     {
         $this->cache->delete('frontend_latest_routes');
+    }
+
+    /**
+     * Get rocks information for an area with caching
+     */
+    public function getRocksForArea(string $areaSlug): array
+    {
+        $cacheKey = 'area_rocks_' . $areaSlug;
+        
+        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($areaSlug): array {
+            $item->expiresAfter(self::AREA_ROCKS_TTL);
+            
+            return $this->rockRepository->getRocksInformation($areaSlug);
+        });
+    }
+
+    /**
+     * Get route grades for rocks in an area with caching
+     */
+    public function getRouteGradesForArea(string $areaSlug): array
+    {
+        $cacheKey = 'area_route_grades_' . $areaSlug;
+        
+        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($areaSlug): array {
+            $item->expiresAfter(self::AREA_ROCKS_TTL);
+            
+            return $this->rockRepository->getRouteGradesForRocks($areaSlug);
+        });
+    }
+
+    /**
+     * Get top 100 routes for an area with caching
+     */
+    public function getTop100RoutesForArea(int $areaId): array
+    {
+        $cacheKey = 'area_top100_routes_' . $areaId;
+        
+        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($areaId): array {
+            $item->expiresAfter(self::TOP100_ROUTES_TTL);
+            
+            return $this->routesRepository->findTop100ByAreaCached($areaId);
+        });
+    }
+
+    /**
+     * Clear all frontend cache including area-specific caches
+     */
+    public function clearCache(): void
+    {
+        $this->cache->delete('frontend_latest_routes');
+        $this->cache->delete('frontend_latest_comments');
+        $this->cache->delete('frontend_banned_rocks');
+        // Note: Area-specific caches will expire naturally or can be cleared individually
+    }
+
+    /**
+     * Clear cache for a specific area
+     */
+    public function clearAreaCache(string $areaSlug, int $areaId): void
+    {
+        $this->cache->delete('area_rocks_' . $areaSlug);
+        $this->cache->delete('area_route_grades_' . $areaSlug);
+        $this->cache->delete('area_top100_routes_' . $areaId);
     }
 }
 

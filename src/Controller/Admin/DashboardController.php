@@ -111,6 +111,7 @@ class DashboardController extends AbstractDashboardController
         ]);
     }
 
+    #[\Symfony\Component\Security\Http\Attribute\IsGranted('ROLE_ADMIN')]
     #[Route('/climbed-routes-count/{areaId}', name: 'climbed_routes_count')]
     public function climbedRoutesCount(int $areaId): Response
     {
@@ -119,6 +120,8 @@ class DashboardController extends AbstractDashboardController
 
         return new JsonResponse(['count' => count($climbedRoutesInArea)]);
     }
+
+    #[\Symfony\Component\Security\Http\Attribute\IsGranted('ROLE_ADMIN')]
     #[Route('/update-grades', name: 'update_grades')]
     public function updateGrades(): Response
     {
@@ -127,6 +130,7 @@ class DashboardController extends AbstractDashboardController
         return new JsonResponse(['status' => 'success']);
     }
 
+    #[\Symfony\Component\Security\Http\Attribute\IsGranted('ROLE_ADMIN')]
     #[Route('/admin/clear-frontend-cache', name: 'admin_clear_frontend_cache')]
     public function clearFrontendCache(): Response
     {

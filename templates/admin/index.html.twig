@@ -30,7 +30,12 @@
 		<div class="col-12 col-md-4">{{ render_chart(chartBernd) }}
 		</div>
 		<div class="col-12 col-md-4">
-			<button id="update-grades-button" class="btn btn-primary">Update Grades</button>
+			<div class="d-flex flex-column gap-2">
+				<button id="update-grades-button" class="btn btn-primary">Update Grades</button>
+				<button id="clear-cache-button" class="btn btn-warning">
+					<i class="fa fa-refresh me-1"></i> Clear Frontend Cache
+				</button>
+			</div>
 		</div>
 
 		<div class="col-12 my-5">
@@ -45,12 +50,55 @@
 		</div>
 	</div>
 
-	 <script>
-			document.getElementById('update-grades-button').addEventListener('click', function() {
-			    fetch('/update-grades')
-			        .then(response => response.json())
-			        .then(data => console.log(data));
-			});
-			</script>
+	<script>
+		document.getElementById('update-grades-button').addEventListener('click', function() {
+			fetch('/update-grades')
+				.then(response => response.json())
+				.then(data => console.log(data));
+		});
+
+		document.getElementById('clear-cache-button').addEventListener('click', function() {
+			const button = this;
+			const originalText = button.innerHTML;
+			
+			// Show loading state
+			button.disabled = true;
+			button.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i> Clearing...';
+			
+			fetch('/admin/clear-frontend-cache')
+				.then(response => response.json())
+				.then(data => {
+					if (data.status === 'success') {
+						button.innerHTML = '<i class="fa fa-check me-1"></i> Cache Cleared!';
+						button.classList.remove('btn-warning');
+						button.classList.add('btn-success');
+						
+						// Reset button after 2 seconds
+						setTimeout(() => {
+							button.innerHTML = originalText;
+							button.classList.remove('btn-success');
+							button.classList.add('btn-warning');
+							button.disabled = false;
+						}, 2000);
+					} else {
+						throw new Error('Cache clear failed');
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					button.innerHTML = '<i class="fa fa-times me-1"></i> Error!';
+					button.classList.remove('btn-warning');
+					button.classList.add('btn-danger');
+					
+					// Reset button after 2 seconds
+					setTimeout(() => {
+						button.innerHTML = originalText;
+						button.classList.remove('btn-danger');
+						button.classList.add('btn-warning');
+						button.disabled = false;
+					}, 2000);
+				});
+		});
+	</script>
 
 {% endblock %}

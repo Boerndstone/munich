@@ -98,8 +98,7 @@ class FrontendController extends AbstractController
 
     #[Route('/{slug}', name: 'show_rocks')]
     public function showRocksArea(
-        RockRepository $rockRepository,
-        RoutesRepository $routesRepository,
+        FrontendCacheService $frontendCacheService,
         #[MapEntity] Area $area,
         string $slug
     ): Response {
@@ -113,9 +112,10 @@ class FrontendController extends AbstractController
         $areaImage = $area->getHeaderImage();
         $areaKletterkonzeption = $area->getKletterkonzeption();
 
-        $rocks = $rockRepository->getRocksInformation($slug);
-        $routeGrades = $rockRepository->getRouteGradesForRocks($slug);
-        $top100Routes = $routesRepository->findTop100ByArea($area);
+        // Use cached data for better performance
+        $rocks = $frontendCacheService->getRocksForArea($slug);
+        $routeGrades = $frontendCacheService->getRouteGradesForArea($slug);
+        $top100Routes = $frontendCacheService->getTop100RoutesForArea($area->getId());
 
         // Group route grades by rock slug
         $gradesByRock = [];
@@ -133,7 +133,7 @@ class FrontendController extends AbstractController
             $rock['routeGrades'] = isset($gradesByRock[$rockSlug]) ? implode(',', $gradesByRock[$rockSlug]) : '';
         }
 
-        return $this->render('frontend/rocks.html.twig', [
+        $response = $this->render('frontend/rocks.html.twig', [
             'areaName' => $areaName,
             'areaSlug' => $areaSlug,
             'areaLat' => $areaLat,
@@ -145,6 +145,12 @@ class FrontendController extends AbstractController
             'rocks' => $rocks,
             'top100Routes' => $top100Routes,
         ]);
+
+        // Enable HTTP caching - page can be cached for 5 minutes
+        $response->setSharedMaxAge(300);
+        $response->headers->set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=60');
+
+        return $response;
     }
 
     // #[Route('/{areaSlug}/{slug}', name: 'show_rock')]

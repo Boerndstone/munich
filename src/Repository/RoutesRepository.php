@@ -466,4 +466,38 @@ class RoutesRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Get the top 100 most difficult routes in an area (cache-friendly version)
+     * Returns arrays instead of entities for proper serialization
+     */
+    public function findTop100ByAreaCached(int $areaId): array
+    {
+        return $this->createQueryBuilder('r')
+            ->select(
+                'r.id',
+                'r.name',
+                'r.grade',
+                'r.gradeNo',
+                'r.firstAscent',
+                'r.yearFirstAscent',
+                'r.rating',
+                'r.protection',
+                'r.rockQuality',
+                'rock.name AS rockName',
+                'rock.slug AS rockSlug',
+                'area.slug AS areaSlug'
+            )
+            ->leftJoin('r.rock', 'rock')
+            ->leftJoin('r.area', 'area')
+            ->where('area.id = :areaId')
+            ->andWhere('r.gradeNo IS NOT NULL')
+            ->andWhere('rock.online = 1')
+            ->setParameter('areaId', $areaId)
+            ->orderBy('r.gradeNo', 'DESC')
+            ->addOrderBy('r.name', 'ASC')
+            ->setMaxResults(100)
+            ->getQuery()
+            ->getResult();
+    }
 }

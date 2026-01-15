@@ -81,6 +81,8 @@ class RoutesRepository extends ServiceEntityRepository
 
     /**
      * Get latest routes as arrays (cache-friendly)
+     *
+     * @return array<int, array{id: int, name: string, grade: string, rockName: string, rockSlug: string, areaSlug: string}>
      */
     public function latestRoutes(): array
     {

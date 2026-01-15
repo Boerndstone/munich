@@ -3,11 +3,11 @@
 	<ul class="list-unstyled">
 		{% for latestRoute in latestRoutes %}
 			<li class="px-3 mb-2 hover:bg-gray-300" style="line-height: 1.3rem;">
-				<a class="fs-6 text-truncate text-black block" href="{{ path('show_rock', { 'areaSlug': latestRoute.area.slug, slug: latestRoute.rock.slug }) }}">
+				<a class="fs-6 text-truncate text-black block" href="{{ path('show_rock', { 'areaSlug': latestRoute.areaSlug, slug: latestRoute.rockSlug }) }}">
 					<span class="d-inline-block me-2 list-item-icon"></span>
 					<span class="fw-normal pr-2">{{ latestRoute.name }}</span>
 					<span class="fw-normal">{{ latestRoute.grade }}</span>
-					<span class="fw-light d-block ms-2 text-truncate" style="padding-left: 12px;">{{ latestRoute.rock }}</span>
+					<span class="fw-light d-block ms-2 text-truncate" style="padding-left: 12px;">{{ latestRoute.rockName }}</span>
 				</a>
 			</li>
 		{% endfor %}

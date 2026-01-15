@@ -14,6 +14,8 @@ use App\Entity\ClimbedRoutes;
 use App\Entity\Comment;
 use App\Repository\AreaRepository;
 use App\Repository\RockRepository;
+use App\Service\AreasService;
+use App\Service\FrontendCacheService;
 use Symfony\UX\Chartjs\Model\Chart;
 use App\Repository\RoutesRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,14 +42,25 @@ class DashboardController extends AbstractDashboardController
     private RockRepository $rockRepository;
     private ChartBuilderInterface $chartBuilder;
     private RequestStack $requestStack;
+    private AreasService $areasService;
+    private FrontendCacheService $frontendCacheService;
 
-    public function __construct(RoutesRepository $routesRepository, AreaRepository $areaRepository, RockRepository $rockRepository, ChartBuilderInterface $chartBuilder, RequestStack $requestStack)
-    {
+    public function __construct(
+        RoutesRepository $routesRepository,
+        AreaRepository $areaRepository,
+        RockRepository $rockRepository,
+        ChartBuilderInterface $chartBuilder,
+        RequestStack $requestStack,
+        AreasService $areasService,
+        FrontendCacheService $frontendCacheService
+    ) {
         $this->areaRepository = $areaRepository;
         $this->rockRepository = $rockRepository;
         $this->routesRepository = $routesRepository;
         $this->chartBuilder = $chartBuilder;
         $this->requestStack = $requestStack;
+        $this->areasService = $areasService;
+        $this->frontendCacheService = $frontendCacheService;
     }
 
     // Have to to make user in db + user form!!!
@@ -112,6 +125,19 @@ class DashboardController extends AbstractDashboardController
         $this->routesRepository->updateGrades();
 
         return new JsonResponse(['status' => 'success']);
+    }
+
+    #[Route('/admin/clear-frontend-cache', name: 'admin_clear_frontend_cache')]
+    public function clearFrontendCache(): Response
+    {
+        // Clear all frontend caches
+        $this->areasService->clearCache();
+        $this->frontendCacheService->clearCache();
+
+        return new JsonResponse([
+            'status' => 'success',
+            'message' => 'Frontend cache cleared successfully'
+        ]);
     }
 
     public function configureDashboard(): Dashboard

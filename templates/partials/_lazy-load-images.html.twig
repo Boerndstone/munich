@@ -1,10 +1,10 @@
 <picture>
 	{% if suffixes is defined and suffixes is not empty %}
 		{% for mediaQuery, suffix in suffixes %}
-			<source media="{{ mediaQuery }}" srcset="{{ asset(url ~ area.image ~ '-' ~ suffix ~ '-@1x.webp') }}, {{ asset(url ~ area.image ~ '-' ~ suffix ~ '-@2x.webp') }} 2x, {{ asset(url ~ area.image ~ '-' ~ suffix ~ '-@3x.webp') }} 3x" loading="lazy">
+			<source media="{{ mediaQuery }}" srcset="{{ asset(url ~ area.image ~ '-' ~ suffix ~ '-@1x.webp') }}, {{ asset(url ~ area.image ~ '-' ~ suffix ~ '-@2x.webp') }} 2x, {{ asset(url ~ area.image ~ '-' ~ suffix ~ '-@3x.webp') }} 3x">
 		{% endfor %}
 	{% else %}
-		<source srcset="{{ asset(url ~ area.image ~ '@1x.webp') }}, {{ asset(url ~ area.image ~ '@2x.webp') }} 2x, {{ asset(url ~ area.image ~ '@3x.webp') }} 3x" loading="lazy">
+		<source srcset="{{ asset(url ~ area.image ~ '@1x.webp') }}, {{ asset(url ~ area.image ~ '@2x.webp') }} 2x, {{ asset(url ~ area.image ~ '@3x.webp') }} 3x">
 	{% endif %}
-	<img class="img-fluid" src="{{ asset('https://www.munichclimbs.de/uploads/areas/' ~ area.image ~ '.webp') }}" alt="Klettergebiet {{ area.name }}" loading="lazy">
+	<img class="img-fluid" src="{{ asset('https://www.munichclimbs.de/uploads/areas/' ~ area.image ~ '.webp') }}" alt="Klettergebiet {{ area.name }}" loading="lazy" decoding="async" fetchpriority="low">
 </picture>

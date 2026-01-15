@@ -91,6 +91,14 @@ class RockRepository extends ServiceEntityRepository
 
     /**
      * Get seasonally banned rocks as arrays (cache-friendly)
+     *
+     * @return array<int, array{
+     *     id: int,
+     *     name: string,
+     *     slug: string,
+     *     areaName: string,
+     *     areaSlug: string
+     * }>
      */
     public function saisonalGesperrt(): array
     {

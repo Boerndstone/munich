@@ -36,7 +36,7 @@
 
     <extensions>
         <!-- DAMA DoctrineTestBundle - wraps each test in a database transaction
-             Currently incompatible: v7 needs Symfony 5/6, v8 needs PHPUnit 10+
+             Currently incompatible: v7 needs Symfony 5/6, v8 needs PHPUnit 9.5 or 10+
              Your unit tests with mocks don't need this anyway -->
         <!-- <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" /> -->
 

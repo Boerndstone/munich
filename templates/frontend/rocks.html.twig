@@ -31,8 +31,8 @@
 			{% if areaImage is not empty %}
 				<picture>
 					<source media="(min-width: 1200px)" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-large-@1x.webp') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-large-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-large-@3x.webp') }} 3x">
-					<source media="(min-width: 800px)" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-medium-@1x.webp') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-medium-@2x.webp') }} @2, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-medium-@3x.webp') }} 3x">
-					<img src="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-small-@1x.webp') }}" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-small-@2x.webp 2x') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-small-@3x.webp 3x') }}" alt="{{ setTitle }}" loading="lazy">
+					<source media="(min-width: 800px)" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-medium-@1x.webp') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-medium-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-medium-@3x.webp') }} 3x">
+					<img src="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-small-@1x.webp') }}" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-small-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-small-@3x.webp') }} 3x" alt="{{ setTitle }}" fetchpriority="high" decoding="async">
 				</picture>
 			{% else %}
 				<div style="height: 100px"></div>
@@ -122,8 +122,8 @@
 												<div class="col-auto px-0">
 													{% if rock.previewImage is defined and rock.previewImage is not null %}
 														<picture>
-															<source type="image/webp" srcset="https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}.webp, https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}@2x.webp 2x, https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}@3x.webp 3x" loading="lazy">
-															<img src="https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}.webp" alt="Klettergebiet, {{ areaName}}, Fels: {{ rock.rockName }}" title="Klettergebiet, {{ areaName }}, Fels: {{ rock.rockName }}" loading="lazy" class="shadow d-inline-block" style="height: 50px; width: 50px; object-fit: cover; border-radius: 50%;">
+															<source type="image/webp" srcset="https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}.webp, https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}@2x.webp 2x, https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}@3x.webp 3x">
+															<img src="https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}.webp" alt="Klettergebiet, {{ areaName}}, Fels: {{ rock.rockName }}" title="Klettergebiet, {{ areaName }}, Fels: {{ rock.rockName }}" loading="lazy" decoding="async" fetchpriority="low" class="shadow d-inline-block" style="height: 50px; width: 50px; object-fit: cover; border-radius: 50%;">
 														</picture>
 													{% else %}
 														<div class="d-flex align-items-center justify-content-center shadow" style="height: 50px; width: 50px; object-fit: cover; border-radius: 50%;">

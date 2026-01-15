@@ -6,5 +6,5 @@
 	{% else %}
 		<source srcset="{{ asset(url ~ area.image ~ '@1x.webp') }}, {{ asset(url ~ area.image ~ '@2x.webp') }} 2x, {{ asset(url ~ area.image ~ '@3x.webp') }} 3x">
 	{% endif %}
-	<img class="img-fluid" src="{{ asset('https://www.munichclimbs.de/uploads/areas/' ~ area.image ~ '.webp') }}" alt="Klettergebiet {{ area.name }}" loading="lazy" decoding="async" fetchpriority="low">
+	<img class="img-fluid" src="{{ asset('https://www.munichclimbs.de/uploads/areas/' ~ area.image ~ '.webp') }}" alt="Klettergebiet {{ area.name }}" loading="lazy" decoding="async">
 </picture>

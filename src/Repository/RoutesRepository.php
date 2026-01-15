@@ -490,7 +490,7 @@ class RoutesRepository extends ServiceEntityRepository
             )
             ->leftJoin('r.rock', 'rock')
             ->leftJoin('r.area', 'area')
-            ->where('r.area = :areaId')
+            ->where('area.id = :areaId')
             ->andWhere('r.gradeNo IS NOT NULL')
             ->andWhere('rock.online = 1')
             ->setParameter('areaId', $areaId)

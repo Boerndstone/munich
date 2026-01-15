@@ -89,12 +89,32 @@ class RockRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function saisonalGesperrt()
+    /**
+     * Get seasonally banned rocks as arrays (cache-friendly)
+     *
+     * @return array<int, array{
+     *     id: int,
+     *     name: string,
+     *     slug: string,
+     *     areaName: string,
+     *     areaSlug: string
+     * }>
+     */
+    public function saisonalGesperrt(): array
     {
         return $this->createQueryBuilder('rock')
-            ->orderBy('rock.name', 'ASC')
-            ->where('rock.banned = 1')
-            ->orWhere('rock.banned = 2')
+            ->select(
+                'rock.id',
+                'rock.name',
+                'rock.slug',
+                'area.name AS areaName',
+                'area.slug AS areaSlug'
+            )
+            ->innerJoin('rock.area', 'area')
+            ->where('rock.banned IN (1, 2)')
+            ->andWhere('rock.slug IS NOT NULL')
+            ->andWhere('area.slug IS NOT NULL')
+            ->andWhere('area.online = 1')
             ->orderBy('rock.banned')
             ->getQuery()
             ->getResult();

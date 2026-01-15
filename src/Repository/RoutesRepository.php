@@ -79,11 +79,29 @@ class RoutesRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function latestRoutes()
+    /**
+     * Get latest routes as arrays (cache-friendly)
+     *
+     * @return array<int, array{id: int, name: string, grade: string, rockName: string, rockSlug: string, areaSlug: string}>
+     */
+    public function latestRoutes(): array
     {
         return $this->createQueryBuilder('routes')
+            ->select(
+                'routes.id',
+                'routes.name',
+                'routes.grade',
+                'rock.name AS rockName',
+                'rock.slug AS rockSlug',
+                'area.slug AS areaSlug'
+            )
+            ->innerJoin('routes.rock', 'rock')
+            ->innerJoin('routes.area', 'area')
+            ->where('rock.slug IS NOT NULL')
+            ->andWhere('area.slug IS NOT NULL')
+            ->andWhere('rock.online = 1')
+            ->andWhere('area.online = 1')
             ->orderBy('routes.yearFirstAscent', 'DESC')
-            ->innerJoin('routes.rock', 'routes_rock')
             ->setMaxResults(5)
             ->getQuery()
             ->getResult();

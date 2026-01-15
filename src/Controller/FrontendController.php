@@ -6,6 +6,7 @@ use App\Entity\Area;
 use App\Entity\Rock;
 use App\Entity\Contact;
 use App\Service\FooterAreas;
+use App\Service\FrontendCacheService;
 use App\Service\RouteGroupingService;
 use App\Form\ContactFormType;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -70,24 +71,29 @@ class FrontendController extends AbstractController
         requirements: ['_locale' => 'en']
     )]
     public function index(
-        RockRepository $rockRepository,
-        RoutesRepository $routesRepository,
-        CommentRepository $commentRepository,
+        FrontendCacheService $frontendCacheService,
         Request $request,
         TranslatorInterface $translator
     ): Response {
 
-        $latestRoutes = $routesRepository->latestRoutes();
-        $latestComments = $commentRepository->latestComments();
-        $banned = $rockRepository->saisonalGesperrt();
+        // Use cached data for better performance
+        $latestRoutes = $frontendCacheService->getLatestRoutes();
+        $latestComments = $frontendCacheService->getLatestComments();
+        $banned = $frontendCacheService->getBannedRocks();
         $searchTerm = $request->query->get('q');
-        //dd($searchRoutes);
 
-        return $this->render('frontend/index.html.twig', [
+        $response = $this->render('frontend/index.html.twig', [
             'latestRoutes' => $latestRoutes,
             'latestComments' => $latestComments,
             'banned' => $banned,
         ]);
+
+        // Enable HTTP caching - page can be cached for 5 minutes (300 seconds),
+        // and stale content can be served for up to 1 additional minute while revalidating
+        $response->setSharedMaxAge(300);
+        $response->headers->set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=60');
+
+        return $response;
     }
 
     #[Route('/{slug}', name: 'show_rocks')]

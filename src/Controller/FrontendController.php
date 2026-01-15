@@ -148,7 +148,7 @@ class FrontendController extends AbstractController
 
         // Enable HTTP caching - page can be cached for 5 minutes
         $response->setSharedMaxAge(300);
-        $response->headers->set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600');
+        $response->headers->set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=60');
 
         return $response;
     }

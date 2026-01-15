@@ -1,8 +1,11 @@
 {% extends 'base.html.twig' %}
 
+{# Cache areas data - only fetch once instead of 3 times #}
+{% set areasData = getAreasInformation() %}
+
 {% block meta_tags %}
 	{% set description = 'Klettern rund um München. Hier werden die Klettergebiete rund um München vorgestellt: ' %}
-	{% for area in getAreasInformation() %}
+	{% for area in areasData %}
 		{% set description = description ~ area.name %}
 		{% if loop.last == false %}
 			{% set description = description ~ ', ' %}
@@ -18,7 +21,7 @@
 		'title': 'Munichclimbs',
 		'description': description,
 		'url': 'https://munichclimbs.de/',
-		'areas': getAreasInformation()
+		'areas': areasData
 	} %}
 {% endblock %}
 
@@ -39,7 +42,7 @@
 				<div class="row">
 					<div class="col-md-8">
 						<div class="row">
-							{% for area in getAreasInformation() %}
+							{% for area in areasData %}
 								<div class="col-12">
 									<a class="d-block" href="{{ path('show_rocks', { slug: area.slug } ) }}" title="Klettergebiet {{ area.name }}">
 										<div class="card mb-4 p-0 overflow-hidden">

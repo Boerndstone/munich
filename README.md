@@ -19,3 +19,8 @@
 
 ### Command to render Sitemap
 -    php bin/console app:generate-sitemap
+
+### Running Tests
+php bin/phpunit                                    # Run all tests
+php bin/phpunit tests/Service/                     # Run service tests
+php bin/phpunit tests/Service/FrontendCacheServiceTest.php  # Run specific test

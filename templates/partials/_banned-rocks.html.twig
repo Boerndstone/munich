@@ -5,10 +5,10 @@
 		<ul class="list-unstyled">
 			{% for bannedRock in banned %}
 				<li class="px-3 mb-2 hover:bg-gray-300" style="line-height: 1.3rem;">
-					<a class="fs-6 text-truncate block" href="{{ path('show_rock', { 'areaSlug': bannedRock.area.slug, slug: bannedRock.slug }) }}">
+					<a class="fs-6 text-truncate block" href="{{ path('show_rock', { 'areaSlug': bannedRock.areaSlug, slug: bannedRock.slug }) }}">
 						<span class="d-inline-block me-2 list-item-icon"></span>
 						<span class="fw-normal pr-2">{{ bannedRock.name }}</span>
-						<span class="fw-light d-block ms-2 text-truncate" style="padding-left: 12px; color: rgba(0,0,0,.6);">{{ bannedRock.area.name }}</span>
+						<span class="fw-light d-block ms-2 text-truncate" style="padding-left: 12px; color: rgba(0,0,0,.6);">{{ bannedRock.areaName }}</span>
 					</a>
 				</li>
 			{% endfor %}

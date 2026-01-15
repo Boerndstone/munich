@@ -111,7 +111,7 @@ class RockRepository extends ServiceEntityRepository
                 'area.slug AS areaSlug'
             )
             ->innerJoin('rock.area', 'area')
-            ->where('(rock.banned = 1 OR rock.banned = 2)')
+            ->where('rock.banned IN (1, 2)')
             ->andWhere('rock.slug IS NOT NULL')
             ->andWhere('area.slug IS NOT NULL')
             ->andWhere('area.online = 1')

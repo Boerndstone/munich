@@ -88,10 +88,10 @@ class FrontendController extends AbstractController
             'banned' => $banned,
         ]);
 
-        // Enable HTTP caching - page can be cached for 5 minutes (300 seconds)
-        // and stale content can be served for 1 hour while revalidating
+        // Enable HTTP caching - page can be cached for 5 minutes (300 seconds),
+        // and stale content can be served for up to 1 additional minute while revalidating
         $response->setSharedMaxAge(300);
-        $response->headers->set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600');
+        $response->headers->set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=60');
 
         return $response;
     }

@@ -198,7 +198,7 @@
 																data-modal-route-information-grade-value="{{ route.routeGrade }}"
 																data-modal-route-information-first-ascent-value="{{ route.routefirstAscent }}"
 																data-modal-route-information-year-first-ascent-value="{{ route.routeyearFirstAscent }}"
-																data-modal-route-information-comments-value="{{ route.routeComment|json_encode|e('html_attr') }}">
+																data-modal-route-information-comments-value="{{ route.routeComment|striptags|json_encode|e('html_attr') }}">
 																<div class="modal-info"></div>
 															</button>
 														{% endif %}

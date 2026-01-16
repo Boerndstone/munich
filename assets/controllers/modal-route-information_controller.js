@@ -3,38 +3,50 @@ import { Modal } from "bootstrap";
 
 export default class extends Controller {
   static targets = ["modal", "title", "content"];
-  static values = {
-    name: String,
-    grade: String,
-    firstAscent: String,
-    yearFirstAscent: String,
-    comments: Array
-  };
 
   openModal(event) {
+    // Get the button that was clicked
+    const button = event.currentTarget;
+    
+    // Read values from the button's data attributes
+    const name = button.dataset.modalRouteInformationNameValue || '';
+    const grade = button.dataset.modalRouteInformationGradeValue || '';
+    const firstAscent = button.dataset.modalRouteInformationFirstAscentValue || '';
+    const yearFirstAscent = button.dataset.modalRouteInformationYearFirstAscentValue || '';
+    
+    let comments = [];
+    try {
+      const commentsData = button.dataset.modalRouteInformationCommentsValue;
+      if (commentsData) {
+        comments = JSON.parse(commentsData);
+      }
+    } catch (e) {
+      console.error('Error parsing comments:', e);
+    }
+
     // Populate the shared modal with route-specific data
     if (this.hasTitleTarget) {
-      this.titleTarget.textContent = `${this.nameValue} (${this.gradeValue})`;
+      this.titleTarget.textContent = `${name} (${grade})`;
     }
 
     if (this.hasContentTarget) {
       let html = '';
       
       // First ascent info (mobile)
-      if (this.firstAscentValue || this.yearFirstAscentValue) {
+      if (firstAscent || yearFirstAscent) {
         html += `<p class="fw-medium mb-0 d-lg-none stay-black">`;
-        if (this.firstAscentValue) {
-          html += `Erstbegeher: ${this.firstAscentValue} `;
+        if (firstAscent) {
+          html += `Erstbegeher: ${firstAscent} `;
         }
-        if (this.yearFirstAscentValue) {
-          html += this.yearFirstAscentValue;
+        if (yearFirstAscent) {
+          html += yearFirstAscent;
         }
         html += `</p>`;
       }
       
       // Comments
-      if (this.commentsValue && this.commentsValue.length > 0) {
-        this.commentsValue.forEach((commentData, index) => {
+      if (comments && comments.length > 0) {
+        comments.forEach((commentData, index) => {
           html += `<p class="mt-2 text-sm fw-normal stay-black">${commentData.comment || ''}</p>`;
           if (commentData.username) {
             html += `<p class="mt-2 fst-italic text-sm fw-normal stay-black">`;
@@ -45,7 +57,7 @@ export default class extends Controller {
             }
             html += `</p>`;
           }
-          if (index < this.commentsValue.length - 1) {
+          if (index < comments.length - 1) {
             html += `<hr/>`;
           }
         });

@@ -1,6 +1,11 @@
 {% extends 'base.html.twig' %}
 {% set setTitle = 'Munichclimbs | Klettergebiet ' ~ areaName ~	' | Fels ' ~ slug|custom_replace %}
 
+{% block leaflet %}
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
+	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+{% endblock %}
+
 {% block meta_tags %}
 	{% set description = '' %}
 	{% for rock in rocks %}
@@ -73,13 +78,13 @@
 			<div class="image-container position-relative">
 				{% if rock.rockheaderImage is not empty %}
 					<div class="container my-3">
-						<img class="rounded" src="{{ asset('https://www.munichclimbs.de/build/images/headerImages/' ~ rock.rockheaderImage ~ '.webp') }}" loading="lazy"/>
+						<img class="rounded" src="{{ asset('https://www.munichclimbs.de/build/images/headerImages/' ~ rock.rockheaderImage ~ '.webp') }}" alt="{{ setTitle }}" width="1200" height="400" fetchpriority="high" decoding="async"/>
 					</div>
 				{% else %}
 					<picture>
 						<source media="(min-width: 1200px)" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-large-@1x.webp') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-large-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-large-@3x.webp') }} 3x">
-						<source media="(min-width: 800px)" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-medium-@1x.webp') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-medium-@2x.webp') }} @2, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-medium-@3x.webp') }} 3x">
-						<img src="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~'-small-@1x.webp') }}" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-small-@2x.webp 2x') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-small-@3x.webp 3x') }}" alt=" {{ setTitle }}" loading="lazy">
+						<source media="(min-width: 800px)" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-medium-@1x.webp') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-medium-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-medium-@3x.webp') }} 3x">
+						<img src="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~'-small-@1x.webp') }}" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-small-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-small-@3x.webp') }} 3x" alt="{{ setTitle }}" width="800" height="300" fetchpriority="high" decoding="async">
 					</picture>
 				{% endif %}
 				<div class="container my-3 position-absolute" style="top: 0; right: 0; left:0;">
@@ -142,7 +147,7 @@
 				</div>
 			</section>
 		{% endfor %}
-		<div class="container">
+		<div class="container" {{ stimulus_controller('modal-route-information') }}>
 			<div class="row">
 				<div class="col-md-9 p-0 p-md-2">
 					{% for topoName, topoData in groupedRoutes %}
@@ -187,12 +192,15 @@
 													</td>
 													<td class="py-2">
 														{% if route.routeDescription or route.routeComment %}
-															<div {{ stimulus_controller('modal-route-information') }}>
-																<button class="btn btn-sm m-0 p-0 border-0 shadow-none rounded-circle" data-action="modal-route-information#openModal" data-bs-toggle="modal" data-bs-target="#{{ route.routeName|custom_replace }}">
-																	<div class="modal-info"></div>
-																</button>
-																{{ include('partials/_modal-route-information.html.twig') }}
-															</div>
+															<button class="btn btn-sm m-0 p-0 border-0 shadow-none rounded-circle" 
+																data-action="modal-route-information#openModal"
+																data-modal-route-information-name-value="{{ route.routeName }}"
+																data-modal-route-information-grade-value="{{ route.routeGrade }}"
+																data-modal-route-information-first-ascent-value="{{ route.routefirstAscent }}"
+																data-modal-route-information-year-first-ascent-value="{{ route.routeyearFirstAscent }}"
+																data-modal-route-information-comments-value="{{ route.routeComment|json_encode|e('html_attr') }}">
+																<div class="modal-info"></div>
+															</button>
 														{% endif %}
 													</td>
 												</tr>
@@ -205,32 +213,51 @@
 					{% endfor %}
 				</div>
 			</div>
+			
+			{# Shared modal for route information - populated dynamically to reduce DOM size #}
+			<div id="sharedRouteModal" class="modal fade" tabindex="-1" aria-hidden="true" aria-labelledby="sharedRouteModalTitle" data-modal-route-information-target="modal">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title stay-black" data-modal-route-information-target="title"></h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body" data-modal-route-information-target="content">
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</main>
 	<script>
 		// Handle smooth scrolling to route anchors with offset for fixed navigation
-		document.addEventListener('DOMContentLoaded', function() {
+		// Uses requestIdleCallback for non-blocking execution when available
+		(function() {
 			const hash = window.location.hash;
-			if (hash) {
+			if (!hash) return;
+			
+			const scrollToTarget = function() {
 				const targetElement = document.querySelector(hash);
-				if (targetElement) {
-					// Add highlight class
-					targetElement.classList.add('route-highlight');
-					
-					// Wait for page to be fully rendered
-					setTimeout(() => {
-						const navigationHeight = 50; // Height of fixed navigation bar
-						const extraOffset = 10; // Extra space for better visibility
-						const elementTop = targetElement.getBoundingClientRect().top + window.pageYOffset;
-						const offsetPosition = elementTop - navigationHeight - extraOffset;
-						
-						window.scrollTo({
-							top: Math.max(0, offsetPosition),
-							behavior: 'smooth'
-						});
-					}, 100);
-				}
+				if (!targetElement) return;
+				
+				targetElement.classList.add('route-highlight');
+				
+				const navigationHeight = 50;
+				const extraOffset = 10;
+				const elementTop = targetElement.getBoundingClientRect().top + window.scrollY;
+				
+				window.scrollTo({
+					top: Math.max(0, elementTop - navigationHeight - extraOffset),
+					behavior: 'smooth'
+				});
+			};
+			
+			// Execute when browser is idle or on DOMContentLoaded as fallback
+			if ('requestIdleCallback' in window) {
+				requestIdleCallback(scrollToTarget, { timeout: 200 });
+			} else {
+				document.addEventListener('DOMContentLoaded', scrollToTarget);
 			}
-		});
+		})();
 	</script>
 {% endblock %}

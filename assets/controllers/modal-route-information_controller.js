@@ -4,6 +4,36 @@ import { Modal } from "bootstrap";
 export default class extends Controller {
   static targets = ["modal", "title", "content"];
 
+  // Parse date from various formats (PHP DateTime object, ISO string, MySQL datetime)
+  parseDate(dateValue) {
+    if (!dateValue) return null;
+    
+    // If it's a PHP DateTime object serialized as JSON
+    if (typeof dateValue === 'object' && dateValue.date) {
+      return new Date(dateValue.date.replace(' ', 'T'));
+    }
+    
+    // If it's a string, try to parse it
+    if (typeof dateValue === 'string') {
+      // Replace space with T for ISO compatibility (MySQL format: "2024-01-15 10:30:00")
+      const isoString = dateValue.replace(' ', 'T');
+      const parsed = new Date(isoString);
+      if (!isNaN(parsed.getTime())) {
+        return parsed;
+      }
+    }
+    
+    // Fallback: try direct parsing
+    const fallback = new Date(dateValue);
+    return isNaN(fallback.getTime()) ? null : fallback;
+  }
+
+  formatDate(dateValue) {
+    const date = this.parseDate(dateValue);
+    if (!date) return '';
+    return date.toLocaleDateString('de-DE');
+  }
+
   openModal(event) {
     // Get the button that was clicked
     const button = event.currentTarget;
@@ -52,8 +82,10 @@ export default class extends Controller {
             html += `<p class="mt-2 fst-italic text-sm fw-normal stay-black">`;
             html += commentData.username;
             if (commentData.date) {
-              const date = new Date(commentData.date);
-              html += ` ${date.toLocaleDateString('de-DE')}`;
+              const formattedDate = this.formatDate(commentData.date);
+              if (formattedDate) {
+                html += ` ${formattedDate}`;
+              }
             }
             html += `</p>`;
           }

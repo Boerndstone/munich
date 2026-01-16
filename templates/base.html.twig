@@ -3,7 +3,15 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1"> {% block meta_tags %}{% endblock %}
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		{# Preconnect to external resources for faster loading #}
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link rel="preconnect" href="https://www.munichclimbs.de">
+		<link rel="dns-prefetch" href="https://unpkg.com">
+		
+		{% block meta_tags %}{% endblock %}
 		{% block structured_data %}{% endblock %}
 		<title>
 			{% block title %}Munichclimbs
@@ -11,22 +19,18 @@
 		</title>
 		{% block stylesheets %}
 			{{ encore_entry_link_tags('app') }}
-			{{ encore_entry_link_tags('app') }}
-			<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Spartan&display=swap">
-			<link href='https://fonts.googleapis.com/css?family=Chelsea+Market' rel='stylesheet' type='text/css'>
-			{{ encore_entry_link_tags('app') }}
+			<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spartan:wght@400;500;600;700&display=swap">
+			<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chelsea+Market&display=swap">
 		{% endblock %}
 		{% block javascripts %}
-			{{ encore_entry_script_tags('app') }}
 			{{ encore_entry_script_tags('app') }}
 		{% endblock %}
 		<link href="{{ asset('build/images/favicon/favicon.png') }}" rel="icon" type="image/png">
 		<link href="{{ asset('build/images/favicon/favicon.ico') }}" rel="shortcut icon" type="image/x-icon">
 		<link href="{{ asset('build/images/favicon/apple-touch-icon.png') }}" rel="apple-touch-icon" sizes="180x180">
 		<link href="{{ asset('build/images/favicon/apple-touch-startup-image.png') }}" rel="apple-touch-startup-image">
-		<link
-		rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
-	 <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+		{# Leaflet CSS - loaded only when needed via block, with preload hint #}
+		{% block leaflet_css %}{% endblock %}
 	</head>
 	<body id="body" {% block body_attributes %} {% endblock %} class="{% block bodyclass %}{% endblock %}">
 		<div data-controller="scroll-progress" class="bg-theme fixed-top" style="height: 3px; z-index: 10000;"></div>
@@ -40,6 +44,9 @@
 		<a href="#body" data-controller="scrolltop" data-action="scroll@window->scrolltop#scrollFunction" data-scrolltop-target="top" class="btn btn-outline-secondary btn-sm btn-to-top">
 			<div class="chevron-up "></div>
 		</a>
+
+		{# Leaflet JS - loaded only when needed via block, deferred for performance #}
+		{% block leaflet_js %}{% endblock %}
 
 	</body>
 </html>

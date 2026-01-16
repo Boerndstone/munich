@@ -2,6 +2,14 @@
 {% set setTitle = 'Munichclimbs | Klettergebiet ' ~ areaName %}
 {% set currentDate =  "now"|date("z") %}
 
+{% block leaflet_css %}
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
+{% endblock %}
+
+{% block leaflet_js %}
+	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin="" defer></script>
+{% endblock %}
+
 {% block meta_tags %}
 	{% set description = 'Felsen im Klettergebiet ' ~ areaName ~ ': ' %}
 	{% for rock in rocks %}

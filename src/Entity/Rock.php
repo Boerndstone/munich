@@ -26,12 +26,13 @@ class Rock
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['rock:read', 'photo:read', 'video:read', 'route:read', 'rock_translation:read'])]
     private ?int $id = null;
 
     #[Assert\NotBlank(message: 'Felsname darf nicht leer sein!')]
     #[Assert\Length(minMessage: 'Felsname sollte mehr als zwei Zeichen enthalten!', min: 2)]
     #[ORM\Column(type: Types::STRING, length: 255)]
-    #[Groups(['area:read', 'rock:read'])]
+    #[Groups(['area:read', 'rock:read', 'photo:read', 'video:read', 'route:read', 'rock_translation:read'])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'rock', targetEntity: Routes::class, fetch: 'EXTRA_LAZY')]

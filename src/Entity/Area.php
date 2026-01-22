@@ -28,13 +28,13 @@ class Area
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['area:read'])]
+    #[Groups(['area:read', 'photo:read', 'video:read', 'route:read'])]
     private ?int $id = null;
 
     #[Assert\NotBlank(message: 'Der Name des Gebiets darf nicht leer sein!')]
     #[Assert\Length(minMessage: 'Der Gebietsname sollte mehr als zwei Zeichen enthalten!', min: 2)]
     #[ORM\Column(type: Types::STRING, length: 255)]
-    #[Groups(['rock:read', 'area:read'])]
+    #[Groups(['rock:read', 'area:read', 'photo:read', 'video:read', 'route:read'])]
     private ?string $name = null;
 
     #[Assert\NotNull(message: 'Die URL darf nicht leer sein und darf keine Umlaute enthalten!')]

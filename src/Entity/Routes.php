@@ -12,13 +12,14 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: RoutesRepository::class)]
 #[ApiResource(
     operations: [
-        new Get(),
-        new GetCollection(),
+        new Get(normalizationContext: ['groups' => ['route:read']]),
+        new GetCollection(normalizationContext: ['groups' => ['route:read']]),
     ]
 )]
 class Routes
@@ -26,62 +27,78 @@ class Routes
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['route:read', 'comment:read', 'photo:read', 'video:read'])]
     private ?int $id = null;
 
     #[Assert\NotBlank(message: 'Routenname darf nicht leer sein!')]
     #[Assert\Length(minMessage: 'Routenname sollte mehr als zwei Zeichen enthalten!', min: 2)]
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(['route:read', 'comment:read', 'photo:read', 'video:read'])]
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'routes', fetch: 'EXTRA_LAZY')]
+    #[Groups(['route:read'])]
     private ?Area $area = null;
 
     #[ORM\ManyToOne(inversedBy: 'routes', fetch: 'EXTRA_LAZY')]
+    #[Groups(['route:read'])]
     private ?Rock $rock = null;
 
     #[ORM\Column(type: Types::STRING, length: 20, nullable: true)]
+    #[Groups(['route:read', 'comment:read'])]
     private ?string $grade = null;
 
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     private bool $climbed = false;
 
     #[ORM\Column(type: Types::STRING, length: 100, nullable: true)]
+    #[Groups(['route:read'])]
     private ?string $firstAscent = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['route:read'])]
     protected ?int $yearFirstAscent = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    #[Groups(['route:read'])]
     private ?int $protection = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['route:read'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::STRING, length: 100, nullable: true)]
+    #[Groups(['route:read'])]
     private ?string $scale = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['route:read'])]
     protected ?int $gradeNo = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    #[Groups(['route:read'])]
     private ?int $rating = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['route:read'])]
     protected ?int $topoId = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['route:read'])]
     protected ?int $nr = null;
 
     #[ORM\ManyToMany(targetEntity: ClimbedRoutes::class, mappedBy: 'ManyToMany')]
     private Collection $climbedRoutes;
 
     #[ORM\ManyToOne(inversedBy: 'realtion')]
+    #[Groups(['route:read'])]
     private ?FirstAscencionist $relatesToRoute = null;
 
     #[ORM\OneToMany(mappedBy: 'route', targetEntity: Comment::class)]
     private Collection $comments;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['route:read'])]
     private ?bool $rockQuality = null;
 
     public function __construct()

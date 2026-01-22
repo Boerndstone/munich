@@ -19,6 +19,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['comment:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
@@ -37,6 +38,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $lastname = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['comment:read'])]
     private ?string $avatar = null;
 
     #[ORM\ManyToMany(targetEntity: ClimbedRoutes::class, mappedBy: 'user')]
@@ -46,6 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $comments;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['comment:read'])]
     private ?string $username = null;
 
     // #[ORM\Column(nullable: true)]
@@ -161,6 +164,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->avatar;
     }
 
+    #[Groups(['comment:read'])]
     public function getAvatarUrl(): ?string
     {
         if (!$this->avatar) {

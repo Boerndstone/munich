@@ -53,15 +53,15 @@
 						</div>
 						<div>
 						{% if areaKletterkonzeption %}
-							<button class="btn btn-outline-secondary btn-sm" {{ stimulus_controller('modal-route-information') }} data-action="modal-route-information#openModal" data-bs-toggle="modal" data-bs-target="#kletterkonzeptionModal" title="Kletterkonzeption anzeigen">
-								<div class="modal-info"></div>
-							</button>
+						<button class="btn btn-outline-secondary btn-sm" {{ stimulus_controller('modal-route-information') }} data-action="modal-route-information#openModal" data-bs-toggle="modal" data-bs-target="#kletterkonzeptionModal" title="Kletterkonzeption anzeigen" aria-label="Kletterkonzeption anzeigen">
+							<div class="modal-info"></div>
+						</button>
 							{{ include('partials/_modal-kletterkonzeption.html.twig') }}
 						{% endif %}
 						{% if top100Routes is not empty %}
-							<button class="btn btn-outline-secondary btn-sm" {{ stimulus_controller('modal-route-information') }} data-action="modal-route-information#openModal" data-bs-toggle="modal" data-bs-target="#top100RoutesModal" title="Top 100 schwierigste Routen anzeigen">
-								<div class="top-routes-icon"></div>
-							</button>
+						<button class="btn btn-outline-secondary btn-sm" {{ stimulus_controller('modal-route-information') }} data-action="modal-route-information#openModal" data-bs-toggle="modal" data-bs-target="#top100RoutesModal" title="Top 100 schwierigste Routen anzeigen" aria-label="Top 100 schwierigste Routen anzeigen">
+							<div class="top-routes-icon"></div>
+						</button>
 							{{ include('partials/_modal-top100-routes.html.twig') }}
 						{% endif %}
 							{% include 'partials/_collapseWeather.html.twig' with { collapseId: 'collapseWeather', ariaControls: 'collapseWeather' } %}
@@ -83,7 +83,7 @@
 					<div id="areaMap" class="z-10 mb-3">
 						<div class="card py-2 mb-2 card-body">
 							<div {{ stimulus_controller('weather') }} data-weather-area-lat="{{ areaLat }}" data-weather-area-lng="{{ areaLng }}">
-								<h6 class="mb-2">Wetter</h6>
+								<h2 class="h6 mb-2">Wetter</h2>
 								<div class="current-weather d-flex align-items-center">
 									<div class="icon icon-weather"></div>
 									<div id="temperature"></div>
@@ -139,7 +139,7 @@
 												<div class="col">
 													<div class="overflow-hidden flex-nowrap">
 														<div class="d-flex align-items-bottom justify-content-between">
-															<h6 class="mb-0 fw-normal d-inline-block text-truncate text-truncate-rock-name">{{rock.rockName}}</h6>
+															<h2 class="h6 mb-0 fw-normal d-inline-block text-truncate text-truncate-rock-name">{{rock.rockName}}</h2>
 															<div class="d-flex align-items-center">
 																<p class="small mb-0">{{ rock.rockHeight }} m</p>
 																<div class="mx-1 text d-block" style="width: 1px; height: 14px;"></div>
@@ -159,12 +159,12 @@
 																			{% set middle = percent * rock.amountMiddle %}
 																			{% set hard = percent * rock.amountHard %}
 																			{% set project = percent * rock.amountProjects %}
-																			<div class="progress d-flex" style="height: 1rem; width: 6rem;">
-																				<div class="progress-bar bg-green" role="progressbar" style="width: {{ easy }}%;" aria-valuenow="{{ easy }}" aria-valuemin="0" aria-valuemax="100"></div>
-																				<div class="progress-bar bg-amber" role="progressbar" style="width: {{ middle }}%;" aria-valuenow="{{ middle }}" aria-valuemin="0" aria-valuemax="100"></div>
-																				<div class="progress-bar bg-red" role="progressbar" style="width: {{ hard }}%;" aria-valuenow="{{ hard }}" aria-valuemin="0" aria-valuemax="100"></div>
-																				<div class="progress-bar" role="progressbar" style="width: {{ project }}%; background-color: black" aria-valuenow="{{ project }}" aria-valuemin="0" aria-valuemax="100"></div>
-																			</div>
+																		<div class="progress d-flex" style="height: 1rem; width: 6rem;">
+																			<div class="progress-bar bg-green" role="progressbar" style="width: {{ easy }}%;" aria-valuenow="{{ easy }}" aria-valuemin="0" aria-valuemax="100" aria-label="Leichte Routen (Grad 1-5): {{ easy|round }}%"></div>
+																			<div class="progress-bar bg-amber" role="progressbar" style="width: {{ middle }}%;" aria-valuenow="{{ middle }}" aria-valuemin="0" aria-valuemax="100" aria-label="Mittlere Routen (Grad 6-7): {{ middle|round }}%"></div>
+																			<div class="progress-bar bg-red" role="progressbar" style="width: {{ hard }}%;" aria-valuenow="{{ hard }}" aria-valuemin="0" aria-valuemax="100" aria-label="Schwere Routen (Grad 8-11): {{ hard|round }}%"></div>
+																			<div class="progress-bar" role="progressbar" style="width: {{ project }}%; background-color: black" aria-valuenow="{{ project }}" aria-valuemin="0" aria-valuemax="100" aria-label="Projekte: {{ project|round }}%"></div>
+																		</div>
 																		</div>
 																	</div>
 																	<div class="col text-end">
@@ -190,40 +190,44 @@
 						<div class="card py-2 mb-2 card-body sticky-filter">
 							<div class="row">
 								<div class="col-12 mb-2">
-									<h6 id="resultsCounter" class="mb-2"><span id="resultsCount">0</span> Felsen</h6>
+									<h2 class="h6 mb-2" id="resultsCounter"><span id="resultsCount">0</span> Felsen</h2>
 								</div>
-								<div class="col-3 col-md-6 mb-2">
-									<div class="form-check form-switch">
-										<input id="flexSwitchCheckDefault" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="childFriendly">
-										<label class="form-check-label" for="flexSwitchCheckDefault">
-											<div class="child-friendly"></div>
-										</label>
-									</div>
+							<div class="col-3 col-md-6 mb-2">
+								<div class="form-check form-switch">
+									<input id="flexSwitchCheckDefault" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="childFriendly">
+									<label class="form-check-label" for="flexSwitchCheckDefault">
+										<div class="child-friendly"></div>
+										<span class="visually-hidden">Kinderfreundlich</span>
+									</label>
 								</div>
-								<div class="col-3 col-md-6 mb-2">
-									<div class="form-check form-switch">
-										<label class="form-check-label" for="sun">
-											<div class="sun"></div>
-										</label>
-										<input id="sun" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="sunny">
-									</div>
+							</div>
+							<div class="col-3 col-md-6 mb-2">
+								<div class="form-check form-switch">
+									<label class="form-check-label" for="sun">
+										<div class="sun"></div>
+										<span class="visually-hidden">Sonnig</span>
+									</label>
+									<input id="sun" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="sunny">
 								</div>
-								<div class="col-3 col-md-6 mb-2">
-									<div class="form-check form-switch">
-										<label class="form-check-label" for="rain">
-											<div class="umbrella"></div>
-										</label>
-										<input id="rain" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="rain">
-									</div>
+							</div>
+							<div class="col-3 col-md-6 mb-2">
+								<div class="form-check form-switch">
+									<label class="form-check-label" for="rain">
+										<div class="umbrella"></div>
+										<span class="visually-hidden">Regenschutz</span>
+									</label>
+									<input id="rain" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="rain">
 								</div>
-								<div class="col-3 col-md-6 mb-2">
-									<div class="form-check form-switch">
-										<label class="form-check-label" for="train">
-											<div class="train"></div>
-										</label>
-										<input id="train" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="train">
-									</div>
+							</div>
+							<div class="col-3 col-md-6 mb-2">
+								<div class="form-check form-switch">
+									<label class="form-check-label" for="train">
+										<div class="train"></div>
+										<span class="visually-hidden">Mit Bahn erreichbar</span>
+									</label>
+									<input id="train" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="train">
 								</div>
+							</div>
 							</div>
 						</div>
 

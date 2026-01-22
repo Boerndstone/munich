@@ -159,7 +159,7 @@
 																			{% set middle = percent * rock.amountMiddle %}
 																			{% set hard = percent * rock.amountHard %}
 																			{% set project = percent * rock.amountProjects %}
-																		<div class="progress d-flex" style="height: 1rem; width: 6rem;" role="group" aria-label="Schwierigkeitsverteilung der Routen">
+																		<div class="progress d-flex" style="height: 1rem; width: 6rem;">
 																			<div class="progress-bar bg-green" role="progressbar" style="width: {{ easy }}%;" aria-valuenow="{{ easy }}" aria-valuemin="0" aria-valuemax="100" aria-label="Leichte Routen (Grad 1-5): {{ easy|round }}%"></div>
 																			<div class="progress-bar bg-amber" role="progressbar" style="width: {{ middle }}%;" aria-valuenow="{{ middle }}" aria-valuemin="0" aria-valuemax="100" aria-label="Mittlere Routen (Grad 6-7): {{ middle|round }}%"></div>
 																			<div class="progress-bar bg-red" role="progressbar" style="width: {{ hard }}%;" aria-valuenow="{{ hard }}" aria-valuemin="0" aria-valuemax="100" aria-label="Schwere Routen (Grad 8-11): {{ hard|round }}%"></div>

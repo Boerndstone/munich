@@ -37,23 +37,15 @@ Encore
   .enableBuildNotifications()
   .enableSourceMaps(!Encore.isProduction())
   // enables hashed filenames (e.g. app.abc123.css)
-  .enableVersioning(Encore.isProduction());
+  .enableVersioning(Encore.isProduction())
 
-// Enable CSS minification in production
-if (Encore.isProduction()) {
-  Encore.configureCssMinimizerPlugin((options) => {
+  // Enable CSS minification in production
+  .configureCssMinimizerPlugin((options) => {
     options.minimizerOptions = {
-      preset: [
-        "default",
-        {
-          discardComments: { removeAll: true },
-        },
-      ],
+      preset: ["default", { discardComments: { removeAll: true } }],
     };
-  });
-}
+  })
 
-Encore
   .configureBabel((babelConfig) => {
     babelConfig.plugins.push("@babel/plugin-proposal-class-properties");
   })

@@ -31,6 +31,12 @@ Encore
   // enables hashed filenames (e.g. admin.abc123.css)
   .enableVersioning(Encore.isProduction())
 
+  // Ensure CSS is minified consistently with the main webpack configuration
+  .configureCssMinimizerPlugin((options) => {
+    options.minimizerOptions = {
+      preset: ["default", { discardComments: { removeAll: true } }],
+    };
+  })
   .configureBabel((babelConfig) => {
     babelConfig.plugins.push("@babel/plugin-proposal-class-properties");
   })

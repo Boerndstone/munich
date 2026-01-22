@@ -2,6 +2,7 @@
 	<span id="form-check-language">
 		<div class="form-check form-switch">
 			<input class="form-check-input" type="checkbox" role="switch" id="languageSwitch" onchange="location.href=this.checked ? '{{ path('show_rock_en', { 'areaSlug': areaSlug, 'slug': rockSlug }) }}' : '{{ path('show_rock', { 'areaSlug': areaSlug, 'slug': rockSlug }) }}'" {% if app.request.locale == 'en' %} checked {% endif %}>
+			<label class="form-check-label visually-hidden" for="languageSwitch">Sprache wechseln (Deutsch/English)</label>
 		</div>
 	</span>
 {% endif %}

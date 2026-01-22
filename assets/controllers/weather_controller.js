@@ -40,7 +40,7 @@ export default class extends Controller {
       ).textContent = `${formattedDate} Temperatur: ${celsius}°C`;
 
       const currentIconCode = currentWeatherData.weather[0].icon;
-      const currentIconUrl = `http://openweathermap.org/img/wn/${currentIconCode}@2x.png`;
+      const currentIconUrl = `https://openweathermap.org/img/wn/${currentIconCode}@2x.png`;
       document.querySelector(
         ".current-weather .icon"
       ).innerHTML = `<img src="${currentIconUrl}" alt="weather icon">`;
@@ -60,7 +60,7 @@ export default class extends Controller {
 
         // Update forecast icons and temperature
         const forecastIconCode = forecastDay.weather[0].icon;
-        const forecastIconUrl = `http://openweathermap.org/img/wn/${forecastIconCode}@2x.png`;
+        const forecastIconUrl = `https://openweathermap.org/img/wn/${forecastIconCode}@2x.png`;
         const formattedForecastDate = convertDateStringToDate(
           forecastDay.dt_txt
         );

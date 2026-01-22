@@ -3,6 +3,11 @@
 {# Cache areas data - only fetch once instead of 3 times #}
 {% set areasData = getAreasInformation() %}
 
+{% block leaflet %}
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
+	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+{% endblock %}
+
 {% block meta_tags %}
 	{% set description = 'Klettern rund um München. Hier werden die Klettergebiete rund um München vorgestellt: ' %}
 	{% for area in areasData %}
@@ -34,11 +39,11 @@
 					<h1 class="h2 mb-0 fw-medium">Klettergebiete um München</h1>
 					{% include 'partials/_collapseMap.html.twig' with { collapseId: 'collapseMap', ariaControls: 'collapseMap' } %}
 				</div>
-				<div class="collapse mt-3" id="collapseMap">
-					<div id="map" class="z-10 mb-3" style="width: 100%; height: 500px;">
-						{{ include('pageParts/mainMap.html.twig') }}
-					</div>
+			<div class="collapse mt-3" id="collapseMap">
+				<div class="z-10 mb-3">
+					{{ include('pageParts/mainMap.html.twig') }}
 				</div>
+			</div>
 				<div class="row">
 					<div class="col-md-8">
 						<div class="row">

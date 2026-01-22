@@ -9,6 +9,9 @@ const app = startStimulusApp(
   )
 );
 
+// Disable Stimulus debug messages in console
+app.debug = false;
+
 export { app };
 
 // register any custom, 3rd party controllers here

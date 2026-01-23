@@ -3,6 +3,7 @@ import lightGallery from "lightgallery";
 import lgThumbnail from "lightgallery/plugins/thumbnail";
 import lgZoom from "lightgallery/plugins/zoom";
 
+/* stimulusFetch: 'lazy' */
 export default class extends Controller {
   static targets = ["lgItem"];
 

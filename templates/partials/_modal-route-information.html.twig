@@ -7,7 +7,7 @@
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				<p class="fw-medium mb-0 d-lg-none stay-black">
+				<p class="fw-medium small mb-0 d-lg-none stay-black">
 					{% if route.routefirstAscent %}
 						Erstbegeher:
 						{{ route.routefirstAscent }}
@@ -18,8 +18,8 @@
 				</p>
 				{% if route.routeComment %}
 					{% for commentData in route.routeComment %}
-						<p class="mt-2 text-sm fw-normal stay-black">{{ commentData.comment|raw }}</p>
-						<p class="mt-2 fst-italic text-sm fw-normal stay-black">
+						<p class="mt-2 small fw-normal stay-black">{{ commentData.comment|raw }}</p>
+						<p class="mt-2 fst-italic small fw-normal stay-black">
 							{% if commentData.username %}
 								{{ commentData.username }}
 								{% if commentData.date %}

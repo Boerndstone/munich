@@ -1,7 +1,6 @@
 import { Controller } from "stimulus";
 import { Modal } from "bootstrap";
 
-/* stimulusFetch: 'lazy' */
 export default class extends Controller {
   static targets = ["modal", "title", "content"];
 

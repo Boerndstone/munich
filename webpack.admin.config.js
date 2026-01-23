@@ -7,22 +7,14 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
 
 Encore
   // directory where compiled assets will be stored
-  .setOutputPath("public/build/")
+  .setOutputPath("public/build/admin/")
   // public path used by the web server to access the output path
-  .setPublicPath("/build")
-
-  .addStyleEntry("global", "./assets/styles/global.scss")
-  .enableSassLoader()
+  .setPublicPath("/build/admin")
 
   /*
-   * ENTRY CONFIG - Frontend only
+   * ENTRY CONFIG - Admin only
    */
-  .addEntry("app", "./assets/app.js")
-
-  .copyFiles({
-    from: "./assets/images",
-    to: "images/[path][name].[ext]",
-  })
+  .addEntry("admin", "./assets/admin.js")
 
   // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
   .enableStimulusBridge("./assets/controllers.json")
@@ -36,16 +28,15 @@ Encore
   .cleanupOutputBeforeBuild()
   .enableBuildNotifications()
   .enableSourceMaps(!Encore.isProduction())
-  // enables hashed filenames (e.g. app.abc123.css)
+  // enables hashed filenames (e.g. admin.abc123.css)
   .enableVersioning(Encore.isProduction())
 
-  // Enable CSS minification in production
+  // Ensure CSS is minified consistently with the main webpack configuration
   .configureCssMinimizerPlugin((options) => {
     options.minimizerOptions = {
       preset: ["default", { discardComments: { removeAll: true } }],
     };
   })
-
   .configureBabel((babelConfig) => {
     babelConfig.plugins.push("@babel/plugin-proposal-class-properties");
   })

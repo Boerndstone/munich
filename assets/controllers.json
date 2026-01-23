@@ -3,7 +3,7 @@
         "@symfony/ux-autocomplete": {
             "autocomplete": {
                 "enabled": true,
-                "fetch": "eager",
+                "fetch": "lazy",
                 "autoimport": {
                     "tom-select/dist/css/tom-select.default.css": true,
                     "tom-select/dist/css/tom-select.bootstrap4.css": false,
@@ -14,7 +14,7 @@
         "@symfony/ux-chartjs": {
             "chart": {
                 "enabled": true,
-                "fetch": "eager"
+                "fetch": "lazy"
             }
         },
         "@symfony/ux-turbo": {
@@ -24,7 +24,7 @@
             },
             "mercure-turbo-stream": {
                 "enabled": false,
-                "fetch": "eager"
+                "fetch": "lazy"
             }
         }
     },

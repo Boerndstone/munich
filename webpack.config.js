@@ -18,6 +18,13 @@ Encore
    * ENTRY CONFIG - Frontend only
    */
   .addEntry("app", "./assets/app.js")
+  
+  // Page-specific entry points - only loaded when needed
+  .addEntry("map", "./assets/map.js")
+  .addEntry("gallery", "./assets/gallery.js")
+  .addEntry("rock", "./assets/rock.js")
+  .addEntry("routeparams", "./assets/routeparams.js")
+  .addEntry("filter", "./assets/filter.js")
 
   .copyFiles({
     from: "./assets/images",

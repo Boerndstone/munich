@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 import L from "leaflet";
 
+/* stimulusFetch: 'lazy' */
 export default class extends Controller {
   static targets = ["map"];
   static values = {

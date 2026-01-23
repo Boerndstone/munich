@@ -1,5 +1,6 @@
 import { Controller } from "stimulus";
 
+/* stimulusFetch: 'lazy' */
 export default class extends Controller {
   connect() {
     const tabs = document.querySelectorAll(".scrollable-tabs-container a");

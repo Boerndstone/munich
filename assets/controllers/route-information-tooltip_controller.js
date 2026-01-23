@@ -1,7 +1,6 @@
 import { Controller } from "stimulus";
 import { Tooltip } from "bootstrap";
 
-/* stimulusFetch: 'lazy' */
 export default class extends Controller {
   connect() {
     const svgElements = this.element.querySelectorAll(".tooltip-trigger");

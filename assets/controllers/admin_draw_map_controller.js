@@ -2,7 +2,6 @@ import { Controller } from "@hotwired/stimulus";
 import L from "leaflet";
 import "leaflet-draw"; // Import Leaflet Draw
 
-/* stimulusFetch: 'lazy' */
 export default class extends Controller {
   static targets = ["map", "exportButton", "coordinates"];
   static values = {

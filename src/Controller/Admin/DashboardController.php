@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -183,10 +184,8 @@ class DashboardController extends AbstractDashboardController
 
     public function configureAssets(): Assets
     {
-        $assets = parent::configureAssets();
-        $assets->addWebpackEncoreEntry('admin', 'admin');
-
-        return $assets;
+        return parent::configureAssets()
+            ->addWebpackEncoreEntry(Asset::new('admin')->webpackEntrypointName('admin'));
     }
 
     private function createChart(): Chart

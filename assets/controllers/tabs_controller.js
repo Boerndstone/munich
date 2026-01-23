@@ -3,17 +3,15 @@ import { Controller } from "stimulus";
 export default class extends Controller {
   connect() {
     const tabs = document.querySelectorAll(".scrollable-tabs-container a");
-    const rightArrow = document.querySelector(
-      ".scrollable-tabs-container .right-arrow svg"
-    );
-    const leftArrow = document.querySelector(
-      ".scrollable-tabs-container .left-arrow svg"
-    );
     const tabsList = document.querySelector(".scrollable-tabs-container ul");
-    const container = document.querySelector(".container");
-    const navigationHeight =
-      document.querySelector(".navbar").offsetHeight + 41;
-    console.log(navigationHeight); // Adjust this selector to match your navigation bar
+    const navbar = document.querySelector(".navbar");
+    
+    // Early exit if required elements don't exist
+    if (!tabsList || !navbar) {
+      return;
+    }
+    
+    const navigationHeight = navbar.offsetHeight + 41;
 
     let totalWidth = 0;
     tabsList.querySelectorAll("li").forEach((li) => {
@@ -27,7 +25,7 @@ export default class extends Controller {
       ".scrollable-tabs-container .right-arrow"
     );
 
-    if (totalWidth < tabsList.clientWidth) {
+    if (rightArrowContainer && totalWidth < tabsList.clientWidth) {
       rightArrowContainer.classList.remove("active");
     }
 

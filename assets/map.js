@@ -8,8 +8,7 @@ import MainMapController from "./controllers/main_map_controller";
 import WeatherController from "./controllers/weather_controller";
 
 // Get or create the Stimulus application
-const application = window.Stimulus || Application.start();
-window.Stimulus = application;
+const application = window.Stimulus || (window.Stimulus = Application.start());
 
 // Register map controllers
 application.register("map", MapController);

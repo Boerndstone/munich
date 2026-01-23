@@ -9,8 +9,7 @@ import ModalRouteInformationController from "./controllers/modal-route-informati
 import TabsController from "./controllers/tabs_controller";
 
 // Get or create the Stimulus application
-const application = window.Stimulus || Application.start();
-window.Stimulus = application;
+const application = window.Stimulus || (window.Stimulus = Application.start());
 
 // Register rock page controllers
 application.register("route-information-tooltip", RouteInformationTooltipController);

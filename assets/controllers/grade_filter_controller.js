@@ -1,6 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
 
-/* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static targets = ["minSlider", "maxSlider", "resetButton", "filterInfo", "rockItem", "minValue", "maxValue"]
 

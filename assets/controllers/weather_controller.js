@@ -2,6 +2,7 @@ import { Controller } from "stimulus";
 
 const apiKey = ""; // Replace with your actual API key
 
+/* stimulusFetch: 'lazy' */
 export default class extends Controller {
   async connect() {
     const areaLng = this.element.dataset.weatherAreaLng;

@@ -2,6 +2,7 @@ import { Controller } from "stimulus";
 import L from "leaflet";
 import { info } from "autoprefixer";
 
+/* stimulusFetch: 'lazy' */
 export default class extends Controller {
   static targets = ["map"];
 

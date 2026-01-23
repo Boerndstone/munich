@@ -184,7 +184,7 @@ class DashboardController extends AbstractDashboardController
     public function configureAssets(): Assets
     {
         $assets = parent::configureAssets();
-        $assets->addWebpackEncoreEntry('admin');
+        $assets->addWebpackEncoreEntry('admin', 'admin');
 
         return $assets;
     }

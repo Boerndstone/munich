@@ -42,7 +42,8 @@ export default class extends Controller {
     const name = button.dataset.modalRouteInformationNameValue || '';
     const grade = button.dataset.modalRouteInformationGradeValue || '';
     const firstAscent = button.dataset.modalRouteInformationFirstAscentValue || '';
-    const yearFirstAscent = button.dataset.modalRouteInformationYearFirstAscentValue || '';
+    const yearFirstAscentRaw = button.dataset.modalRouteInformationYearFirstAscentValue;
+    const yearFirstAscent = (yearFirstAscentRaw && yearFirstAscentRaw !== '0') ? yearFirstAscentRaw : '';
     
     let comments = [];
     try {
@@ -64,7 +65,7 @@ export default class extends Controller {
       
       // First ascent info (mobile)
       if (firstAscent || yearFirstAscent) {
-        html += `<p class="fw-medium mb-0 d-lg-none stay-black">`;
+        html += `<p class="fw-medium small mb-0 d-lg-none stay-black">`;
         if (firstAscent) {
           html += `Erstbegeher: ${firstAscent} `;
         }
@@ -77,9 +78,9 @@ export default class extends Controller {
       // Comments
       if (comments && comments.length > 0) {
         comments.forEach((commentData, index) => {
-          html += `<p class="mt-2 text-sm fw-normal stay-black">${commentData.comment || ''}</p>`;
+          html += `<p class="mt-2 small fw-normal stay-black">${commentData.comment || ''}</p>`;
           if (commentData.username) {
-            html += `<p class="mt-2 fst-italic text-sm fw-normal stay-black">`;
+            html += `<p class="mt-2 fst-italic small fw-normal stay-black">`;
             html += commentData.username;
             if (commentData.date) {
               const formattedDate = this.formatDate(commentData.date);

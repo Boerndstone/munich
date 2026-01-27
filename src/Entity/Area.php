@@ -58,9 +58,11 @@ class Area
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     #[Assert\Type(type: 'integer', message: 'Bitte nur Zahlenwerte eintragen.')]
+    #[Groups(['area:read'])]
     private int $sequence;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Groups(['area:read'])]
     private int $online;
 
     #[ORM\Column(type: Types::STRING, length: 25, nullable: true)]
@@ -187,7 +189,6 @@ class Area
         return $this->getName();
     }
 
-    #[Groups(['areas:read'])]
     public function getSequence(): ?int
     {
         return $this->sequence;
@@ -200,7 +201,6 @@ class Area
         return $this;
     }
 
-    #[Groups(['areas:read'])]
     public function getOnline(): ?int
     {
         return $this->online;

@@ -187,6 +187,7 @@ class Area
         return $this->getName();
     }
 
+    #[Groups(['area:read'])]
     public function getSequence(): ?int
     {
         return $this->sequence;
@@ -199,6 +200,7 @@ class Area
         return $this;
     }
 
+    #[Groups(['area:read'])]
     public function getOnline(): ?int
     {
         return $this->online;

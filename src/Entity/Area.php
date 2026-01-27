@@ -66,6 +66,7 @@ class Area
     private int $online;
 
     #[ORM\Column(type: Types::STRING, length: 25, nullable: true)]
+    #[Groups(['area:read'])]
     private ?string $image = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]

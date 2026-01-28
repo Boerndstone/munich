@@ -15,7 +15,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class PhotoUploadController extends AbstractController
 {
-    #[Route('/upload-photo', name: 'upload_photo')]
+    #[Route('/upload-photo', name: 'upload_photo', methods: ['GET', 'POST'])]
     #[Route('/Foto-hochladen', name: 'upload_photo_de', methods: ['GET', 'POST'])]
     public function upload(
         Request $request,

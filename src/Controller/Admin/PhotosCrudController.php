@@ -18,11 +18,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class PhotosCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private ParameterBagInterface $parameterBag
+    ) {
+    }
+
     public static function getEntityFqcn(): string
     {
         return Photos::class;
@@ -164,6 +171,12 @@ class PhotosCrudController extends AbstractCrudController
             ->setLabel('Tour')
             ->setColumns('col-12');
         
+        // Ensure directory exists (EasyAdmin uses relative path from project root)
+        $uploadDir = $this->parameterBag->get('kernel.project_dir') . '/public/uploads/galerie';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
         yield ImageField::new('name')
             ->setBasePath('uploads/galerie')
             ->setUploadDir('public/uploads/galerie')

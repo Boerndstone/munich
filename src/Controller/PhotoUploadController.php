@@ -34,9 +34,6 @@ class PhotoUploadController extends AbstractController
 
             if ($imageFile) {
                 $uploadDir = $this->getParameter('kernel.project_dir') . '/public/uploads/galerie';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
-                }
 
                 // Generate base filename (without extension)
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);

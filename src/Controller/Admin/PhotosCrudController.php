@@ -138,7 +138,7 @@ class PhotosCrudController extends AbstractCrudController
     {
         yield Field::new('id')
             ->hideOnIndex()
-            ->hideonForm();
+            ->hideOnForm();
         
         yield ChoiceField::new('status')
             ->setLabel('Status')

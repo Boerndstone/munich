@@ -47,25 +47,33 @@ class ImageProcessingService
         $mainImage = $this->resizeAndCrop($sourceImage, self::MAIN_WIDTH, self::MAIN_HEIGHT);
         $mainFilename = $baseFilename . '.webp';
         $mainPath = $uploadDir . '/' . $mainFilename;
-        $this->saveWebP($mainImage, $mainPath);
+        if (!$this->saveWebP($mainImage, $mainPath)) {
+            throw new \Exception('Failed to save main image to ' . $mainPath);
+        }
 
         // Process thumbnail (110x56)
         $thumbImage = $this->resizeAndCrop($sourceImage, self::THUMB_WIDTH, self::THUMB_HEIGHT);
         $thumbFilename = $baseFilename . '_thumb.webp';
         $thumbPath = $uploadDir . '/' . $thumbFilename;
-        $this->saveWebP($thumbImage, $thumbPath);
+        if (!$this->saveWebP($thumbImage, $thumbPath)) {
+            throw new \Exception('Failed to save thumbnail image to ' . $thumbPath);
+        }
 
         // Process 2x version (2000x1126)
         $image2x = $this->resizeAndCrop($sourceImage, self::MAIN_WIDTH * 2, self::MAIN_HEIGHT * 2);
         $filename2x = $baseFilename . '@2x.webp';
         $path2x = $uploadDir . '/' . $filename2x;
-        $this->saveWebP($image2x, $path2x);
+        if (!$this->saveWebP($image2x, $path2x)) {
+            throw new \Exception('Failed to save 2x image to ' . $path2x);
+        }
 
         // Process 3x version (3000x1689)
         $image3x = $this->resizeAndCrop($sourceImage, self::MAIN_WIDTH * 3, self::MAIN_HEIGHT * 3);
         $filename3x = $baseFilename . '@3x.webp';
         $path3x = $uploadDir . '/' . $filename3x;
-        $this->saveWebP($image3x, $path3x);
+        if (!$this->saveWebP($image3x, $path3x)) {
+            throw new \Exception('Failed to save 3x image to ' . $path3x);
+        }
 
         // Clean up memory
         imagedestroy($sourceImage);

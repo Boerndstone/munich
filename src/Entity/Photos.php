@@ -51,6 +51,24 @@ class Photos
     #[Groups(['photo:read'])]
     private ?string $photgrapher = null;
 
+    #[ORM\Column(length: 20, options: ['default' => 'pending'])]
+    #[Groups(['photo:read'])]
+    private string $status = 'pending';
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $createdAt = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $uploaderName = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $uploaderEmail = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -126,5 +144,68 @@ class Photos
         $this->photgrapher = $photgrapher;
 
         return $this;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUploaderName(): ?string
+    {
+        return $this->uploaderName;
+    }
+
+    public function setUploaderName(?string $uploaderName): self
+    {
+        $this->uploaderName = $uploaderName;
+
+        return $this;
+    }
+
+    public function getUploaderEmail(): ?string
+    {
+        return $this->uploaderEmail;
+    }
+
+    public function setUploaderEmail(?string $uploaderEmail): self
+    {
+        $this->uploaderEmail = $uploaderEmail;
+
+        return $this;
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->status === 'approved';
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === 'pending';
+    }
+
+    public function isRejected(): bool
+    {
+        return $this->status === 'rejected';
     }
 }

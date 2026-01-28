@@ -46,7 +46,23 @@ class PhotosRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('photo')
             ->andWhere('photo.belongsToRock = :rock')
+            ->andWhere('photo.status = :status')
             ->setParameter('rock', $rock)
+            ->setParameter('status', 'approved')
+            ->orderBy('photo.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Photos[] Returns an array of pending Photos objects
+     */
+    public function findPendingPhotos(): array
+    {
+        return $this->createQueryBuilder('photo')
+            ->andWhere('photo.status = :status')
+            ->setParameter('status', 'pending')
+            ->orderBy('photo.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
     }

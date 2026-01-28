@@ -24,3 +24,6 @@
 php bin/phpunit                                    # Run all tests
 php bin/phpunit tests/Service/                     # Run service tests
 php bin/phpunit tests/Service/FrontendCacheServiceTest.php  # Run specific test
+
+### Start lokal phpMyAdmin
+php -S 127.0.0.1:8080 -t /opt/homebrew/share/phpmyadmin

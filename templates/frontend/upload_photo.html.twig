@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+{% block title %}Foto hochladen - Munichclimbs{% endblock %}
+
+{% block body %}
+	{{ include('partials/_navigation.html.twig') }}
+	<main>
+		<div class="container my-3">
+			<section>
+				<div class="py-3 mb-3 d-flex align-items-center justify-content-between">
+					<h1 class="h2 mb-0 fw-medium">Foto hochladen</h1>
+				</div>
+			</section>
+			<section>
+				<p class="text-muted mb-4">
+					Helfen Sie mit, die Seite zu verbessern! Wählen Sie einen Fels und optional eine Route, laden Sie ein Foto hoch.
+					Ihr Foto wird von einem Administrator geprüft und nach Freigabe auf der Seite veröffentlicht.
+				</p>
+
+				{% for message in app.flashes('success') %}
+					<div class="alert alert-success alert-dismissible fade show" role="alert">
+						{{ message }}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>
+				{% endfor %}
+
+				{% for message in app.flashes('error') %}
+					<div class="alert alert-danger alert-dismissible fade show" role="alert">
+						{{ message }}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>
+				{% endfor %}
+
+				{{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'novalidate': 'novalidate', 'data-turbo': 'false'}}) }}
+					{{ form_row(form.belongsToRock) }}
+					{{ form_row(form.belongsToRoute, {'help': 'Optional: Wählen Sie eine Route, wenn das Foto zu einer spezifischen Route gehört.'}) }}
+					{{ form_row(form.image, {'help': 'Maximale Dateigröße: 10MB. Erlaubte Formate: JPEG, PNG, WebP, GIF'}) }}
+					{{ form_row(form.description) }}
+					{{ form_row(form.uploaderName) }}
+					{{ form_row(form.uploaderEmail, {'help': 'Ihre E-Mail wird nicht veröffentlicht und nur für Rückfragen verwendet.'}) }}
+					<button type="submit" class="btn btn-success text-green mb-5">Foto hochladen</button>
+				{{ form_end(form) }}
+			</section>
+		</div>
+	</main>
+{% endblock %}

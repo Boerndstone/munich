@@ -215,7 +215,7 @@ class PhotosCrudController extends AbstractCrudController
         $photo->setStatus('rejected');
         $entityManager->flush();
 
-        $this->addFlash('success', 'Foto wurde abgelehnt.');
+        $this->addFlash('warning', 'Foto wurde abgelehnt.');
 
         return $this->redirect($this->generateUrl('admin', [
             'crudAction' => 'index',

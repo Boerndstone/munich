@@ -40,7 +40,11 @@ class PhotoUploadController extends AbstractController
                 $baseFilename = $safeFilename . '-' . uniqid();
 
                 // Move uploaded file to temporary location for processing
-                $tempPath = $uploadDir . '/temp_' . $baseFilename . '.' . $imageFile->guessExtension();
+                $extension = $imageFile->guessExtension();
+                if (!$extension) {
+                    $extension = 'tmp';
+                }
+                $tempPath = $uploadDir . '/temp_' . $baseFilename . '.' . $extension;
                 $imageFile->move($uploadDir, basename($tempPath));
 
                 try {

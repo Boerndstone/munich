@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Photos;
 use App\Form\PhotoUploadType;
-use App\Repository\RockRepository;
 use App\Service\ImageProcessingService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

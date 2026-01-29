@@ -5,6 +5,15 @@
 
 ### Images
 
+#### Galerie (uploads/galerie)
+- **Public upload** (Seite „Foto hochladen“): Hochgeladenes Bild wird sofort in WebP umgewandelt und in vier Varianten gespeichert:
+  - `{name}.webp` (1000×563, Hauptbild)
+  - `{name}_thumb.webp` (110×56, Vorschaubild)
+  - `{name}@2x.webp` (2000×1126)
+  - `{name}@3x.webp` (3000×1689)
+- **Admin-Upload** (EasyAdmin Fotos): Beim Speichern wird dasselbe gemacht – die ursprüngliche Datei (z. B. JPG) wird durch die WebP-Varianten ersetzt und gelöscht.
+- Verarbeitung: `App\Service\ImageProcessingService` (GD, WebP).
+
 - Header Images
   - Desktop
     - 3960 3x 2640 2x 1320 1x

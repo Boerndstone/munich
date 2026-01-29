@@ -233,7 +233,7 @@ class PhotosCrudController extends AbstractCrudController
             return;
         }
 
-        $uploadDir = $this->parameterBag->get('kernel.project_dir') . '/public/uploads/galerie';
+        $uploadDir = $this->parameterBag->get('kernel.project_dir') . 'https://munichclimbs.com/public/uploads/galerie';
         $sourcePath = $uploadDir . '/' . $name;
 
         if (!is_file($sourcePath)) {

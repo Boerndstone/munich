@@ -9,71 +9,79 @@
 				<div class="offcanvas-body">
 					<ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
 						{% for area in getSidebarAreas() %}
-							<li class="nav-item my-2">
-								<a class="nav-link" data-bs-toggle="collapse" href="#{{ area.name|custom_replace }}" title="Klettergebiet {{ area.name }}" role="button" aria-expanded="false" aria-controls="{{ area.name|custom_replace }}">
+							<li class="nav-item">
+								<a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#{{ area.name|custom_replace }}" title="Klettergebiet {{ area.name }}" role="button" aria-expanded="false" aria-controls="{{ area.name|custom_replace }}">
 									<img src="https://www.munichclimbs.de/build/images/navigationThumbs/{{ area.image }}.webp" alt="Übersicht Klettergebiete {{ area.name }}." class="rounded me-3" style="width: 18px; height: 18px;" loading="lazy">
-									<span class="text-truncate">{{ area.name }}</span>
+									<span class="text-truncate flex-grow-1">{{ area.name }}</span>
+									<span class="nav-area-chevron single-chevron-right flex-shrink-0 ms-1" aria-hidden="true"></span>
 								</a>
 								<div class="collapse" id="{{ area.name|custom_replace }}">
 									{% if area.rocks is not empty %}
-										<ol class="list-group list-group-numbered" style="margin-left: 30px">
+										<ul class="list-group" style="margin-left: 8px; border-left: 1px solid grey;">
 											{% for rock in area.rocks %}
-												<li class="list-group-item list-group-item-action d-flex border-0 px-2">
-													<a href="{{ path('show_rock', { 'areaSlug': area.slug, slug: rock.slug } ) }}" title="Link zum Klettergebiet: {{ rock.name }}" class="nav-link py-0 d-flex justify-content-between align-items-center w-100 ms-2" data-area="Konstein" data-rocks-information="{{ rock.name }}" data-banned="0">{{ rock.name }}</a>
+												<li class="list-group-item list-group-item-action d-flex border-0 px-3 py-1" style="border-radius: 0;">
+													<a href="{{ path('show_rock', { 'areaSlug': area.slug, slug: rock.slug } ) }}" title="Link zum Klettergebiet: {{ rock.name }}" class="nav-link py-0 w-100 ms-2" data-area="{{ area.name }}" data-rocks-information="{{ rock.name }}" data-banned="0">{{ rock.name }}</a>
 												</li>
 											{% endfor %}
-										</ol>
+										</ul>
 									{% endif %}
 								</div>
 							</li>
 						{% endfor %}
 						<hr/>
-						<li class="nav-item my-2">
+						<li class="nav-item">
 							<a class="nav-link d-flex align-items-center" href="{{ path('app_suche') }}" title="Suche nach Erstbegeher">
 								<div class="magnifier d-inline-block me-3"></div>
 								<span class="text-truncate">Suche</span>
 							</a>
 						</li>
 						<hr/>
-						<li class="nav-item my-2">
+						<li class="nav-item">
 							<a class="nav-link d-flex align-items-center" href="{{ path('app_login') }}" title="Login">
 								<div class="user d-inline-block me-3"></div>
 								<span class="text-truncate">Login</span>
 							</a>
 						</li>
 						<hr/>
-						<li class="nav-item my-2">
+						<li class="nav-item">
+							<div class="nav-link text-truncate">Kontakt</div>
+						</li>
+						<li class="nav-item">
 							<a class="nav-link d-flex align-items-center" href="{{ path('datenschutz') }}">
 								<div class="chart d-inline-block me-3"></div>
 								<span class="text-truncate">Datenschutz</span>
 							</a>
 						</li>
-						<li class="nav-item my-2">
+						{# <li class="nav-item">
 							<a class="nav-link d-flex align-items-center" href="{{ path('upload_photo') }}" title="Foto hochladen">
 								<div class="chart d-inline-block me-3"></div>
 								<div class="text-truncate">Foto hochladen</div>
 							</a>
-						</li>
-						<li class="nav-item my-2">
+						</li> #}
+						<li class="nav-item">
 							<a class="nav-link d-flex align-items-center" href="{{ path('impressum') }}">
 								<div class="chart d-inline-block me-3"></div>
 								<div class="text-truncate">Impressum</div>
 							</a>
 						</li>
 						<hr/>
-						<li class="nav-item my-2">
-							<div class="text-truncate">Theme Mode</div>
+						<li class="nav-item">
+							<div class="nav-link text-truncate">Theme Mode</div>
 						</li>
-						<div class="mt-2" data-controller="theme">
-							<div class="segment-container">
-								<div class="segment-item" data-theme-target="system" data-action="click->theme#setSystem">System</div>
-								<div class="segment-item" data-theme-target="light" data-action="click->theme#setLight">Light</div>
-								<div class="segment-item" data-theme-target="dark" data-action="click->theme#setDark">Dark</div>
-							</div>
-						</div>
+						<li class="nav-item d-flex align-items-center" data-controller="theme">
+							<button type="button" class="theme-toggle-btn" data-action="click->theme#cycle" aria-label="Toggle theme" title="Theme wechseln (System → Hell → Dunkel)">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-toggle-icon" aria-hidden="true">
+									<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+									<path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/>
+									<path d="M12 3l0 18"/>
+									<path d="M12 9l4.65 -4.65"/>
+									<path d="M12 14.3l7.37 -7.37"/>
+									<path d="M12 19.6l8.85 -8.85"/>
+								</svg>
+								<span class="visually-hidden">Toggle theme</span>
+							</button>
+						</li>
 					</ul>
-					
-					
 				</div>
 			</div>
 			<div class="container p-0">

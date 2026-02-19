@@ -21,6 +21,14 @@ export default class extends Controller {
     this.setTheme('dark');
   }
 
+  // Cycle theme for single-button toggle: system → light → dark → system
+  cycle() {
+    const current = localStorage.getItem('theme') || 'system';
+    const order = ['system', 'light', 'dark'];
+    const nextIndex = (order.indexOf(current) + 1) % order.length;
+    this.setTheme(order[nextIndex]);
+  }
+
   setTheme(theme) {
     // Handle system theme detection
     let actualTheme = theme;

@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Rock;
 use App\Form\Type\JsonFieldType;
+use App\Form\Type\RockTranslationType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -177,6 +178,16 @@ class RockCrudController extends AbstractCrudController
             ->hideOnDetail()
             ->setColumns('col-12')
             ->setHelp('Beschreibung des Zustiegs zum Fels.');
+
+        yield CollectionField::new('translations')
+            ->setLabel('Übersetzungen (Beschreibung, Zustieg, Naturschutz, Pflanzen)')
+            ->setEntryType(RockTranslationType::class)
+            ->allowAdd()
+            ->allowDelete()
+            ->hideOnIndex()
+            ->hideOnDetail()
+            ->setColumns('col-12')
+            ->setHelp('Sprachversionen für die Frontend-Anzeige. Bevorzugt gegenüber den Feldern oben, sobald eine Übersetzung für die aktuelle Sprache existiert. Später nur noch Übersetzungen verwenden.');
 
         yield BooleanField::new('train')
             ->setLabel('Anfahrt mit Zug möglich')

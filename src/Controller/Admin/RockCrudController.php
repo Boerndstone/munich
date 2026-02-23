@@ -13,8 +13,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
-
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
@@ -173,7 +171,7 @@ class RockCrudController extends AbstractCrudController
             ->setColumns('col-12')
             ->setHelp('Angaben die für den Naturschutz wichtig sind.');
 
-        yield TextEditorField::new('access')
+        yield TextareaField::new('access')
             ->setLabel('Zustieg')
             ->hideOnIndex()
             ->hideOnDetail()

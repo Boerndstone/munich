@@ -292,12 +292,6 @@ class RockCrudController extends AbstractCrudController
             ->hideOnDetail()
             ->setColumns('col-12');
 
-        yield Field::new('header_image')
-            ->setLabel('Header Bild')
-            ->hideOnIndex()
-            ->hideOnDetail()
-            ->setColumns('col-12');
-
         yield NumberField::new('lat')
             ->setLabel('Breitengrad')
             ->setNumDecimals(6)

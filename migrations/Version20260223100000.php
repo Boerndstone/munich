@@ -20,7 +20,7 @@ final class Version20260223100000 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE rock DROP COLUMN header_image');
+        $this->addSql('ALTER TABLE rock DROP header_image');
     }
 
     public function down(Schema $schema): void

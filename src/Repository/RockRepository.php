@@ -178,7 +178,6 @@ class RockRepository extends ServiceEntityRepository
                 'rock.description as rockDescription',
                 'rock.access as rockAccess',
                 'rock.nature as rockNature',
-                'rock.headerImage as rockheaderImage',
                 'rock.banned as rockBanned',
                 'area.name as areaName',
                 'area.slug as areaSlug',

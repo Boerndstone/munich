@@ -87,9 +87,6 @@ class Rock
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $image = null;
 
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
-    private ?string $headerImage = null;
-
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 6, nullable: true)]
     private ?string $lat = null;
 
@@ -312,18 +309,6 @@ class Rock
     public function setImage(?string $image): self
     {
         $this->image = $image;
-
-        return $this;
-    }
-
-    public function getHeaderImage(): ?string
-    {
-        return $this->headerImage;
-    }
-
-    public function setHeaderImage(?string $headerImage): self
-    {
-        $this->headerImage = $headerImage;
 
         return $this;
     }

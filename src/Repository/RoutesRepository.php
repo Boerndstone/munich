@@ -484,6 +484,7 @@ class RoutesRepository extends ServiceEntityRepository
                 'r.rating',
                 'r.protection',
                 'r.rockQuality',
+                'r.climbingStyle',
                 'rock.name AS rockName',
                 'rock.slug AS rockSlug',
                 'area.slug AS areaSlug'

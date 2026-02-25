@@ -32,6 +32,7 @@ class RouteGroupingService
                 'routeRating' => $routeData['routeRating'],
                 'routeProtection' => $routeData['routeProtection'],
                 'rockQuality' => $routeData['rockQuality'],
+                'routeClimbingStyle' => $routeData['routeClimbingStyle'] ?? null,
                 'areaId' => $routeData['areaId'],
                 'rockId' => $routeData['rockId'],
                 'routeId' => $routeData['routeId'],

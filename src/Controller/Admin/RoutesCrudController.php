@@ -252,6 +252,23 @@ class RoutesCrudController extends AbstractCrudController
             ->setHelp('Wenn aktiv, dann wird die Felsqualität zweifelhaft!')
             ->setTemplatePath('admin/field/votes.html.twig');
 
+        yield ChoiceField::new('climbingStyle')
+            ->setLabel('Kletterstil')
+            ->setChoices([
+                'Mehrseillängen Tour' => 'multi-pitch',
+                'Trad Tour' => 'trad',
+                'Platte' => 'slab',
+                'Überhang' => 'overhang',
+                'Riss' => 'crack',
+                'Dach' => 'roof',
+                'Kamin' => 'chimney',
+                'Reibungsklettern' => 'friction',
+            ])
+            ->allowMultipleChoices()
+            ->hideOnIndex()
+            ->setColumns('col-12')
+            ->setHelp('Kletterstil(e) der Route – mehrere möglich.');
+
         yield Field::new('description')
             ->setLabel('Beschreibung')
             ->setColumns('col-12')

@@ -211,6 +211,7 @@ class RockRepository extends ServiceEntityRepository
                 'routes.rating as routeRating',
                 'routes.protection as routeProtection',
                 'routes.rockQuality as rockQuality',
+                'routes.climbingStyle as routeClimbingStyle',
                 'routes.firstAscent as routefirstAscent',
                 'routes.yearFirstAscent as routeyearFirstAscent',
                 'routes.description as routeDescription',

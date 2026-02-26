@@ -206,10 +206,14 @@ font-size: 0.875em;
     background-color: var(--theme-bg-lighter) !important;
     color: var(--theme-text-vise-versa) !important;
 }
-.list-group, .list-group-item, .list-group-item::before {
-    background-color: var(--theme-bg-lighter) !important;
+.list-group, .list-group-item, .list-group-item:hover {
     color: var(--theme-text) !important;
-    a {color: var(--theme-text) !important;}
+}
+.list-group-item.active, .nav-link.active
+{
+    background-color: black !important;
+    color: white !important;
+    border-radius: 5px;
 }
 .accordion-button:focus {
     box-shadow: none !important;
@@ -920,13 +924,6 @@ a {
     width: 20px;
     height: 20px;
 }
-.list-group-item.active {
-    color: white;
-    background-color: $primary;
-    border-color: $primary;
-}
-
-
 .scroll-container::-webkit-scrollbar {
     height: 2px;
 }
@@ -1116,15 +1113,6 @@ input[data-autocomplete-target="input"]:focus {
 }
 .dropdown-toggle::after {
     display: none;
-}
-
-.active-item, .list-group-item:hover {
-    background-color: rgba(7, 89, 133, 0.9);
-}
-
-.active-item a,
-.list-group-item:hover a {
-    text-decoration: underline;
 }
 
 #form-check-language {

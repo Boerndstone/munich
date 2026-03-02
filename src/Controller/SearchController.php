@@ -14,9 +14,64 @@ class SearchController extends AbstractController
     #[Route('/search', name: 'search_autocomplete')]
     public function autocomplete(Request $request, RockRepository $rockRepository, RoutesRepository $routesRepository): JsonResponse
     {
+        try {
+            return $this->doAutocomplete($request, $rockRepository, $routesRepository);
+        } catch (\Throwable $e) {
+            $message = $this->getParameter('kernel.environment') === 'dev'
+                ? $e->getMessage()
+                : 'Ein Fehler ist aufgetreten.';
+            return $this->json(['rocks' => [], 'routes' => [], 'searchMode' => 'name', '_error' => $message], 500);
+        }
+    }
+
+    private function doAutocomplete(Request $request, RockRepository $rockRepository, RoutesRepository $routesRepository): JsonResponse
+    {
         $query = $request->query->get('query', '');
         $mode = $request->query->get('mode', 'name');
-        
+        $selectedGrades = $request->query->all('grades') ?? [];
+        $selectedArea = $request->query->get('area', '');
+        $childFriendly = filter_var($request->query->get('childFriendly', false), \FILTER_VALIDATE_BOOLEAN);
+        $sunny = filter_var($request->query->get('sunny', false), \FILTER_VALIDATE_BOOLEAN);
+        $rainProtected = filter_var($request->query->get('rainProtected', false), \FILTER_VALIDATE_BOOLEAN);
+
+        // Attributes search – child friendly, sunny, rain protected
+        if ($mode === 'attributes') {
+            $filters = array_filter([
+                'childFriendly' => $childFriendly,
+                'sunny' => $sunny,
+                'rainProtected' => $rainProtected,
+            ]);
+            if (empty($filters)) {
+                return $this->json(['rocks' => [], 'routes' => [], 'searchMode' => $mode]);
+            }
+            $rocks = $rockRepository->findByAttributes($filters, $selectedArea ?: null);
+            $rockResults = [];
+            foreach ($rocks as $rock) {
+                $area = $rock->getArea();
+                if ($area) {
+                    $rockResults[] = [
+                        'name' => $rock->getName(),
+                        'url' => $this->generateUrl('show_rock', [
+                            'areaSlug' => $area->getSlug(),
+                            'slug' => $rock->getSlug(),
+                        ]),
+                    ];
+                }
+            }
+            return $this->json(['rocks' => $rockResults, 'routes' => [], 'searchMode' => $mode]);
+        }
+
+        // Grade search – same logic as FirstAscencionistSearchController
+        if ($mode === 'grade') {
+            if (empty($selectedGrades)) {
+                return $this->json(['rocks' => [], 'routes' => [], 'searchMode' => $mode]);
+            }
+            $routes = $routesRepository->findByGrades($selectedGrades, $selectedArea ?: null, 100);
+            $routeResults = $this->formatRoutesForJson($routes);
+            return $this->json(['rocks' => [], 'routes' => $routeResults, 'searchMode' => $mode]);
+        }
+
+        // Name and firstascent need at least 2 characters
         if (empty($query) || strlen($query) < 2) {
             return $this->json(['rocks' => [], 'routes' => [], 'searchMode' => $mode]);
         }
@@ -25,45 +80,25 @@ class SearchController extends AbstractController
         $routeResults = [];
 
         if ($mode === 'name') {
-            // Search for rocks and routes by name
+            // Search rocks and routes by name (same as /suche approach)
             $rocks = $rockRepository->search($query);
             foreach ($rocks as $rock) {
-                $rockResults[] = [
-                    'name' => $rock->getName(),
-                    'url' => $this->generateUrl('show_rock', [
-                        'areaSlug' => $rock->getArea()->getSlug(),
-                        'slug' => $rock->getSlug()
-                    ])
-                ];
+                $area = $rock->getArea();
+                if ($area) {
+                    $rockResults[] = [
+                        'name' => $rock->getName(),
+                        'url' => $this->generateUrl('show_rock', [
+                            'areaSlug' => $area->getSlug(),
+                            'slug' => $rock->getSlug()
+                        ])
+                    ];
+                }
             }
-
             $routes = $routesRepository->search($query);
-            foreach ($routes as $route) {
-                $routeResults[] = [
-                    'name' => $route->getName(),
-                    'area' => $route->getArea() ? $route->getArea()->getName() : 'Unknown',
-                    'rock' => $route->getRock() ? $route->getRock()->getName() : 'Unknown',
-                    'url' => $this->generateUrl('show_rock', [
-                        'areaSlug' => $route->getArea() ? $route->getArea()->getSlug() : 'unknown',
-                        'slug' => $route->getRock() ? $route->getRock()->getSlug() : 'unknown'
-                    ])
-                ];
-            }
+            $routeResults = $this->formatRoutesForJson($routes);
         } elseif ($mode === 'firstascent') {
-            // Search for routes by first ascent
             $routes = $routesRepository->findByFirstAscent($query);
-            foreach ($routes as $route) {
-                $routeResults[] = [
-                    'name' => $route->getName(),
-                    'area' => $route->getArea() ? $route->getArea()->getName() : 'Unknown',
-                    'rock' => $route->getRock() ? $route->getRock()->getName() : 'Unknown',
-                    'firstAscent' => $route->getFirstAscent() ? $route->getFirstAscent() : 'Unknown',
-                    'url' => $this->generateUrl('show_rock', [
-                        'areaSlug' => $route->getArea() ? $route->getArea()->getSlug() : 'unknown',
-                        'slug' => $route->getRock() ? $route->getRock()->getSlug() : 'unknown'
-                    ])
-                ];
-            }
+            $routeResults = $this->formatRoutesForJson($routes);
         }
 
         return $this->json([
@@ -73,4 +108,30 @@ class SearchController extends AbstractController
         ]);
     }
 
+    /**
+     * @param \App\Entity\Routes[] $routes
+     * @return array<int, array{name: string, area: string, rock: string, grade: ?string, firstAscent: ?string, yearFirstAscent: ?int, url: string, rating: ?int, protection: ?int, rockQuality: ?bool}>
+     */
+    private function formatRoutesForJson(array $routes): array
+    {
+        $results = [];
+        foreach ($routes as $route) {
+            $results[] = [
+                'name' => $route->getName(),
+                'area' => $route->getArea() ? $route->getArea()->getName() : '',
+                'rock' => $route->getRock() ? $route->getRock()->getName() : '',
+                'grade' => $route->getGrade(),
+                'firstAscent' => $route->getFirstAscent(),
+                'yearFirstAscent' => $route->getYearFirstAscent(),
+                'rating' => $route->getRating(),
+                'protection' => $route->getProtection(),
+                'rockQuality' => $route->isRockQuality(),
+                'url' => $this->generateUrl('show_rock', [
+                    'areaSlug' => $route->getArea() ? $route->getArea()->getSlug() : 'unknown',
+                    'slug' => $route->getRock() ? $route->getRock()->getSlug() : 'unknown'
+                ])
+            ];
+        }
+        return $results;
+    }
 }

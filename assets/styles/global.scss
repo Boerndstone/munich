@@ -1091,20 +1091,20 @@ input[data-autocomplete-target="input"]:focus {
     /* Adjust this value to move the legend vertically */
 }
 
-// Search modal: ensure modal content appears above backdrop (modal must have higher z-index)
-#searchModal.modal,
-#searchModal.modal.show {
+// Modals: ensure modal content appears above backdrop (all modals need higher z-index than backdrop)
+.modal.fade,
+.modal.show {
   --bs-modal-zindex: 10550;
   z-index: 10550 !important;
-}
-
-#searchModal input.form-control::placeholder {
-  font-size: 0.875rem !important;
 }
 .modal-backdrop.fade,
 .modal-backdrop.show {
   --bs-backdrop-zindex: 10545;
   z-index: 10545 !important;
+}
+
+#searchModal input.form-control::placeholder {
+  font-size: 0.875rem !important;
 }
 
 .number-circle {

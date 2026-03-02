@@ -33,12 +33,14 @@
 		{# Leaflet - CSS and JS loaded in head (required because map init scripts run inline in body) #}
 		{% block leaflet %}{% endblock %}
 	</head>
-	<body id="body" {% block body_attributes %} {% endblock %} class="{% block bodyclass %}{% endblock %}">
+	<body id="body" {% block body_attributes %} {% endblock %} class="{% block bodyclass %}{% endblock %}" data-controller="search-modal" data-search-modal-search-url-value="{{ path('search_autocomplete') }}">
 		<div data-controller="scroll-progress" class="bg-theme fixed-top" style="height: 3px; z-index: 10000;"></div>
 
 		{% block body %}{% endblock %}
 
 		{% include 'partials/_footer.html.twig' with {'areas': getAreas()} %}
+
+		{{ include('partials/_search_modal.html.twig') }}
 
 		<div {{ stimulus_controller('cookie-consent') }}></div>
 

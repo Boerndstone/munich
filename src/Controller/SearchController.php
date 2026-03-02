@@ -66,7 +66,7 @@ class SearchController extends AbstractController
             if (empty($selectedGrades)) {
                 return $this->json(['rocks' => [], 'routes' => [], 'searchMode' => $mode]);
             }
-            $routes = $routesRepository->findByGrades($selectedGrades, $selectedArea ?: null);
+            $routes = $routesRepository->findByGrades($selectedGrades, $selectedArea ?: null, 100);
             $routeResults = $this->formatRoutesForJson($routes);
             return $this->json(['rocks' => [], 'routes' => $routeResults, 'searchMode' => $mode]);
         }

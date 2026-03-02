@@ -2,11 +2,16 @@
 <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true" data-search-modal-target="modal">
 	<div class="modal-dialog modal-lg modal-dialog-scrollable">
 		<div class="modal-content">
+			<div class="modal-header py-2">
+				<h5 class="modal-title stay-black fs-6 mb-0" id="searchModalLabel">Suche</h5>
+				<button type="button" class="btn-close small text-black p-0" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
 			<div class="modal-body">
+			
 				{# Tabs: Route/Fels | Erstbegeher | Schwierigkeitsgrade | Eigenschaften #}
 				<ul class="nav nav-tabs mb-3 p-1 rounded-3" id="searchTabs" role="tablist">
 					<li class="nav-item" role="presentation">
-						<button class="nav-link active px-1 py-1" id="tab-name" data-bs-toggle="tab" data-bs-target="#pane-name" type="button" role="tab">Route/Fels</button>
+						<button class="nav-link active px-2 py-1" id="tab-name" data-bs-toggle="tab" data-bs-target="#pane-name" type="button" role="tab">Route/Fels</button>
 					</li>
 					<li class="nav-item" role="presentation">
 						<button class="nav-link px-2 py-1" id="tab-firstascent" data-bs-toggle="tab" data-bs-target="#pane-firstascent" type="button" role="tab">Erstbegeher</button>
@@ -122,7 +127,7 @@
 							<div class="col-3 fw-bold small">Fels</div>
 							<div class="col-3 fw-bold small">Gebiet</div>
 						</div>
-						<div data-search-modal-target="routesTable"></div>
+						<ul class="ps-0" data-search-modal-target="routesTable"></ul>
 					</div>
 					<div data-search-modal-target="emptyState" class="text-muted small d-none">Keine Ergebnisse gefunden.</div>
 				</div>

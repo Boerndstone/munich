@@ -315,7 +315,10 @@ class RockRepository extends ServiceEntityRepository
             $qb->andWhere('rock.rain = 1');
         }
 
-        return $qb->getQuery()->getResult();
+        return $qb
+            ->setMaxResults(100)
+            ->getQuery()
+            ->getResult();
     }
 
     public function findWithTranslations($slug, $locale)

@@ -142,7 +142,7 @@ export default class extends Controller {
     if (this.hasEmptyStateTarget) this.emptyStateTarget.classList.add('d-none');
     if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add('d-none');
     if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add('d-none');
-    if (this.hasRoutesTableTarget) this.routesTableTarget.innerHTML = '<tr><td colspan="6" class="text-center py-3 text-muted">Lade...</td></tr>';
+    if (this.hasRoutesTableTarget) this.routesTableTarget.innerHTML = '<div class="text-center py-3">Lade...</div>';
   }
 
   renderResults(data) {

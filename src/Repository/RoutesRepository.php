@@ -336,7 +336,7 @@ class RoutesRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findByGrades(array $gradeRanges, ?string $areaSlug = null): array
+    public function findByGrades(array $gradeRanges, ?string $areaSlug = null, ?int $limit = null): array
     {
         $qb = $this->createQueryBuilder('r')
             ->leftJoin('r.rock', 'rock')
@@ -365,9 +365,11 @@ class RoutesRepository extends ServiceEntityRepository
                ->setParameter('areaSlug', $areaSlug);
         }
 
-        return $qb->orderBy('r.name', 'ASC')
-            ->getQuery()
-            ->getResult();
+        $qb = $qb->orderBy('r.name', 'ASC');
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
+        }
+        return $qb->getQuery()->getResult();
     }
 
     private function getNumericalRangeForGrade(string $range): array

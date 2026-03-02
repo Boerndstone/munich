@@ -933,6 +933,30 @@ a {
     background-color: rgb(7, 89, 133) !important;
     color: white;
 }
+
+.nav-tabs {
+    background-color:   oklch(92.3% 0.003 48.717);
+    border: none;
+    .nav-link.active {
+        background-color: var(--bs-white) !important;
+        color: var(--bs-black) !important;
+    }
+    .nav-link {
+        border: none;
+        margin: 0;
+    }
+}
+.tab-content {
+    .form-control:focus  {
+        box-shadow: none;
+    }
+    .form-control:focus-visible {
+        outline: none;
+    }
+}
+.list-group-item-action:hover {
+    background-color: #dee2e6;
+}
 .error {
     .message-box {
         height: 200px;
@@ -1065,6 +1089,22 @@ input[data-autocomplete-target="input"]:focus {
     /* Adjust this value to move the legend more to the left */
     top: 10px;
     /* Adjust this value to move the legend vertically */
+}
+
+// Search modal: ensure modal content appears above backdrop (modal must have higher z-index)
+#searchModal.modal,
+#searchModal.modal.show {
+  --bs-modal-zindex: 10550;
+  z-index: 10550 !important;
+}
+
+#searchModal input.form-control::placeholder {
+  font-size: 0.875rem !important;
+}
+.modal-backdrop.fade,
+.modal-backdrop.show {
+  --bs-backdrop-zindex: 10545;
+  z-index: 10545 !important;
 }
 
 .number-circle {
@@ -1282,4 +1322,3 @@ input[data-autocomplete-target="input"]:focus {
     height: 1.125rem;
     pointer-events: none;
 }
-

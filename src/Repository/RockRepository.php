@@ -286,6 +286,41 @@ class RockRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Find rocks by attributes: child friendly, sunny, rain protected.
+     *
+     * @param array{childFriendly?: bool, sunny?: bool, rainProtected?: bool} $filters
+     * @return Rock[]
+     */
+    public function findByAttributes(array $filters, ?string $areaSlug = null): array
+    {
+        $qb = $this->createQueryBuilder('rock')
+            ->leftJoin('rock.area', 'area')
+            ->addSelect('area')
+            ->where('rock.online = 1')
+            ->orderBy('rock.name', 'ASC');
+
+        if (!empty($areaSlug)) {
+            $qb->andWhere('area.slug = :areaSlug')
+                ->setParameter('areaSlug', $areaSlug);
+        }
+
+        if (!empty($filters['childFriendly'])) {
+            $qb->andWhere('rock.childFriendly = 1');
+        }
+        if (!empty($filters['sunny'])) {
+            $qb->andWhere('rock.sunny = 3');
+        }
+        if (!empty($filters['rainProtected'])) {
+            $qb->andWhere('rock.rain = 1');
+        }
+
+        return $qb
+            ->setMaxResults(100)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findWithTranslations($slug, $locale)
     {
         return $this->createQueryBuilder('r')

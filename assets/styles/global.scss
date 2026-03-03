@@ -1107,6 +1107,18 @@ input[data-autocomplete-target="input"]:focus {
   font-size: 0.875rem !important;
 }
 
+#searchModal #searchTabs {
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-wrap: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+
+  .nav-item {
+    flex-shrink: 0;
+  }
+}
+
 .number-circle {
     r: 17px;
 }

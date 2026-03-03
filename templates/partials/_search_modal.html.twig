@@ -128,6 +128,15 @@
 							<div class="col-3 fw-bold small">Gebiet</div>
 						</div>
 						<ul class="ps-0" data-search-modal-target="routesTable"></ul>
+						<div data-search-modal-target="pagerContainer" class="d-none mt-2 d-flex align-items-center justify-content-between flex-wrap gap-2">
+							<button type="button" class="btn btn-outline-secondary btn-sm" data-search-modal-target="pagerPrev" data-action="click->search-modal#gradePagePrev" aria-label="Vorherige Seite">
+								<i class="fas fa-chevron-left me-1"></i>Zurück
+							</button>
+							<span class="small text-muted" data-search-modal-target="pagerInfo">Seite 1 von 1</span>
+							<button type="button" class="btn btn-outline-secondary btn-sm" data-search-modal-target="pagerNext" data-action="click->search-modal#gradePageNext" aria-label="Nächste Seite">
+								Weiter<i class="fas fa-chevron-right ms-1"></i>
+							</button>
+						</div>
 					</div>
 					<div data-search-modal-target="emptyState" class="text-muted small d-none">Keine Ergebnisse gefunden.</div>
 				</div>

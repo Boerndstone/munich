@@ -61,14 +61,25 @@ class SearchController extends AbstractController
             return $this->json(['rocks' => $rockResults, 'routes' => [], 'searchMode' => $mode]);
         }
 
-        // Grade search – same logic as FirstAscencionistSearchController
+        // Grade search – paginated
         if ($mode === 'grade') {
             if (empty($selectedGrades)) {
                 return $this->json(['rocks' => [], 'routes' => [], 'searchMode' => $mode]);
             }
-            $routes = $routesRepository->findByGrades($selectedGrades, $selectedArea ?: null, 100);
+            $perPage = max(1, min(50, (int) $request->query->get('perPage', 20)));
+            $page = max(1, (int) $request->query->get('page', 1));
+            $totalCount = $routesRepository->countByGrades($selectedGrades, $selectedArea ?: null);
+            $offset = ($page - 1) * $perPage;
+            $routes = $routesRepository->findByGrades($selectedGrades, $selectedArea ?: null, $perPage, $offset);
             $routeResults = $this->formatRoutesForJson($routes);
-            return $this->json(['rocks' => [], 'routes' => $routeResults, 'searchMode' => $mode]);
+            return $this->json([
+                'rocks' => [],
+                'routes' => $routeResults,
+                'searchMode' => $mode,
+                'totalCount' => $totalCount,
+                'page' => $page,
+                'perPage' => $perPage,
+            ]);
         }
 
         // Name and firstascent need at least 2 characters

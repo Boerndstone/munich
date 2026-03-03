@@ -8,15 +8,20 @@ export default class extends Controller {
     "trigger", "modal", "nameInput", "firstAscentInput", "areaSelect",
     "areaSelectAttributes", "gradeCheck", "attrChildFriendly", "attrSunny", "attrRainProtected",
     "resultsContainer", "resultsCount", "rocksSection", "rocksList",
-    "routesSection", "routesTable", "emptyState", "idleState"
+    "routesSection", "routesTable", "emptyState", "idleState",
+    "pagerContainer", "pagerPrev", "pagerNext", "pagerInfo"
   ];
 
   connect() {
     this.bootstrapModal = null;
     this._debounceTimers = {};
+    this._gradePagination = null; // { grades, area, totalCount, page, perPage }
     const tabsEl = document.getElementById('searchTabs');
     if (tabsEl) {
-      tabsEl.addEventListener('shown.bs.tab', () => this.clearResults());
+      tabsEl.addEventListener('shown.bs.tab', (e) => {
+        this.clearResults();
+        this.scrollActiveTabToCenter(e.target);
+      });
     }
   }
 
@@ -26,11 +31,24 @@ export default class extends Controller {
     }
   }
 
+  scrollActiveTabToCenter(activeButton) {
+    const tabsEl = document.getElementById('searchTabs');
+    if (!tabsEl || !activeButton) return;
+    const container = tabsEl;
+    const btn = activeButton;
+    const scrollLeft = btn.offsetLeft - (container.offsetWidth / 2) + (btn.offsetWidth / 2);
+    container.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
+  }
+
   open(event) {
     event?.preventDefault();
     if (!this.hasModalTarget) return;
     if (!this.bootstrapModal) {
       this.bootstrapModal = new Modal(this.modalTarget);
+      this.modalTarget.addEventListener('shown.bs.modal', () => {
+        const activeBtn = document.querySelector('#searchTabs .nav-link.active');
+        if (activeBtn) this.scrollActiveTabToCenter(activeBtn);
+      });
     }
     this.bootstrapModal.show();
     setTimeout(() => this.modalTarget.querySelector('input[type="search"]')?.focus(), 300);
@@ -71,6 +89,7 @@ export default class extends Controller {
   }
 
   clearResults() {
+    this._gradePagination = null;
     if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.add('d-none');
     if (this.hasIdleStateTarget) this.idleStateTarget.classList.remove('d-none');
     if (this.hasResultsCountTarget) this.resultsCountTarget.textContent = '0';
@@ -78,6 +97,7 @@ export default class extends Controller {
     if (this.hasRoutesTableTarget) this.routesTableTarget.innerHTML = '';
     if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add('d-none');
     if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add('d-none');
+    if (this.hasPagerContainerTarget) this.pagerContainerTarget.classList.add('d-none');
     if (this.hasEmptyStateTarget) {
       this.emptyStateTarget.classList.add('d-none');
       this.emptyStateTarget.textContent = 'Keine Ergebnisse gefunden.';
@@ -88,7 +108,20 @@ export default class extends Controller {
     const grades = this.gradeCheckTargets.filter(cb => cb.checked).map(cb => cb.value);
     if (grades.length === 0) return;
     const area = this.areaSelectTarget?.value || '';
-    await this.fetchResults('grade', { grades, area });
+    await this.fetchResults('grade', { grades, area, page: 1 });
+  }
+
+  gradePagePrev() {
+    if (!this._gradePagination || this._gradePagination.page <= 1) return;
+    const { grades, area, perPage } = this._gradePagination;
+    this.fetchResults('grade', { grades, area, page: this._gradePagination.page - 1, perPage });
+  }
+
+  gradePageNext() {
+    if (!this._gradePagination) return;
+    const { totalCount, page, perPage, grades, area } = this._gradePagination;
+    if (page * perPage >= totalCount) return;
+    this.fetchResults('grade', { grades, area, page: page + 1, perPage });
   }
 
   async searchByAttributes() {
@@ -114,6 +147,8 @@ export default class extends Controller {
     if (params.grades?.length) {
       params.grades.forEach(g => url.searchParams.append('grades[]', g));
     }
+    if (params.page != null) url.searchParams.set('page', String(params.page));
+    if (params.perPage != null) url.searchParams.set('perPage', String(params.perPage));
     if (params.childFriendly) url.searchParams.set('childFriendly', '1');
     if (params.sunny) url.searchParams.set('sunny', '1');
     if (params.rainProtected) url.searchParams.set('rainProtected', '1');
@@ -146,12 +181,29 @@ export default class extends Controller {
   }
 
   renderResults(data) {
-    const { rocks = [], routes = [], searchMode } = data;
-    const total = rocks.length + routes.length;
+    const { rocks = [], routes = [], searchMode, totalCount, page, perPage } = data;
+    const total = searchMode === 'grade' && totalCount != null ? totalCount : (rocks.length + routes.length);
 
     if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.remove('d-none');
     if (this.hasIdleStateTarget) this.idleStateTarget.classList.add('d-none');
     if (this.hasResultsCountTarget) this.resultsCountTarget.textContent = total;
+
+    // Grade pagination state and pager UI
+    if (searchMode === 'grade' && totalCount != null && page != null && perPage != null) {
+      const grades = this.gradeCheckTargets.filter(cb => cb.checked).map(cb => cb.value);
+      const area = this.areaSelectTarget?.value || '';
+      this._gradePagination = { grades, area, totalCount, page, perPage };
+      const totalPages = Math.ceil(totalCount / perPage);
+      if (this.hasPagerContainerTarget) {
+        this.pagerContainerTarget.classList.remove('d-none');
+        if (this.hasPagerInfoTarget) this.pagerInfoTarget.textContent = `Seite ${page} von ${totalPages}`;
+        if (this.hasPagerPrevTarget) this.pagerPrevTarget.disabled = page <= 1;
+        if (this.hasPagerNextTarget) this.pagerNextTarget.disabled = page >= totalPages;
+      }
+    } else {
+      this._gradePagination = null;
+      if (this.hasPagerContainerTarget) this.pagerContainerTarget.classList.add('d-none');
+    }
 
     if (total === 0) {
       if (this.hasEmptyStateTarget) this.emptyStateTarget.classList.remove('d-none');

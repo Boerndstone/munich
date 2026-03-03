@@ -69,6 +69,8 @@ class SearchController extends AbstractController
             $perPage = max(1, min(50, (int) $request->query->get('perPage', 20)));
             $page = max(1, (int) $request->query->get('page', 1));
             $totalCount = $routesRepository->countByGrades($selectedGrades, $selectedArea ?: null);
+            $totalPages = max(1, (int) ceil($totalCount / $perPage));
+            $page = min($page, $totalPages);
             $offset = ($page - 1) * $perPage;
             $routes = $routesRepository->findByGrades($selectedGrades, $selectedArea ?: null, $perPage, $offset);
             $routeResults = $this->formatRoutesForJson($routes);

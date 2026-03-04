@@ -158,27 +158,6 @@ class RockCrudController extends AbstractCrudController
             ->setHelp('Reihenfolge auf der Live Seite in der Überischtstabelle')
             ->setColumns('col-12');
 
-        yield TextareaField::new('description')
-            ->setLabel('Beschreibung')
-            ->hideOnIndex()
-            ->hideOnDetail()
-            ->setHelp('Beschreibung zum Fels.')
-            ->setColumns('col-12');
-
-        yield TextareaField::new('nature')
-            ->setLabel('Naturschutz')
-            ->hideOnIndex()
-            ->hideOnDetail()
-            ->setColumns('col-12')
-            ->setHelp('Angaben die für den Naturschutz wichtig sind.');
-
-        yield TextareaField::new('access')
-            ->setLabel('Zustieg')
-            ->hideOnIndex()
-            ->hideOnDetail()
-            ->setColumns('col-12')
-            ->setHelp('Beschreibung des Zustiegs zum Fels.');
-
         yield CollectionField::new('translations')
             ->setLabel('Übersetzungen (Beschreibung, Zustieg, Naturschutz, Pflanzen)')
             ->setEntryType(RockTranslationType::class)

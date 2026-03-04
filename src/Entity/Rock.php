@@ -51,15 +51,6 @@ class Rock
     #[ORM\Column(type: Types::INTEGER)]
     protected ?int $nr = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $access = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $nature = null;
-
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $zone = null;
 
@@ -165,42 +156,6 @@ class Rock
     public function setNr(?int $nr): self
     {
         $this->nr = $nr;
-
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): self
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function getAccess(): ?string
-    {
-        return $this->access;
-    }
-
-    public function setAccess(?string $access): self
-    {
-        $this->access = $access;
-
-        return $this;
-    }
-
-    public function getNature(): ?string
-    {
-        return $this->nature;
-    }
-
-    public function setNature(?string $nature): self
-    {
-        $this->nature = $nature;
 
         return $this;
     }

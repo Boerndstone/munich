@@ -12,10 +12,7 @@
 {% endblock %}
 
 {% block meta_tags %}
-	{% set description = '' %}
-	{% for rock in rocks %}
-		{% set description = rock.rockDescription|striptags|slice(0, 160) %}
-	{% endfor %}
+	{% set description = (description|default(''))|striptags %}
 	{% set keywords = 'Klettern, Kletterfels, ' ~ slug|custom_replace ~ ', ' ~ areaName ~ ', Klettertouren' %}
 	{% for route in routes %}
 		{% set keywords = keywords ~ ', ' ~ route.routeName ~ ' ' ~ route.routeGrade %}
@@ -49,7 +46,7 @@
   "@context": "https://schema.org",
   "@type": "Place",
   "name": "{{ slug|custom_replace }}",
-  "description": "{% for rock in rocks %}{{ rock.rockDescription|striptags|slice(0, 160) }}{% endfor %}",
+  "description": "{{ (description|default(''))|striptags }}",
   "url": "https://munichclimbs.de/Kletterfels/{{ slug }}",
   {% if rockLat is not empty and rockLng is not empty %}
   "geo": {

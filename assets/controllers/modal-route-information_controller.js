@@ -65,7 +65,7 @@ export default class extends Controller {
       
       // First ascent info (mobile)
       if (firstAscent || yearFirstAscent) {
-        html += `<p class="fw-medium small mb-0 d-lg-none stay-black">`;
+        html += `<p class="fw-medium small mb-0 d-lg-none">`;
         if (firstAscent) {
           html += `Erstbegeher: ${firstAscent} `;
         }
@@ -78,9 +78,9 @@ export default class extends Controller {
       // Comments
       if (comments && comments.length > 0) {
         comments.forEach((commentData, index) => {
-          html += `<p class="mt-2 small fw-normal stay-black">${commentData.comment || ''}</p>`;
+          html += `<p class="mt-2 small fw-normal">${commentData.comment || ''}</p>`;
           if (commentData.username) {
-            html += `<p class="mt-2 fst-italic small fw-normal stay-black">`;
+            html += `<p class="mt-2 fst-italic small fw-normal">`;
             html += commentData.username;
             if (commentData.date) {
               const formattedDate = this.formatDate(commentData.date);

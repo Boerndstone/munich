@@ -48,8 +48,9 @@
         "symfony/web-profiler-bundle": "7.4.*",
         "symfony/webpack-encore-bundle": "^2.0",
         "symfony/yaml": "7.4.*",
+        "twig/cssinliner-extra": "^3.23",
         "twig/extra-bundle": "^2.12|^3.12",
-        "twig/inky-extra": "*",
+        "twig/inky-extra": "^3.23",
         "twig/twig": "^3.12"
     },
     "require-dev": {

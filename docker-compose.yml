@@ -1,0 +1,63 @@
+# munichclimbs – local development with Docker
+# Run: docker compose up -d
+# App:         http://localhost:8080
+# phpMyAdmin:  http://localhost:8081   (user: munich / munich_secret  or  root / root_secret)
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        INSTALL_DEV_DEPS: "1"
+    ports:
+      - "8080:80"
+    environment:
+      APP_ENV: dev
+      APP_SECRET: changeme_dev_secret
+      DATABASE_URL: mysql://munich:munich_secret@mysql:3306/munich?serverVersion=8.0&charset=utf8mb4
+      # Optional: override MAILER_DSN for local (e.g. Mailpit or log)
+      # MAILER_DSN: smtp://mailpit:1025
+    volumes:
+      # Mount source so you can edit code without rebuilding (vendor stays in image)
+      - .:/var/www/html
+      # Prevent overwriting vendor in the container with host’s (empty) vendor
+      - /var/www/html/vendor
+    depends_on:
+      mysql:
+        condition: service_healthy
+    # Uncomment to run as your user (avoids permission issues on var/)
+    # user: "${UID}:${GID}"
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: munich
+      MYSQL_USER: munich
+      MYSQL_PASSWORD: munich_secret
+      MYSQL_ROOT_PASSWORD: root_secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_secret"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      # Optional: prefill login (user can still choose another)
+      # PMA_USER: munich
+      # PMA_PASSWORD: munich_secret
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql_data:

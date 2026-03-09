@@ -5,10 +5,12 @@ namespace App\Controller;
 use App\Entity\Area;
 use App\Entity\Rock;
 use App\Entity\Contact;
+use App\Dto\RockImprovementSuggestion;
 use App\Service\FooterAreas;
 use App\Service\FrontendCacheService;
 use App\Service\RouteGroupingService;
 use App\Form\ContactFormType;
+use App\Form\RockImprovementSuggestionType;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use App\Repository\AreaRepository;
 use App\Repository\RockRepository;
@@ -177,7 +179,9 @@ class FrontendController extends AbstractController
         $areaSlug,
         $slug,
         Packages $assetPackages,
-        Request $request
+        Request $request,
+        MailerInterface $mailer,
+        TranslatorInterface $translator
     ): Response {
 
         $rockId = $rockRepository->getRockId($slug);
@@ -247,6 +251,31 @@ class FrontendController extends AbstractController
             throw $this->createNotFoundException('The rock does not exist');
         }
 
+        $suggestion = new RockImprovementSuggestion();
+        $suggestion->rockName = $rock->getName();
+        $improvementForm = $this->createForm(RockImprovementSuggestionType::class, $suggestion);
+        $improvementForm->handleRequest($request);
+        if ($improvementForm->isSubmitted() && $improvementForm->isValid()) {
+            /** @var RockImprovementSuggestion $data */
+            $data = $improvementForm->getData();
+            $email = (new TemplatedEmail())
+                ->from('noreply@munichclimbs.de')
+                ->to('admin@munichclimbs.de')
+                ->subject('munichclimbs: Aktualisierung für Fels „' . $data->rockName . '“')
+                ->htmlTemplate('emails/rock_improvement.html.twig')
+                ->context([
+                    'name' => $data->name,
+                    'rockName' => $data->rockName,
+                    'routeName' => $data->routeName,
+                    'grade' => $data->grade,
+                    'firstAscent' => $data->firstAscent,
+                    'comment' => $data->comment,
+                ]);
+            $mailer->send($email);
+            $this->addFlash('success', $translator->trans('rock_improvement.success'));
+            return $this->redirectToRoute('show_rock', ['areaSlug' => $areaSlug, 'slug' => $slug]);
+        }
+
         return $this->render('frontend/rock.html.twig', [
             'areaName' => $areaName,
             'slug' => $slug,
@@ -267,6 +296,7 @@ class FrontendController extends AbstractController
             'topos' => $topos,
             'jsonData' => $jsonData,
             'locale' => $locale,
+            'improvementForm' => $improvementForm,
         ]);
     }
 }

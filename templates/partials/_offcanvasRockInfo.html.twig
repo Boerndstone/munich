@@ -216,7 +216,6 @@
 						</div>
 					</div>
 				{% endif %}
-
 				{% if jsonData %}
 					<div class="accordion-item">
 						<h2 class="accordion-header" id="headingBilder">
@@ -305,9 +304,33 @@
 								<td>{{"multi.pitch"|trans}}</td>
 							</tr>
 						</table>
-					</div>
-				</div>
 			</div>
+		</div>
+	</div>
+	<div class="accordion-item">
+		<h2 class="accordion-header" id="headingImprovement">
+			<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseImprovement" aria-expanded="false" aria-controls="collapseImprovement">
+				<div class="rock-general-improvement text-black me-2"></div>
+				{{ "rock_improvement.title"|trans }}
+			</button>
+		</h2>
+		<div id="collapseImprovement" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+			<div class="accordion-body">
+				{% if improvementForm is defined and improvementForm is not null %}
+					<p class="small text-muted mb-3">{{ "rock_improvement.intro"|trans({"%rock_name%": rock.rockName}) }}</p>
+					{{ form_start(improvementForm, { 'action': path('show_rock', { areaSlug: areaSlug, slug: slug }), 'attr': { 'class': 'small' } }) }}
+					{{ form_row(improvementForm.rockName) }}
+					{{ form_row(improvementForm.name) }}
+					{{ form_row(improvementForm.routeName) }}
+					{{ form_row(improvementForm.grade) }}
+					{{ form_row(improvementForm.firstAscent) }}
+					{{ form_row(improvementForm.comment) }}
+					<button type="submit" class="btn btn-success text-green btn-sm mt-2">{{ "rock_improvement.submit"|trans }}</button>
+					{{ form_end(improvementForm) }}
+				{% endif %}
+			</div>
+		</div>
+	</div>
 		</div>
 	</div>
 </div>{% endfor %}

@@ -1,0 +1,469 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block page_title %}
+	Topo Path Helper
+{% endblock %}
+
+{% block head_stylesheets %}
+	{{ parent() }}
+	<style>
+		.topo-path-helper-root {
+			--tph-bg: #1a1a1a;
+			--tph-surface: #2d2d2d;
+			--tph-border: #444;
+			--tph-text: #e0e0e0;
+			--tph-accent: #0d6efd;
+			--tph-success: #198754;
+		}
+		.topo-path-helper-root { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--tph-bg); color: var(--tph-text); margin: 0; padding: 24px; line-height: 1.5; border-radius: 8px; }
+		.topo-path-helper-root h1 { font-size: 1.25rem; margin: 0 0 8px; }
+		.topo-path-helper-root .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 24px; }
+		.topo-path-helper-root section { background: var(--tph-surface); border-radius: 8px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--tph-border); }
+		.topo-path-helper-root label { display: block; font-weight: 500; margin-bottom: 4px; font-size: 0.9rem; }
+		.topo-path-helper-root textarea { width: 100%; min-height: 120px; padding: 12px; border-radius: 6px; border: 1px solid var(--tph-border); background: #1a1a1a; color: var(--tph-text); font-family: 'Monaco', 'Consolas', monospace; font-size: 13px; resize: vertical; }
+		.topo-path-helper-root textarea:focus { outline: none; border-color: var(--tph-accent); }
+		.topo-path-helper-root button { background: var(--tph-accent); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; cursor: pointer; }
+		.topo-path-helper-root button:hover { filter: brightness(1.1); }
+		.topo-path-helper-root button.secondary { background: var(--tph-surface); color: var(--tph-text); border: 1px solid var(--tph-border); }
+		.topo-path-helper-root .row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+		.topo-path-helper-root .path-card { background: #1a1a1a; border: 1px solid var(--tph-border); border-radius: 6px; padding: 12px; margin-bottom: 12px; }
+		.topo-path-helper-root .path-card h4 { margin: 0 0 8px; font-size: 0.85rem; color: #aaa; }
+		.topo-path-helper-root .path-d { font-family: monospace; font-size: 11px; word-break: break-all; color: #9cdcfe; margin-bottom: 10px; }
+		.topo-path-helper-root .path-opts { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+		.topo-path-helper-root .path-opts label { display: inline-flex; align-items: center; gap: 6px; margin: 0; font-weight: normal; }
+		.topo-path-helper-root .path-opts input[type="checkbox"] { width: 18px; height: 18px; }
+		.topo-path-helper-root .path-opts select { padding: 6px 10px; border-radius: 4px; border: 1px solid var(--tph-border); background: var(--tph-surface); color: var(--tph-text); }
+		.topo-path-helper-root input[type="color"] { width: 32px; height: 28px; padding: 2px; border: none; border-radius: 4px; cursor: pointer; background: transparent; }
+		.topo-path-helper-root .output-wrap { position: relative; }
+		.topo-path-helper-root .copy-btn { position: absolute; top: 8px; right: 8px; padding: 6px 12px; font-size: 12px; }
+		.topo-path-helper-root .toast { position: fixed; bottom: 24px; right: 24px; background: var(--tph-success); color: white; padding: 12px 20px; border-radius: 6px; font-weight: 500; opacity: 0; transform: translateY(10px); transition: 0.2s; z-index: 1000; }
+		.topo-path-helper-root .toast.show { opacity: 1; transform: translateY(0); }
+		.topo-path-helper-root .empty-state { color: #666; padding: 24px; text-align: center; }
+		.topo-path-helper-root input[type="number"],
+		.topo-path-helper-root input[type="text"] { padding: 8px; border-radius: 4px; border: 1px solid var(--tph-border); background: #1a1a1a; color: var(--tph-text); }
+		.topo-path-helper-root .tph-draw-area { position: relative; max-width: 100%; max-height: 75vh; margin-top: 12px; border: 1px solid var(--tph-border); border-radius: 6px; overflow: hidden; background: #0d0d0d; }
+		.topo-path-helper-root .tph-draw-area img { display: block; width: 100%; height: 100%; max-height: 75vh; object-fit: contain; vertical-align: top; }
+		.topo-path-helper-root .tph-draw-area svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+		.topo-path-helper-root .tph-draw-area svg path { fill: none; stroke: #E42522; stroke-width: 2; }
+		.topo-path-helper-root .tph-draw-area svg circle.point { fill: #E42522; stroke: #fff; stroke-width: 1; }
+		.topo-path-helper-root .tph-draw-toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+		.topo-path-helper-root .tph-draw-hint { font-size: 0.85rem; color: #888; margin-top: 8px; }
+	</style>
+{% endblock %}
+
+{% block main %}
+	<div class="content-header">
+		<div class="content-header-title">
+			<h1 class="title">Topo Path Helper</h1>
+		</div>
+	</div>
+
+	<div class="content-body">
+		<div class="topo-path-helper-root">
+			<p class="subtitle">Paste SVG paths from <a href="https://editor.method.ac/" target="_blank" rel="noopener">Method Draw</a> → configure options → copy PHP output. Or draw paths directly on your topo image below.</p>
+
+			<section>
+				<label>0. Draw paths on image (like Method Draw)</label>
+				<div class="row" style="gap: 16px; margin-bottom: 12px;">
+					<div style="flex: 1; min-width: 200px;">
+						<label style="margin-bottom: 4px;">Image URL</label>
+						<input type="text" id="tph-drawImageUrl" placeholder="https://www.munichclimbs.de/build/images/topos/..." style="width: 100%;">
+					</div>
+					<div>
+						<label style="margin-bottom: 4px;">or choose file</label>
+						<input type="file" id="tph-drawImageFile" accept="image/*" style="color: var(--tph-text);">
+					</div>
+					<div>
+						<label style="margin-bottom: 4px;">Width</label>
+						<input type="number" id="tph-drawWidth" value="1024" min="1" style="width: 80px;">
+					</div>
+					<div>
+						<label style="margin-bottom: 4px;">Height</label>
+						<input type="number" id="tph-drawHeight" value="820" min="1" style="width: 80px;">
+					</div>
+					<div style="align-self: flex-end;">
+						<button type="button" id="tph-drawLoadImage">Load image</button>
+					</div>
+				</div>
+				<div class="tph-draw-toolbar">
+					<button type="button" id="tph-drawNewPath" class="secondary">New path</button>
+					<button type="button" id="tph-drawUndo" class="secondary">Undo last point</button>
+					<button type="button" id="tph-drawCopyToStep1">Copy paths to Step 1 &amp; parse</button>
+					<span id="tph-drawStatus" style="color: #888; font-size: 0.9rem;"></span>
+				</div>
+				<div class="tph-draw-area" id="tph-drawArea" style="display: none;">
+					<img id="tph-drawImg" alt="Topo" style="width: 100%; height: auto;">
+					<svg id="tph-drawSvg" xmlns="http://www.w3.org/2000/svg" style="pointer-events: none;"></svg>
+				</div>
+				<p class="tph-draw-hint" id="tph-drawHint">Enter an image URL or choose a file, set dimensions (match your topo viewBox), then click "Load image". Click on the image to add points; use "New path" to start the next route.</p>
+			</section>
+
+			<section>
+				<label>1. Paste SVG paths (raw HTML from Method Draw)</label>
+				<textarea id="tph-input" placeholder='<path id="svg_2" d="m236,774c6,-209 30,-394..." stroke="#000" fill="#fff"/>
+<path id="svg_3" d="m539,684c-3,-78 6,-208..." stroke="#000" fill="#fff"/>'></textarea>
+				<div class="row" style="margin-top: 12px;">
+					<button type="button" id="tph-parse">Parse paths</button>
+				</div>
+			</section>
+
+			<section>
+				<label>2. Configure each path</label>
+				<div id="tph-paths"></div>
+				<div id="tph-emptyState" class="empty-state">Parse paths first.</div>
+			</section>
+
+			<section>
+				<label>3. SVG settings (for SVG output)</label>
+				<div class="row" style="gap: 16px; margin-bottom: 0;">
+					<div>
+						<label style="margin-bottom: 4px;">ViewBox width</label>
+						<input type="number" id="tph-svgWidth" value="1024" min="1" style="width: 100px;">
+					</div>
+					<div>
+						<label style="margin-bottom: 4px;">ViewBox height</label>
+						<input type="number" id="tph-svgHeight" value="820" min="1" style="width: 100px;">
+					</div>
+					<div style="flex: 1; min-width: 200px;">
+						<label style="margin-bottom: 4px;">Image URL</label>
+						<input type="text" id="tph-svgImageUrl" placeholder="https://www.munichclimbs.de/build/images/topos/..." style="width: 100%;">
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<label>4. PHP output (paste into your topo file)</label>
+				<div class="output-wrap">
+					<textarea id="tph-output" readonly placeholder="Generate output after configuring paths."></textarea>
+					<button type="button" class="copy-btn secondary" id="tph-copyPhp">Copy</button>
+				</div>
+				<div class="row" style="margin-top: 12px;">
+					<button type="button" id="tph-generatePhp">Generate PHP</button>
+				</div>
+			</section>
+
+			<section>
+				<label>5. SVG output (full SVG with paths, copy and paste)</label>
+				<div class="output-wrap">
+					<textarea id="tph-svgOutput" readonly placeholder="Generate SVG after configuring paths." style="min-height: 200px;"></textarea>
+					<button type="button" class="copy-btn secondary" id="tph-copySvg">Copy SVG</button>
+				</div>
+				<div class="row" style="margin-top: 12px;">
+					<button type="button" id="tph-generateSvg">Generate SVG</button>
+				</div>
+			</section>
+
+			<div id="tph-toast" class="toast">Copied to clipboard!</div>
+		</div>
+	</div>
+
+	<script>
+	(function() {
+		// --- Step 0: Draw on image ---
+		var drawArea = document.getElementById('tph-drawArea');
+		var drawImg = document.getElementById('tph-drawImg');
+		var drawSvg = document.getElementById('tph-drawSvg');
+		var drawnPaths = [];
+		var currentPath = [];
+		var drawW = 1024, drawH = 820;
+
+		function getDrawImageUrl() {
+			var file = document.getElementById('tph-drawImageFile').files[0];
+			if (file) return URL.createObjectURL(file);
+			var url = document.getElementById('tph-drawImageUrl').value.trim();
+			return url || null;
+		}
+
+		function loadDrawImage() {
+			var url = getDrawImageUrl();
+			if (!url) {
+				document.getElementById('tph-drawStatus').textContent = 'Enter an image URL or choose a file.';
+				return;
+			}
+			drawW = parseInt(document.getElementById('tph-drawWidth').value, 10) || 1024;
+			drawH = parseInt(document.getElementById('tph-drawHeight').value, 10) || 820;
+			drawImg.onload = function() {
+				drawArea.style.display = 'block';
+				drawArea.style.aspectRatio = drawW + ' / ' + drawH;
+				drawSvg.setAttribute('viewBox', '0 0 ' + drawW + ' ' + drawH);
+				drawSvg.setAttribute('width', '100%');
+				drawSvg.setAttribute('height', '100%');
+				drawSvg.style.pointerEvents = 'all';
+				drawSvg.style.cursor = 'crosshair';
+				redrawOverlay();
+				document.getElementById('tph-drawStatus').textContent = 'Click on the image to add points. "New path" starts the next route.';
+			};
+			drawImg.onerror = function() {
+				document.getElementById('tph-drawStatus').textContent = 'Could not load image. Check URL or try a file.';
+			};
+			drawImg.src = url;
+		}
+
+		function svgCoords(ev) {
+			var rect = drawSvg.getBoundingClientRect();
+			var x = ((ev.clientX - rect.left) / rect.width) * drawW;
+			var y = ((ev.clientY - rect.top) / rect.height) * drawH;
+			return [ Math.round(x * 10) / 10, Math.round(y * 10) / 10 ];
+		}
+
+		function pathToD(pts) {
+			if (pts.length === 0) return '';
+			var d = 'M ' + pts[0][0] + ',' + pts[0][1];
+			for (var i = 1; i < pts.length; i++) d += ' L ' + pts[i][0] + ',' + pts[i][1];
+			return d;
+		}
+
+		function redrawOverlay() {
+			var ns = 'http://www.w3.org/2000/svg';
+			while (drawSvg.firstChild) drawSvg.removeChild(drawSvg.firstChild);
+			drawnPaths.forEach(function(p) {
+				var path = document.createElementNS(ns, 'path');
+				path.setAttribute('d', p.d);
+				path.setAttribute('stroke', '#E42522');
+				path.setAttribute('stroke-width', '2');
+				path.setAttribute('fill', 'none');
+				drawSvg.appendChild(path);
+			});
+			if (currentPath.length >= 2) {
+				var path = document.createElementNS(ns, 'path');
+				path.setAttribute('d', pathToD(currentPath));
+				path.setAttribute('stroke', '#E42522');
+				path.setAttribute('stroke-width', '2');
+				path.setAttribute('fill', 'none');
+				drawSvg.appendChild(path);
+			}
+			currentPath.forEach(function(pt) {
+				var circle = document.createElementNS(ns, 'circle');
+				circle.setAttribute('class', 'point');
+				circle.setAttribute('cx', pt[0]);
+				circle.setAttribute('cy', pt[1]);
+				circle.setAttribute('r', '4');
+				circle.setAttribute('fill', '#E42522');
+				circle.setAttribute('stroke', '#fff');
+				circle.setAttribute('stroke-width', '1');
+				drawSvg.appendChild(circle);
+			});
+		}
+
+		function onDrawSvgClick(ev) {
+			if (!drawImg.src || drawImg.src === window.location.href) return;
+			var pt = svgCoords(ev);
+			currentPath.push(pt);
+			redrawOverlay();
+			document.getElementById('tph-drawStatus').textContent = 'Path ' + (drawnPaths.length + 1) + ': ' + currentPath.length + ' point(s). Click "New path" to finish this route.';
+		}
+
+		function newPath() {
+			if (currentPath.length >= 2) {
+				drawnPaths.push({ d: pathToD(currentPath) });
+				currentPath = [];
+				redrawOverlay();
+				document.getElementById('tph-drawStatus').textContent = 'Path ' + drawnPaths.length + ' saved. Click on image to start next path.';
+			} else if (currentPath.length > 0) {
+				currentPath = [];
+				redrawOverlay();
+				document.getElementById('tph-drawStatus').textContent = 'Path cleared (need at least 2 points).';
+			} else {
+				document.getElementById('tph-drawStatus').textContent = 'Draw at least 2 points before starting a new path.';
+			}
+		}
+
+		function undoLastPoint() {
+			if (currentPath.length > 0) {
+				currentPath.pop();
+				redrawOverlay();
+				document.getElementById('tph-drawStatus').textContent = 'Last point removed. Points: ' + currentPath.length;
+			}
+		}
+
+		function copyPathsToStep1() {
+			if (currentPath.length >= 2) drawnPaths.push({ d: pathToD(currentPath) });
+			currentPath = [];
+			if (drawnPaths.length === 0) {
+				showToast('No paths to copy. Draw at least one path with 2+ points.');
+				return;
+			}
+			var lines = drawnPaths.map(function(p, i) {
+				return '<path id="svg_' + (i + 1) + '" d="' + escapeHtml(p.d) + '" stroke="#000" fill="#fff"/>';
+			});
+			var html = lines.join('\n');
+			document.getElementById('tph-input').value = html;
+			parsePaths();
+			navigator.clipboard.writeText(html).then(function() {
+				showToast('Paths copied to Step 1 and parsed. You can now configure colors in Step 2.');
+			});
+			document.getElementById('tph-svgWidth').value = drawW;
+			document.getElementById('tph-svgHeight').value = drawH;
+			var imgUrl = document.getElementById('tph-drawImageUrl').value.trim();
+			if (imgUrl) document.getElementById('tph-svgImageUrl').value = imgUrl;
+			document.getElementById('tph-drawStatus').textContent = 'Copied ' + drawnPaths.length + ' path(s) to Step 1.';
+		}
+
+		document.getElementById('tph-drawLoadImage').addEventListener('click', loadDrawImage);
+		document.getElementById('tph-drawNewPath').addEventListener('click', newPath);
+		document.getElementById('tph-drawUndo').addEventListener('click', undoLastPoint);
+		document.getElementById('tph-drawCopyToStep1').addEventListener('click', copyPathsToStep1);
+		drawSvg.addEventListener('click', onDrawSvgClick);
+
+		// --- Steps 1–5 ---
+		const COLOR_PRESETS = { 'Red (default)': '#E42522', 'Green': '#15803d', 'Amber': '#a16207', 'Black': '#000000' };
+		let paths = [];
+
+		function parsePaths() {
+			const html = document.getElementById('tph-input').value;
+			const pattern = /<path[^>]*\sd="([^"]*)"/g;
+			const dValues = [];
+			let m;
+			while ((m = pattern.exec(html)) !== null) dValues.push(m[1]);
+
+			if (dValues.length === 0) {
+				paths = [];
+				document.getElementById('tph-paths').innerHTML = '';
+				document.getElementById('tph-emptyState').textContent = 'No paths found. Paste SVG path elements with a "d" attribute.';
+				document.getElementById('tph-emptyState').style.display = 'block';
+				return;
+			}
+			paths = dValues.map(d => ({ d, color: '#E42522', dashed: false, dot: false }));
+			renderPaths();
+			document.getElementById('tph-emptyState').style.display = 'none';
+		}
+
+		function renderPaths() {
+			const container = document.getElementById('tph-paths');
+			container.innerHTML = paths.map((p, i) => `
+				<div class="path-card" data-index="${i}">
+					<h4>Path ${i + 1}</h4>
+					<div class="path-d">${escapeHtml(p.d)}</div>
+					<div class="path-opts">
+						<label>Color:
+							<select data-tph-path="${i}" data-tph-opt="color">
+								${Object.entries(COLOR_PRESETS).map(([name, hex]) => `<option value="${hex}" ${p.color === hex ? 'selected' : ''}>${name}</option>`).join('')}
+							</select>
+						</label>
+						<label><input type="color" value="${p.color}" data-tph-path="${i}" data-tph-opt="color" title="Custom color"></label>
+						<label><input type="checkbox" ${p.dashed ? 'checked' : ''} data-tph-path="${i}" data-tph-opt="dashed"> Dashed</label>
+						<label><input type="checkbox" ${p.dot ? 'checked' : ''} data-tph-path="${i}" data-tph-opt="dot"> Dot (anker)</label>
+					</div>
+				</div>
+			`).join('');
+			container.querySelectorAll('[data-tph-path]').forEach(el => {
+				const i = parseInt(el.getAttribute('data-tph-path'), 10);
+				const opt = el.getAttribute('data-tph-opt');
+				el.addEventListener('change', function() {
+					updatePath(i, opt, el.type === 'checkbox' ? el.checked : el.value);
+				});
+			});
+		}
+
+		function updatePath(index, key, value) {
+			if (paths[index]) {
+				paths[index][key] = value;
+				if (key === 'color') {
+					const card = document.querySelector('.path-card[data-index="' + index + '"]');
+					if (card) {
+						const colorInput = card.querySelector('input[type="color"]');
+						if (colorInput) colorInput.value = value;
+						const sel = card.querySelector('select');
+						if (sel) sel.value = Object.values(COLOR_PRESETS).includes(value) ? value : sel.value;
+					}
+				}
+			}
+		}
+
+		function calculateEndpoint(d) {
+			const commands = d.split(/(?=[a-zA-Z])/).filter(Boolean);
+			let currentX = 0, currentY = 0, endX = 0, endY = 0;
+			for (const cmd of commands) {
+				const type = cmd[0];
+				const rest = cmd.slice(1).trim();
+				const values = rest ? rest.split(/[\s,]+/).map(parseFloat) : [];
+				switch (type) {
+					case 'M': case 'm': currentX = values[0]; currentY = values[1]; break;
+					case 'L': case 'l': currentX += values[0]; currentY += values[1]; break;
+					case 'C': case 'c': currentX += values[4]; currentY += values[5]; break;
+					case 'S': case 's': currentX += values[2]; currentY += values[3]; break;
+					case 'Q': case 'q': currentX += values[2]; currentY += values[3]; break;
+					case 'T': case 't': currentX += values[0]; currentY += values[1]; break;
+					case 'A': case 'a': currentX += values[5]; currentY += values[6]; break;
+					case 'H': case 'h': currentX += values[0]; break;
+					case 'V': case 'v': currentY += values[0]; break;
+				}
+				endX = currentX; endY = currentY;
+			}
+			return [endX, endY];
+		}
+
+		function generateSvgOutput() {
+			const w = document.getElementById('tph-svgWidth').value || 1024;
+			const h = document.getElementById('tph-svgHeight').value || 820;
+			const imgUrl = document.getElementById('tph-svgImageUrl').value || '';
+			const parts = [];
+			parts.push('<div style="width: ' + w + 'px; height: ' + h + 'px;">');
+			parts.push('    <svg height="100%" width="100%" viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="img-fluid">');
+			if (imgUrl) parts.push('        <image width="' + w + '" height="' + h + '" xlink:href="' + escapeHtml(imgUrl) + '" x="0" y="0"></image>');
+			parts.push('        <defs><marker id="dot" markerWidth="10" markerHeight="10" refX="5" refY="5" markerUnits="strokeWidth"><circle cx="5" cy="5" r="3" fill="white"/></marker></defs>');
+			paths.forEach(function(path, i) {
+				var d = path.d, id = i + 1, color = path.color || '#E42522', dashed = path.dashed, dot = path.dot;
+				var m = d.match(/m([\d.]+),([\d.]+)/i);
+				if (!m) return;
+				var startX = m[1], startY = m[2], startYMinusOne = parseFloat(startY) - 1;
+				if (dashed) parts.push('        <path id="border_' + id + '" d="' + escapeHtml(d) + '" stroke-width="4" stroke="#ffffff" fill="none" class="route-path-border dashed"></path>');
+				else parts.push('        <path id="border_' + id + '" d="' + escapeHtml(d) + '" stroke-width="4" stroke="#000000" fill="none" class="route-path-border"></path>');
+				var markerAttr = dot ? ' marker-end="url(#dot)"' : '';
+				parts.push('        <path id="svg_' + id + '" d="' + escapeHtml(d) + '" stroke-width="3" stroke="' + color + '"' + markerAttr + ' fill="none" class="stroke-behavior"></path>');
+				var strokeColor = dashed ? '#ffffff' : '#000';
+				var circleClass = dashed ? 'number-circle' : 'number-circle tooltip-trigger';
+				parts.push('        <circle cx="' + startX + '" cy="' + startYMinusOne + '" r="15" fill="' + color + '" stroke="' + strokeColor + '" stroke-width="1" class="' + circleClass + '" data-path-id="' + id + '"></circle>');
+				parts.push('        <text x="' + startX + '" y="' + startY + '" fill="#fff" class="number-text tooltip-trigger" data-path-id="' + id + '">' + id + '</text>');
+				if (dot) { var end = calculateEndpoint(d); parts.push('        <circle cx="' + end[0] + '" cy="' + end[1] + '" r="7" fill="#fff" class="end-dot"></circle>'); }
+			});
+			parts.push('    </svg></div>');
+			document.getElementById('tph-svgOutput').value = parts.join('\n');
+		}
+
+		function copySvgOutput() {
+			var el = document.getElementById('tph-svgOutput');
+			el.select();
+			el.setSelectionRange(0, 99999);
+			navigator.clipboard.writeText(el.value).then(function() { showToast('SVG copied to clipboard!'); });
+		}
+
+		function generateOutput() {
+			var lines = paths.map(function(p) {
+				var parts = ["'d' => '" + p.d.replace(/'/g, "\\'") + "'"];
+				if (p.color && p.color !== '#E42522') parts.push("'color' => '" + p.color + "'");
+				if (p.dashed) parts.push("'dashed' => true");
+				if (p.dot) parts.push("'dot' => true");
+				return '                [' + parts.join(', ') + ']';
+			});
+			document.getElementById('tph-output').value = '$paths = [\n' + lines.join(',\n') + '\n            ];';
+		}
+
+		function copyOutput() {
+			var el = document.getElementById('tph-output');
+			el.select();
+			el.setSelectionRange(0, 99999);
+			navigator.clipboard.writeText(el.value).then(function() { showToast('Copied to clipboard!'); });
+		}
+
+		function showToast(msg) {
+			var t = document.getElementById('tph-toast');
+			t.textContent = msg;
+			t.classList.add('show');
+			setTimeout(function() { t.classList.remove('show'); }, 2000);
+		}
+
+		function escapeHtml(s) {
+			var div = document.createElement('div');
+			div.textContent = s;
+			return div.innerHTML;
+		}
+
+		document.getElementById('tph-parse').addEventListener('click', parsePaths);
+		document.getElementById('tph-generatePhp').addEventListener('click', generateOutput);
+		document.getElementById('tph-copyPhp').addEventListener('click', copyOutput);
+		document.getElementById('tph-generateSvg').addEventListener('click', generateSvgOutput);
+		document.getElementById('tph-copySvg').addEventListener('click', copySvgOutput);
+	})();
+	</script>
+{% endblock %}

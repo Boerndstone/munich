@@ -76,6 +76,20 @@
 {% block body %}
 	{{ include('partials/_navigation.html.twig', [ rocks ]) }}
 	<main>
+		<div class="container">
+			{% for message in app.flashes('success') %}
+				<div class="alert alert-success alert-dismissible fade show mt-3" role="alert" data-controller="auto-dismiss-alert" data-auto-dismiss-alert-dismiss-after-value="2">
+					{{ message }}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			{% endfor %}
+			{% for message in app.flashes('error') %}
+				<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+					{{ message }}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			{% endfor %}
+		</div>
 		{% for rock in rocks %}
 			<div class="image-container position-relative">
 				{% if rock.rockImage is not empty %}
@@ -99,7 +113,7 @@
 										<div class="modal-info" style="width: 22px; height: 22px;"></div>
 										<span class="ms-1 d-none d-md-block">{{ "rock"|trans }}</span>
 									</button>
-									{{ include('partials/_offcanvasRockInfo.html.twig', [ rocks ]) }}
+	{{ include('partials/_offcanvasRockInfo.html.twig', { rocks: rocks, improvementForm: improvementForm|default(null), areaSlug: areaSlug, slug: slug }) }}
 								</div>
 								<nav class="mt-1" aria-label="breadcrumb">
 									<ol class="breadcrumb text-black fw-normal mb-0" style="font-size: 12px">

@@ -9,6 +9,7 @@
 // Theme variables
 :root {
   --theme-bg: #ffffff;
+  --theme-bg-opacity: rgba(255, 255, 255, 0.7);
   --theme-bg-lighter: #ffffff;
   --theme-text: #000000;
   --theme-text-vise-versa: #ffffff;
@@ -45,6 +46,7 @@
 
 [data-theme="dark"] {
   --theme-bg: #000000;
+  --theme-bg-opacity: rgba(0, 0, 0, 0.2);
   --theme-bg-lighter: #171717;
   --theme-text: #ffffff;
   --theme-text-vise-versa: #000000;
@@ -234,6 +236,10 @@ hr {
 .badge {
     background-color: var(--theme-text) !important;
     color: var(--theme-bg) !important;
+}
+.badge-opacity {
+    background-color: var(--theme-bg-opacity) !important;
+    color: var(--theme-text) !important;
 }
 h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-item.active, .list-unstyled, .text {
       color: var(--theme-text)!important;

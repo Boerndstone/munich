@@ -172,7 +172,7 @@
 										{% set parsed = topoData.topoSvg|parse_topo_svg %}
 										{% if parsed.imageUrl and parsed.pathsSvg is not empty %}
 											<div class="topo-two-layer"{% if parsed.aspectRatio %} style="aspect-ratio: {{ parsed.aspectRatio }};"{% endif %}>
-												<img class="topo-two-layer__bg" src="{{ parsed.src ?? parsed.imageUrl }}"{% if parsed.srcset %} srcset="{{ parsed.srcset }}" sizes="{{ parsed.sizes }}"{% endif %} alt="{{ 'topo.image_alt'|trans({ '%topo_name%': topoName, '%rock_name%': rocks|first.rockName|default(''), '%area_name%': rocks|first.areaName|default('') }) }}" loading="lazy" decoding="async">
+												<img class="topo-two-layer__bg" src="{{ parsed.src ?? parsed.imageUrl }}"{% if parsed.srcset %} srcset="{{ parsed.srcset }}" sizes="{{ parsed.sizes }}"{% endif %} alt="{{ 'topo.image_alt'|trans({ '%topo_name%': topoName, '%rock_name%': (rocks|first).rockName|default(''), '%area_name%': (rocks|first).areaName|default('') }) }}" loading="lazy" decoding="async">
 												<div class="topo-two-layer__overlay" aria-hidden="true">
 													{{ parsed.pathsSvg|raw }}
 												</div>

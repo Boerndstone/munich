@@ -58,3 +58,6 @@ rock_improvement.placeholder.comment: "Weitere Anmerkungen (z. B. Korrekturen) �
 rock_improvement.submit: "Abschicken"
 rock_improvement.success: "Vielen Dank! Deine Meldung wurde gesendet."
 rock_improvement.validation_error: "Bitte versuch es erneut."
+
+# Topo (route overview image)
+topo.image_alt: "Klettertopo „%topo_name%“ am Fels %rock_name% in %area_name%"

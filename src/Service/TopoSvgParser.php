@@ -7,15 +7,15 @@ namespace App\Service;
  * Extracts the image URL and returns a paths-only SVG for a two-layer display:
  * background image + vector paths overlay (supports high-resolution images).
  *
- * Topo image variants (compile: -low 750q5, default 750q100, -high 750q100, @2x 1024q100):
- * -low for slow connections, default/high for normal, @2x for high-DPI/good connection.
+ * Topo image variants (compile: -low 750q5, default 750q100, -high 750q100, @2x 1024q100).
+ * srcset uses only distinct width descriptors (750w + 1024w) so the browser can choose reliably.
+ * For quality-based selection (e.g. -low on slow/Save-Data) you’d need <picture> or JS.
  */
 class TopoSvgParser
 {
     private const VARIANT_LOW = '-low';
     private const VARIANT_HIGH = '-high';
     private const VARIANT_2X = '@2x';
-    private const WIDTH_LOW = 750;
     private const WIDTH_DEFAULT = 750;
     private const WIDTH_2X = 1024;
 
@@ -94,25 +94,33 @@ class TopoSvgParser
 
     /**
      * Build responsive topo image src/srcset from a single image URL.
-     * Expects compile variants: base-low.webp (750q5), base.webp (750q100), base-high.webp (750q100), base@2x.webp (1024q100).
+     * Emits only distinct width descriptors (750w, 1024w) so browser selection is well-defined.
+     * Expects compile variants: base.webp (750q100), base@2x.webp (1024q100).
+     * Query string and fragment from the original URL are re-appended to each generated URL.
      *
      * @return array{src: string, srcset: string, sizes: string}
      */
     public function buildTopoImageSrcset(string $imageUrl): array
     {
-        $baseUrl = $this->getTopoImageBaseUrl($imageUrl);
-        $ext = $this->getExtension($imageUrl);
-        if ($baseUrl === null || $ext === '') {
+        $parts = parse_url($imageUrl);
+        $path = $parts['path'] ?? $imageUrl;
+        if ($path === '') {
             return ['src' => $imageUrl, 'srcset' => '', 'sizes' => ''];
         }
 
-        $src = $baseUrl . $ext;
+        $ext = $this->getExtension($path);
+        $basePath = $this->getTopoImageBasePath($path);
+        if ($basePath === null || $ext === '') {
+            return ['src' => $imageUrl, 'srcset' => '', 'sizes' => ''];
+        }
+
+        $append = $this->appendQueryFragment('', $parts);
+
+        $src = $basePath . $ext . $append;
 
         $candidates = [
-            $baseUrl . self::VARIANT_LOW . $ext . ' ' . self::WIDTH_LOW . 'w',
-            $baseUrl . $ext . ' ' . self::WIDTH_DEFAULT . 'w',
-            $baseUrl . self::VARIANT_HIGH . $ext . ' ' . self::WIDTH_DEFAULT . 'w',
-            $baseUrl . self::VARIANT_2X . $ext . ' ' . self::WIDTH_2X . 'w',
+            $basePath . $ext . $append . ' ' . self::WIDTH_DEFAULT . 'w',
+            $basePath . self::VARIANT_2X . $ext . $append . ' ' . self::WIDTH_2X . 'w',
         ];
         $srcset = implode(', ', $candidates);
         $sizes = '(max-width: 768px) 100vw, 750px';
@@ -124,13 +132,25 @@ class TopoSvgParser
         ];
     }
 
-    /** Returns URL without extension and without any known variant suffix. */
-    private function getTopoImageBaseUrl(string $imageUrl): ?string
+    private function appendQueryFragment(string $path, array $parts): string
     {
-        $path = $imageUrl;
-        $ext = $this->getExtension($imageUrl);
+        $out = $path;
+        if (!empty($parts['query'])) {
+            $out .= '?' . $parts['query'];
+        }
+        if (isset($parts['fragment']) && $parts['fragment'] !== '') {
+            $out .= '#' . $parts['fragment'];
+        }
+        return $out;
+    }
+
+    /** Returns path without extension and without any known variant suffix (query/fragment not included). */
+    private function getTopoImageBasePath(string $pathOnly): ?string
+    {
+        $path = $pathOnly;
+        $ext = $this->getExtension($path);
         if ($ext !== '') {
-            $path = substr($imageUrl, 0, -\strlen($ext));
+            $path = substr($path, 0, -\strlen($ext));
         }
         foreach ([self::VARIANT_2X, self::VARIANT_HIGH, self::VARIANT_LOW] as $suffix) {
             if (str_ends_with($path, $suffix)) {
@@ -141,11 +161,18 @@ class TopoSvgParser
         return $path;
     }
 
-    private function getExtension(string $url): string
+    private function getExtension(string $pathOrUrl): string
     {
-        $q = strpos($url, '?');
-        $path = $q !== false ? substr($url, 0, $q) : $url;
-        if (preg_match('/\.(webp|jpg|jpeg|png|avif)(?:\?|$)/i', $path, $m)) {
+        $path = $pathOrUrl;
+        $q = strpos($path, '?');
+        $h = strpos($path, '#');
+        $end = $path;
+        if ($q !== false && ($h === false || $q < $h)) {
+            $end = substr($path, 0, $q);
+        } elseif ($h !== false) {
+            $end = substr($path, 0, $h);
+        }
+        if (preg_match('/\.(webp|jpg|jpeg|png|avif)(?:\?|#|$)/i', $end, $m)) {
             return '.' . strtolower($m[1]);
         }
         return '';

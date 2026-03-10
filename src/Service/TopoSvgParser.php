@@ -110,7 +110,7 @@ class TopoSvgParser
 
         $ext = $this->getExtension($path);
         $basePath = $this->getTopoImageBasePath($path);
-        if ($basePath === null || $ext === '') {
+        if ($ext === '') {
             return ['src' => $imageUrl, 'srcset' => '', 'sizes' => ''];
         }
 

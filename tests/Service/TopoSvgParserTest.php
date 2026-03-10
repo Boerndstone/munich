@@ -66,7 +66,7 @@ class TopoSvgParserTest extends TestCase
     {
         $svg = '<svg xmlns:xlink="http://www.w3.org/1999/xlink"><image xlink:href="/build/images/topos/suedwand.webp" width="1024" height="820"/><path d="m1,2"/></svg>';
         $result = $this->parser->parse($svg);
-        $this->assertSame('/build/images/topos/suedwand.webp', $result['imageUrl']);
+        $this->assertSame('https://www.munichclimbs.de/build/images/topos/suedwand.webp', $result['imageUrl']);
         $this->assertStringNotContainsString('<image', $result['pathsSvg']);
         $this->assertStringContainsString('<path d="m1,2"/>', $result['pathsSvg']);
     }
@@ -139,8 +139,8 @@ class TopoSvgParserTest extends TestCase
         $url = 'https://www.munichclimbs.de/build/images/topos/burgsteinSuedwand.webp';
         $result = $this->parser->buildTopoImageSrcset($url);
         $this->assertSame('https://www.munichclimbs.de/build/images/topos/burgsteinSuedwand.webp', $result['src']);
-        $this->assertStringContainsString('burgsteinSuedwand.webp 750w', $result['srcset']);
-        $this->assertStringContainsString('burgsteinSuedwand@2x.webp 1024w', $result['srcset']);
+        $this->assertStringContainsString('https://www.munichclimbs.de/build/images/topos/burgsteinSuedwand.webp 750w', $result['srcset']);
+        $this->assertStringContainsString('https://www.munichclimbs.de/build/images/topos/burgsteinSuedwand@2x.webp 1024w', $result['srcset']);
         $this->assertSame('(max-width: 768px) 100vw, 750px', $result['sizes']);
     }
 
@@ -148,9 +148,9 @@ class TopoSvgParserTest extends TestCase
     {
         $url = '/build/images/topos/rock.webp?v=1';
         $result = $this->parser->buildTopoImageSrcset($url);
-        $this->assertSame('/build/images/topos/rock.webp?v=1', $result['src']);
-        $this->assertStringContainsString('rock.webp?v=1 750w', $result['srcset']);
-        $this->assertStringContainsString('rock@2x.webp?v=1 1024w', $result['srcset']);
+        $this->assertSame('https://www.munichclimbs.de/build/images/topos/rock.webp?v=1', $result['src']);
+        $this->assertStringContainsString('https://www.munichclimbs.de/build/images/topos/rock.webp?v=1 750w', $result['srcset']);
+        $this->assertStringContainsString('https://www.munichclimbs.de/build/images/topos/rock@2x.webp?v=1 1024w', $result['srcset']);
     }
 
     public function testBuildTopoImageSrcsetWithFragment(): void
@@ -202,31 +202,31 @@ class TopoSvgParserTest extends TestCase
     {
         $url = '/topos/photo.jpg';
         $result = $this->parser->buildTopoImageSrcset($url);
-        $this->assertSame('/topos/photo.jpg', $result['src']);
-        $this->assertStringContainsString('photo.jpg 750w', $result['srcset']);
-        $this->assertStringContainsString('photo@2x.jpg 1024w', $result['srcset']);
+        $this->assertSame('https://www.munichclimbs.de/topos/photo.jpg', $result['src']);
+        $this->assertStringContainsString('https://www.munichclimbs.de/topos/photo.jpg 750w', $result['srcset']);
+        $this->assertStringContainsString('https://www.munichclimbs.de/topos/photo@2x.jpg 1024w', $result['srcset']);
     }
 
     public function testBuildTopoImageSrcsetPreservesPngExtension(): void
     {
         $url = '/topos/diagram.png?v=1';
         $result = $this->parser->buildTopoImageSrcset($url);
-        $this->assertSame('/topos/diagram.png?v=1', $result['src']);
-        $this->assertStringContainsString('diagram.png?v=1', $result['srcset']);
+        $this->assertSame('https://www.munichclimbs.de/topos/diagram.png?v=1', $result['src']);
+        $this->assertStringContainsString('https://www.munichclimbs.de/topos/diagram.png?v=1', $result['srcset']);
     }
 
     public function testBuildTopoImageSrcsetLowSuffixStrippedFromBase(): void
     {
         $url = '/build/topos/name-low.webp';
         $result = $this->parser->buildTopoImageSrcset($url);
-        $this->assertSame('/build/topos/name.webp', $result['src']);
-        $this->assertStringContainsString('name@2x.webp', $result['srcset']);
+        $this->assertSame('https://www.munichclimbs.de/build/topos/name.webp', $result['src']);
+        $this->assertStringContainsString('https://www.munichclimbs.de/build/topos/name@2x.webp', $result['srcset']);
     }
 
     public function testBuildTopoImageSrcsetHighSuffixStrippedFromBase(): void
     {
         $url = '/topos/name-high.webp';
         $result = $this->parser->buildTopoImageSrcset($url);
-        $this->assertSame('/topos/name.webp', $result['src']);
+        $this->assertSame('https://www.munichclimbs.de/topos/name.webp', $result['src']);
     }
 }

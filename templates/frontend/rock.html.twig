@@ -113,7 +113,7 @@
 										<div class="modal-info" style="width: 22px; height: 22px;"></div>
 										<span class="ms-1 d-none d-md-block">{{ "rock"|trans }}</span>
 									</button>
-	{{ include('partials/_offcanvasRockInfo.html.twig', { rocks: rocks, improvementForm: improvementForm|default(null), areaSlug: areaSlug, slug: slug }) }}
+									{{ include('partials/_offcanvasRockInfo.html.twig', { rocks: rocks, improvementForm: improvementForm|default(null), areaSlug: areaSlug, slug: slug }) }}
 								</div>
 								<nav class="mt-1" aria-label="breadcrumb">
 									<ol class="breadcrumb text-black fw-normal mb-0" style="font-size: 12px">
@@ -169,7 +169,17 @@
 							<div class="card-body p-0">
 								<section data-controller="route-information-tooltip">
 									{% if topoData.topoSvg is not empty %}
-										{{ topoData.topoSvg|raw }}
+										{% set parsed = topoData.topoSvg|parse_topo_svg %}
+										{% if parsed.imageUrl and parsed.pathsSvg is not empty %}
+											<div class="topo-two-layer"{% if parsed.aspectRatio %} style="aspect-ratio: {{ parsed.aspectRatio }};"{% endif %}>
+												<img class="topo-two-layer__bg" src="{{ parsed.src ?? parsed.imageUrl }}"{% if parsed.srcset %} srcset="{{ parsed.srcset }}" sizes="{{ parsed.sizes }}"{% endif %} alt="" loading="lazy" decoding="async">
+												<div class="topo-two-layer__overlay" aria-hidden="true">
+													{{ parsed.pathsSvg|raw }}
+												</div>
+											</div>
+										{% else %}
+											{{ topoData.topoSvg|raw }}
+										{% endif %}
 									{% endif %}
 									<table class="table mb-0 small fw-medium 0">
 										<tbody>

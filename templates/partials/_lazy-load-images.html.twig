@@ -7,7 +7,7 @@
 		<source srcset="{{ asset(url ~ area.image ~ '@1x.webp') }}, {{ asset(url ~ area.image ~ '@2x.webp') }} 2x, {{ asset(url ~ area.image ~ '@3x.webp') }} 3x">
 	{% endif %}
 	<img class="position-relative img-fluid" src="{{ asset('https://www.munichclimbs.de/uploads/areas/' ~ area.image ~ '.webp') }}" alt="Klettergebiet {{ area.name }}" loading="lazy" decoding="async">
-	<span class="badge-opacity position-absolute px-2 py-1" style="top: 20px; left: 0;">
+	<span class="badge-opacity position-absolute px-2 py-1 rounded-end" style="top: 20px; left: 0;">
 		<h2 class="h5 card-title mb-0 fw-normal">{{ area.name }}</h2>
 	</span>
 </picture>

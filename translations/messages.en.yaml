@@ -58,3 +58,6 @@ rock_improvement.placeholder.comment: "Further notes (e.g. corrections) …"
 rock_improvement.submit: "Submit"
 rock_improvement.success: "Thank you! Your message has been sent."
 rock_improvement.validation_error: "Please try again."
+
+# Topo (route overview image)
+topo.image_alt: "Climbing topo „%topo_name%“ at %rock_name% in %area_name%"

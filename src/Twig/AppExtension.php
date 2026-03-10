@@ -7,17 +7,20 @@ use Twig\TwigFilter;
 use Twig\TwigFunction;
 use App\Service\AreasService;
 use App\Service\ImageSeoService;
+use App\Service\TopoSvgParser;
 
 class AppExtension extends AbstractExtension
 {
 
     private AreasService $areasService;
     private ImageSeoService $imageSeoService;
+    private TopoSvgParser $topoSvgParser;
 
-    public function __construct(AreasService $areasService, ImageSeoService $imageSeoService)
+    public function __construct(AreasService $areasService, ImageSeoService $imageSeoService, TopoSvgParser $topoSvgParser)
     {
         $this->areasService = $areasService;
         $this->imageSeoService = $imageSeoService;
+        $this->topoSvgParser = $topoSvgParser;
     }
 
     public function getFunctions(): array
@@ -66,6 +69,7 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFilter('custom_replace', [$this, 'customReplaceFilter']),
+            new TwigFilter('parse_topo_svg', [$this, 'parseTopoSvg']),
         ];
     }
 
@@ -79,5 +83,31 @@ class AppExtension extends AbstractExtension
         $value = str_replace(['ö', 'ä', 'ü', '_', 'ß'], ['oe', 'ae', 'ue', ' ', 'ss'], $value);
 
         return $value;
+    }
+
+    /**
+     * Parses a topo SVG string into imageUrl, pathsSvg and viewBox for two-layer rendering (background image + paths overlay).
+     * When imageUrl is present, also adds src, srcset and sizes for responsive topo images (-low, default, -high, @2x).
+     *
+     * @return array{imageUrl: string|null, pathsSvg: string, viewBox: string|null, aspectRatio: string|null, src: string|null, srcset: string, sizes: string}
+     */
+    public function parseTopoSvg(?string $svg): array
+    {
+        if ($svg === null || $svg === '') {
+            return ['imageUrl' => null, 'pathsSvg' => '', 'viewBox' => null, 'aspectRatio' => null, 'src' => null, 'srcset' => '', 'sizes' => ''];
+        }
+        $parsed = $this->topoSvgParser->parse($svg);
+        $parsed['aspectRatio'] = $this->topoSvgParser->viewBoxToAspectRatio($parsed['viewBox']);
+        if (!empty($parsed['imageUrl'])) {
+            $srcsetData = $this->topoSvgParser->buildTopoImageSrcset($parsed['imageUrl']);
+            $parsed['src'] = $srcsetData['src'];
+            $parsed['srcset'] = $srcsetData['srcset'];
+            $parsed['sizes'] = $srcsetData['sizes'];
+        } else {
+            $parsed['src'] = null;
+            $parsed['srcset'] = '';
+            $parsed['sizes'] = '';
+        }
+        return $parsed;
     }
 }

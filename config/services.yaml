@@ -6,6 +6,7 @@
 parameters:
   env(SITE_BASE_URL): "%env(SITE_BASE_SCHEME)%://%env(SITE_BASE_HOST)%"
   locale: "de"
+  app.topo_image_base_url: "https://www.munichclimbs.de"
 
 services:
   # default configuration for services in *this* file
@@ -40,6 +41,10 @@ services:
       $defaultLocale: "%locale%"
     tags:
       - { name: kernel.event_subscriber }
+
+  App\Service\TopoSvgParser:
+    arguments:
+      $baseUrl: "%app.topo_image_base_url%"
 
   App\Command\GenerateSitemapCommand:
     arguments:

@@ -19,6 +19,13 @@ class TopoSvgParser
     private const WIDTH_DEFAULT = 750;
     private const WIDTH_2X = 1024;
 
+    private const DEFAULT_BASE_URL = 'https://www.munichclimbs.de';
+
+    public function __construct(
+        private readonly string $baseUrl = self::DEFAULT_BASE_URL
+    ) {
+    }
+
     /**
      * Returns parsed data: imageUrl, pathsSvg (SVG without the image element), viewBox (e.g. "0 0 1024 820").
      * If no image element is found, pathsSvg is the original SVG and imageUrl is null.
@@ -34,6 +41,9 @@ class TopoSvgParser
 
         $viewBox = $this->extractViewBox($svg);
         $imageUrl = $this->extractImageUrl($svg);
+        if ($imageUrl !== null) {
+            $imageUrl = $this->ensureAbsoluteUrl($imageUrl);
+        }
         $pathsSvg = $this->removeImageElement($svg);
 
         return [
@@ -102,6 +112,8 @@ class TopoSvgParser
      */
     public function buildTopoImageSrcset(string $imageUrl): array
     {
+        $imageUrl = $this->ensureAbsoluteUrl($imageUrl);
+
         $parts = parse_url($imageUrl);
         $path = $parts['path'] ?? $imageUrl;
         if ($path === '') {
@@ -110,17 +122,21 @@ class TopoSvgParser
 
         $ext = $this->getExtension($path);
         $basePath = $this->getTopoImageBasePath($path);
-        if ($ext === '') {
+        if ($basePath === null || $ext === '') {
             return ['src' => $imageUrl, 'srcset' => '', 'sizes' => ''];
         }
 
         $append = $this->appendQueryFragment('', $parts);
 
-        $src = $basePath . $ext . $append;
+        $pathOnly = $basePath . $ext . $append;
+        $src = $this->ensureAbsoluteUrl($pathOnly);
+
+        $pathOnly2x = $basePath . self::VARIANT_2X . $ext . $append;
+        $url2x = $this->ensureAbsoluteUrl($pathOnly2x);
 
         $candidates = [
-            $basePath . $ext . $append . ' ' . self::WIDTH_DEFAULT . 'w',
-            $basePath . self::VARIANT_2X . $ext . $append . ' ' . self::WIDTH_2X . 'w',
+            $src . ' ' . self::WIDTH_DEFAULT . 'w',
+            $url2x . ' ' . self::WIDTH_2X . 'w',
         ];
         $srcset = implode(', ', $candidates);
         $sizes = '(max-width: 768px) 100vw, 750px';
@@ -159,6 +175,19 @@ class TopoSvgParser
             }
         }
         return $path;
+    }
+
+    private function ensureAbsoluteUrl(string $url): string
+    {
+        $url = trim($url);
+        if ($url === '') {
+            return $this->baseUrl;
+        }
+        if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
+            return $url;
+        }
+        $base = rtrim($this->baseUrl, '/');
+        return $base . '/' . ltrim($url, '/');
     }
 
     private function getExtension(string $pathOrUrl): string

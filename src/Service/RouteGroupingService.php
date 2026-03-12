@@ -21,12 +21,15 @@ class RouteGroupingService
                 $groupedRoutes[$topoName] = [
                     'topoName' => $topoName,
                     'topoNumber' => $routeData['topoNumber'],
-                    'topoSvg' => $routeData['topoSvg'],
+                    'topoImage' => $routeData['topoImage'] ?? null,
+                    'topoPathCollection' => $routeData['topoPathCollection'] ?? null,
+                    'topoPath' => $routeData['topoPath'] ?? null,
+                    'topoViewBox' => $routeData['topoViewBox'] ?? null,
                     'withSector' => $routeData['withSector'],
                     'routes' => []
                 ];
             }
-            
+
             $groupedRoutes[$topoName]['routes'][] = [
                 'routeName' => $routeData['routeName'],
                 'routeRating' => $routeData['routeRating'],
@@ -41,7 +44,10 @@ class RouteGroupingService
                 'routeDescription' => $routeData['routeDescription'],
                 'routeComment' => $routeData['routeComment'] ?? [],
                 'routeGrade' => $routeData['routeGrade'],
-                'topoSvg' => $routeData['topoSvg'],
+                'topoImage' => $routeData['topoImage'] ?? null,
+                'topoPathCollection' => $routeData['topoPathCollection'] ?? null,
+                'topoPath' => $routeData['topoPath'] ?? null,
+                'topoViewBox' => $routeData['topoViewBox'] ?? null,
                 'withSector' => $routeData['withSector'],
                 'videoLink' => $routeData['videoLink']
             ];
@@ -72,16 +78,16 @@ class RouteGroupingService
     }
     
     /**
-     * Gets the first available SVG for a topo
+     * Gets the first available topo image URL for a topo
      *
      * @param array $topoRoutes Routes for a specific topo
      * @return string|null
      */
-    public function getFirstTopoSvg(array $topoRoutes): ?string
+    public function getFirstTopoImage(array $topoRoutes): ?string
     {
         foreach ($topoRoutes as $route) {
-            if (!empty($route['topoSvg'])) {
-                return $route['topoSvg'];
+            if (!empty($route['topoImage'])) {
+                return $route['topoImage'];
             }
         }
         return null;

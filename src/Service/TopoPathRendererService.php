@@ -175,15 +175,143 @@ class TopoPathRendererService
         $pathCollection = $pathCollection !== null ? trim($pathCollection) : '';
         if ($pathCollection !== '' && (str_contains($pathCollection, '<path') || str_contains($pathCollection, '<circle'))) {
             $content = $this->stripOuterSvgIfPresent($pathCollection);
+            $content = $this->sanitizeSvgContent($content);
             return $this->ensureDefsInContent($content);
         }
         $paths = $this->decodePathData($pathCollection, $pathData);
         if ($paths === null || empty($paths)) {
-            return $pathCollection !== '' ? $this->ensureDefsInContent($this->stripOuterSvgIfPresent($pathCollection)) : '';
+            if ($pathCollection === '') {
+                return '';
+            }
+            $content = $this->stripOuterSvgIfPresent($pathCollection);
+            $content = $this->sanitizeSvgContent($content);
+            return $this->ensureDefsInContent($content);
         }
         return $this->renderPathsToSvg($paths);
     }
 
+    /**
+     * Sanitize SVG inner content by allowing only a safe subset of elements and attributes.
+     * This is used for pre-rendered path collections that are later rendered with |raw.
+     */
+    private function sanitizeSvgContent(string $content): string
+    {
+        $trimmed = trim($content);
+        if ($trimmed === '') {
+            return $trimmed;
+        }
+
+        $wrapper = '<svg xmlns="http://www.w3.org/2000/svg">' . $trimmed . '</svg>';
+
+        $dom = new \DOMDocument();
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput = false;
+
+        $prevUseErrors = libxml_use_internal_errors(true);
+        $loaded = $dom->loadXML($wrapper, LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING);
+        libxml_clear_errors();
+        libxml_use_internal_errors($prevUseErrors);
+
+        if (!$loaded || $dom->documentElement === null) {
+            // Fallback: very simple sanitization if XML parsing fails.
+            $sanitized = preg_replace('#<\s*script\b[^>]*>.*?<\s*/\s*script\s*>#is', '', $trimmed);
+            $sanitized = preg_replace('/\son\w+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $sanitized);
+            return is_string($sanitized) ? $sanitized : '';
+        }
+
+        $allowedElements = [
+            'svg'    => true,
+            'g'      => true,
+            'path'   => true,
+            'circle' => true,
+            'text'   => true,
+            'defs'   => true,
+            'marker' => true,
+            'title'  => true,
+            'desc'   => true,
+        ];
+
+        $allowedAttributes = [
+            'id'            => true,
+            'class'         => true,
+            'd'             => true,
+            'fill'          => true,
+            'stroke'        => true,
+            'stroke-width'  => true,
+            'stroke-linecap'=> true,
+            'stroke-linejoin'=> true,
+            'stroke-dasharray'=> true,
+            'cx'            => true,
+            'cy'            => true,
+            'r'             => true,
+            'x'             => true,
+            'y'             => true,
+            'dx'            => true,
+            'dy'            => true,
+            'text-anchor'   => true,
+            'font-size'     => true,
+            'marker-start'  => true,
+            'marker-mid'    => true,
+            'marker-end'    => true,
+            'viewBox'       => true,
+            'xmlns'         => true,
+            'markerWidth'   => true,
+            'markerHeight'  => true,
+            'refX'          => true,
+            'refY'          => true,
+            'markerUnits'   => true,
+        ];
+
+        $xpath = new \DOMXPath($dom);
+        /** @var \DOMElement $node */
+        foreach ($xpath->query('//*') as $node) {
+            $tagName = $node->tagName;
+            if (!isset($allowedElements[$tagName])) {
+                if ($node->parentNode !== null) {
+                    $node->parentNode->removeChild($node);
+                }
+                continue;
+            }
+
+            if (!$node->hasAttributes()) {
+                continue;
+            }
+
+            // Collect attributes to remove (cannot modify NamedNodeMap while iterating directly).
+            $attrsToRemove = [];
+            foreach (iterator_to_array($node->attributes) as $attr) {
+                $name = $attr->nodeName;
+                $lname = strtolower($name);
+                if (str_starts_with($lname, 'on')) {
+                    $attrsToRemove[] = $name;
+                    continue;
+                }
+                if ($lname === 'href' || $lname === 'xlink:href') {
+                    $attrsToRemove[] = $name;
+                    continue;
+                }
+                if (!isset($allowedAttributes[$name])) {
+                    $attrsToRemove[] = $name;
+                }
+            }
+
+            foreach ($attrsToRemove as $attrName) {
+                $node->removeAttribute($attrName);
+            }
+        }
+
+        $root = $dom->documentElement;
+        if ($root === null) {
+            return '';
+        }
+
+        $inner = '';
+        foreach ($root->childNodes as $child) {
+            $inner .= $dom->saveXML($child);
+        }
+
+        return $inner;
+    }
     /** If content is wrapped in <svg>...</svg>, return only the inner content (and drop <image> if present). */
     private function stripOuterSvgIfPresent(string $content): string
     {

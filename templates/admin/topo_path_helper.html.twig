@@ -169,7 +169,7 @@
 	</div>
 
 	<script>
-	window.TOPO_EDIT = {{ (topoEdit is defined and topoEdit) ? topoEdit|json_encode|raw : 'null' }};
+	window.TOPO_EDIT = {{ (topoEdit is defined and topoEdit) ? topoEdit|json_encode|e('js') : 'null' }};
 	</script>
 	<script>
 	(function() {

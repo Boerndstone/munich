@@ -114,33 +114,63 @@ class TopoPathRendererService
                     break;
                 case 'L':
                 case 'l':
-                    $currentX += $values[0] ?? 0;
-                    $currentY += $values[1] ?? 0;
+                    if ($type === 'L') {
+                        $currentX = $values[0] ?? $currentX;
+                        $currentY = $values[1] ?? $currentY;
+                    } else {
+                        $currentX += $values[0] ?? 0;
+                        $currentY += $values[1] ?? 0;
+                    }
                     break;
                 case 'C':
                 case 'c':
-                    $currentX += $values[4] ?? 0;
-                    $currentY += $values[5] ?? 0;
+                    if ($type === 'C') {
+                        $currentX = $values[4] ?? $currentX;
+                        $currentY = $values[5] ?? $currentY;
+                    } else {
+                        $currentX += $values[4] ?? 0;
+                        $currentY += $values[5] ?? 0;
+                    }
                     break;
                 case 'S':
                 case 's':
-                    $currentX += $values[2] ?? 0;
-                    $currentY += $values[3] ?? 0;
+                    if ($type === 'S') {
+                        $currentX = $values[2] ?? $currentX;
+                        $currentY = $values[3] ?? $currentY;
+                    } else {
+                        $currentX += $values[2] ?? 0;
+                        $currentY += $values[3] ?? 0;
+                    }
                     break;
                 case 'Q':
                 case 'q':
-                    $currentX += $values[2] ?? 0;
-                    $currentY += $values[3] ?? 0;
+                    if ($type === 'Q') {
+                        $currentX = $values[2] ?? $currentX;
+                        $currentY = $values[3] ?? $currentY;
+                    } else {
+                        $currentX += $values[2] ?? 0;
+                        $currentY += $values[3] ?? 0;
+                    }
                     break;
                 case 'T':
                 case 't':
-                    $currentX += $values[0] ?? 0;
-                    $currentY += $values[1] ?? 0;
+                    if ($type === 'T') {
+                        $currentX = $values[0] ?? $currentX;
+                        $currentY = $values[1] ?? $currentY;
+                    } else {
+                        $currentX += $values[0] ?? 0;
+                        $currentY += $values[1] ?? 0;
+                    }
                     break;
                 case 'A':
                 case 'a':
-                    $currentX += $values[5] ?? 0;
-                    $currentY += $values[6] ?? 0;
+                    if ($type === 'A') {
+                        $currentX = $values[5] ?? $currentX;
+                        $currentY = $values[6] ?? $currentY;
+                    } else {
+                        $currentX += $values[5] ?? 0;
+                        $currentY += $values[6] ?? 0;
+                    }
                     break;
                 case 'H':
                 case 'h':

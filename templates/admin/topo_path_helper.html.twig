@@ -1,7 +1,7 @@
 {% extends '@!EasyAdmin/layout.html.twig' %}
 
 {% block page_title %}
-	Topo Path Helper
+	{% if topoEdit is defined and topoEdit %}Tourenpfade bearbeiten: {{ topoEdit.name }}{% else %}Topo Path Helper{% endif %}
 {% endblock %}
 
 {% block head_stylesheets %}
@@ -48,6 +48,10 @@
 		.topo-path-helper-root .tph-draw-area svg circle.point { fill: #E42522; stroke: #fff; stroke-width: 1; }
 		.topo-path-helper-root .tph-draw-toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
 		.topo-path-helper-root .tph-draw-hint { font-size: 0.85rem; color: #888; margin-top: 8px; }
+		.topo-path-helper-root .path-card-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+		.topo-path-helper-root .path-card-actions button { padding: 4px 10px; font-size: 12px; }
+		.topo-path-helper-root .tph-save-topo-bar { margin-bottom: 16px; padding: 12px; background: var(--tph-surface); border: 1px solid var(--tph-success); border-radius: 8px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+		.topo-path-helper-root .tph-save-topo-bar button.save { background: var(--tph-success); }
 	</style>
 {% endblock %}
 
@@ -60,7 +64,14 @@
 
 	<div class="content-body">
 		<div class="topo-path-helper-root">
-			<p class="subtitle">Paste SVG paths from <a href="https://editor.method.ac/" target="_blank" rel="noopener">Method Draw</a> → configure options → copy PHP output. Or draw paths directly on your topo image below.</p>
+			{% if topoEdit is defined and topoEdit %}
+			<div class="tph-save-topo-bar" id="tph-saveTopoBar">
+				<strong>Topo „{{ topoEdit.name }}“</strong>
+				<button type="button" class="save" id="tph-saveToTopo">Änderungen am Topo speichern</button>
+				<a href="{{ topoEdit.backUrl }}" class="btn secondary">Zurück zum Topo</a>
+			</div>
+			{% endif %}
+			<p class="subtitle">Paste SVG paths from <a href="https://editor.method.ac/" target="_blank" rel="noopener">Method Draw</a> (supports Bezier curves) → configure options → copy PHP. Or draw paths on the image (polyline). Add, delete, or reorder paths in step 2.</p>
 
 			<section>
 				<label>0. Draw paths on image (like Method Draw)</label>
@@ -158,6 +169,9 @@
 	</div>
 
 	<script>
+	window.TOPO_EDIT = {{ (topoEdit is defined and topoEdit) ? topoEdit|json_encode|e('js') : 'null' }};
+	</script>
+	<script>
 	(function() {
 		// --- Step 0: Draw on image ---
 		var drawArea = document.getElementById('tph-drawArea');
@@ -243,6 +257,13 @@
 				circle.setAttribute('stroke-width', '1');
 				drawSvg.appendChild(circle);
 			});
+		}
+
+		function syncDrawnPathsFromPaths() {
+			if (typeof paths !== 'undefined' && paths.length >= 0) {
+				drawnPaths = paths.map(function(p) { return { d: p.d }; });
+				if (drawSvg.getAttribute('viewBox')) redrawOverlay();
+			}
 		}
 
 		function onDrawSvgClick(ev) {
@@ -344,6 +365,11 @@
 						<label><input type="checkbox" ${p.dashed ? 'checked' : ''} data-tph-path="${i}" data-tph-opt="dashed"> Dashed</label>
 						<label><input type="checkbox" ${p.dot ? 'checked' : ''} data-tph-path="${i}" data-tph-opt="dot"> Dot (anker)</label>
 					</div>
+					<div class="path-card-actions">
+						<button type="button" class="secondary tph-path-delete" data-index="${i}">Delete</button>
+						<button type="button" class="secondary tph-path-move-up" data-index="${i}" ${i === 0 ? 'disabled' : ''}>Move up</button>
+						<button type="button" class="secondary tph-path-move-down" data-index="${i}" ${i === paths.length - 1 ? 'disabled' : ''}>Move down</button>
+					</div>
 				</div>
 			`).join('');
 			container.querySelectorAll('[data-tph-path]').forEach(el => {
@@ -353,6 +379,33 @@
 					updatePath(i, opt, el.type === 'checkbox' ? el.checked : el.value);
 				});
 			});
+			container.querySelectorAll('.tph-path-delete').forEach(btn => {
+				btn.addEventListener('click', function() {
+					const i = parseInt(this.getAttribute('data-index'), 10);
+					paths.splice(i, 1);
+					renderPaths();
+					document.getElementById('tph-emptyState').style.display = paths.length ? 'none' : 'block';
+				});
+			});
+			container.querySelectorAll('.tph-path-move-up').forEach(btn => {
+				btn.addEventListener('click', function() {
+					const i = parseInt(this.getAttribute('data-index'), 10);
+					if (i > 0) {
+						const t = paths[i]; paths[i] = paths[i - 1]; paths[i - 1] = t;
+						renderPaths();
+					}
+				});
+			});
+			container.querySelectorAll('.tph-path-move-down').forEach(btn => {
+				btn.addEventListener('click', function() {
+					const i = parseInt(this.getAttribute('data-index'), 10);
+					if (i < paths.length - 1) {
+						const t = paths[i]; paths[i] = paths[i + 1]; paths[i + 1] = t;
+						renderPaths();
+					}
+				});
+			});
+			syncDrawnPathsFromPaths();
 		}
 
 		function updatePath(index, key, value) {
@@ -439,6 +492,16 @@
 			document.getElementById('tph-output').value = '$paths = [\n' + lines.join(',\n') + '\n            ];';
 		}
 
+		function getPhpLiteralContent() {
+			return paths.map(function(p) {
+				var parts = ["'d' => '" + p.d.replace(/'/g, "\\'") + "'"];
+				if (p.color && p.color !== '#E42522') parts.push("'color' => '" + p.color + "'");
+				if (p.dashed) parts.push("'dashed' => true");
+				if (p.dot) parts.push("'dot' => true");
+				return '[' + parts.join(', ') + ']';
+			}).join(',\n');
+		}
+
 		function copyOutput() {
 			var el = document.getElementById('tph-output');
 			el.select();
@@ -464,6 +527,60 @@
 		document.getElementById('tph-copyPhp').addEventListener('click', copyOutput);
 		document.getElementById('tph-generateSvg').addEventListener('click', generateSvgOutput);
 		document.getElementById('tph-copySvg').addEventListener('click', copySvgOutput);
+
+		// Preload when editing a topo: show image with current paths overlaid
+		if (window.TOPO_EDIT) {
+			var te = window.TOPO_EDIT;
+			document.getElementById('tph-drawImageUrl').value = te.imageUrl || '';
+			document.getElementById('tph-drawWidth').value = te.viewBoxW || 1024;
+			document.getElementById('tph-drawHeight').value = te.viewBoxH || 820;
+			document.getElementById('tph-svgWidth').value = te.viewBoxW || 1024;
+			document.getElementById('tph-svgHeight').value = te.viewBoxH || 820;
+			document.getElementById('tph-svgImageUrl').value = te.imageUrl || '';
+			if (te.pathsJson) {
+				paths = typeof te.pathsJson === 'string' ? JSON.parse(te.pathsJson) : te.pathsJson;
+				drawnPaths = paths.map(function(p) { return { d: p.d }; });
+				renderPaths();
+				document.getElementById('tph-emptyState').style.display = paths.length ? 'none' : 'block';
+			}
+			loadDrawImage();
+		}
+
+		// Save to topo (when editing)
+		var saveToTopoBtn = document.getElementById('tph-saveToTopo');
+		if (saveToTopoBtn && window.TOPO_EDIT) {
+			saveToTopoBtn.addEventListener('click', function() {
+				var te = window.TOPO_EDIT;
+				var w = document.getElementById('tph-svgWidth').value || 1024;
+				var h = document.getElementById('tph-svgHeight').value || 820;
+				var viewBox = '0 0 ' + w + ' ' + h;
+				var phpLiteral = getPhpLiteralContent();
+				var body = new URLSearchParams({ phpLiteral: phpLiteral, viewBox: viewBox });
+				var csrfToken = '{{ csrf_token("topo_save_topo_path_helper")|e('js') }}';
+				if (csrfToken) {
+					body.append('_token', csrfToken);
+				}
+				saveToTopoBtn.disabled = true;
+				fetch(te.saveUrl, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+					body: body.toString()
+				})
+				.then(function(r) { return r.json(); })
+				.then(function(data) {
+					saveToTopoBtn.disabled = false;
+					if (data.success && data.redirectUrl) {
+						window.location.href = data.redirectUrl;
+					} else {
+						showToast(data.error || data.message || 'Save failed');
+					}
+				})
+				.catch(function() {
+					saveToTopoBtn.disabled = false;
+					showToast('Save failed');
+				});
+			});
+		}
 	})();
 	</script>
 {% endblock %}

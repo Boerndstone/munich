@@ -40,6 +40,9 @@ class Topo
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $pathCollection = null;
 
+    #[ORM\Column(type: Types::STRING, length: 64, nullable: true)]
+    private ?string $viewBox = null;
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
 
@@ -140,6 +143,18 @@ class Topo
     public function setPathCollection(?string $pathCollection): static
     {
         $this->pathCollection = $pathCollection;
+
+        return $this;
+    }
+
+    public function getViewBox(): ?string
+    {
+        return $this->viewBox;
+    }
+
+    public function setViewBox(?string $viewBox): static
+    {
+        $this->viewBox = $viewBox;
 
         return $this;
     }

@@ -168,17 +168,20 @@
 						<div class="card mt-3 overflow-hidden border-0 rounded-0" id="{{ topoName|custom_replace|lower }}">
 							<div class="card-body p-0">
 								<section data-controller="route-information-tooltip">
-									{% if topoData.topoSvg is not empty %}
-										{% set parsed = topoData.topoSvg|parse_topo_svg %}
-										{% if parsed.imageUrl and parsed.pathsSvg is not empty %}
-											<div class="topo-two-layer"{% if parsed.aspectRatio %} style="aspect-ratio: {{ parsed.aspectRatio }};"{% endif %}>
-												<img class="topo-two-layer__bg" src="{{ parsed.src ?? parsed.imageUrl }}"{% if parsed.srcset %} srcset="{{ parsed.srcset }}" sizes="{{ parsed.sizes }}"{% endif %} alt="{{ 'topo.image_alt'|trans({ '%topo_name%': topoName, '%rock_name%': (rocks|first).rockName|default(''), '%area_name%': (rocks|first).areaName|default('') }) }}" loading="lazy" decoding="async">
-												<div class="topo-two-layer__overlay" aria-hidden="true">
-													{{ parsed.pathsSvg|raw }}
-												</div>
+									{% if topoData.topoImage is not empty and (topoData.topoPathCollection is not empty or topoData.topoPath is not empty) %}
+										{% set srcsetData = topoData.topoImage|topo_image_srcset %}
+										{% set viewBoxValue = topoData.topoViewBox|default('0 0 1024 820') %}
+										{% set aspectRatio = viewBoxValue|viewbox_to_aspect_ratio %}
+										{% set pathsSvg = topo_paths_overlay(topoData.topoPathCollection, topoData.topoPath) %}
+										{% if pathsSvg is not empty %}
+										<div class="topo-two-layer"{% if aspectRatio %} style="aspect-ratio: {{ aspectRatio }};"{% endif %}>
+											<img class="topo-two-layer__bg" src="{{ srcsetData.src|default(topoData.topoImage) }}"{% if srcsetData.srcset %} srcset="{{ srcsetData.srcset }}" sizes="{{ srcsetData.sizes }}"{% endif %} alt="{{ 'topo.image_alt'|trans({ '%topo_name%': topoName, '%rock_name%': (rocks|first).rockName|default(''), '%area_name%': (rocks|first).areaName|default('') }) }}" loading="lazy" decoding="async">
+											<div class="topo-two-layer__overlay" aria-hidden="true">
+												<svg height="100%" width="100%" viewBox="{{ viewBoxValue }}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="img-fluid preserve-aspect-ratio">
+													{{ pathsSvg|raw }}
+												</svg>
 											</div>
-										{% else %}
-											{{ topoData.topoSvg|raw }}
+										</div>
 										{% endif %}
 									{% endif %}
 									<table class="table mb-0 small fw-medium 0">

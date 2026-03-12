@@ -556,8 +556,10 @@
 				var viewBox = '0 0 ' + w + ' ' + h;
 				var phpLiteral = getPhpLiteralContent();
 				var body = new URLSearchParams({ phpLiteral: phpLiteral, viewBox: viewBox });
-				var csrf = document.querySelector('input[name="_csrf_token"]');
-				if (csrf) body.append('_token', csrf.value);
+				var csrfToken = '{{ csrf_token("topo_save_topo_path_helper")|e('js') }}';
+				if (csrfToken) {
+					body.append('_token', csrfToken);
+				}
 				saveToTopoBtn.disabled = true;
 				fetch(te.saveUrl, {
 					method: 'POST',

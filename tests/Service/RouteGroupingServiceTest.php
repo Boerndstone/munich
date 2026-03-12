@@ -20,7 +20,9 @@ class RouteGroupingServiceTest extends TestCase
             [
                 'topoName' => 'Topo A',
                 'topoNumber' => 1,
-                'topoSvg' => '<svg>Topo A SVG</svg>',
+                'topoImage' => 'https://example.com/topo-a.webp',
+                'topoPathCollection' => '<path id="svg_1" d="M0,0"/>',
+                'topoViewBox' => '0 0 1024 820',
                 'withSector' => true,
                 'routeName' => 'Route 1',
                 'routeGrade' => '6a',
@@ -39,7 +41,9 @@ class RouteGroupingServiceTest extends TestCase
             [
                 'topoName' => 'Topo A',
                 'topoNumber' => 1,
-                'topoSvg' => '<svg>Topo A SVG</svg>',
+                'topoImage' => 'https://example.com/topo-a.webp',
+                'topoPathCollection' => '<path id="svg_1" d="M0,0"/>',
+                'topoViewBox' => '0 0 1024 820',
                 'withSector' => false,
                 'routeName' => 'Route 2',
                 'routeGrade' => '6b',
@@ -58,7 +62,9 @@ class RouteGroupingServiceTest extends TestCase
             [
                 'topoName' => 'Topo B',
                 'topoNumber' => 2,
-                'topoSvg' => '<svg>Topo B SVG</svg>',
+                'topoImage' => 'https://example.com/topo-b.webp',
+                'topoPathCollection' => '<path id="svg_2" d="M0,0"/>',
+                'topoViewBox' => '0 0 1024 820',
                 'withSector' => false,
                 'routeName' => 'Route 3',
                 'routeGrade' => '7a',
@@ -86,7 +92,9 @@ class RouteGroupingServiceTest extends TestCase
         $this->assertCount(2, $result['Topo A']['routes']);
         $this->assertEquals('Topo A', $result['Topo A']['topoName']);
         $this->assertEquals(1, $result['Topo A']['topoNumber']);
-        $this->assertEquals('<svg>Topo A SVG</svg>', $result['Topo A']['topoSvg']);
+        $this->assertEquals('https://example.com/topo-a.webp', $result['Topo A']['topoImage']);
+        $this->assertEquals('<path id="svg_1" d="M0,0"/>', $result['Topo A']['topoPathCollection']);
+        $this->assertEquals('0 0 1024 820', $result['Topo A']['topoViewBox']);
         $this->assertTrue($result['Topo A']['withSector']);
         
         // Check Topo B has 1 route
@@ -125,25 +133,25 @@ class RouteGroupingServiceTest extends TestCase
         $this->assertFalse($this->service->hasSectors($topoRoutes));
     }
 
-    public function testGetFirstTopoSvg(): void
+    public function testGetFirstTopoImage(): void
     {
         $topoRoutes = [
-            ['topoSvg' => ''],
-            ['topoSvg' => '<svg>First SVG</svg>'],
-            ['topoSvg' => '<svg>Second SVG</svg>']
+            ['topoImage' => ''],
+            ['topoImage' => 'https://example.com/first.webp'],
+            ['topoImage' => 'https://example.com/second.webp']
         ];
 
-        $this->assertEquals('<svg>First SVG</svg>', $this->service->getFirstTopoSvg($topoRoutes));
+        $this->assertEquals('https://example.com/first.webp', $this->service->getFirstTopoImage($topoRoutes));
     }
 
-    public function testGetFirstTopoSvgNull(): void
+    public function testGetFirstTopoImageNull(): void
     {
         $topoRoutes = [
-            ['topoSvg' => ''],
-            ['topoSvg' => null],
-            ['topoSvg' => '']
+            ['topoImage' => ''],
+            ['topoImage' => null],
+            ['topoImage' => '']
         ];
 
-        $this->assertNull($this->service->getFirstTopoSvg($topoRoutes));
+        $this->assertNull($this->service->getFirstTopoImage($topoRoutes));
     }
 } 

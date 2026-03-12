@@ -317,7 +317,7 @@ class TopoPathRendererService
     {
         if (preg_match('/^\s*<svg[^>]*>(.*)<\/svg>\s*$/is', $content, $m)) {
             $inner = trim($m[1]);
-            $inner = preg_replace('/<image\s[^>]*\/?\s*>/i', '', $inner);
+            $inner = preg_replace('/<image\b[^>]*\/?\s*>(?:.*?<\/image\s*>|)/is', '', $inner);
             return trim($inner);
         }
         return $content;

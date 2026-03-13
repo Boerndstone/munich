@@ -282,7 +282,8 @@
                 }
 
                 // Main path
-                const markerAttr = dot ? ` marker-end="url(#dot)"` : '';
+                // No path marker when dot: we draw the explicit end-dot circle instead (avoids white ring)
+                const markerAttr = '';
                 parts.push(`        <path id="svg_${id}" d="${escapeHtml(d)}" stroke-width="3" stroke="${color}"${markerAttr} fill="none" class="stroke-behavior"></path>`);
 
                 // Circle and text

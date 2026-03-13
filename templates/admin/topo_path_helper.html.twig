@@ -462,7 +462,7 @@
 				var startX = m[1], startY = m[2], startYMinusOne = parseFloat(startY) - 1;
 				if (dashed) parts.push('        <path id="border_' + id + '" d="' + escapeHtml(d) + '" stroke-width="4" stroke="#ffffff" fill="none" class="route-path-border dashed"></path>');
 				else parts.push('        <path id="border_' + id + '" d="' + escapeHtml(d) + '" stroke-width="4" stroke="#000000" fill="none" class="route-path-border"></path>');
-				var markerAttr = dot ? ' marker-end="url(#dot)"' : '';
+				var markerAttr = ''; {# no path marker when dot: we draw the explicit end-dot circle instead #}
 				parts.push('        <path id="svg_' + id + '" d="' + escapeHtml(d) + '" stroke-width="3" stroke="' + color + '"' + markerAttr + ' fill="none" class="stroke-behavior"></path>');
 				var strokeColor = dashed ? '#ffffff' : '#000';
 				var circleClass = dashed ? 'number-circle' : 'number-circle tooltip-trigger';

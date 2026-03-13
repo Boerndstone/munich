@@ -54,7 +54,8 @@ class TopoPathRendererService
                 $borderStroke,
                 $borderClass
             );
-            $markerAttr = $dot ? ' marker-end="url(#dot)"' : '';
+            // No path marker when dot: we draw the explicit end-dot circle instead (avoids white ring)
+            $markerAttr = '';
             $parts[] = sprintf(
                 '<path id="svg_%d" d="%s" stroke-width="3" stroke="%s"%s fill="none" class="stroke-behavior"></path>',
                 $id,

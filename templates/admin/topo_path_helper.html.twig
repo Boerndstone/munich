@@ -78,7 +78,7 @@
 				<div class="row" style="gap: 16px; margin-bottom: 12px;">
 					<div style="flex: 1; min-width: 200px;">
 						<label style="margin-bottom: 4px;">Image URL</label>
-						<input type="text" id="tph-drawImageUrl" placeholder="https://www.munichclimbs.de/build/images/topos/..." style="width: 100%;">
+						<input type="text" id="tph-drawImageUrl" placeholder="https://www.munichclimbs.de/build/images/topos/..." value="{{ (topoEdit is defined and topoEdit and topoEdit.imageUrl is defined) ? topoEdit.imageUrl|e('html_attr') : '' }}" style="width: 100%;">
 					</div>
 					<div>
 						<label style="margin-bottom: 4px;">or choose file</label>
@@ -86,11 +86,11 @@
 					</div>
 					<div>
 						<label style="margin-bottom: 4px;">Width</label>
-						<input type="number" id="tph-drawWidth" value="1024" min="1" style="width: 80px;">
+						<input type="number" id="tph-drawWidth" value="{{ (topoEdit is defined and topoEdit and topoEdit.viewBoxW is defined) ? topoEdit.viewBoxW : 1024 }}" min="1" style="width: 80px;">
 					</div>
 					<div>
 						<label style="margin-bottom: 4px;">Height</label>
-						<input type="number" id="tph-drawHeight" value="820" min="1" style="width: 80px;">
+						<input type="number" id="tph-drawHeight" value="{{ (topoEdit is defined and topoEdit and topoEdit.viewBoxH is defined) ? topoEdit.viewBoxH : 820 }}" min="1" style="width: 80px;">
 					</div>
 					<div style="align-self: flex-end;">
 						<button type="button" id="tph-drawLoadImage">Load image</button>
@@ -528,22 +528,26 @@
 		document.getElementById('tph-generateSvg').addEventListener('click', generateSvgOutput);
 		document.getElementById('tph-copySvg').addEventListener('click', copySvgOutput);
 
-		// Preload when editing a topo: show image with current paths overlaid
+		// Preload when editing a topo: load image from Topo::$image into step 0 and show paths
 		if (window.TOPO_EDIT) {
 			var te = window.TOPO_EDIT;
 			document.getElementById('tph-drawImageUrl').value = te.imageUrl || '';
-			document.getElementById('tph-drawWidth').value = te.viewBoxW || 1024;
-			document.getElementById('tph-drawHeight').value = te.viewBoxH || 820;
-			document.getElementById('tph-svgWidth').value = te.viewBoxW || 1024;
-			document.getElementById('tph-svgHeight').value = te.viewBoxH || 820;
+			document.getElementById('tph-drawWidth').value = te.viewBoxW != null ? te.viewBoxW : 1024;
+			document.getElementById('tph-drawHeight').value = te.viewBoxH != null ? te.viewBoxH : 820;
+			document.getElementById('tph-svgWidth').value = te.viewBoxW != null ? te.viewBoxW : 1024;
+			document.getElementById('tph-svgHeight').value = te.viewBoxH != null ? te.viewBoxH : 820;
 			document.getElementById('tph-svgImageUrl').value = te.imageUrl || '';
 			if (te.pathsJson) {
-				paths = typeof te.pathsJson === 'string' ? JSON.parse(te.pathsJson) : te.pathsJson;
-				drawnPaths = paths.map(function(p) { return { d: p.d }; });
-				renderPaths();
-				document.getElementById('tph-emptyState').style.display = paths.length ? 'none' : 'block';
+				try {
+					paths = typeof te.pathsJson === 'string' ? JSON.parse(te.pathsJson) : te.pathsJson;
+					drawnPaths = paths.map(function(p) { return { d: p.d }; });
+					renderPaths();
+					document.getElementById('tph-emptyState').style.display = paths.length ? 'none' : 'block';
+				} catch (e) { /* ignore parse error; image still loads */ }
 			}
-			loadDrawImage();
+			if (te.imageUrl) {
+				loadDrawImage();
+			}
 		}
 
 		// Save to topo (when editing)

@@ -55,7 +55,6 @@
 							<h1 class="h3 mb-0 fw-medium stay-black me-2">
 								{{ areaName }}
 							</h1>
-							
 						</div>
 						<div>
 						{% if areaKletterkonzeption %}
@@ -79,7 +78,6 @@
 		</div>
 		<div class="container my-3">
 			<section>
-				
 				<div class="collapse mt-3" id="collapseAreaMap">
 					<div id="areaMap" class="z-10 mb-3" style="width: 100%; height: 500px;">
 						{{ include('partials/_areaMap.html.twig') }}
@@ -119,14 +117,13 @@
 								</div>
 							</div>
 						</div>
-
 					</div>
 				</div>
 				<div class="row" data-controller="filter">
 					<div class="col-12 col-md-8 order-2 order-lg-1">
 						<div class="row">
 							{% for rock in rocks %}
-								<div class="col-12 rock-item {% if currentDate < 181 and rock.banned > 0 %}banned{% endif %}" data-child-friendly="{{ rock.rockChild == 1 ? 'true' : 'false' }}" data-rock-sunny="{{ rock.rockSunny == 3 ? 'true' : 'false' }}" data-rock-rain="{{ rock.rockRain == 1 ? 'true' : 'false' }}" data-rock-train="{{ rock.rockTrain == 1 ? 'true' : 'false' }}">
+								<div class="col-12 rock-item {% if currentDate < 181 and rock.banned > 0 %}banned{% endif %}" data-child-friendly="{{ rock.rockChild == 1 ? 'true' : 'false' }}" data-rock-sunny="{{ rock.rockSunny == 3 ? 'true' : 'false' }}" data-rock-rain="{{ rock.rockRain == 1 ? 'true' : 'false' }}" data-rock-train="{{ rock.rockTrain == 1 ? 'true' : 'false' }}" data-rock-bike="{{ (rock.rockBike is defined and rock.rockBike == 1) ? 'true' : 'false' }}">
 									<a href="{{ path('show_rock', { 'areaSlug': rock.areaSlug, slug: rock.rockSlug }) }}" class="d-block text-black">
 										<div class="card py-2 mb-2 card-body">
 											<div class="row align-items-center">
@@ -225,18 +222,26 @@
 									<input id="rain" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="rain">
 								</div>
 							</div>
-							<div class="col-3 col-md-6 mb-2">
+<div class="col-3 col-md-6 mb-2">
 								<div class="form-check form-switch">
 									<label class="form-check-label" for="train">
 										<div class="train"></div>
-										<span class="visually-hidden">Mit Bahn erreichbar</span>
+										<span class="visually-hidden">{{ 'train.reachable'|trans }}</span>
 									</label>
 									<input id="train" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="train">
 								</div>
 							</div>
+							<div class="col-3 col-md-6 mb-2">
+								<div class="form-check form-switch">
+									<input id="bike" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="bike">
+									<label class="form-check-label d-flex align-items-center	" for="bike">
+										<div class="train"></div> + <div class="bike"></div>
+										<span class="visually-hidden">{{ 'bike.reachable'|trans }}</span>
+									</label>
+								</div>
 							</div>
 						</div>
-
+						</div>
 					</div>
 				</div>
 			</section>

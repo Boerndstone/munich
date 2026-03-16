@@ -1,7 +1,7 @@
 import { Controller } from "stimulus";
 
 export default class extends Controller {
-  static targets = ["childFriendly", "sunny", "rain", "train"];
+  static targets = ["childFriendly", "sunny", "rain", "train", "bike"];
 
   connect() {
     this.filterItems();
@@ -12,6 +12,7 @@ export default class extends Controller {
     const showSunny = this.sunnyTarget.checked;
     const showRain = this.rainTarget.checked;
     const showTrain = this.trainTarget.checked;
+    const showBike = this.bikeTarget.checked;
     let visibleCount = 0;
 
     document.querySelectorAll(".rock-item").forEach((item) => {
@@ -19,6 +20,7 @@ export default class extends Controller {
       const isSunny = item.dataset.rockSunny === "true";
       const isRain = item.dataset.rockRain === "true";
       const isTrain = item.dataset.rockTrain === "true";
+      const isBike = item.dataset.rockBike === "true";
 
       let shouldShow = true;
       if (showChildFriendly && !isChildFriendly) {
@@ -30,7 +32,12 @@ export default class extends Controller {
       if (showRain && !isRain) {
         shouldShow = false;
       }
-      if (showTrain && !isTrain) {
+      // Train / bike: if both checked, show rocks with train AND bike; if one checked, filter by that only
+      if (showTrain && showBike) {
+        if (!(isTrain && isBike)) shouldShow = false;
+      } else if (showTrain && !isTrain) {
+        shouldShow = false;
+      } else if (showBike && !isBike) {
         shouldShow = false;
       }
 

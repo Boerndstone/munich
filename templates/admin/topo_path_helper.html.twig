@@ -42,10 +42,13 @@
 		.topo-path-helper-root input[type="number"],
 		.topo-path-helper-root input[type="text"] { padding: 8px; border-radius: 4px; border: 1px solid var(--tph-border); background: #1a1a1a; color: var(--tph-text); }
 		.topo-path-helper-root .tph-draw-area { position: relative; max-width: 100%; max-height: 75vh; margin-top: 12px; border: 1px solid var(--tph-border); border-radius: 6px; overflow: hidden; background: #0d0d0d; }
-		.topo-path-helper-root .tph-draw-area img { display: block; width: 100%; height: 100%; max-height: 75vh; object-fit: contain; vertical-align: top; }
-		.topo-path-helper-root .tph-draw-area svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-		.topo-path-helper-root .tph-draw-area svg path { fill: none; stroke: #E42522; stroke-width: 2; }
-		.topo-path-helper-root .tph-draw-area svg circle.point { fill: #E42522; stroke: #fff; stroke-width: 1; }
+		.topo-path-helper-root .tph-draw-area__bg { display: block; width: 100%; height: auto; max-height: 75vh; object-fit: contain; vertical-align: top; }
+		.topo-path-helper-root .tph-draw-area__overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1; pointer-events: none; }
+		.topo-path-helper-root .tph-draw-area__overlay svg { display: block; width: 100%; height: 100%; }
+		.topo-path-helper-root .tph-draw-area__overlay svg.paths-editable { pointer-events: all; }
+		.topo-path-helper-root .tph-draw-area__overlay svg path { fill: none; stroke: #E42522; stroke-width: 2; }
+		.topo-path-helper-root .tph-draw-area__overlay svg circle.point { fill: #E42522; stroke: #fff; stroke-width: 1; }
+		.topo-path-helper-root .tph-draw-area__overlay svg circle.edit-point { cursor: grab; }
 		.topo-path-helper-root .tph-draw-toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
 		.topo-path-helper-root .tph-draw-hint { font-size: 0.85rem; color: #888; margin-top: 8px; }
 		.topo-path-helper-root .path-card-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
@@ -67,7 +70,7 @@
 			{% if topoEdit is defined and topoEdit %}
 			<div class="tph-save-topo-bar" id="tph-saveTopoBar">
 				<strong>Topo „{{ topoEdit.name }}“</strong>
-				<button type="button" class="save" id="tph-saveToTopo">Änderungen am Topo speichern</button>
+				<button type="button" class="save" id="tph-saveToTopo" data-csrf-token="{{ csrf_token('topo_save_topo_path_helper')|e('html_attr') }}">Änderungen am Topo speichern</button>
 				<a href="{{ topoEdit.backUrl }}" class="btn secondary">Zurück zum Topo</a>
 			</div>
 			{% endif %}
@@ -99,12 +102,16 @@
 				<div class="tph-draw-toolbar">
 					<button type="button" id="tph-drawNewPath" class="secondary">New path</button>
 					<button type="button" id="tph-drawUndo" class="secondary">Undo last point</button>
+					<button type="button" id="tph-drawDeselect" class="secondary">Deselect</button>
+					<button type="button" id="tph-drawDeletePath" class="secondary">Delete selected path</button>
 					<button type="button" id="tph-drawCopyToStep1">Copy paths to Step 1 &amp; parse</button>
 					<span id="tph-drawStatus" style="color: #888; font-size: 0.9rem;"></span>
 				</div>
 				<div class="tph-draw-area" id="tph-drawArea" style="display: none;">
-					<img id="tph-drawImg" alt="Topo" style="width: 100%; height: auto;">
-					<svg id="tph-drawSvg" xmlns="http://www.w3.org/2000/svg" style="pointer-events: none;"></svg>
+					<img id="tph-drawImg" class="tph-draw-area__bg" alt="Topo">
+					<div class="tph-draw-area__overlay" aria-hidden="true">
+						<svg id="tph-drawSvg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
+					</div>
 				</div>
 				<p class="tph-draw-hint" id="tph-drawHint">Enter an image URL or choose a file, set dimensions (match your topo viewBox), then click "Load image". Click on the image to add points; use "New path" to start the next route.</p>
 			</section>
@@ -168,9 +175,16 @@
 		</div>
 	</div>
 
+	<div id="tph-topo-edit" style="display:none" data-json="{{ (topoEdit is defined and topoEdit and topoEditJsonBase64 is defined) ? topoEditJsonBase64|e('html_attr') : '' }}"></div>
 	<script>
-	window.TOPO_EDIT = {{ (topoEdit is defined and topoEdit) ? topoEdit|json_encode|e('js') : 'null' }};
+	window.TOPO_EDIT = (function(){
+		var el = document.getElementById('tph-topo-edit');
+		var b64 = el && el.getAttribute('data-json');
+		if (!b64) return null;
+		try { return JSON.parse(atob(b64)); } catch (e) { return null; }
+	})();
 	</script>
+	{% verbatim %}
 	<script>
 	(function() {
 		// --- Step 0: Draw on image ---
@@ -204,8 +218,15 @@
 				drawSvg.setAttribute('height', '100%');
 				drawSvg.style.pointerEvents = 'all';
 				drawSvg.style.cursor = 'crosshair';
+				drawSvg.classList.add('paths-editable');
+				// Always use path list (pathsJson) for overlay — never inject server SVG here to avoid broken content in DOM
+				syncDrawnPathsFromPaths();
 				redrawOverlay();
-				document.getElementById('tph-drawStatus').textContent = 'Click on the image to add points. "New path" starts the next route.';
+				updateDrawPathButtons();
+				requestAnimationFrame(function() {
+					var count = drawSvg.querySelectorAll('path[id^="svg_"]').length || drawnPaths.length;
+					document.getElementById('tph-drawStatus').textContent = count ? count + ' path(s) on image. Click to add points or \"New path\" for the next route.' : 'Click on the image to add points. "New path" starts the next route.';
+				});
 			};
 			drawImg.onerror = function() {
 				document.getElementById('tph-drawStatus').textContent = 'Could not load image. Check URL or try a file.';
@@ -217,26 +238,102 @@
 			var rect = drawSvg.getBoundingClientRect();
 			var x = ((ev.clientX - rect.left) / rect.width) * drawW;
 			var y = ((ev.clientY - rect.top) / rect.height) * drawH;
-			return [ Math.round(x * 10) / 10, Math.round(y * 10) / 10 ];
+			return [ Math.round(x), Math.round(y) ];
 		}
 
 		function pathToD(pts) {
 			if (pts.length === 0) return '';
-			var d = 'M ' + pts[0][0] + ',' + pts[0][1];
-			for (var i = 1; i < pts.length; i++) d += ' L ' + pts[i][0] + ',' + pts[i][1];
+			var d = 'm' + pts[0][0] + ',' + pts[0][1];
+			for (var i = 1; i < pts.length; i++) {
+				d += 'l' + (pts[i][0] - pts[i-1][0]) + ',' + (pts[i][1] - pts[i-1][1]);
+			}
 			return d;
 		}
+
+		function pathToPoints(d) {
+			if (!d || typeof d !== 'string') return [];
+			var points = [];
+			var commands = d.trim().split(/(?=[mMlLcCsShHvVzZ])/).filter(Boolean);
+			var x = 0, y = 0;
+			for (var i = 0; i < commands.length; i++) {
+				var cmd = commands[i].trim();
+				if (!cmd) continue;
+				var type = cmd.charAt(0);
+				var rest = cmd.slice(1).replace(/^\s*,\s*|\s*,\s*/g, ',').trim();
+				var values = rest ? rest.split(/[\s,]+/).map(parseFloat) : [];
+				var j = 0;
+				if (type === 'm' || type === 'M') {
+					while (j + 1 < values.length) {
+						if (type === 'm') { x += values[j]; y += values[j+1]; } else { x = values[j]; y = values[j+1]; }
+						points.push([Math.round(x), Math.round(y)]); j += 2;
+					}
+				} else if (type === 'l' || type === 'L') {
+					while (j + 1 < values.length) {
+						if (type === 'l') { x += values[j]; y += values[j+1]; } else { x = values[j]; y = values[j+1]; }
+						points.push([Math.round(x), Math.round(y)]); j += 2;
+					}
+				} else if (type === 'c' || type === 'C') {
+					while (j + 5 < values.length) {
+						if (type === 'c') { x += values[j+4]; y += values[j+5]; } else { x = values[j+4]; y = values[j+5]; }
+						points.push([Math.round(x), Math.round(y)]); j += 6;
+					}
+				} else if (type === 's' || type === 'S') {
+					while (j + 3 < values.length) {
+						if (type === 's') { x += values[j+2]; y += values[j+3]; } else { x = values[j+2]; y = values[j+3]; }
+						points.push([Math.round(x), Math.round(y)]); j += 4;
+					}
+				}
+			}
+			return points;
+		}
+
+		var selectedPathIndex = null;
+		var editingPathPoints = null;
+		var draggingPointIndex = null;
+		var dragStart = null;
 
 		function redrawOverlay() {
 			var ns = 'http://www.w3.org/2000/svg';
 			while (drawSvg.firstChild) drawSvg.removeChild(drawSvg.firstChild);
-			drawnPaths.forEach(function(p) {
+			drawnPaths.forEach(function(p, idx) {
+				var color = p.color || '#E42522';
+				var isSelected = selectedPathIndex === idx;
+				var pathD = (isSelected && editingPathPoints && editingPathPoints.length >= 2) ? pathToD(editingPathPoints) : p.d;
 				var path = document.createElementNS(ns, 'path');
-				path.setAttribute('d', p.d);
-				path.setAttribute('stroke', '#E42522');
-				path.setAttribute('stroke-width', '2');
+				path.setAttribute('d', pathD);
+				path.setAttribute('stroke', color);
+				path.setAttribute('stroke-width', isSelected ? '3' : '2');
 				path.setAttribute('fill', 'none');
+				path.setAttribute('data-path-index', String(idx));
+				path.setAttribute('class', 'tph-path' + (isSelected ? ' tph-path-selected' : ''));
 				drawSvg.appendChild(path);
+				if (p.dot && !(isSelected && editingPathPoints)) {
+					var end = calculateEndpoint(pathD);
+					var circle = document.createElementNS(ns, 'circle');
+					circle.setAttribute('class', 'end-dot');
+					circle.setAttribute('cx', end[0]);
+					circle.setAttribute('cy', end[1]);
+					circle.setAttribute('r', '7');
+					circle.setAttribute('fill', '#fff');
+					circle.setAttribute('stroke', '#000');
+					circle.setAttribute('stroke-width', '1');
+					drawSvg.appendChild(circle);
+				}
+				if (isSelected && editingPathPoints && editingPathPoints.length >= 2) {
+					editingPathPoints.forEach(function(pt, ptIdx) {
+						var circle = document.createElementNS(ns, 'circle');
+						circle.setAttribute('class', 'point edit-point');
+						circle.setAttribute('data-path-index', String(idx));
+						circle.setAttribute('data-point-index', String(ptIdx));
+						circle.setAttribute('cx', pt[0]);
+						circle.setAttribute('cy', pt[1]);
+						circle.setAttribute('r', '5');
+						circle.setAttribute('fill', color);
+						circle.setAttribute('stroke', '#fff');
+						circle.setAttribute('stroke-width', '1');
+						drawSvg.appendChild(circle);
+					});
+				}
 			});
 			if (currentPath.length >= 2) {
 				var path = document.createElementNS(ns, 'path');
@@ -260,14 +357,108 @@
 		}
 
 		function syncDrawnPathsFromPaths() {
-			if (typeof paths !== 'undefined' && paths.length >= 0) {
-				drawnPaths = paths.map(function(p) { return { d: p.d }; });
+			if (typeof paths !== 'undefined' && Array.isArray(paths) && paths.length >= 0) {
+				drawnPaths = paths.map(function(p) {
+					var d = (p && (p.d != null ? p.d : p.path)) || '';
+					return { d: d, color: (p && p.color) || '#E42522', dot: !!(p && p.dot) };
+				}).filter(function(p) { return p.d !== ''; });
 				if (drawSvg.getAttribute('viewBox')) redrawOverlay();
 			}
 		}
 
+		function updateDrawPathButtons() {
+			var sel = selectedPathIndex !== null;
+			document.getElementById('tph-drawDeselect').disabled = !sel;
+			document.getElementById('tph-drawDeletePath').disabled = !sel;
+		}
+
+		function selectPath(index) {
+			if (index < 0 || index >= drawnPaths.length) return;
+			var pts = pathToPoints(drawnPaths[index].d);
+			if (pts.length < 2) {
+				document.getElementById('tph-drawStatus').textContent = 'Path has too few points to edit.';
+				return;
+			}
+			selectedPathIndex = index;
+			editingPathPoints = pts.map(function(p) { return [p[0], p[1]]; });
+			redrawOverlay();
+			updateDrawPathButtons();
+			document.getElementById('tph-drawStatus').textContent = 'Path ' + (index + 1) + ' selected. Drag points to edit, or click "Delete selected path" / "Deselect".';
+		}
+
+		function deselectPath() {
+			if (selectedPathIndex === null) return;
+			if (editingPathPoints && editingPathPoints.length >= 2) {
+				var newD = pathToD(editingPathPoints);
+				drawnPaths[selectedPathIndex].d = newD;
+				if (paths[selectedPathIndex]) paths[selectedPathIndex].d = newD;
+				renderPaths();
+			}
+			selectedPathIndex = null;
+			editingPathPoints = null;
+			draggingPointIndex = null;
+			redrawOverlay();
+			updateDrawPathButtons();
+			document.getElementById('tph-drawStatus').textContent = drawnPaths.length ? drawnPaths.length + ' path(s). Click a path to edit, or click on image to add points.' : 'Click on the image to add points.';
+		}
+
+		function deleteSelectedPath() {
+			if (selectedPathIndex === null) return;
+			drawnPaths.splice(selectedPathIndex, 1);
+			paths.splice(selectedPathIndex, 1);
+			selectedPathIndex = null;
+			editingPathPoints = null;
+			renderPaths();
+			redrawOverlay();
+			updateDrawPathButtons();
+			document.getElementById('tph-drawStatus').textContent = 'Path deleted. ' + (drawnPaths.length ? drawnPaths.length + ' path(s) left.' : 'Click on the image to add points.');
+		}
+
+		function onDrawSvgMouseDown(ev) {
+			if (selectedPathIndex === null) return;
+			var t = ev.target;
+			if (t.getAttribute('data-point-index') === null || t.getAttribute('data-path-index') === null) return;
+			var pathIdx = parseInt(t.getAttribute('data-path-index'), 10);
+			if (pathIdx !== selectedPathIndex) return;
+			var pointIdx = parseInt(t.getAttribute('data-point-index'), 10);
+			ev.preventDefault();
+			ev.stopPropagation();
+			draggingPointIndex = pointIdx;
+			var dragMove = function(e) {
+				if (draggingPointIndex === null) return;
+				var pt = svgCoords(e);
+				editingPathPoints[draggingPointIndex] = pt;
+				redrawOverlay();
+			};
+			var dragUp = function(e) {
+				if (draggingPointIndex === null) return;
+				var newD = pathToD(editingPathPoints);
+				drawnPaths[selectedPathIndex].d = newD;
+				if (paths[selectedPathIndex]) paths[selectedPathIndex].d = newD;
+				renderPaths();
+				draggingPointIndex = null;
+				document.removeEventListener('mousemove', dragMove);
+				document.removeEventListener('mouseup', dragUp);
+			};
+			document.addEventListener('mousemove', dragMove);
+			document.addEventListener('mouseup', dragUp);
+		}
+
 		function onDrawSvgClick(ev) {
 			if (!drawImg.src || drawImg.src === window.location.href) return;
+			var t = ev.target;
+			if (t.getAttribute('data-point-index') !== null) return;
+			if (t.tagName && t.tagName.toLowerCase() === 'path' && t.getAttribute('data-path-index') !== null) {
+				var idx = parseInt(t.getAttribute('data-path-index'), 10);
+				selectPath(idx);
+				ev.preventDefault();
+				ev.stopPropagation();
+				return;
+			}
+			if (selectedPathIndex !== null) {
+				deselectPath();
+				return;
+			}
 			var pt = svgCoords(ev);
 			currentPath.push(pt);
 			redrawOverlay();
@@ -323,8 +514,11 @@
 		document.getElementById('tph-drawLoadImage').addEventListener('click', loadDrawImage);
 		document.getElementById('tph-drawNewPath').addEventListener('click', newPath);
 		document.getElementById('tph-drawUndo').addEventListener('click', undoLastPoint);
+		document.getElementById('tph-drawDeselect').addEventListener('click', deselectPath);
+		document.getElementById('tph-drawDeletePath').addEventListener('click', deleteSelectedPath);
 		document.getElementById('tph-drawCopyToStep1').addEventListener('click', copyPathsToStep1);
 		drawSvg.addEventListener('click', onDrawSvgClick);
+		drawSvg.addEventListener('mousedown', onDrawSvgMouseDown);
 
 		// --- Steps 1–5 ---
 		const COLOR_PRESETS = { 'Red (default)': '#E42522', 'Green': '#15803d', 'Amber': '#a16207', 'Black': '#000000' };
@@ -351,27 +545,29 @@
 
 		function renderPaths() {
 			const container = document.getElementById('tph-paths');
-			container.innerHTML = paths.map((p, i) => `
-				<div class="path-card" data-index="${i}">
-					<h4>Path ${i + 1}</h4>
-					<div class="path-d">${escapeHtml(p.d)}</div>
-					<div class="path-opts">
-						<label>Color:
-							<select data-tph-path="${i}" data-tph-opt="color">
-								${Object.entries(COLOR_PRESETS).map(([name, hex]) => `<option value="${hex}" ${p.color === hex ? 'selected' : ''}>${name}</option>`).join('')}
-							</select>
-						</label>
-						<label><input type="color" value="${p.color}" data-tph-path="${i}" data-tph-opt="color" title="Custom color"></label>
-						<label><input type="checkbox" ${p.dashed ? 'checked' : ''} data-tph-path="${i}" data-tph-opt="dashed"> Dashed</label>
-						<label><input type="checkbox" ${p.dot ? 'checked' : ''} data-tph-path="${i}" data-tph-opt="dot"> Dot (anker)</label>
-					</div>
-					<div class="path-card-actions">
-						<button type="button" class="secondary tph-path-delete" data-index="${i}">Delete</button>
-						<button type="button" class="secondary tph-path-move-up" data-index="${i}" ${i === 0 ? 'disabled' : ''}>Move up</button>
-						<button type="button" class="secondary tph-path-move-down" data-index="${i}" ${i === paths.length - 1 ? 'disabled' : ''}>Move down</button>
-					</div>
-				</div>
-			`).join('');
+			var colorOpts = function(p) {
+				return Object.keys(COLOR_PRESETS).map(function(name) {
+					var hex = COLOR_PRESETS[name];
+					return '<option value="' + hex + '"' + (p.color === hex ? ' selected' : '') + '>' + name + '</option>';
+				}).join('');
+			};
+			container.innerHTML = paths.map(function(p, i) {
+				var color = p.color || '#E42522';
+				return '<div class="path-card" data-index="' + i + '">' +
+					'<h4>Path ' + (i + 1) + '</h4>' +
+					'<div class="path-d">' + escapeHtml(p.d) + '</div>' +
+					'<div class="path-opts">' +
+					'<label>Color: <select data-tph-path="' + i + '" data-tph-opt="color">' + colorOpts(p) + '</select></label>' +
+					'<label><input type="color" value="' + color + '" data-tph-path="' + i + '" data-tph-opt="color" title="Custom color"></label>' +
+					'<label><input type="checkbox"' + (p.dashed ? ' checked' : '') + ' data-tph-path="' + i + '" data-tph-opt="dashed"> Dashed</label>' +
+					'<label><input type="checkbox"' + (p.dot ? ' checked' : '') + ' data-tph-path="' + i + '" data-tph-opt="dot"> Dot (anker)</label>' +
+					'</div>' +
+					'<div class="path-card-actions">' +
+					'<button type="button" class="secondary tph-path-delete" data-index="' + i + '">Delete</button>' +
+					'<button type="button" class="secondary tph-path-move-up" data-index="' + i + '"' + (i === 0 ? ' disabled' : '') + '>Move up</button>' +
+					'<button type="button" class="secondary tph-path-move-down" data-index="' + i + '"' + (i === paths.length - 1 ? ' disabled' : '') + '>Move down</button>' +
+					'</div></div>';
+			}).join('');
 			container.querySelectorAll('[data-tph-path]').forEach(el => {
 				const i = parseInt(el.getAttribute('data-tph-path'), 10);
 				const opt = el.getAttribute('data-tph-opt');
@@ -462,7 +658,7 @@
 				var startX = m[1], startY = m[2], startYMinusOne = parseFloat(startY) - 1;
 				if (dashed) parts.push('        <path id="border_' + id + '" d="' + escapeHtml(d) + '" stroke-width="4" stroke="#ffffff" fill="none" class="route-path-border dashed"></path>');
 				else parts.push('        <path id="border_' + id + '" d="' + escapeHtml(d) + '" stroke-width="4" stroke="#000000" fill="none" class="route-path-border"></path>');
-				var markerAttr = ''; {# no path marker when dot: we draw the explicit end-dot circle instead #}
+				var markerAttr = '';
 				parts.push('        <path id="svg_' + id + '" d="' + escapeHtml(d) + '" stroke-width="3" stroke="' + color + '"' + markerAttr + ' fill="none" class="stroke-behavior"></path>');
 				var strokeColor = dashed ? '#ffffff' : '#000';
 				var circleClass = dashed ? 'number-circle' : 'number-circle tooltip-trigger';
@@ -539,11 +735,15 @@
 			document.getElementById('tph-svgImageUrl').value = te.imageUrl || '';
 			if (te.pathsJson) {
 				try {
-					paths = typeof te.pathsJson === 'string' ? JSON.parse(te.pathsJson) : te.pathsJson;
-					drawnPaths = paths.map(function(p) { return { d: p.d }; });
+					var parsed = typeof te.pathsJson === 'string' ? JSON.parse(te.pathsJson) : te.pathsJson;
+					paths = Array.isArray(parsed) ? parsed : [];
+					drawnPaths = paths.map(function(p) {
+						var d = (p && (p.d != null ? p.d : p.path)) || '';
+						return { d: d, color: (p && p.color) || '#E42522', dot: !!(p && p.dot) };
+					}).filter(function(p) { return p.d !== ''; });
 					renderPaths();
 					document.getElementById('tph-emptyState').style.display = paths.length ? 'none' : 'block';
-				} catch (e) { /* ignore parse error; image still loads */ }
+				} catch (e) { paths = []; drawnPaths = []; }
 			}
 			if (te.imageUrl) {
 				loadDrawImage();
@@ -560,7 +760,7 @@
 				var viewBox = '0 0 ' + w + ' ' + h;
 				var phpLiteral = getPhpLiteralContent();
 				var body = new URLSearchParams({ phpLiteral: phpLiteral, viewBox: viewBox });
-				var csrfToken = '{{ csrf_token("topo_save_topo_path_helper")|e('js') }}';
+				var csrfToken = (saveToTopoBtn && saveToTopoBtn.getAttribute('data-csrf-token')) || '';
 				if (csrfToken) {
 					body.append('_token', csrfToken);
 				}
@@ -587,4 +787,5 @@
 		}
 	})();
 	</script>
+	{% endverbatim %}
 {% endblock %}

@@ -71,9 +71,6 @@ class TopoPathHelperController extends AbstractDashboardController
         ];
 
         $topoEditJson = json_encode($topoEdit, \JSON_UNESCAPED_SLASHES);
-        if ($topoEditJson === false) {
-            $topoEditJson = 'null';
-        }
         $topoEditJsonBase64 = base64_encode($topoEditJson);
 
         return $this->render('admin/topo_path_helper.html.twig', [
@@ -86,6 +83,11 @@ class TopoPathHelperController extends AbstractDashboardController
     #[Route('/admin/topo/{id}/save-paths', name: 'admin_topo_save_paths', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function savePaths(int $id, Request $request): Response
     {
+        $token = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('topo_save_topo_path_helper', $token)) {
+            return $this->json(['success' => false, 'error' => 'Invalid security token.'], 403);
+        }
+
         $topo = $this->topoRepository->find($id);
         if (!$topo instanceof Topo) {
             return $this->json(['success' => false, 'error' => 'Topo not found.'], 404);

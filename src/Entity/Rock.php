@@ -99,6 +99,9 @@ class Rock
     #[ORM\Column(nullable: true)]
     private ?bool $train = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $bike = null;
+
     #[ORM\OneToMany(mappedBy: 'rock', targetEntity: RockTranslation::class, cascade: ['persist', 'remove'])]
     private Collection $translations;
 
@@ -370,6 +373,18 @@ class Rock
     public function setTrain(?bool $train): static
     {
         $this->train = $train;
+
+        return $this;
+    }
+
+    public function isBike(): ?bool
+    {
+        return $this->bike;
+    }
+
+    public function setBike(?bool $bike): static
+    {
+        $this->bike = $bike;
 
         return $this;
     }

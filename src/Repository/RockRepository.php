@@ -131,6 +131,7 @@ class RockRepository extends ServiceEntityRepository
                 'rock.childFriendly as rockChild',
                 'rock.rain as rockRain',
                 'rock.train as rockTrain',
+                'rock.bike as rockBike',
                 'rock.lat as rockLat',
                 'rock.lng as rockLng',
                 'rock.orientation as rockOrientation',
@@ -166,6 +167,8 @@ class RockRepository extends ServiceEntityRepository
                 'rock.height as rockHeight',
                 'rock.childFriendly as rockChild',
                 'rock.rain as rockRain',
+                'rock.train as rockTrain',
+                'rock.bike as rockBike',
                 'rock.lat as rockLat',
                 'rock.lng as rockLng',
                 'rock.zone as rockZone',
@@ -287,9 +290,9 @@ class RockRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find rocks by attributes: child friendly, sunny, rain protected.
+     * Find rocks by attributes: child friendly, sunny, rain protected, train, bike.
      *
-     * @param array{childFriendly?: bool, sunny?: bool, rainProtected?: bool} $filters
+     * @param array{childFriendly?: bool, sunny?: bool, rainProtected?: bool, train?: bool, bike?: bool} $filters
      * @return Rock[]
      */
     public function findByAttributes(array $filters, ?string $areaSlug = null): array
@@ -313,6 +316,12 @@ class RockRepository extends ServiceEntityRepository
         }
         if (!empty($filters['rainProtected'])) {
             $qb->andWhere('rock.rain = 1');
+        }
+        if (!empty($filters['train'])) {
+            $qb->andWhere('rock.train = 1');
+        }
+        if (!empty($filters['bike'])) {
+            $qb->andWhere('rock.bike = 1');
         }
 
         return $qb

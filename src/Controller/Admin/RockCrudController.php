@@ -175,6 +175,12 @@ class RockCrudController extends AbstractCrudController
             ->setColumns('col-12')
             ->setHelp('Ist der Fels gut mit dem Zug erreicht.');
 
+        yield BooleanField::new('bike')
+            ->setLabel('Mit Bahn und Fahrrad erreichbar')
+            ->hideOnIndex()
+            ->hideOnDetail()
+            ->setColumns('col-12')
+            ->setHelp('Ist der Fels gut mit dem Fahrrad erreichbar.');
 
         yield ChoiceField::new('zone')
             ->setLabel('Zone')

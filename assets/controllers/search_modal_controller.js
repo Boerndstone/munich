@@ -6,7 +6,7 @@ export default class extends Controller {
   static values = { searchUrl: { type: String, default: '/search' } };
   static targets = [
     "trigger", "modal", "nameInput", "firstAscentInput", "areaSelect",
-    "areaSelectAttributes", "gradeCheck", "attrChildFriendly", "attrSunny", "attrRainProtected",
+    "areaSelectAttributes", "gradeCheck", "attrChildFriendly", "attrSunny", "attrRainProtected", "attrTrain", "attrBike",
     "resultsContainer", "resultsCount", "rocksSection", "rocksList",
     "routesSection", "routesTable", "emptyState", "idleState",
     "pagerContainer", "pagerPrev", "pagerNext", "pagerInfo"
@@ -128,12 +128,16 @@ export default class extends Controller {
     const childFriendly = this.hasAttrChildFriendlyTarget && this.attrChildFriendlyTarget.checked;
     const sunny = this.hasAttrSunnyTarget && this.attrSunnyTarget.checked;
     const rainProtected = this.hasAttrRainProtectedTarget && this.attrRainProtectedTarget.checked;
-    if (!childFriendly && !sunny && !rainProtected) return;
+    const train = this.hasAttrTrainTarget && this.attrTrainTarget.checked;
+    const bike = this.hasAttrBikeTarget && this.attrBikeTarget.checked;
+    if (!childFriendly && !sunny && !rainProtected && !train && !bike) return;
     const area = this.hasAreaSelectAttributesTarget ? this.areaSelectAttributesTarget.value : '';
     await this.fetchResults('attributes', {
       childFriendly,
       sunny,
       rainProtected,
+      train,
+      bike,
       area,
     });
   }
@@ -152,6 +156,8 @@ export default class extends Controller {
     if (params.childFriendly) url.searchParams.set('childFriendly', '1');
     if (params.sunny) url.searchParams.set('sunny', '1');
     if (params.rainProtected) url.searchParams.set('rainProtected', '1');
+    if (params.train) url.searchParams.set('train', '1');
+    if (params.bike) url.searchParams.set('bike', '1');
 
     this.showLoading();
     try {

@@ -33,13 +33,17 @@ class SearchController extends AbstractController
         $childFriendly = filter_var($request->query->get('childFriendly', false), \FILTER_VALIDATE_BOOLEAN);
         $sunny = filter_var($request->query->get('sunny', false), \FILTER_VALIDATE_BOOLEAN);
         $rainProtected = filter_var($request->query->get('rainProtected', false), \FILTER_VALIDATE_BOOLEAN);
+        $train = filter_var($request->query->get('train', false), \FILTER_VALIDATE_BOOLEAN);
+        $bike = filter_var($request->query->get('bike', false), \FILTER_VALIDATE_BOOLEAN);
 
-        // Attributes search – child friendly, sunny, rain protected
+        // Attributes search – child friendly, sunny, rain protected, train, bike
         if ($mode === 'attributes') {
             $filters = array_filter([
                 'childFriendly' => $childFriendly,
                 'sunny' => $sunny,
                 'rainProtected' => $rainProtected,
+                'train' => $train,
+                'bike' => $bike,
             ]);
             if (empty($filters)) {
                 return $this->json(['rocks' => [], 'routes' => [], 'searchMode' => $mode]);

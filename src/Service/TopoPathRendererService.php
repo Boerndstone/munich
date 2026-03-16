@@ -204,14 +204,17 @@ class TopoPathRendererService
     public function resolvePathsOverlay(?string $pathCollection, $pathData): string
     {
         $pathCollection = $pathCollection !== null ? trim($pathCollection) : '';
-        if ($pathCollection !== '' && (str_contains($pathCollection, '<path') || str_contains($pathCollection, '<circle'))) {
+        // Do not treat JavaScript source (e.g. from Step 5 textarea) as raw SVG
+        $looksLikeJsSource = str_contains($pathCollection, "' + ") || str_contains($pathCollection, 'escapeHtml(')
+            || str_contains($pathCollection, "' + w + '") || str_contains($pathCollection, "' + h + '");
+        if ($pathCollection !== '' && !$looksLikeJsSource && (str_contains($pathCollection, '<path') || str_contains($pathCollection, '<circle'))) {
             $content = $this->stripOuterSvgIfPresent($pathCollection);
             $content = $this->sanitizeSvgContent($content);
             return $this->ensureDefsInContent($content);
         }
         $paths = $this->decodePathData($pathCollection, $pathData);
         if ($paths === null || empty($paths)) {
-            if ($pathCollection === '') {
+            if ($pathCollection === '' || $looksLikeJsSource) {
                 return '';
             }
             $content = $this->stripOuterSvgIfPresent($pathCollection);

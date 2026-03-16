@@ -57,17 +57,25 @@ class TopoPathHelperController extends AbstractDashboardController
             $imageUrl = $srcset['src'] ?? ('https://www.munichclimbs.de/build/images/topos/' . $topo->getImage() . '.webp');
         }
 
+        // Do not pass pathsOverlaySvg to path-helper — it can contain broken content if pathCollection was saved as JS/SVG. Use pathsJson only.
+        $topoEdit = [
+            'id' => $topo->getId(),
+            'name' => $topo->getName(),
+            'imageUrl' => $imageUrl,
+            'viewBoxW' => $viewBoxW,
+            'viewBoxH' => $viewBoxH,
+            'pathsJson' => $pathsJson,
+            'pathsOverlaySvg' => '', // step 0 overlay is built client-side from pathsJson only
+            'saveUrl' => $this->generateUrl('admin_topo_save_paths', ['id' => $topo->getId()]),
+            'backUrl' => $this->container->get(AdminUrlGenerator::class)->setController(TopoCrudController::class)->setAction('edit')->setEntityId($topo->getId())->generateUrl(),
+        ];
+
+        $topoEditJson = json_encode($topoEdit, \JSON_UNESCAPED_SLASHES);
+        $topoEditJsonBase64 = base64_encode($topoEditJson);
+
         return $this->render('admin/topo_path_helper.html.twig', [
-            'topoEdit' => [
-                'id' => $topo->getId(),
-                'name' => $topo->getName(),
-                'imageUrl' => $imageUrl,
-                'viewBoxW' => $viewBoxW,
-                'viewBoxH' => $viewBoxH,
-                'pathsJson' => $pathsJson,
-                'saveUrl' => $this->generateUrl('admin_topo_save_paths', ['id' => $topo->getId()]),
-                'backUrl' => $this->container->get(AdminUrlGenerator::class)->setController(TopoCrudController::class)->setAction('edit')->setEntityId($topo->getId())->generateUrl(),
-            ],
+            'topoEdit' => $topoEdit,
+            'topoEditJsonBase64' => $topoEditJsonBase64,
         ]);
     }
 

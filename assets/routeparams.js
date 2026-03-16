@@ -1,6 +1,6 @@
 /**
  * Route params entry point - lightweight bundle for pages showing route ratings
- * Used on suche.html.twig and rocks.html.twig (via _modal-top100-routes.html.twig)
+ * Used on rocks.html.twig (via _modal-top100-routes.html.twig)
  */
 import { Application } from "@hotwired/stimulus";
 import RouteparamsController from "./controllers/routeparams_controller";

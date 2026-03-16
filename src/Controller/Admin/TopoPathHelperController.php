@@ -71,6 +71,9 @@ class TopoPathHelperController extends AbstractDashboardController
         ];
 
         $topoEditJson = json_encode($topoEdit, \JSON_UNESCAPED_SLASHES);
+        if ($topoEditJson === false) {
+            $topoEditJson = 'null';
+        }
         $topoEditJsonBase64 = base64_encode($topoEditJson);
 
         return $this->render('admin/topo_path_helper.html.twig', [

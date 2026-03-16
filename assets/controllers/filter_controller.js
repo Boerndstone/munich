@@ -32,9 +32,9 @@ export default class extends Controller {
       if (showRain && !isRain) {
         shouldShow = false;
       }
-      // Train / bike: if both checked, show rocks with train OR bike; if one checked, filter by that only
+      // Train / bike: if both checked, show rocks with train AND bike; if one checked, filter by that only
       if (showTrain && showBike) {
-        if (!(isTrain || isBike)) shouldShow = false;
+        if (!(isTrain && isBike)) shouldShow = false;
       } else if (showTrain && !isTrain) {
         shouldShow = false;
       } else if (showBike && !isBike) {

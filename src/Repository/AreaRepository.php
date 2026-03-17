@@ -103,7 +103,7 @@ class AreaRepository extends ServiceEntityRepository
             ->groupBy('area.id, area.name')
             ->orderBy('area.sequence');
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
     }
 
     public function sidebarNavigation()

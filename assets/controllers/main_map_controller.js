@@ -37,15 +37,62 @@ export default class extends Controller {
 
   getFilteredMarkers() {
     const markers = this.markersValue || [];
-    if (this.currentRange === "all") {
+    const rangeRaw = (this.currentRange ?? "").toString().trim();
+    if (!rangeRaw || rangeRaw === "all") {
       return markers;
     }
-    const [min, max] = this.currentRange.split("-").map(Number);
+
+    let min = -Infinity;
+    let max = Infinity;
+
+    // Support formats:
+    // - "min-max"  (e.g. "0-30")
+    // - "min+"     (e.g. "120+")
+    // - "value"    (e.g. "120" treated as exact match)
+    if (rangeRaw.endsWith("+")) {
+      const minStr = rangeRaw.slice(0, -1).trim();
+      const parsedMin = Number(minStr);
+      if (!Number.isFinite(parsedMin)) {
+        return [];
+      }
+      min = parsedMin;
+      max = Infinity;
+    } else if (rangeRaw.includes("-")) {
+      const [minStrRaw, maxStrRaw] = rangeRaw.split("-", 2);
+      const minStr = minStrRaw.trim();
+      const maxStr = maxStrRaw.trim();
+
+      if (minStr !== "") {
+        const parsedMin = Number(minStr);
+        if (!Number.isFinite(parsedMin)) {
+          return [];
+        }
+        min = parsedMin;
+      }
+
+      if (maxStr !== "") {
+        const parsedMax = Number(maxStr);
+        if (!Number.isFinite(parsedMax)) {
+          return [];
+        }
+        max = parsedMax;
+      }
+    } else {
+      // Single numeric value: treat as exact range
+      const exact = Number(rangeRaw);
+      if (!Number.isFinite(exact)) {
+        return [];
+      }
+      min = exact;
+      max = exact;
+    }
+
     return markers.filter((m) => {
       const t = Array.isArray(m) ? m[4] : m.travelTimeMinutes;
       if (t == null) return false;
-      const num = typeof t === "number" ? t : parseFloat(t);
-      return !Number.isNaN(num) && num >= min && num < max;
+      const num = typeof t === "number" ? t : Number(t);
+      if (!Number.isFinite(num)) return false;
+      return num >= min && num < max;
     });
   }
 

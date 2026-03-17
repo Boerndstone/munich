@@ -50,6 +50,14 @@ services:
     arguments:
       $projectDir: "%kernel.project_dir%"
 
+  App\Command\TravelTimeExportCommand:
+    arguments:
+      $projectDir: "%kernel.project_dir%"
+
+  App\Command\TravelTimeImportCommand:
+    arguments:
+      $projectDir: "%kernel.project_dir%"
+
   App\Service\TravelTimeService:
     arguments:
       # Set OSRM_SSL_VERIFY=0 in .env on hosts with old OpenSSL (cURL error 35)

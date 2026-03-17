@@ -11,60 +11,22 @@ class AreasService
     // Cache TTL in seconds (1 hour = 3600 seconds)
     private const CACHE_TTL = 3600;
 
-    /**
-     * Maximum number of external travel time requests to perform
-     * during a single areas_information cache computation.
-     */
-    private const MAX_TRAVELTIME_REQUESTS = 20;
-
     public function __construct(
         private AreaRepository $areaRepository,
         private CacheInterface $cache,
-        private TravelTimeService $travelTimeService,
     ) {
     }
 
     /**
      * Get areas information for the main page (with rock counts, route counts, travel time from Munich, etc.)
-     * Results are cached for better performance
+     * Travel times come from the database (filled via app:travel-time:import). Results are cached.
      */
     public function getAreasInformation(): array
     {
         return $this->cache->get('areas_information', function (ItemInterface $item): array {
             $item->expiresAfter(self::CACHE_TTL);
 
-            $areas = $this->areaRepository->getAreasInformation();
-
-            $travelTimeRequests = 0;
-
-            foreach ($areas as &$area) {
-                $lat = isset($area['lat']) ? (float) $area['lat'] : null;
-                $lng = isset($area['lng']) ? (float) $area['lng'] : null;
-
-                // If coordinates are missing, we cannot compute travel time
-                if ($lat === null || $lng === null) {
-                    $area['travelTimeMinutes'] = null;
-                    continue;
-                }
-
-                // Protect against excessive external calls on a cold cache
-                if ($travelTimeRequests >= self::MAX_TRAVELTIME_REQUESTS) {
-                    $area['travelTimeMinutes'] = null;
-                    continue;
-                }
-
-                try {
-                    $minutes = $this->travelTimeService->getDrivingMinutesFromMunich($lng, $lat);
-                    $area['travelTimeMinutes'] = $minutes;
-                } catch (\Throwable $e) {
-                    // On failure, fall back to null to avoid blocking cache computation
-                    $area['travelTimeMinutes'] = null;
-                }
-
-                $travelTimeRequests++;
-            }
-
-            return $areas;
+            return $this->areaRepository->getAreasInformation();
         });
     }
 

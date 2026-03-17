@@ -81,6 +81,10 @@ class Area
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private int $zoom;
 
+    /** Driving time from Munich in minutes (OSRM), filled via app:travel-time:import. */
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $travelTimeMinutes = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $rockResponsibility = null;
 
@@ -270,6 +274,18 @@ class Area
     public function setZoom(int $zoom): self
     {
         $this->zoom = $zoom;
+
+        return $this;
+    }
+
+    public function getTravelTimeMinutes(): ?int
+    {
+        return $this->travelTimeMinutes;
+    }
+
+    public function setTravelTimeMinutes(?int $travelTimeMinutes): self
+    {
+        $this->travelTimeMinutes = $travelTimeMinutes;
 
         return $this;
     }

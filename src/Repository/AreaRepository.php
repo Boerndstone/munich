@@ -90,6 +90,7 @@ class AreaRepository extends ServiceEntityRepository
                 'area.image as image',
                 'area.lat as lat',
                 'area.lng as lng',
+                'area.travelTimeMinutes as travelTimeMinutes',
                 'COUNT(DISTINCT route.id) AS routes',
                 'COUNT(DISTINCT rock.id) AS rocks',
                 'COUNT(DISTINCT CASE WHEN route.gradeNo > 0 AND route.gradeNo <= 15 THEN route.id ELSE 0 END) AS amountEasy',
@@ -100,7 +101,7 @@ class AreaRepository extends ServiceEntityRepository
             ->leftJoin('area.routes', 'route')
             ->leftJoin('area.rocks', 'rock')
             ->where('area.online = 1')
-            ->groupBy('area.id, area.name')
+            ->groupBy('area.id', 'area.name', 'area.slug', 'area.image', 'area.lat', 'area.lng', 'area.travelTimeMinutes', 'area.sequence')
             ->orderBy('area.sequence');
 
         return $qb->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);

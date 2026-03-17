@@ -70,11 +70,10 @@ Das Projekt kann komplett mit Docker laufen: PHP 8.2 + Apache + MySQL 8.
    docker compose exec app php bin/console cache:clear
    ```
 
-5. **Fahrtzeiten ab München vorberechnen** (optional, für „ca. X Min. ab München“ auf der Startseite)
-   ```bash
-   docker compose exec app php bin/console app:travel-time:warmup
-   ```
-   Nutzt die OSRM-API; Ergebnisse werden gecacht. Auf dem Live-Server zuerst `--test` ausführen, um die Verbindung zu prüfen: `php bin/console app:travel-time:warmup --test`. Bei cURL-Fehler 35 („no common encryption algorithm“) auf dem Host in `.env` setzen: `OSRM_SSL_VERIFY=0`.
+5. **Fahrtzeiten ab München** (optional, für „ca. X Min. ab München“ in der Karten-Popup): Travel-Zeiten liegen in der DB; der Server ruft **kein** OSRM auf.
+   - **Lokal/Docker** (wo HTTPS funktioniert): `php bin/console app:travel-time:export` → erzeugt `var/travel_times.json`.
+   - Datei auf den Live-Server legen (Upload oder im Repo), dann **auf dem Server**: `php bin/console app:travel-time:import`.
+   - So ist kein Outbound-HTTPS und kein SSL-Trick auf dem Host nötig.
 
 ### Nützliche Befehle
 

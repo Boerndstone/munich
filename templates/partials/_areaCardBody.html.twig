@@ -1,4 +1,4 @@
-{# Shared stats body for area card. Used by _areaCard and map popups. Optional: ulClass (e.g. 'mt-2'). #}
+{# Shared stats body for area card and map popups. Optional: ulClass (e.g. 'mt-2'), showTravelTime (true only on map). #}
 <ul class="list-unstyled mb-0 d-flex justify-content-between flex-md-column {{ ulClass|default('') }}">
 	<li class="mb-2">Felsen
 		<span class="badge ms-2">{{ area.rocks|default(0) }}</span>
@@ -6,6 +6,9 @@
 	<li>Touren
 		<span class="badge ms-2">{{ area.routes|default(0) }}</span>
 	</li>
+	{% if showTravelTime|default(false) and area.travelTimeMinutes is defined %}
+		<li class="my-2 small">{% if area.travelTimeMinutes is not null %}ca. {{ area.travelTimeMinutes }}{% else %}—{% endif %} Min. ab München</li>
+	{% endif %}
 </ul>
 <hr class="my-2"/>
 <div class="d-flex justify-content-between">

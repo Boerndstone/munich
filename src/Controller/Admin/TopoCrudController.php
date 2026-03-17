@@ -3,13 +3,11 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Topo;
-use App\Form\Type\JsonFieldType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
@@ -113,12 +111,6 @@ class TopoCrudController extends AbstractCrudController
             ->setColumns('col-12')
             ->setHelp('Dateiname ohne Erweiterung (z.B. burgsteinSuedwand). Bild muss unter build/images/topos/ als .webp liegen. Zusammen mit den Tourenpfaden wird daraus das Topo auf der Fels-Seite gerendert.');
 
-        yield TextField::new('viewBox')
-            ->setLabel('ViewBox')
-            ->hideOnIndex()
-            ->setColumns('col-12')
-            ->setHelp('Koordinatensystem der Pfade, z.B. 0 0 1024 820. Muss zu den Pfad-Koordinaten passen. Wenn leer, wird 0 0 1024 820 verwendet. Vom Topo Path Helper (Schritt 5) übernehmen.');
-
         yield NumberField::new('number')
             ->setLabel('Nummer Sektor')
             ->setColumns('col-12')
@@ -134,22 +126,7 @@ class TopoCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->setColumns('col-12')
             ->setNumOfRows(14)
-            ->setHelp('PHP-Array-Literal vom Topo Path Helper (Schritt 5) einfügen – oder ein JSON-Array. Wird mit dem Bild oben als Overlay gerendert. Bestehende Topos: Inhalt hier anpassen und speichern.')
+            ->setHelp('PHP-Array-Literal vom Topo Path Helper einfügen – oder ein JSON-Array. Wird mit dem Bild oben als Overlay gerendert (ViewBox immer 0 0 1024 820).')
             ->setTemplatePath('admin/field/path_collection.html.twig');
-
-        yield CodeEditorField::new('path')
-            ->setLabel('Path (JSON, optional)')
-            ->setFormType(JsonFieldType::class)
-            ->hideOnIndex()
-            ->hideOnDetail()
-            ->setColumns('col-12')
-            ->setHelp('Optional: Pfade als JSON-Array. Wenn gesetzt, wird dies bevorzugt; sonst wird Tourenpfade (PHP/JSON) verwendet.');
-
-        yield TextareaField::new('svg')
-            ->setLabel('Legacy: Topo SVG')
-            ->hideOnIndex()
-            ->hideOnDetail()
-            ->setColumns('col-12')
-            ->setHelp('Veraltet – nur falls noch genutzt. Moderne Topos nutzen Bild + Tourenpfade.');
     }
 }

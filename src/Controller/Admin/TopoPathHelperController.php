@@ -40,16 +40,11 @@ class TopoPathHelperController extends AbstractDashboardController
             throw $this->createNotFoundException('Topo not found.');
         }
 
-        $pathConfigs = $this->pathRenderer->decodePathsForTopo(
-            $topo->getPathCollection(),
-            $topo->getPath()
-        );
+        $pathConfigs = $this->pathRenderer->decodePathsForTopo($topo->getPathCollection(), null);
         $pathsJson = $pathConfigs !== null ? json_encode($pathConfigs, \JSON_UNESCAPED_SLASHES) : '[]';
 
-        $viewBox = $topo->getViewBox() ?? '0 0 1024 820';
-        $parts = preg_split('/\s+/', trim($viewBox), 4);
-        $viewBoxW = isset($parts[2]) && is_numeric($parts[2]) ? (int) $parts[2] : 1024;
-        $viewBoxH = isset($parts[3]) && is_numeric($parts[3]) ? (int) $parts[3] : 820;
+        $viewBoxW = 1024;
+        $viewBoxH = 820;
 
         $imageUrl = '';
         if ($topo->getImage() !== null && $topo->getImage() !== '') {
@@ -94,16 +89,11 @@ class TopoPathHelperController extends AbstractDashboardController
         }
 
         $phpLiteral = $request->request->get('phpLiteral');
-        $viewBox = $request->request->get('viewBox');
         if (!\is_string($phpLiteral)) {
             return $this->json(['success' => false, 'error' => 'Missing phpLiteral.'], 400);
         }
 
         $topo->setPathCollection(trim($phpLiteral));
-        if (\is_string($viewBox) && $viewBox !== '') {
-            $topo->setViewBox(trim($viewBox));
-        }
-        $topo->setPath(null); // prefer pathCollection after edit
         $this->topoRepository->getEntityManager()->flush();
 
         $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);

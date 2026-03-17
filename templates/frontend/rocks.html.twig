@@ -70,7 +70,7 @@
 							{{ include('partials/_modal-top100-routes.html.twig') }}
 						{% endif %}
 							{% include 'partials/_collapseWeather.html.twig' with { collapseId: 'collapseWeather', ariaControls: 'collapseWeather' } %}
-							{% include 'partials/_collapseMap.html.twig' with { collapseId: 'collapseAreaMap', ariaControls: 'collapseAreaMap' } %}
+							{% include 'partials/_collapseMap.html.twig' with { modalId: 'modalAreaMap' } %}
 						</div>
 					</div>
 				</div>
@@ -78,9 +78,19 @@
 		</div>
 		<div class="container my-3">
 			<section>
-				<div class="collapse mt-3" id="collapseAreaMap">
-					<div id="areaMap" class="z-10 mb-3" style="width: 100%; height: 500px;">
-						{{ include('partials/_areaMap.html.twig') }}
+				<div class="modal fade" id="modalAreaMap" tabindex="-1" aria-labelledby="modalAreaMapLabel" aria-hidden="true">
+					<div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
+						<div class="modal-content h-100 d-flex flex-column">
+							<div class="modal-header py-2 flex-shrink-0">
+								<h2 class="modal-title h6 mb-0" id="modalAreaMapLabel">Übersichtskarte {{ areaName }}</h2>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+							</div>
+							<div class="modal-body p-0 flex-grow-1 min-h-0 d-flex flex-column">
+								<div id="areaMap" class="z-10 flex-grow-1 min-h-0">
+									{{ include('partials/_areaMap.html.twig') }}
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="collapse mt-3" id="collapseWeather">

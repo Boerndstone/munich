@@ -6,9 +6,9 @@
 {% endfor %}
 
 <div 
+    class="h-100"
     data-controller="main-map" 
     data-main-map-markers-value="{{ marker|json_encode|e('html_attr') }}"
-    data-main-map-collapse-id-value="collapseMap"
 >
-    <div data-main-map-target="map" style="height: 500px;"></div>
+    <div class="h-100" style="min-height: 500px;" data-main-map-target="map"></div>
 </div>

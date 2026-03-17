@@ -25,6 +25,6 @@
 {% set intialZoom = intialZoom|merge([areaLat, areaLng, areaZoom]) %}
 {% set railwayStation = areaRailwayStation %}
 
-<div data-controller="map" data-map-markers-area="{{ marker|json_encode|e('html_attr') }}" data-map-zoom="{{ intialZoom|json_encode|e('html_attr') }}" data-map-railway-stations="{{ railwayStation|json_encode|e('html_attr') }}">
-	<div id="areaMap" data-map-target="map" style="height: 500px;"></div>
+<div class="h-100" data-controller="map" data-map-markers-area="{{ marker|json_encode|e('html_attr') }}" data-map-zoom="{{ intialZoom|json_encode|e('html_attr') }}" data-map-railway-stations="{{ railwayStation|json_encode|e('html_attr') }}">
+	<div id="areaMap" class="h-100" style="min-height: 500px;" data-map-target="map"></div>
 </div>

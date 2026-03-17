@@ -1,7 +1,7 @@
 {% set url = 'https://www.munichclimbs.de/uploads/areas/' %}
 {% set marker = [] %}
 {% for area in getAreasInformation() %}
-    {% set popupBody = include('partials/_areaCardBody.html.twig', { area: area, ulClass: 'mt-2' }) %}
+    {% set popupBody = include('partials/_areaCardBody.html.twig', { area: area, ulClass: 'mt-2', showTravelTime: true }) %}
     {% set areaName = '<div class="main-map-popup-card">' ~
         '<div class="main-map-popup-image-wrap">' ~
         '<picture><source srcset="' ~ url ~ area.image ~ '@1x.webp 1x, ' ~ url ~ area.image ~ '@2x.webp 2x, ' ~ url ~ area.image ~ '@3x.webp 3x" type="image/webp">' ~
@@ -13,13 +13,26 @@
         '</div></div>' ~
         '<div class="main-map-popup-body">' ~ popupBody ~ '</div></div>' %}
     {% set areaImage = '' %}
-    {% set marker = marker|merge([[ area.lat, area.lng, areaName, areaImage ]]) %}
+    {% set marker = marker|merge([{
+        'lat': area.lat,
+        'lng': area.lng,
+        'popup': areaName,
+        'image': areaImage,
+        'travelTimeMinutes': area.travelTimeMinutes|default(null)
+    }]) %}
 {% endfor %}
 
 <div 
-    class="h-100 main-map-container"
+    class="main-map-container d-flex flex-column h-100"
     data-controller="main-map" 
     data-main-map-markers-value="{{ marker|json_encode|e('html_attr') }}"
 >
-    <div class="h-100" style="min-height: 500px;" data-main-map-target="map"></div>
+    <div class="main-map-filters flex-shrink-0 py-2 px-3 gap-2 d-flex flex-wrap align-items-center" data-main-map-target="filters">
+        <span class="small text-muted">Fahrtzeit ab München:</span>
+        <button type="button" class="btn btn-outline-secondary btn-sm active" data-main-map-target="filterBtn" data-range="all">Alle</button>
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-main-map-target="filterBtn" data-range="0-60">&lt; 1 h</button>
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-main-map-target="filterBtn" data-range="60-90">1 – 1,5 h</button>
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-main-map-target="filterBtn" data-range="120">> 2 h</button>
+    </div>
+    <div class="flex-grow-1 min-h-0" style="min-height: 400px;" data-main-map-target="map"></div>
 </div>

@@ -8,28 +8,35 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class AreasService
 {
-    private AreaRepository $areaRepository;
-    private CacheInterface $cache;
-
     // Cache TTL in seconds (1 hour = 3600 seconds)
     private const CACHE_TTL = 3600;
 
-    public function __construct(AreaRepository $areaRepository, CacheInterface $cache)
-    {
-        $this->areaRepository = $areaRepository;
-        $this->cache = $cache;
+    public function __construct(
+        private AreaRepository $areaRepository,
+        private CacheInterface $cache,
+        private TravelTimeService $travelTimeService,
+    ) {
     }
 
     /**
-     * Get areas information for the main page (with rock counts, route counts, etc.)
+     * Get areas information for the main page (with rock counts, route counts, travel time from Munich, etc.)
      * Results are cached for better performance
      */
     public function getAreasInformation(): array
     {
         return $this->cache->get('areas_information', function (ItemInterface $item): array {
             $item->expiresAfter(self::CACHE_TTL);
-            
-            return $this->areaRepository->getAreasInformation();
+
+            $areas = $this->areaRepository->getAreasInformation();
+
+            foreach ($areas as &$area) {
+                $lat = isset($area['lat']) ? (float) $area['lat'] : null;
+                $lng = isset($area['lng']) ? (float) $area['lng'] : null;
+                $minutes = $this->travelTimeService->getDrivingMinutesFromMunich($lng, $lat);
+                $area['travelTimeMinutes'] = $minutes;
+            }
+
+            return $areas;
         });
     }
 

@@ -33,19 +33,3 @@
 >
     <div class="h-100" style="min-height: 500px;" data-main-map-target="map"></div>
 </div>
-
-
-
-
-
-{# {% for area in getAreasInformation() %}
-    {% set areaName = '<div class="main-map-popup-card">' ~
-        '<div class="main-map-popup-image" style="background-image: url(\'' ~ url ~ area.image ~ '.webp\');">' ~
-        '<button type="button" class="main-map-popup-close" onclick="this.closest(\'.leaflet-popup\').querySelector(\'.leaflet-popup-close-button\').click()" aria-label="Schließen">&times;</button>' ~
-        '</div>' ~
-        '<div class="main-map-popup-body">' ~
-        '<a href="' ~ path('show_rocks', { slug: area.slug }) ~ '" class="main-map-popup-link">' ~ area.name ~ '</a>' ~
-        '</div></div>' %}
-    {% set areaImage = '' %}
-    {% set marker = marker|merge([[ area.lat, area.lng, areaName, areaImage ]]) %}
-{% endfor %} #}

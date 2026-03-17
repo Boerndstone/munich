@@ -6,7 +6,6 @@ export default class extends Controller {
   static targets = ["map"];
   static values = {
     markers: Array,
-    collapseId: String,
   };
 
   connect() {
@@ -14,10 +13,8 @@ export default class extends Controller {
 
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
-        '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>',
+        '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       maxZoom: 18,
-      accessToken:
-        "pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw",
     }).addTo(this.map);
 
     // Add markers
@@ -27,16 +24,12 @@ export default class extends Controller {
         .addTo(this.map);
     });
 
-    // Handle map resize on collapse
-    if (this.collapseIdValue) {
-      const collapseElement = document.getElementById(this.collapseIdValue);
-      if (collapseElement) {
-        collapseElement.addEventListener("shown.bs.collapse", () => {
-          setTimeout(() => {
-            this.map.invalidateSize();
-          }, 40);
-        });
-      }
+    // Resize map when modal is shown
+    const modal = this.element.closest(".modal");
+    if (modal) {
+      modal.addEventListener("shown.bs.modal", () => {
+        setTimeout(() => this.map.invalidateSize(), 40);
+      });
     }
   }
 }

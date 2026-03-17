@@ -42,12 +42,23 @@ class TravelTimeService
                 \CURLOPT_USERAGENT => 'munichclimbs/1.0',
                 \CURLOPT_SSL_VERIFYPEER => true,
             ]);
-            curl_exec($ch);
+            $body = curl_exec($ch);
             $errno = curl_errno($ch);
             $error = curl_error($ch);
+            $httpCode = curl_getinfo($ch, \CURLINFO_HTTP_CODE);
             curl_close($ch);
             if ($errno !== 0) {
                 return sprintf('cURL error %d: %s', $errno, $error ?: 'Unknown');
+            }
+            if ($httpCode < 200 || $httpCode >= 300) {
+                return sprintf('Unexpected HTTP status %d from OSRM', $httpCode);
+            }
+            if (!\is_string($body) || $body === '') {
+                return 'Empty response body from OSRM';
+            }
+            $data = json_decode($body, true);
+            if (!\is_array($data) || !isset($data['code']) || $data['code'] !== 'Ok') {
+                return 'OSRM response not OK or invalid JSON';
             }
 
             return null;
@@ -61,6 +72,22 @@ class TravelTimeService
         if ($response === false) {
             $e = error_get_last();
             return $e['message'] ?? 'file_get_contents failed (check allow_url_fopen and outbound HTTPS)';
+        }
+
+        $httpCode = null;
+        if (isset($http_response_header[0]) && \preg_match('~^HTTP/\S+\s+(\d{3})~', $http_response_header[0], $m)) {
+            $httpCode = (int) $m[1];
+        }
+        if ($httpCode !== null && ($httpCode < 200 || $httpCode >= 300)) {
+            return sprintf('Unexpected HTTP status %d from OSRM', $httpCode);
+        }
+
+        if ($response === '') {
+            return 'Empty response body from OSRM';
+        }
+        $data = json_decode($response, true);
+        if (!\is_array($data) || !isset($data['code']) || $data['code'] !== 'Ok') {
+            return 'OSRM response not OK or invalid JSON';
         }
 
         return null;

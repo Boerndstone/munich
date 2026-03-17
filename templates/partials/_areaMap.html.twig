@@ -28,9 +28,9 @@
 <div class="d-flex flex-column h-100" data-controller="map" data-map-markers-area="{{ marker|json_encode|e('html_attr') }}" data-map-zoom="{{ intialZoom|json_encode|e('html_attr') }}" data-map-railway-stations="{{ railwayStation|json_encode|e('html_attr') }}">
 	<div class="area-map-filters flex-shrink-0 py-2 px-3 gap-2 d-flex flex-wrap align-items-center">
 		<span class="small text-muted">Anzeigen:</span>
-		<button type="button" class="btn btn-outline-secondary btn-sm active" data-map-target="layerBtn" data-layer="rocks">Felsen</button>
-		<button type="button" class="btn btn-outline-secondary btn-sm active" data-map-target="layerBtn" data-layer="railway">Bahnhöfe</button>
-		<button type="button" class="btn btn-outline-secondary btn-sm active" data-map-target="layerBtn" data-layer="camping">Übernachtung</button>
+		<button type="button" class="btn btn-outline-secondary btn-sm active" data-map-target="layerBtn" data-layer="rocks" aria-pressed="true">Felsen</button>
+		<button type="button" class="btn btn-outline-secondary btn-sm active" data-map-target="layerBtn" data-layer="railway" aria-pressed="true">Bahnhöfe</button>
+		<button type="button" class="btn btn-outline-secondary btn-sm active" data-map-target="layerBtn" data-layer="camping" aria-pressed="true">Übernachtung</button>
 	</div>
 	<div class="flex-grow-1 min-h-0" style="min-height: 400px;" data-map-target="map"></div>
 </div>

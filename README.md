@@ -74,7 +74,7 @@ Das Projekt kann komplett mit Docker laufen: PHP 8.2 + Apache + MySQL 8.
    ```bash
    docker compose exec app php bin/console app:travel-time:warmup
    ```
-   Nutzt die OSRM-API; Ergebnisse werden gecacht. Auf dem Live-Server zuerst `--test` ausführen, um die Verbindung zu prüfen: `php bin/console app:travel-time:warmup --test`
+   Nutzt die OSRM-API; Ergebnisse werden gecacht. Auf dem Live-Server zuerst `--test` ausführen, um die Verbindung zu prüfen: `php bin/console app:travel-time:warmup --test`. Bei cURL-Fehler 35 („no common encryption algorithm“) auf dem Host in `.env` setzen: `OSRM_SSL_VERIFY=0`.
 
 ### Nützliche Befehle
 

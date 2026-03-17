@@ -49,3 +49,8 @@ services:
   App\Command\GenerateSitemapCommand:
     arguments:
       $projectDir: "%kernel.project_dir%"
+
+  App\Service\TravelTimeService:
+    arguments:
+      # Set OSRM_SSL_VERIFY=0 in .env on hosts with old OpenSSL (cURL error 35)
+      $osrmSslVerify: "%env(bool:default:OSRM_SSL_VERIFY:1)%"

@@ -20,6 +20,7 @@ class TravelTimeService
 
     public function __construct(
         private CacheInterface $cache,
+        private bool $osrmSslVerify = true,
     ) {
     }
 
@@ -35,13 +36,18 @@ class TravelTimeService
             if ($ch === false) {
                 return 'cURL init failed';
             }
-            curl_setopt_array($ch, [
+            $opts = [
                 \CURLOPT_RETURNTRANSFER => true,
                 \CURLOPT_FOLLOWLOCATION => true,
                 \CURLOPT_TIMEOUT => self::HTTP_TIMEOUT,
                 \CURLOPT_USERAGENT => 'munichclimbs/1.0',
-                \CURLOPT_SSL_VERIFYPEER => true,
-            ]);
+                \CURLOPT_SSL_VERIFYPEER => $this->osrmSslVerify,
+                \CURLOPT_SSL_VERIFYHOST => $this->osrmSslVerify ? 2 : 0,
+            ];
+            if (\defined('CURL_SSLVERSION_TLSv1_2')) {
+                $opts[\CURLOPT_SSLVERSION] = \CURL_SSLVERSION_TLSv1_2;
+            }
+            curl_setopt_array($ch, $opts);
             $body = curl_exec($ch);
             $errno = curl_errno($ch);
             $error = curl_error($ch);
@@ -66,7 +72,7 @@ class TravelTimeService
 
         $context = stream_context_create([
             'http' => ['timeout' => self::HTTP_TIMEOUT],
-            'ssl' => ['verify_peer' => true],
+            'ssl' => ['verify_peer' => $this->osrmSslVerify],
         ]);
         $response = @file_get_contents($url, false, $context);
         if ($response === false) {
@@ -146,13 +152,18 @@ class TravelTimeService
             if ($ch === false) {
                 return null;
             }
-            curl_setopt_array($ch, [
+            $opts = [
                 \CURLOPT_RETURNTRANSFER => true,
                 \CURLOPT_FOLLOWLOCATION => true,
                 \CURLOPT_TIMEOUT => self::HTTP_TIMEOUT,
                 \CURLOPT_USERAGENT => 'munichclimbs/1.0',
-                \CURLOPT_SSL_VERIFYPEER => true,
-            ]);
+                \CURLOPT_SSL_VERIFYPEER => $this->osrmSslVerify,
+                \CURLOPT_SSL_VERIFYHOST => $this->osrmSslVerify ? 2 : 0,
+            ];
+            if (\defined('CURL_SSLVERSION_TLSv1_2')) {
+                $opts[\CURLOPT_SSLVERSION] = \CURL_SSLVERSION_TLSv1_2;
+            }
+            curl_setopt_array($ch, $opts);
             $response = curl_exec($ch);
             $errno = curl_errno($ch);
             curl_close($ch);
@@ -170,7 +181,7 @@ class TravelTimeService
                 'header' => "User-Agent: munichclimbs/1.0\r\n",
             ],
             'ssl' => [
-                'verify_peer' => true,
+                'verify_peer' => $this->osrmSslVerify,
             ],
         ]);
 

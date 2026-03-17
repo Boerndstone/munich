@@ -97,12 +97,17 @@ export default class extends Controller {
     const layer = btn.dataset.layer;
     btn.classList.toggle("active");
     const visible = btn.classList.contains("active");
-    const markers =
-      layer === "rocks"
-        ? this.areaMarkers
-        : layer === "railway"
-          ? this.trainMarkers
-          : this.campingMarkers;
+    let markers;
+    if (layer === "rocks") {
+      markers = this.areaMarkers;
+    } else if (layer === "railway") {
+      markers = this.trainMarkers;
+    } else if (layer === "camping") {
+      markers = this.campingMarkers;
+    } else {
+      console.warn(`map_controller: unknown layer "${layer}" in toggleLayer`);
+      return;
+    }
     markers.forEach((marker) => {
       if (visible) {
         marker.addTo(this.areaMap);

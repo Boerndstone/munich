@@ -1,22 +1,21 @@
 import { Controller } from "stimulus";
 import L from "leaflet";
-import { info } from "autoprefixer";
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
-  static targets = ["map"];
+  static targets = ["map", "layerBtn"];
 
   connect() {
     const markersArea = JSON.parse(this.data.get("markersArea"));
     const zoom = JSON.parse(this.data.get("zoom"));
     const information = JSON.parse(this.data.get("railwayStations"));
-    const areaMap = L.map(this.mapTarget).setView([zoom[0], zoom[1]], zoom[2]);
+    this.areaMap = L.map(this.mapTarget).setView([zoom[0], zoom[1]], zoom[2]);
 
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
         '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       maxZoom: 18,
-    }).addTo(areaMap);
+    }).addTo(this.areaMap);
 
     // Create a custom icon
     const trainStationIcon = L.divIcon({
@@ -34,7 +33,7 @@ export default class extends Controller {
     });
 
     // Add railway station markers
-    const trainMarkers = [];
+    this.trainMarkers = [];
     if (information.trainStations && information.trainStations.length > 0) {
       information.trainStations.forEach((trainStation) => {
         if (trainStation) {
@@ -47,13 +46,13 @@ export default class extends Controller {
                   : ""
               }`
             )
-            .addTo(areaMap);
-          trainMarkers.push(marker);
+            .addTo(this.areaMap);
+          this.trainMarkers.push(marker);
         }
       });
     }
     // Add camping site markers
-    const campingMarkers = [];
+    this.campingMarkers = [];
     if (information.campingSites && information.campingSites.length > 0) {
       information.campingSites.forEach((campingSite) => {
         if (campingSite) {
@@ -62,102 +61,54 @@ export default class extends Controller {
             .bindPopup(
               `<b>Campingplatz ${campingSite.name}</b><br><a href="${campingSite.link}" target="_blank">${campingSite.link}</a>`
             )
-            .addTo(areaMap);
-          campingMarkers.push(marker);
+            .addTo(this.areaMap);
+          this.campingMarkers.push(marker);
         }
       });
     }
 
     // Add area markers
-    const areaMarkers = [];
+    this.areaMarkers = [];
     markersArea.forEach((markerData) => {
       const marker = L.marker([markerData[0], markerData[1]])
         .bindPopup(markerData[2])
-        .addTo(areaMap);
-      areaMarkers.push(marker);
+        .addTo(this.areaMap);
+      this.areaMarkers.push(marker);
     });
 
-    // Create a legend control
-    const legend = L.control({ position: "topright" });
-
-    legend.onAdd = function () {
-      const div = L.DomUtil.create("div", "info legend");
-      div.innerHTML = `
-      <div class="card" style="width: 180px;">
-        <div class="card-body">
-          <h5 class="card-title">Legende</h5>
-          <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="toggleMarkers" checked>
-              <label class="form-check-label" for="toggleMarkers">
-                Felsen
-              </label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="toggleRailwayStations" checked>
-              <label class="form-check-label" for="toggleRailwayStations">
-                Bahnhöfe
-              </label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="toggleCamping" checked>
-              <label class="form-check-label" for="toggleCamping">
-                Übernachtung
-              </label>
-            </div>
-        </div>
-      </div>
-      `;
-      return div;
-    };
-
-    legend.addTo(areaMap);
-
-    // Handle legend checkbox changes
-    document
-      .getElementById("toggleMarkers")
-      .addEventListener("change", function (e) {
-        const isChecked = e.target.checked;
-        areaMarkers.forEach((marker) => {
-          if (isChecked) {
-            marker.addTo(areaMap);
-          } else {
-            areaMap.removeLayer(marker);
-          }
-        });
+    // Layer filter buttons (same pattern as main map)
+    if (this.hasLayerBtnTarget) {
+      this.layerBtnTargets.forEach((btn) => {
+        btn.addEventListener("click", (e) => this.toggleLayer(e));
       });
-
-    document
-      .getElementById("toggleRailwayStations")
-      .addEventListener("change", function (e) {
-        const isChecked = e.target.checked;
-        trainMarkers.forEach((marker) => {
-          if (isChecked) {
-            marker.addTo(areaMap);
-          } else {
-            areaMap.removeLayer(marker);
-          }
-        });
-      });
-
-    document
-      .getElementById("toggleCamping")
-      .addEventListener("change", function (e) {
-        const isChecked = e.target.checked;
-        campingMarkers.forEach((marker) => {
-          if (isChecked) {
-            marker.addTo(areaMap);
-          } else {
-            areaMap.removeLayer(marker);
-          }
-        });
-      });
+    }
 
     // Resize map when modal is shown
     const modal = this.element.closest(".modal");
     if (modal) {
       modal.addEventListener("shown.bs.modal", () => {
-        setTimeout(() => areaMap.invalidateSize(), 40);
+        setTimeout(() => this.areaMap.invalidateSize(), 40);
       });
     }
+  }
+
+  toggleLayer(e) {
+    const btn = e.currentTarget;
+    const layer = btn.dataset.layer;
+    btn.classList.toggle("active");
+    const visible = btn.classList.contains("active");
+    const markers =
+      layer === "rocks"
+        ? this.areaMarkers
+        : layer === "railway"
+          ? this.trainMarkers
+          : this.campingMarkers;
+    markers.forEach((marker) => {
+      if (visible) {
+        marker.addTo(this.areaMap);
+      } else {
+        this.areaMap.removeLayer(marker);
+      }
+    });
   }
 }

@@ -70,13 +70,19 @@ Das Projekt kann komplett mit Docker laufen: PHP 8.2 + Apache + MySQL 8.
    docker compose exec app php bin/console cache:clear
    ```
 
+5. **Fahrtzeiten ab München vorberechnen** (optional, für „ca. X Min. ab München“ auf der Startseite)
+   ```bash
+   docker compose exec app php bin/console app:travel-time:warmup
+   ```
+   Nutzt die OSRM-API; Ergebnisse werden gecacht.
+
 ### Nützliche Befehle
 
 | Befehl | Beschreibung |
 |--------|--------------|
 | `docker compose up -d` | Container starten (im Hintergrund) |
 | `docker compose down` | Container stoppen und entfernen |
-| `docker compose exec app php bin/console …` | Symfony-Kommando in der App-Container ausführen |
+| `docker compose exec app php bin/console …` | Symfony-Kommando im App-Container ausführen (DB: Host `mysql`) |
 | `docker compose exec app bash` | Shell im App-Container öffnen |
 | `docker compose logs -f app` | Logs der App anzeigen |
 | **http://localhost:8081** | phpMyAdmin (Datenbank-Verwaltung) |

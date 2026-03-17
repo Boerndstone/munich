@@ -1,0 +1,27 @@
+{# Reusable area card. Pass `area` and optional `link` (href for the card). Omit `link` for a non-clickable card. #}
+{% set url = url|default('https://www.munichclimbs.de/uploads/areas/') %}
+{% if link is defined and link is not empty %}
+	<a class="d-block" href="{{ link }}" title="Klettergebiet {{ area.name }}">
+{% endif %}
+<div class="card mb-4 p-0 overflow-hidden">
+	<div class="row g-0">
+		<div class="col-md-6 position-relative">
+			{% include 'partials/_lazy-load-images.html.twig' with {
+				'area': area,
+				'url': url,
+				'media': {
+					'(min-width: 1200px)': url ~ area.image,
+					'(min-width: 800px)': url ~ area.image,
+				},
+			} %}
+		</div>
+		<div class="col-md-6">
+			<div class="card-body p-3">
+				{{ include('partials/_areaCardBody.html.twig', { area: area }) }}
+			</div>
+		</div>
+	</div>
+</div>
+{% if link is defined and link is not empty %}
+	</a>
+{% endif %}

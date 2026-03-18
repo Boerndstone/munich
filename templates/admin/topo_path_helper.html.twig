@@ -124,25 +124,7 @@
 			</section>
 
 			<section>
-				<label>3. SVG settings (for SVG output)</label>
-				<div class="row" style="gap: 16px; margin-bottom: 0;">
-					<div>
-						<label style="margin-bottom: 4px;">ViewBox width</label>
-						<input type="number" id="tph-svgWidth" value="1024" min="1" style="width: 100px;">
-					</div>
-					<div>
-						<label style="margin-bottom: 4px;">ViewBox height</label>
-						<input type="number" id="tph-svgHeight" value="820" min="1" style="width: 100px;">
-					</div>
-					<div style="flex: 1; min-width: 200px;">
-						<label style="margin-bottom: 4px;">Image URL</label>
-						<input type="text" id="tph-svgImageUrl" placeholder="https://www.munichclimbs.de/build/images/topos/..." style="width: 100%;">
-					</div>
-				</div>
-			</section>
-
-			<section>
-				<label>4. PHP output (paste into your topo file)</label>
+				<label>3. PHP output (paste into your topo file)</label>
 				<div class="output-wrap">
 					<textarea id="tph-output" readonly placeholder="Generate output after configuring paths."></textarea>
 					<button type="button" class="copy-btn secondary" id="tph-copyPhp">Copy</button>
@@ -485,10 +467,6 @@
 			navigator.clipboard.writeText(html).then(function() {
 				showToast('Paths copied to Step 1 and parsed. You can now configure colors in Step 2.');
 			});
-			document.getElementById('tph-svgWidth').value = 1024;
-			document.getElementById('tph-svgHeight').value = 820;
-			var imgUrl = document.getElementById('tph-drawImageUrl').value.trim();
-			if (imgUrl) document.getElementById('tph-svgImageUrl').value = imgUrl;
 			document.getElementById('tph-drawStatus').textContent = 'Copied ' + drawnPaths.length + ' path(s) to Step 1.';
 		}
 
@@ -501,7 +479,7 @@
 		drawSvg.addEventListener('click', onDrawSvgClick);
 		drawSvg.addEventListener('mousedown', onDrawSvgMouseDown);
 
-		// --- Steps 1–4 ---
+		// --- Steps 1–3 ---
 		const COLOR_PRESETS = { 'Red (default)': '#E42522', 'Green': '#15803d', 'Amber': '#a16207', 'Black': '#000000' };
 		let paths = [];
 
@@ -672,9 +650,6 @@
 		if (window.TOPO_EDIT) {
 			var te = window.TOPO_EDIT;
 			document.getElementById('tph-drawImageUrl').value = te.imageUrl || '';
-			document.getElementById('tph-svgWidth').value = te.viewBoxW != null ? te.viewBoxW : 1024;
-			document.getElementById('tph-svgHeight').value = te.viewBoxH != null ? te.viewBoxH : 820;
-			document.getElementById('tph-svgImageUrl').value = te.imageUrl || '';
 			if (te.pathsJson) {
 				try {
 					var parsed = typeof te.pathsJson === 'string' ? JSON.parse(te.pathsJson) : te.pathsJson;
@@ -697,9 +672,7 @@
 		if (saveToTopoBtn && window.TOPO_EDIT) {
 			saveToTopoBtn.addEventListener('click', function() {
 				var te = window.TOPO_EDIT;
-				var w = document.getElementById('tph-svgWidth').value || 1024;
-				var h = document.getElementById('tph-svgHeight').value || 820;
-				var viewBox = '0 0 ' + w + ' ' + h;
+				var viewBox = '0 0 1024 820';
 				var phpLiteral = getPhpLiteralContent();
 				var body = new URLSearchParams({ phpLiteral: phpLiteral, viewBox: viewBox });
 				var csrfToken = (saveToTopoBtn && saveToTopoBtn.getAttribute('data-csrf-token')) || '';

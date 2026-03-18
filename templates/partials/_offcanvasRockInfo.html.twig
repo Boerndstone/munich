@@ -88,10 +88,12 @@
 								<tr>
 									<td>{{"rain.proof"|trans}}:</td>
 									<td>
-										{% if rock.rockRain %}
+										{% if rock.rockRain is same as(true) %}
 											{{"rain.proof.good"|trans}}
-										{% else %}
+										{% elseif rock.rockRain is same as(false) %}
 											{{"rain.proof.not"|trans}}
+										{% else %}
+											&mdash;
 										{% endif %}
 									</td>
 								</tr>

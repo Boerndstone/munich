@@ -80,7 +80,8 @@ class AppExtension extends AbstractExtension
     }
 
     /**
-     * Normalize for IDs/display: strip punctuation, expand umlauts (via SlugUtil), underscore → space.
+     * Normalize for IDs/display: strip spaces and selected punctuation, expand umlauts (via SlugUtil),
+     * then convert underscores to spaces.
      */
     public function customReplaceFilter($value)
     {

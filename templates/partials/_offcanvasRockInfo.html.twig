@@ -66,12 +66,12 @@
 								<tr>
 									<td>{{"sunny"|trans}}:</td>
 									<td>
-										{% if rock.rockSunny == 1 %}
-											{{"sunny.property.sun"|trans}}
-										{% elseif rock.rockSunny == 2 %}
-											{{"sunny.property.partly"|trans}}
-										{% else %}
+										{% if rock.rockSunny is same as(true) %}
 											{{"sunny.property.sunny"|trans}}
+										{% elseif rock.rockSunny is same as(false) %}
+											{{"sunny.property.sun"|trans}}
+										{% else %}
+											-
 										{% endif %}
 									</td>
 								</tr>
@@ -88,14 +88,12 @@
 								<tr>
 									<td>{{"rain.proof"|trans}}:</td>
 									<td>
-										{% if rock.rockRain == 1 %}
+										{% if rock.rockRain is same as(true) %}
 											{{"rain.proof.good"|trans}}
-										{% elseif rock.rockRain == 2 %}
-											{{"rain.proof.medium"|trans}}
-										{% elseif rock.rockRain == 3 %}
+										{% elseif rock.rockRain is same as(false) %}
 											{{"rain.proof.not"|trans}}
 										{% else %}
-											{{"rain.proof.bad"|trans}}
+											&mdash;
 										{% endif %}
 									</td>
 								</tr>

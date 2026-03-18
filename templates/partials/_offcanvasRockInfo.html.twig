@@ -66,10 +66,12 @@
 								<tr>
 									<td>{{"sunny"|trans}}:</td>
 									<td>
-										{% if rock.rockSunny %}
+										{% if rock.rockSunny is same as(true) %}
 											{{"sunny.property.sunny"|trans}}
-										{% else %}
+										{% elseif rock.rockSunny is same as(false) %}
 											{{"sunny.property.sun"|trans}}
+										{% else %}
+											-
 										{% endif %}
 									</td>
 								</tr>

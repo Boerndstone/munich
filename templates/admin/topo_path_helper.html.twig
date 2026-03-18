@@ -87,14 +87,6 @@
 						<label style="margin-bottom: 4px;">or choose file</label>
 						<input type="file" id="tph-drawImageFile" accept="image/*" style="color: var(--tph-text);">
 					</div>
-					<div>
-						<label style="margin-bottom: 4px;">Width</label>
-						<input type="number" id="tph-drawWidth" value="{{ (topoEdit is defined and topoEdit and topoEdit.viewBoxW is defined) ? topoEdit.viewBoxW : 1024 }}" min="1" style="width: 80px;">
-					</div>
-					<div>
-						<label style="margin-bottom: 4px;">Height</label>
-						<input type="number" id="tph-drawHeight" value="{{ (topoEdit is defined and topoEdit and topoEdit.viewBoxH is defined) ? topoEdit.viewBoxH : 820 }}" min="1" style="width: 80px;">
-					</div>
 					<div style="align-self: flex-end;">
 						<button type="button" id="tph-drawLoadImage">Load image</button>
 					</div>
@@ -113,7 +105,7 @@
 						<svg id="tph-drawSvg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
 					</div>
 				</div>
-				<p class="tph-draw-hint" id="tph-drawHint">Enter an image URL or choose a file, set dimensions (match your topo viewBox), then click "Load image". Click on the image to add points; use "New path" to start the next route.</p>
+				<p class="tph-draw-hint" id="tph-drawHint">Enter an image URL or choose a file, then click "Load image". Draw area is 1024×820. Click on the image to add points; use "New path" to start the next route.</p>
 			</section>
 
 			<section>
@@ -160,17 +152,6 @@
 				</div>
 			</section>
 
-			<section>
-				<label>5. SVG output (full SVG with paths, copy and paste)</label>
-				<div class="output-wrap">
-					<textarea id="tph-svgOutput" readonly placeholder="Generate SVG after configuring paths." style="min-height: 200px;"></textarea>
-					<button type="button" class="copy-btn secondary" id="tph-copySvg">Copy SVG</button>
-				</div>
-				<div class="row" style="margin-top: 12px;">
-					<button type="button" id="tph-generateSvg">Generate SVG</button>
-				</div>
-			</section>
-
 			<div id="tph-toast" class="toast">Copied to clipboard!</div>
 		</div>
 	</div>
@@ -208,8 +189,8 @@
 				document.getElementById('tph-drawStatus').textContent = 'Enter an image URL or choose a file.';
 				return;
 			}
-			drawW = parseInt(document.getElementById('tph-drawWidth').value, 10) || 1024;
-			drawH = parseInt(document.getElementById('tph-drawHeight').value, 10) || 820;
+			drawW = 1024;
+			drawH = 820;
 			drawImg.onload = function() {
 				drawArea.style.display = 'block';
 				drawArea.style.aspectRatio = drawW + ' / ' + drawH;
@@ -504,8 +485,8 @@
 			navigator.clipboard.writeText(html).then(function() {
 				showToast('Paths copied to Step 1 and parsed. You can now configure colors in Step 2.');
 			});
-			document.getElementById('tph-svgWidth').value = drawW;
-			document.getElementById('tph-svgHeight').value = drawH;
+			document.getElementById('tph-svgWidth').value = 1024;
+			document.getElementById('tph-svgHeight').value = 820;
 			var imgUrl = document.getElementById('tph-drawImageUrl').value.trim();
 			if (imgUrl) document.getElementById('tph-svgImageUrl').value = imgUrl;
 			document.getElementById('tph-drawStatus').textContent = 'Copied ' + drawnPaths.length + ' path(s) to Step 1.';
@@ -520,7 +501,7 @@
 		drawSvg.addEventListener('click', onDrawSvgClick);
 		drawSvg.addEventListener('mousedown', onDrawSvgMouseDown);
 
-		// --- Steps 1–5 ---
+		// --- Steps 1–4 ---
 		const COLOR_PRESETS = { 'Red (default)': '#E42522', 'Green': '#15803d', 'Amber': '#a16207', 'Black': '#000000' };
 		let paths = [];
 
@@ -642,41 +623,6 @@
 			return [endX, endY];
 		}
 
-		function generateSvgOutput() {
-			const w = document.getElementById('tph-svgWidth').value || 1024;
-			const h = document.getElementById('tph-svgHeight').value || 820;
-			const imgUrl = document.getElementById('tph-svgImageUrl').value || '';
-			const parts = [];
-			parts.push('<div style="width: ' + w + 'px; height: ' + h + 'px;">');
-			parts.push('    <svg height="100%" width="100%" viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="img-fluid">');
-			if (imgUrl) parts.push('        <image width="' + w + '" height="' + h + '" xlink:href="' + escapeHtml(imgUrl) + '" x="0" y="0"></image>');
-			parts.push('        <defs><marker id="dot" markerWidth="10" markerHeight="10" refX="5" refY="5" markerUnits="strokeWidth"><circle cx="5" cy="5" r="3" fill="white"/></marker></defs>');
-			paths.forEach(function(path, i) {
-				var d = path.d, id = i + 1, color = path.color || '#E42522', dashed = path.dashed, dot = path.dot;
-				var m = d.match(/m([\d.]+),([\d.]+)/i);
-				if (!m) return;
-				var startX = m[1], startY = m[2], startYMinusOne = parseFloat(startY) - 1;
-				if (dashed) parts.push('        <path id="border_' + id + '" d="' + escapeHtml(d) + '" stroke-width="4" stroke="#ffffff" fill="none" class="route-path-border dashed"></path>');
-				else parts.push('        <path id="border_' + id + '" d="' + escapeHtml(d) + '" stroke-width="4" stroke="#000000" fill="none" class="route-path-border"></path>');
-				var markerAttr = '';
-				parts.push('        <path id="svg_' + id + '" d="' + escapeHtml(d) + '" stroke-width="3" stroke="' + color + '"' + markerAttr + ' fill="none" class="stroke-behavior"></path>');
-				var strokeColor = dashed ? '#ffffff' : '#000';
-				var circleClass = dashed ? 'number-circle' : 'number-circle tooltip-trigger';
-				parts.push('        <circle cx="' + startX + '" cy="' + startYMinusOne + '" r="15" fill="' + color + '" stroke="' + strokeColor + '" stroke-width="1" class="' + circleClass + '" data-path-id="' + id + '"></circle>');
-				parts.push('        <text x="' + startX + '" y="' + startY + '" fill="#fff" class="number-text tooltip-trigger" data-path-id="' + id + '">' + id + '</text>');
-				if (dot) { var end = calculateEndpoint(d); parts.push('        <circle cx="' + end[0] + '" cy="' + end[1] + '" r="7" fill="#fff" class="end-dot"></circle>'); }
-			});
-			parts.push('    </svg></div>');
-			document.getElementById('tph-svgOutput').value = parts.join('\n');
-		}
-
-		function copySvgOutput() {
-			var el = document.getElementById('tph-svgOutput');
-			el.select();
-			el.setSelectionRange(0, 99999);
-			navigator.clipboard.writeText(el.value).then(function() { showToast('SVG copied to clipboard!'); });
-		}
-
 		function generateOutput() {
 			var lines = paths.map(function(p) {
 				var parts = ["'d' => '" + p.d.replace(/'/g, "\\'") + "'"];
@@ -685,7 +631,7 @@
 				if (p.dot) parts.push("'dot' => true");
 				return '                [' + parts.join(', ') + ']';
 			});
-			document.getElementById('tph-output').value = '$paths = [\n' + lines.join(',\n') + '\n            ];';
+			document.getElementById('tph-output').value = lines.join(',\n');
 		}
 
 		function getPhpLiteralContent() {
@@ -721,15 +667,11 @@
 		document.getElementById('tph-parse').addEventListener('click', parsePaths);
 		document.getElementById('tph-generatePhp').addEventListener('click', generateOutput);
 		document.getElementById('tph-copyPhp').addEventListener('click', copyOutput);
-		document.getElementById('tph-generateSvg').addEventListener('click', generateSvgOutput);
-		document.getElementById('tph-copySvg').addEventListener('click', copySvgOutput);
 
 		// Preload when editing a topo: load image from Topo::$image into step 0 and show paths
 		if (window.TOPO_EDIT) {
 			var te = window.TOPO_EDIT;
 			document.getElementById('tph-drawImageUrl').value = te.imageUrl || '';
-			document.getElementById('tph-drawWidth').value = te.viewBoxW != null ? te.viewBoxW : 1024;
-			document.getElementById('tph-drawHeight').value = te.viewBoxH != null ? te.viewBoxH : 820;
 			document.getElementById('tph-svgWidth').value = te.viewBoxW != null ? te.viewBoxW : 1024;
 			document.getElementById('tph-svgHeight').value = te.viewBoxH != null ? te.viewBoxH : 820;
 			document.getElementById('tph-svgImageUrl').value = te.imageUrl || '';

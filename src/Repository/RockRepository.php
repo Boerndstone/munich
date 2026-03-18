@@ -221,8 +221,6 @@ class RockRepository extends ServiceEntityRepository
                 'videos.videoLink as videoLink',
                 'topo.image as topoImage',
                 'topo.pathCollection as topoPathCollection',
-                'topo.path as topoPath',
-                'topo.viewBox as topoViewBox',
                 'topo.withSector as withSector'
 
             )

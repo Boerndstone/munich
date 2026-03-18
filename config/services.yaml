@@ -60,5 +60,5 @@ services:
 
   App\Service\TravelTimeService:
     arguments:
-      # Set OSRM_SSL_VERIFY=0 in .env on hosts with old OpenSSL (cURL error 35)
+      # Only used by app:travel-time:export. Set OSRM_SSL_VERIFY=0 in .env if export fails with cURL error 35.
       $osrmSslVerify: "%env(bool:default:OSRM_SSL_VERIFY:1)%"

@@ -28,20 +28,11 @@ class Topo
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     private bool $withSector = false;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $svg = null;
-
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private int $number;
 
-    #[ORM\Column(nullable: true)]
-    private ?array $path = null;
-
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $pathCollection = null;
-
-    #[ORM\Column(type: Types::STRING, length: 64, nullable: true)]
-    private ?string $viewBox = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
@@ -99,18 +90,6 @@ class Topo
         return $this;
     }
 
-    public function getSvg(): ?string
-    {
-        return $this->svg;
-    }
-
-    public function setSvg(?string $svg): self
-    {
-        $this->svg = $svg;
-
-        return $this;
-    }
-
     public function getNumber(): ?int
     {
         return $this->number;
@@ -123,18 +102,6 @@ class Topo
         return $this;
     }
 
-    public function getPath(): ?array
-    {
-        return $this->path;
-    }
-
-    public function setPath(?array $path): static
-    {
-        $this->path = $path;
-
-        return $this;
-    }
-
     public function getPathCollection(): ?string
     {
         return $this->pathCollection;
@@ -143,18 +110,6 @@ class Topo
     public function setPathCollection(?string $pathCollection): static
     {
         $this->pathCollection = $pathCollection;
-
-        return $this;
-    }
-
-    public function getViewBox(): ?string
-    {
-        return $this->viewBox;
-    }
-
-    public function setViewBox(?string $viewBox): static
-    {
-        $this->viewBox = $viewBox;
 
         return $this;
     }

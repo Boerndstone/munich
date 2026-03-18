@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Rock;
 use App\Form\Type\JsonFieldType;
+use App\Util\SlugUtil;
 use App\Form\Type\RockTranslationType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
@@ -132,10 +133,10 @@ class RockCrudController extends AbstractCrudController
 
         yield Field::new('slug')
             ->setLabel('URL des Fels')
+            ->hideOnForm()
             ->hideOnIndex()
-            ->hideOnDetail()
             ->setColumns('col-12')
-            ->setHelp('Die URL darf keine Leerzeichen oder Umlaute beinhalten!');
+            ->setHelp('Wird automatisch aus dem Namen erzeugt (Umlaute → ae/oe/ue/ss, Leerzeichen → _).');
 
         yield AssociationField::new('area')
             ->setLabel('Gebiet')
@@ -247,28 +248,14 @@ class RockCrudController extends AbstractCrudController
             ->setColumns('col-12')
             ->setHelp('Wie gut ist der Fels mit Kindern geeignet.');
 
-        yield ChoiceField::new('sunny')
+        yield BooleanField::new('sunny')
             ->setLabel('Sonnig')
-            ->renderAsNativeWidget()
-            ->setChoices([
-                'keine Sonne' => '1',
-                'teils Sonne' => '2',
-                'sonnig' => '3',
-            ])
             ->hideOnIndex()
-            ->hideOnDetail()
             ->setColumns('col-12');
 
-        yield ChoiceField::new('rain')
+        yield BooleanField::new('rain')
             ->setLabel('Regensicher')
-            ->renderAsNativeWidget()
-            ->setChoices([
-                'regensicher' => '1',
-                'kaum regensicher' => '2',
-                'nicht regensicher' => '3',
-            ])
             ->hideOnIndex()
-            ->hideOnDetail()
             ->setColumns('col-12');
 
         yield Field::new('image')
@@ -304,6 +291,22 @@ class RockCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->hideOnDetail()
             ->setColumns('col-12');
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof Rock) {
+            $entityInstance->setSlug(SlugUtil::nameToSlug($entityInstance->getName()));
+        }
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof Rock) {
+            $entityInstance->setSlug(SlugUtil::nameToSlug($entityInstance->getName()));
+        }
+        parent::updateEntity($entityManager, $entityInstance);
     }
 
     #[Route('/admin/rock/{rockId}/routes/reorder', name: 'admin_rock_routes_reorder', methods: ['POST'])]

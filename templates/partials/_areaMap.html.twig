@@ -19,8 +19,8 @@
 
 	{% set rockImage = '' %}
 	{% set childFriendly = rock.rockChild is defined and rock.rockChild == 1 %}
-	{% set sunny = rock.rockSunny is defined and rock.rockSunny == 3 %}
-	{% set rain = rock.rockRain is defined and rock.rockRain == 1 %}
+	{% set sunny = rock.rockSunny is defined and rock.rockSunny %}
+	{% set rain = rock.rockRain is defined and rock.rockRain %}
 	{% set train = rock.rockTrain is defined and rock.rockTrain == 1 %}
 	{% set bike = rock.rockBike is defined and rock.rockBike == 1 %}
 	{% set marker = marker|merge([[ rock.rockLat, rock.rockLng, rockName, rockImage, childFriendly, sunny, rain, train, bike ]]) %}

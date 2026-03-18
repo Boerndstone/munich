@@ -69,11 +69,11 @@ class Rock
     #[ORM\Column(nullable: true)]
     private ?bool $childFriendly = null;
 
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
-    private int $sunny;
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $sunny = null;
 
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
-    private int $rain;
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $rain = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $image = null;
@@ -235,24 +235,24 @@ class Rock
         return $this;
     }
 
-    public function getSunny(): ?int
+    public function getSunny(): ?bool
     {
         return $this->sunny;
     }
 
-    public function setSunny(?int $sunny): self
+    public function setSunny(?bool $sunny): self
     {
         $this->sunny = $sunny;
 
         return $this;
     }
 
-    public function getRain(): ?int
+    public function getRain(): ?bool
     {
         return $this->rain;
     }
 
-    public function setRain(?int $rain): self
+    public function setRain(?bool $rain): self
     {
         $this->rain = $rain;
 

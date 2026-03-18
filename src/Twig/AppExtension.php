@@ -9,6 +9,7 @@ use App\Service\AreasService;
 use App\Service\ImageSeoService;
 use App\Service\TopoSvgParser;
 use App\Service\TopoPathRendererService;
+use App\Util\SlugUtil;
 
 class AppExtension extends AbstractExtension
 {
@@ -78,15 +79,15 @@ class AppExtension extends AbstractExtension
         ];
     }
 
+    /**
+     * Normalize for IDs/display: strip punctuation, expand umlauts (via SlugUtil), underscore → space.
+     */
     public function customReplaceFilter($value)
     {
-        // Your custom replacement logic here
         $replacements = [' ', '!', '&', '.', ','];
         $value = str_replace($replacements, '', $value);
-
-        // Additional replacement for 'ö'
-        $value = str_replace(['ö', 'ä', 'ü', '_', 'ß'], ['oe', 'ae', 'ue', ' ', 'ss'], $value);
-
+        $value = SlugUtil::umlautsToAscii($value);
+        $value = str_replace('_', ' ', $value);
         return $value;
     }
 

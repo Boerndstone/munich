@@ -485,8 +485,8 @@
 			navigator.clipboard.writeText(html).then(function() {
 				showToast('Paths copied to Step 1 and parsed. You can now configure colors in Step 2.');
 			});
-			document.getElementById('tph-svgWidth').value = drawW;
-			document.getElementById('tph-svgHeight').value = drawH;
+			document.getElementById('tph-svgWidth').value = 1024;
+			document.getElementById('tph-svgHeight').value = 820;
 			var imgUrl = document.getElementById('tph-drawImageUrl').value.trim();
 			if (imgUrl) document.getElementById('tph-svgImageUrl').value = imgUrl;
 			document.getElementById('tph-drawStatus').textContent = 'Copied ' + drawnPaths.length + ' path(s) to Step 1.';

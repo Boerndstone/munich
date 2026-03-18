@@ -301,6 +301,71 @@ h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-
     box-shadow: none !important;
 }
 
+// Main map filters: tab-like look + horizontal scroll (same style as rock page scrollable tabs)
+.main-map-filters {
+  overflow: hidden;
+  background: var(--theme-bg);
+}
+.main-map-filters-scroll {
+  overflow: hidden;
+}
+.main-map-filters-list {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+.main-map-filters-label {
+  flex-shrink: 0;
+  font-size: 14px;
+  color: var(--theme-text);
+  white-space: nowrap;
+}
+.main-map-filter-tab {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 8px 0;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--theme-text);
+  text-decoration: none;
+  transition: border-color 0.15s ease;
+  &:hover {
+    color: var(--theme-text);
+  }
+  &.active {
+    border-bottom-color: var(--theme-text);
+  }
+}
+
+// Area map filters: same tab look + horizontal scroll as main map
+.area-map-filters {
+  overflow: hidden;
+  background: var(--theme-bg);
+}
+// Icon-only filter tabs: ensure icon displays and active state is visible
+.main-map-filter-tab-icon {
+  min-width: 2rem;
+  .child-friendly, .sun, .umbrella, .train, .bike {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+}
+
 .main-map-container .leaflet-popup-content {
   margin: 0;
   padding: 0;

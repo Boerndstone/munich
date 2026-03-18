@@ -101,8 +101,12 @@ export default class extends Controller {
     const range = btn.dataset.range;
     if (!range) return;
     this.currentRange = range;
-    this.filterBtnTargets.forEach((b) => b.classList.remove("active"));
+    this.filterBtnTargets.forEach((b) => {
+      b.classList.remove("active");
+      b.setAttribute("aria-pressed", "false");
+    });
     btn.classList.add("active");
+    btn.setAttribute("aria-pressed", "true");
     this.renderMarkers(this.getFilteredMarkers());
   }
 

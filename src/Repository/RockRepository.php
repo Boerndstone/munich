@@ -310,7 +310,7 @@ class RockRepository extends ServiceEntityRepository
             $qb->andWhere('rock.childFriendly = 1');
         }
         if (!empty($filters['sunny'])) {
-            $qb->andWhere('rock.sunny = 3');
+            $qb->andWhere('rock.sunny = 1');
         }
         if (!empty($filters['rainProtected'])) {
             $qb->andWhere('rock.rain = 1');

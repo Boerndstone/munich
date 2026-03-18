@@ -1,36 +1,55 @@
 {% set marker = [] %}
+{% set rockImageBaseUrl = 'https://www.munichclimbs.de/build/images/rock/' %}
 {% for rock in rocks %}
-	{% set pictureElement = '' %}
+	{% set pictureHtml = '' %}
 	{% if rock.previewImage is not empty %}
-		{% set pictureElement = '
-        <picture>
-            <source type="image/webp" srcset="https://www.munichclimbs.de/build/images/rock/' ~ rock.previewImage ~ 'area-map.webp, https://www.munichclimbs.de/build/images/rock/' ~ rock.previewImage ~ 'area-map@2x.webp 2x, https://www.munichclimbs.de/build/images/rock/' ~ rock.previewImage ~ 'area-map@3x.webp 3x" loading="lazy">
-            <img src="https://www.munichclimbs.de/build/images/rock/' ~ rock.previewImage ~ 'area-map.webp" alt="Klettergebiet, ' ~ areaName ~ ', Fels: ' ~ rock.rockName ~ '" title="Klettergebiet, ' ~ areaName ~ ', Fels: ' ~ rock.rockName ~ '">
-        </picture>
-    ' %}
+		{% set pictureHtml = '<picture><source type="image/webp" srcset="' ~ rockImageBaseUrl ~ rock.previewImage ~ 'area-map.webp 1x, ' ~ rockImageBaseUrl ~ rock.previewImage ~ 'area-map@2x.webp 2x, ' ~ rockImageBaseUrl ~ rock.previewImage ~ 'area-map@3x.webp 3x" type="image/webp"><img class="main-map-popup-image" src="' ~ rockImageBaseUrl ~ rock.previewImage ~ 'area-map.webp" alt="' ~ ('Klettergebiet ' ~ areaName ~ ', Fels: ' ~ rock.rockName)|e('html_attr') ~ '" loading="lazy" decoding="async"></picture>' %}
 	{% endif %}
-	{% set rockName = '
-		<a href="' ~ path('show_rock', { 'areaSlug': rock.areaSlug, slug: rock.rockSlug }) ~ '">
-			<h6 class="font-semibold mb-2">' ~ rock.rockName ~ '</h6>
-			<div style="background-size: cover; background-position: center; width: 150px; height: 150px;">
-				' ~ pictureElement ~ '
-			</div>
-		</a>
-	' %}
+	{% set rockLink = path('show_rock', { 'areaSlug': rock.areaSlug, slug: rock.rockSlug }) %}
+	{% set rockCardArea = { routes: rock.amountRoutes|default(0), amountEasy: rock.amountEasy|default(0), amountMiddle: rock.amountMiddle|default(0), amountHard: rock.amountHard|default(0), amountProjects: rock.amountProjects|default(0) } %}
+	{% set popupBody = include('partials/_areaCardBody.html.twig', { area: rockCardArea, ulClass: 'mt-2', showTravelTime: false, showRocksCount: false }) %}
+	{% set rockName = '<div class="main-map-popup-card">' ~
+		'<div class="main-map-popup-image-wrap">' ~
+		pictureHtml ~
+		'<div class="main-map-popup-header">' ~
+		'<a href="' ~ rockLink ~ '" class="main-map-popup-link fw-normal">' ~ rock.rockName|e('html') ~ '</a>' ~
+		'<button type="button" class="main-map-popup-close" onclick="this.closest(\'.leaflet-popup\').querySelector(\'.leaflet-popup-close-button\').click()" aria-label="Schließen"><span>&times;</span></button>' ~
+		'</div></div>' ~
+		'<div class="main-map-popup-body">' ~ popupBody ~ '</div></div>' %}
 
 	{% set rockImage = '' %}
-	{% set marker = marker|merge([[ rock.rockLat, rock.rockLng, rockName, rockImage ]]) %}
+	{% set childFriendly = rock.rockChild is defined and rock.rockChild == 1 %}
+	{% set sunny = rock.rockSunny is defined and rock.rockSunny == 3 %}
+	{% set rain = rock.rockRain is defined and rock.rockRain == 1 %}
+	{% set train = rock.rockTrain is defined and rock.rockTrain == 1 %}
+	{% set bike = rock.rockBike is defined and rock.rockBike == 1 %}
+	{% set marker = marker|merge([[ rock.rockLat, rock.rockLng, rockName, rockImage, childFriendly, sunny, rain, train, bike ]]) %}
 {% endfor %}
 {% set intialZoom = [] %}
 {% set intialZoom = intialZoom|merge([areaLat, areaLng, areaZoom]) %}
 {% set railwayStation = areaRailwayStation %}
 
-<div class="d-flex flex-column h-100" data-controller="map" data-map-markers-area="{{ marker|json_encode|e('html_attr') }}" data-map-zoom="{{ intialZoom|json_encode|e('html_attr') }}" data-map-railway-stations="{{ railwayStation|json_encode|e('html_attr') }}">
-	<div class="area-map-filters flex-shrink-0 py-2 px-3 gap-2 d-flex flex-wrap align-items-center">
-		<span class="small text-muted">Anzeigen:</span>
-		<button type="button" class="btn btn-outline-secondary btn-sm active" data-map-target="layerBtn" data-layer="rocks" aria-pressed="true">Felsen</button>
-		<button type="button" class="btn btn-outline-secondary btn-sm active" data-map-target="layerBtn" data-layer="railway" aria-pressed="true">Bahnhöfe</button>
-		<button type="button" class="btn btn-outline-secondary btn-sm active" data-map-target="layerBtn" data-layer="camping" aria-pressed="true">Übernachtung</button>
+<div 
+	class="main-map-container d-flex flex-column h-100" 
+	data-controller="map" 
+	data-map-markers-area="{{ marker|json_encode|e('html_attr') }}" 
+	data-map-zoom="{{ intialZoom|json_encode|e('html_attr') }}" 
+	data-map-railway-stations="{{ railwayStation|json_encode|e('html_attr') }}"
+>
+	<div class="area-map-filters flex-shrink-0 py-2 px-3">
+		<div class="main-map-filters-scroll">
+			<ul class="main-map-filters-list">
+				<li class="main-map-filters-label">Filter:</li>
+				<li><button type="button" class="py-1 main-map-filter-tab active" data-map-target="layerBtn" data-layer="rocks" aria-pressed="true">Felsen</button></li>
+				<li><button type="button" class="py-1 main-map-filter-tab active" data-map-target="layerBtn" data-layer="railway" aria-pressed="true">Bahnhöfe</button></li>
+				<li><button type="button" class="py-1 main-map-filter-tab active" data-map-target="layerBtn" data-layer="camping" aria-pressed="true">Übernachtung</button></li>
+				<li><button type="button" class="py-1 main-map-filter-tab main-map-filter-tab-icon d-flex justify-content-center align-items-center" data-map-target="attrFilterBtn" data-attr="childFriendly" aria-pressed="false" title="Kinderfreundlich" aria-label="Kinderfreundlich"><span class="child-friendly flex-shrink-0"></span></button></li>
+				<li><button type="button" class="py-1 main-map-filter-tab main-map-filter-tab-icon d-flex justify-content-center align-items-center" data-map-target="attrFilterBtn" data-attr="sunny" aria-pressed="false" title="Sonnig" aria-label="Sonnig"><span class="sun flex-shrink-0"></span></button></li>
+				<li><button type="button" class="py-1 main-map-filter-tab main-map-filter-tab-icon d-flex justify-content-center align-items-center" data-map-target="attrFilterBtn" data-attr="rain" aria-pressed="false" title="Regenschutz" aria-label="Regenschutz"><span class="umbrella flex-shrink-0"></span></button></li>
+				<li><button type="button" class="py-1 main-map-filter-tab main-map-filter-tab-icon d-flex justify-content-center align-items-center" data-map-target="attrFilterBtn" data-attr="train" aria-pressed="false" title="{{ 'train.reachable'|trans }}" aria-label="{{ 'train.reachable'|trans }}"><span class="train flex-shrink-0"></span></button></li>
+				<li><button type="button" class="py-1 main-map-filter-tab main-map-filter-tab-icon d-flex justify-content-center align-items-center" data-map-target="attrFilterBtn" data-attr="bike" aria-pressed="false" title="{{ 'bike.reachable'|trans }}" aria-label="{{ 'bike.reachable'|trans }}"><span class="bike flex-shrink-0"></span></button></li>
+			</ul>
+		</div>
 	</div>
 	<div class="flex-grow-1 min-h-0" style="min-height: 400px;" data-map-target="map"></div>
 </div>

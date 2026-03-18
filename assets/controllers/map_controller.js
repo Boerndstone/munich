@@ -3,13 +3,14 @@ import L from "leaflet";
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
-  static targets = ["map", "layerBtn"];
+  static targets = ["map", "layerBtn", "attrFilterBtn"];
 
   connect() {
     const markersArea = JSON.parse(this.data.get("markersArea"));
     const zoom = JSON.parse(this.data.get("zoom"));
     const information = JSON.parse(this.data.get("railwayStations"));
     this.areaMap = L.map(this.mapTarget).setView([zoom[0], zoom[1]], zoom[2]);
+    this.rocksLayerVisible = true;
 
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
@@ -67,19 +68,27 @@ export default class extends Controller {
       });
     }
 
-    // Add area markers
+    // Add area markers (markerData: [lat, lng, popup, rockImage, childFriendly, sunny, rain, train, bike])
     this.areaMarkers = [];
+    this.areaMarkerData = [];
     markersArea.forEach((markerData) => {
       const marker = L.marker([markerData[0], markerData[1]])
-        .bindPopup(markerData[2])
-        .addTo(this.areaMap);
+        .bindPopup(markerData[2]);
       this.areaMarkers.push(marker);
+      this.areaMarkerData.push(markerData);
     });
+    this.applyRockVisibility();
 
-    // Layer filter buttons (same pattern as main map)
+    // Layer filter buttons
     if (this.hasLayerBtnTarget) {
       this.layerBtnTargets.forEach((btn) => {
         btn.addEventListener("click", (e) => this.toggleLayer(e));
+      });
+    }
+    // Attribute filter buttons (childFriendly, sunny, rain, train, bike)
+    if (this.hasAttrFilterBtnTarget) {
+      this.attrFilterBtnTargets.forEach((btn) => {
+        btn.addEventListener("click", (e) => this.toggleAttrFilter(e));
       });
     }
 
@@ -96,24 +105,61 @@ export default class extends Controller {
     const btn = e.currentTarget;
     const layer = btn.dataset.layer;
     btn.classList.toggle("active");
-    const visible = btn.classList.contains("active");
-    let markers;
+    btn.setAttribute("aria-pressed", btn.classList.contains("active"));
     if (layer === "rocks") {
-      markers = this.areaMarkers;
-    } else if (layer === "railway") {
-      markers = this.trainMarkers;
-    } else if (layer === "camping") {
-      markers = this.campingMarkers;
+      this.rocksLayerVisible = btn.classList.contains("active");
+      this.applyRockVisibility();
     } else {
-      console.warn(`map_controller: unknown layer "${layer}" in toggleLayer`);
-      return;
-    }
-    markers.forEach((marker) => {
-      if (visible) {
-        marker.addTo(this.areaMap);
-      } else {
-        this.areaMap.removeLayer(marker);
+      const visible = btn.classList.contains("active");
+      let markers = layer === "railway" ? this.trainMarkers : layer === "camping" ? this.campingMarkers : null;
+      if (markers) {
+        markers.forEach((marker) => {
+          if (visible) marker.addTo(this.areaMap);
+          else this.areaMap.removeLayer(marker);
+        });
       }
+    }
+  }
+
+  toggleAttrFilter(e) {
+    const btn = e.currentTarget;
+    btn.classList.toggle("active");
+    btn.setAttribute("aria-pressed", btn.classList.contains("active"));
+    this.applyRockVisibility();
+  }
+
+  applyRockVisibility() {
+    const attrActive = {};
+    if (this.hasAttrFilterBtnTarget) {
+      this.attrFilterBtnTargets.forEach((btn) => {
+        const attr = btn.dataset.attr;
+        if (attr) attrActive[attr] = btn.classList.contains("active");
+      });
+    }
+    const anyAttrFilter = Object.values(attrActive).some((v) => v);
+    this.areaMarkers.forEach((marker, i) => {
+      const data = this.areaMarkerData[i];
+      if (!data || !this.rocksLayerVisible) {
+        this.areaMap.removeLayer(marker);
+        return;
+      }
+      const childFriendly = !!data[4];
+      const sunny = !!data[5];
+      const rain = !!data[6];
+      const train = !!data[7];
+      const bike = !!data[8];
+      let show = true;
+      if (attrActive.childFriendly && !childFriendly) show = false;
+      if (attrActive.sunny && !sunny) show = false;
+      if (attrActive.rain && !rain) show = false;
+      if (attrActive.train && attrActive.bike) {
+        if (!(train && bike)) show = false;
+      } else {
+        if (attrActive.train && !train) show = false;
+        if (attrActive.bike && !bike) show = false;
+      }
+      if (show) marker.addTo(this.areaMap);
+      else this.areaMap.removeLayer(marker);
     });
   }
 }

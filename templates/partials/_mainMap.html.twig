@@ -8,7 +8,7 @@
         '<img class="main-map-popup-image" src="' ~ url ~ area.image ~ '.webp" alt="Klettergebiet ' ~ area.name|e('html_attr') ~ '" loading="lazy" decoding="async">' ~
         '</picture>' ~
         '<div class="main-map-popup-header">' ~
-        '<a href="' ~ path('show_rocks', { slug: area.slug }) ~ '" class="main-map-popup-link">' ~ area.name|e('html') ~ '</a>' ~
+        '<a href="' ~ path('show_rocks', { slug: area.slug }) ~ '" class="main-map-popup-link  fw-normal">' ~ area.name|e('html') ~ '</a>' ~
         '<button type="button" class="main-map-popup-close" onclick="this.closest(\'.leaflet-popup\').querySelector(\'.leaflet-popup-close-button\').click()" aria-label="Schließen"><span>&times;</span></button>' ~
         '</div></div>' ~
         '<div class="main-map-popup-body">' ~ popupBody ~ '</div></div>' %}

@@ -224,47 +224,7 @@
 						</div>
 					</div>
 					<div class="col-12 col-md-4 order-1 order-lg-2">
-						<div class="card py-2 mb-2 card-body sticky-filter">
-							<h2 class="h6 mb-2" id="resultsCounter"><span id="resultsCount">0</span> Felsen</h2>
-							<div class="d-flex flex-nowrap overflow-x-auto">
-								
-								<div class="form-check form-switch me-3">
-									<input id="flexSwitchCheckDefault" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="childFriendly">
-									<label class="form-check-label" for="flexSwitchCheckDefault">
-										<div class="child-friendly"></div>
-										<span class="visually-hidden">Kinderfreundlich</span>
-									</label>
-								</div>
-								<div class="form-check form-switch me-3">
-									<label class="form-check-label" for="sun">
-										<div class="sun"></div>
-										<span class="visually-hidden">Sonnig</span>
-									</label>
-									<input id="sun" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="sunny">
-								</div>
-								<div class="form-check form-switch me-3">
-									<label class="form-check-label" for="rain">
-										<div class="umbrella"></div>
-										<span class="visually-hidden">Regenschutz</span>
-									</label>
-									<input id="rain" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="rain">
-								</div>
-								<div class="form-check form-switch me-3">
-									<label class="form-check-label" for="train">
-										<div class="train"></div>
-										<span class="visually-hidden">{{ 'train.reachable'|trans }}</span>
-									</label>
-									<input id="train" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="train">
-								</div>
-								<div class="form-check form-switch me-3">
-									<input id="bike" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="bike">
-									<label class="form-check-label d-flex align-items-center	" for="bike">
-										<div class="train"></div> + <div class="bike"></div>
-										<span class="visually-hidden">{{ 'bike.reachable'|trans }}</span>
-									</label>
-								</div>
-							</div>
-						</div>
+						{{ include('components/rocks-sticky-filter.html.twig') }}
 					</div>
 				</div>
 			</section>

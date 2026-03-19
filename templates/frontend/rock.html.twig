@@ -92,6 +92,7 @@
 		</div>
 		{% for rock in rocks %}
 			<div class="image-container position-relative">
+				<div class="image-container-media">
 				{% if rock.rockImage is not empty %}
 					<picture>
 						<source media="(min-width: 1200px)" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-large-@1x.webp') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-large-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-large-@3x.webp') }} 3x">
@@ -101,6 +102,7 @@
 				{% else %}
 					<div class="fallback-image"></div>
 				{% endif %}
+				</div>
 				<div class="container my-3 position-absolute" style="top: 0; right: 0; left:0;">
 					<div class="bg-image pb-3 rounded ">
 						<div class="p-3 rounded shadow-3 alert-light d-flex align-items-center justify-content-between" style="background-color: rgba(255, 255, 255, 0.6);">

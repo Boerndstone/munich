@@ -384,6 +384,12 @@ h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-
   background: none;
 }
 
+// Text-only popups (e.g. train stations): no image overlay — avoid absolute header + overflow clipping
+.main-map-popup-card--text-only {
+  overflow: visible;
+  border-radius: 12px;
+}
+
 .main-map-popup-image-wrap {
   position: relative;
 }

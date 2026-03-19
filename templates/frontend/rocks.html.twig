@@ -39,6 +39,7 @@
 	{{ include('partials/_navigation.html.twig') }}
 	<main>
 		<div class="image-container position-relative">
+			<div class="image-container-media">
 			{% if areaImage is not empty %}
 				<picture>
 					<source media="(min-width: 1200px)" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-large-@1x.webp') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-large-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-large-@3x.webp') }} 3x">
@@ -48,6 +49,7 @@
 			{% else %}
 				<div style="height: 100px"></div>
 			{% endif %}
+			</div>
 			<div class="container my-3 position-absolute" style="top: 0; right: 0; left:0;">
 				<div class="bg-image pb-3 rounded ">
 					<div class="p-3 rounded shadow-3 alert-light d-flex align-items-center justify-content-between" style="background-color: rgba(255, 255, 255, 0.6);">
@@ -56,21 +58,36 @@
 								{{ areaName }}
 							</h1>
 						</div>
-						<div>
-						{% if areaKletterkonzeption %}
-						<button class="btn btn-outline-secondary btn-sm" {{ stimulus_controller('modal-route-information') }} data-action="modal-route-information#openModal" data-bs-toggle="modal" data-bs-target="#kletterkonzeptionModal" title="Kletterkonzeption anzeigen" aria-label="Kletterkonzeption anzeigen">
-							<div class="modal-info"></div>
-						</button>
-							{{ include('partials/_modal-kletterkonzeption.html.twig') }}
-						{% endif %}
-						{% if top100Routes is not empty %}
-						<button class="btn btn-outline-secondary btn-sm" {{ stimulus_controller('modal-route-information') }} data-action="modal-route-information#openModal" data-bs-toggle="modal" data-bs-target="#top100RoutesModal" title="Top 100 schwierigste Routen anzeigen" aria-label="Top 100 schwierigste Routen anzeigen">
-							<div class="top-routes-icon"></div>
-						</button>
-							{{ include('partials/_modal-top100-routes.html.twig') }}
-						{% endif %}
-							{% include 'partials/_collapseWeather.html.twig' with { collapseId: 'collapseWeather', ariaControls: 'collapseWeather' } %}
-							{% include 'partials/_collapseMap.html.twig' with { modalId: 'modalAreaMap' } %}
+						<div class="d-flex align-items-center">
+							<div class="dropdown">
+								<button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}' data-bs-auto-close="true" aria-expanded="false" aria-haspopup="true" aria-label="Weitere Informationen">
+									<div class="modal-info"></div>
+								</button>
+								<ul class="dropdown-menu dropdown-menu-end">
+									{% if areaKletterkonzeption %}
+										<li>
+											<button type="button" class="dropdown-item d-flex align-items-center text-start small" data-bs-toggle="modal" data-bs-target="#kletterkonzeptionModal"><div class="modal-info me-2"></div> Kletterkonzeption - {{ areaName }}</button>
+										</li>
+									{% endif %}
+									{% if top100Routes is not empty %}
+										<li>
+											<button type="button" class="dropdown-item d-flex align-items-center text-start small" data-bs-toggle="modal" data-bs-target="#top100RoutesModal"><div class="top-100 me-2"></div> Top 100 schwierigste Routen - {{ areaName }}</button>
+										</li>
+									{% endif %}
+									<li>
+										<button type="button" class="dropdown-item d-flex align-items-center text-start small" data-bs-toggle="modal" data-bs-target="#modalWeather"><div class="weather me-2"></div> Wetter</button>
+									</li>
+									<li>
+										<button type="button" class="dropdown-item d-flex align-items-center text-start small" data-bs-toggle="modal" data-bs-target="#modalAreaMap"><div class="map me-2"></div>Übersichtskarte {{ areaName }}</button>
+									</li>
+								</ul>
+							</div>
+							{% if areaKletterkonzeption %}
+								{{ include('partials/_modal-kletterkonzeption.html.twig') }}
+							{% endif %}
+							{% if top100Routes is not empty %}
+								{{ include('partials/_modal-top100-routes.html.twig') }}
+							{% endif %}
 						</div>
 					</div>
 				</div>
@@ -78,6 +95,49 @@
 		</div>
 		<div class="container my-3">
 			<section>
+				<div class="modal fade" id="modalWeather" tabindex="-1" aria-labelledby="modalWeatherLabel" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+						<div class="modal-content">
+							<div class="modal-header py-2">
+								<h2 class="modal-title h6 mb-0" id="modalWeatherLabel">Wetter</h2>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+							</div>
+							<div class="modal-body">
+								<div class="card py-2 card-body border-0 shadow-none">
+									<div {{ stimulus_controller('weather') }} data-weather-area-lat="{{ areaLat }}" data-weather-area-lng="{{ areaLng }}">
+										<div class="current-weather d-flex align-items-center">
+											<div class="icon icon-weather"></div>
+											<div id="temperature"></div>
+										</div>
+										<div class="forecast row">
+											<div class="day col-3 card card-body m-2">
+												<div class="forecast-text"></div>
+												<div class="d-flex align-items-center">
+													<div class="icon icon-weather"></div>
+													<div class="temp"></div>
+												</div>
+											</div>
+											<div class="day col-3 card card-body m-2">
+												<div class="forecast-text"></div>
+												<div class="d-flex align-items-center">
+													<div class="icon icon-weather"></div>
+													<div class="temp"></div>
+												</div>
+											</div>
+											<div class="day col-3 card card-body m-2">
+												<div class="forecast-text"></div>
+												<div class="d-flex align-items-center">
+													<div class="icon icon-weather"></div>
+													<div class="temp"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 				<div class="modal fade" id="modalAreaMap" tabindex="-1" aria-labelledby="modalAreaMapLabel" aria-hidden="true">
 					<div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
 						<div class="modal-content h-100 d-flex flex-column">
@@ -88,42 +148,6 @@
 							<div class="modal-body p-0 flex-grow-1 min-h-0 d-flex flex-column">
 								<div id="areaMap" class="z-10 flex-grow-1 min-h-0">
 									{{ include('partials/_areaMap.html.twig') }}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="collapse mt-3" id="collapseWeather">
-					<div id="areaMap" class="z-10 mb-3">
-						<div class="card py-2 mb-2 card-body">
-							<div {{ stimulus_controller('weather') }} data-weather-area-lat="{{ areaLat }}" data-weather-area-lng="{{ areaLng }}">
-								<h2 class="h6 mb-2">Wetter</h2>
-								<div class="current-weather d-flex align-items-center">
-									<div class="icon icon-weather"></div>
-									<div id="temperature"></div>
-								</div>
-								<div class="forecast row">
-									<div class="day col-3 card card-body m-2">
-										<div class="forecast-text"></div>
-										<div class="d-flex align-items-center">
-											<div class="icon icon-weather"></div>
-											<div class="temp"></div>
-										</div>
-									</div>
-									<div class="day col-3 card card-body m-2">
-										<div class="forecast-text"></div>
-										<div class="d-flex align-items-center">
-											<div class="icon icon-weather"></div>
-											<div class="temp"></div>
-										</div>
-									</div>
-									<div class="day col-3 card card-body m-2">
-										<div class="forecast-text"></div>
-										<div class="d-flex align-items-center">
-											<div class="icon icon-weather"></div>
-											<div class="temp"></div>
-										</div>
-									</div>
 								</div>
 							</div>
 						</div>
@@ -201,48 +225,38 @@
 					</div>
 					<div class="col-12 col-md-4 order-1 order-lg-2">
 						<div class="card py-2 mb-2 card-body sticky-filter">
-							<div class="row">
-								<div class="col-12 mb-2">
-									<h2 class="h6 mb-2" id="resultsCounter"><span id="resultsCount">0</span> Felsen</h2>
-								</div>
-							<div class="col-3 col-md-6 mb-2">
-								<div class="form-check form-switch">
+							<h2 class="h6 mb-2" id="resultsCounter"><span id="resultsCount">0</span> Felsen</h2>
+							<div class="d-flex flex-nowrap overflow-x-auto">
+								
+								<div class="form-check form-switch me-3">
 									<input id="flexSwitchCheckDefault" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="childFriendly">
 									<label class="form-check-label" for="flexSwitchCheckDefault">
 										<div class="child-friendly"></div>
 										<span class="visually-hidden">Kinderfreundlich</span>
 									</label>
 								</div>
-							</div>
-							<div class="col-3 col-md-6 mb-2">
-								<div class="form-check form-switch">
+								<div class="form-check form-switch me-3">
 									<label class="form-check-label" for="sun">
 										<div class="sun"></div>
 										<span class="visually-hidden">Sonnig</span>
 									</label>
 									<input id="sun" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="sunny">
 								</div>
-							</div>
-							<div class="col-3 col-md-6 mb-2">
-								<div class="form-check form-switch">
+								<div class="form-check form-switch me-3">
 									<label class="form-check-label" for="rain">
 										<div class="umbrella"></div>
 										<span class="visually-hidden">Regenschutz</span>
 									</label>
 									<input id="rain" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="rain">
 								</div>
-							</div>
-							<div class="col-3 col-md-6 mb-2">
-								<div class="form-check form-switch">
+								<div class="form-check form-switch me-3">
 									<label class="form-check-label" for="train">
 										<div class="train"></div>
 										<span class="visually-hidden">{{ 'train.reachable'|trans }}</span>
 									</label>
 									<input id="train" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="train">
 								</div>
-							</div>
-							<div class="col-6 mb-2">
-								<div class="form-check form-switch">
+								<div class="form-check form-switch me-3">
 									<input id="bike" class="form-check-input" type="checkbox" data-action="change->filter#filterItems" data-filter-target="bike">
 									<label class="form-check-label d-flex align-items-center	" for="bike">
 										<div class="train"></div> + <div class="bike"></div>
@@ -250,7 +264,6 @@
 									</label>
 								</div>
 							</div>
-						</div>
 						</div>
 					</div>
 				</div>

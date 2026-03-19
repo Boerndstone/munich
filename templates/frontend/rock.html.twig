@@ -115,7 +115,6 @@
 										<div class="modal-info" style="width: 22px; height: 22px;"></div>
 										<span class="ms-1 d-none d-md-block">{{ "rock"|trans }}</span>
 									</button>
-									{{ include('partials/_offcanvasRockInfo.html.twig', { rocks: rocks, improvementForm: improvementForm|default(null), areaSlug: areaSlug, slug: slug }) }}
 								</div>
 								<nav class="mt-1" aria-label="breadcrumb">
 									<ol class="breadcrumb text-black fw-normal mb-0" style="font-size: 12px">
@@ -163,6 +162,8 @@
 				</div>
 			</section>
 		{% endfor %}
+		{# Offcanvas outside .image-container so backdrop/panel stack above the hero (z-index context) #}
+		{{ include('partials/_offcanvasRockInfo.html.twig', { rocks: rocks, improvementForm: improvementForm|default(null), areaSlug: areaSlug, slug: slug }) }}
 		<div class="container" {{ stimulus_controller('modal-route-information') }}>
 			<div class="row">
 				<div class="col-md-9 p-0 p-md-2">

@@ -4,7 +4,7 @@
 		{% for comment in latestComments %}
 			<li class="px-3 mb-2 hover:bg-gray-300" style="line-height: 1.3rem;">
 				<a class="fs-6 text-truncate text-black d-block" href="{{ path('show_rock', { 'areaSlug': comment.areaSlug, slug: comment.rockSlug }) }}">
-					<span class="d-inline-block me-2 list-item-icon"></span>
+					<span class="d-inline-block me-2 list-item-icon" aria-hidden="true"></span>
 					<span class="fw-normal pr-2">
 						{{ comment.routeName }}
 						({{ comment.rockName }})

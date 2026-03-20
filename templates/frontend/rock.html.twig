@@ -223,7 +223,7 @@
 														</span>
 													</td>
 													<td class="py-2">
-														{% if route.routeDescription or route.routeComment %}
+														{% if route.routeComment is not empty %}
 															<button class="btn btn-sm m-0 p-0 border-0 shadow-none rounded-circle" 
 																data-action="modal-route-information#openModal"
 																data-modal-route-information-name-value="{{ route.routeName }}"

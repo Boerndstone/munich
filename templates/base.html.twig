@@ -38,6 +38,7 @@
 
 		<a href="#main-content" class="visually-hidden-focusable position-fixed top-0 start-0 m-2 btn btn-sm btn-primary" style="z-index: 1080;">{{ 'skip_to_content'|trans({}, 'messages') }}</a>
 
+		<a id="main-content" tabindex="-1"></a>
 		{% block body %}{% endblock %}
 
 		{% include 'partials/_footer.html.twig' with {'areas': getAreas()} %}

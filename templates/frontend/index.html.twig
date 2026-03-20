@@ -36,12 +36,12 @@
 
 {% block body %}
 	{{ include('partials/_navigation.html.twig') }}
-	<main>
+	<main id="main-content">
 		<div class="container my-3">
-			<section>
+			<section aria-labelledby="index-page-heading">
 				<div class="py-3 mb-3 d-flex align-items-center justify-content-between">
-					<h1 class="h2 mb-0 fw-medium">Klettergebiete um München</h1>
-					{% include 'partials/_collapseMap.html.twig' with { modalId: 'modalMap' } %}
+					<h1 class="h2 mb-0 fw-medium" id="index-page-heading">Klettergebiete um München</h1>
+					{% include 'partials/_collapseMap.html.twig' with { modalId: 'modalMap', ariaLabel: 'index.map_open'|trans({}, 'messages') } %}
 				</div>
 				<div class="modal fade" id="modalMap" tabindex="-1" aria-labelledby="modalMapLabel" aria-hidden="true">
 					<div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
@@ -60,21 +60,21 @@
 				</div>
 				<div class="row">
 					<div class="col-md-8">
-						<div class="row">
+						<section class="row" aria-label="{{ 'index.areas_region_label'|trans({}, 'messages') }}">
 							{% for area in areasData %}
 								<div class="col-12">
 									{{ include('partials/_areaCard.html.twig', { area: area, link: path('show_rocks', { slug: area.slug }) }) }}
 								</div>
 							{% endfor %}
-						</div>
+						</section>
 					</div>
 					<div class="col-md-4">
-						<div class="gap-3 row-gap-3" style="display: grid;">
+						<aside class="gap-3 row-gap-3" style="display: grid;" aria-label="{{ 'index.sidebar_label'|trans({}, 'messages') }}">
 							{{ include('partials/_banned-rocks.html.twig') }}
 							{{ include('partials/_support-project.html.twig') }}
 							{{ include('partials/_latest-routes.html.twig') }}
 							{{ include('partials/_latest-comments.html.twig') }}
-						</div>
+						</aside>
 					</div>
 				</div>
 			</section>

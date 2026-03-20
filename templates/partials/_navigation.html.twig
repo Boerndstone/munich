@@ -4,7 +4,7 @@
 			<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
 				<div class="offcanvas-header">
 					<a class="offcanvas-title chelsea-market-regular" id="offcanvasNavbarLabel" href="{{path('index')}}">munichclimbs</a>
-					<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+					<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{{ 'close_navigation'|trans({}, 'messages') }}"></button>
 				</div>
 				<div class="offcanvas-body">
 					{% set _route = app.request.attributes.get('_route') %}

@@ -34,7 +34,6 @@ class RouteGroupingServiceTest extends TestCase
                 'routeId' => 1,
                 'routefirstAscent' => 'John Doe',
                 'routeyearFirstAscent' => '2020',
-                'routeDescription' => 'Great route',
                 'routeComment' => [],
                 'videoLink' => 'https://example.com/video1'
             ],
@@ -55,7 +54,6 @@ class RouteGroupingServiceTest extends TestCase
                 'routeId' => 2,
                 'routefirstAscent' => 'Jane Smith',
                 'routeyearFirstAscent' => '2021',
-                'routeDescription' => 'Nice route',
                 'routeComment' => [],
                 'videoLink' => null
             ],
@@ -76,7 +74,6 @@ class RouteGroupingServiceTest extends TestCase
                 'routeId' => 3,
                 'routefirstAscent' => 'Bob Wilson',
                 'routeyearFirstAscent' => '2019',
-                'routeDescription' => 'Amazing route',
                 'routeComment' => [],
                 'videoLink' => 'https://example.com/video3'
             ]

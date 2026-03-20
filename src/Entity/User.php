@@ -41,9 +41,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['comment:read'])]
     private ?string $avatar = null;
 
-    #[ORM\ManyToMany(targetEntity: ClimbedRoutes::class, mappedBy: 'user')]
-    private Collection $routes;
-
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Comment::class)]
     private Collection $comments;
 
@@ -56,7 +53,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->routes = new ArrayCollection();
         $this->comments = new ArrayCollection();
     }
 
@@ -180,33 +176,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAvatar(string $avatar): self
     {
         $this->avatar = $avatar;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, ClimbedRoutes>
-     */
-    public function getRoutes(): Collection
-    {
-        return $this->routes;
-    }
-
-    public function addRoute(ClimbedRoutes $route): self
-    {
-        if (!$this->routes->contains($route)) {
-            $this->routes->add($route);
-            $route->addUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRoute(ClimbedRoutes $route): self
-    {
-        if ($this->routes->removeElement($route)) {
-            $route->removeUser($this);
-        }
 
         return $this;
     }

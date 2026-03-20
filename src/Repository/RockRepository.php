@@ -214,7 +214,6 @@ class RockRepository extends ServiceEntityRepository
                 'routes.climbingStyle as routeClimbingStyle',
                 'routes.firstAscent as routefirstAscent',
                 'routes.yearFirstAscent as routeyearFirstAscent',
-                'routes.description as routeDescription',
                 // 'comments.comment as routeComment',
                 'topo.name as topoName',
                 'topo.number as topoNumber',

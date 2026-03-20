@@ -63,10 +63,6 @@ class Routes
     #[Groups(['route:read'])]
     private ?int $protection = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['route:read'])]
-    private ?string $description = null;
-
     #[ORM\Column(type: Types::STRING, length: 100, nullable: true)]
     #[Groups(['route:read'])]
     private ?string $scale = null;
@@ -87,13 +83,6 @@ class Routes
     #[Groups(['route:read'])]
     protected ?int $nr = null;
 
-    #[ORM\ManyToMany(targetEntity: ClimbedRoutes::class, mappedBy: 'ManyToMany')]
-    private Collection $climbedRoutes;
-
-    #[ORM\ManyToOne(inversedBy: 'realtion')]
-    #[Groups(['route:read'])]
-    private ?FirstAscencionist $relatesToRoute = null;
-
     #[ORM\OneToMany(mappedBy: 'route', targetEntity: Comment::class)]
     private Collection $comments;
 
@@ -112,7 +101,6 @@ class Routes
 
     public function __construct()
     {
-        $this->climbedRoutes = new ArrayCollection();
         $this->comments = new ArrayCollection();
     }
 
@@ -229,18 +217,6 @@ class Routes
         return $this;
     }
 
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): self
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
     public function getScale(): ?string
     {
         return $this->scale;
@@ -297,45 +273,6 @@ class Routes
     public function setNr(?int $nr): self
     {
         $this->nr = $nr;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, ClimbedRoutes>
-     */
-    public function getClimbedRoutes(): Collection
-    {
-        return $this->climbedRoutes;
-    }
-
-    public function addClimbedRoute(ClimbedRoutes $climbedRoute): self
-    {
-        if (!$this->climbedRoutes->contains($climbedRoute)) {
-            $this->climbedRoutes->add($climbedRoute);
-            $climbedRoute->addManyToMany($this);
-        }
-
-        return $this;
-    }
-
-    public function removeClimbedRoute(ClimbedRoutes $climbedRoute): self
-    {
-        if ($this->climbedRoutes->removeElement($climbedRoute)) {
-            $climbedRoute->removeManyToMany($this);
-        }
-
-        return $this;
-    }
-
-    public function getRelatesToRoute(): ?FirstAscencionist
-    {
-        return $this->relatesToRoute;
-    }
-
-    public function setRelatesToRoute(?FirstAscencionist $relatesToRoute): static
-    {
-        $this->relatesToRoute = $relatesToRoute;
 
         return $this;
     }

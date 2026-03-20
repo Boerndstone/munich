@@ -125,7 +125,6 @@ class RoutesCrudController extends AbstractCrudController
                 ['protection'      , 'setProtection'   , 'int'     , true ],
                 ['rating'          , 'setRating'       , 'int'     , true ],
                 ['topo_id'         , 'setTopoId'       , 'int'     , true ],
-                ['description'     , 'setDescription'  , null      , true ],
                 ['climbed'         , 'setClimbed'      , 'bool'    , true ],
                 ['rock_quality'    , 'setRockQuality'  , 'bool'    , true ],
             ];
@@ -217,16 +216,12 @@ class RoutesCrudController extends AbstractCrudController
             ->setColumns('col-12')
             ->setChoices($this->getGradeChoices())
             ->setHelp('Wählen Sie den Schwierigkeitsgrad aus. Der numerische Wert wird automatisch gesetzt.');
-        yield Field::new('climbed')
+        yield BooleanField::new('climbed')
             ->setLabel('Bereits geklettert')
             ->setColumns('col-12')
-            ->setTemplatePath('admin/field/votes.html.twig');
+            ->renderAsSwitch();
         yield Field::new('first_ascent')
             ->setLabel('Erstbegeher')
-            ->setColumns('col-12')
-            ->hideOnIndex();
-        yield AssociationField::new('relatesToRoute')
-            ->setLabel('Erstbegeher Neu')
             ->setColumns('col-12')
             ->hideOnIndex();
         yield Field::new('year_first_ascent')
@@ -246,11 +241,11 @@ class RoutesCrudController extends AbstractCrudController
                 ]
             );
         yield BooleanField::new('rock_quality')
-            ->setLabel('Felsqualität')
+            ->setLabel('Felsqualität zweifelhaft')
             ->hideOnIndex()
             ->setColumns('col-12')
-            ->setHelp('Wenn aktiv, dann wird die Felsqualität zweifelhaft!')
-            ->setTemplatePath('admin/field/votes.html.twig');
+            ->setHelp('Wenn aktiv, wird die Felsqualität als zweifelhaft gekennzeichnet.')
+            ->renderAsSwitch();
 
         yield ChoiceField::new('climbingStyle')
             ->setLabel('Kletterstil')
@@ -269,10 +264,6 @@ class RoutesCrudController extends AbstractCrudController
             ->setColumns('col-12')
             ->setHelp('Kletterstil(e) der Route – mehrere möglich.');
 
-        yield Field::new('description')
-            ->setLabel('Beschreibung')
-            ->setColumns('col-12')
-            ->hideOnIndex();
         yield Field::new('grade_no')
             ->setLabel('Grade (numerisch)')
             ->setColumns('col-12')

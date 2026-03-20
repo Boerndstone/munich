@@ -41,7 +41,6 @@ class RouteGroupingService
                 'routeId' => $routeData['routeId'],
                 'routefirstAscent' => $routeData['routefirstAscent'],
                 'routeyearFirstAscent' => $routeData['routeyearFirstAscent'],
-                'routeDescription' => $routeData['routeDescription'],
                 'routeComment' => $routeData['routeComment'] ?? [],
                 'routeGrade' => $routeData['routeGrade'],
                 'topoImage' => $routeData['topoImage'] ?? null,

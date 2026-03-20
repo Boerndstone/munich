@@ -9,8 +9,6 @@ use App\Entity\User;
 use App\Entity\Photos;
 use App\Entity\Routes;
 use App\Entity\Videos;
-use App\Entity\ToDoListe;
-use App\Entity\ClimbedRoutes;
 use App\Entity\Comment;
 use App\Repository\AreaRepository;
 use App\Repository\RockRepository;
@@ -155,11 +153,9 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home')->setPermission('ROLE_SUPER_ADMIN');
-        yield MenuItem::linkToCrud('To Do Liste', 'fa fa-tags', ToDoListe::class)->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToCrud('Gebiete', 'fa fa-tags', Area::class)->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToCrud('Felsen', 'fa fa-home', Rock::class);
         yield MenuItem::linkToCrud('Touren', 'fa fa-home', Routes::class);
-        yield MenuItem::linkToCrud('Touren geklettert', 'fa fa-home', ClimbedRoutes::class);
         yield MenuItem::linkToCrud('Topos', 'fa fa-home', Topo::class)->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToRoute('Topo Path Helper', 'fa fa-pencil-square-o', 'admin_topo_path_helper')->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToCrud('Photos', 'fa fa-camera-retro', Photos::class)->setPermission('ROLE_SUPER_ADMIN');

@@ -161,6 +161,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Touren', 'fa fa-home', Routes::class);
         yield MenuItem::linkToCrud('Touren geklettert', 'fa fa-home', ClimbedRoutes::class);
         yield MenuItem::linkToCrud('Topos', 'fa fa-home', Topo::class)->setPermission('ROLE_SUPER_ADMIN');
+        yield MenuItem::linkToRoute('Topo Path Helper', 'fa fa-pencil-square-o', 'admin_topo_path_helper')->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToCrud('Photos', 'fa fa-camera-retro', Photos::class)->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToCrud('Kommentare', 'fa fa-comment', Comment::class)->setPermission('ROLE_MODERATOR');
         yield MenuItem::linkToCrud('Videos', 'fa fa-video', Videos::class);

@@ -1,0 +1,42 @@
+{% set url = 'https://www.munichclimbs.de/uploads/areas/' %}
+{% set marker = [] %}
+{% for area in getAreasInformation() %}
+    {% set popupBody = include('partials/_areaCardBody.html.twig', { area: area, ulClass: 'mt-2', showTravelTime: true }) %}
+    {% set areaName = '<div class="main-map-popup-card">' ~
+        '<div class="main-map-popup-image-wrap">' ~
+        '<picture><source srcset="' ~ url ~ area.image ~ '@1x.webp 1x, ' ~ url ~ area.image ~ '@2x.webp 2x, ' ~ url ~ area.image ~ '@3x.webp 3x" type="image/webp">' ~
+        '<img class="main-map-popup-image" src="' ~ url ~ area.image ~ '.webp" alt="Klettergebiet ' ~ area.name|e('html_attr') ~ '" loading="lazy" decoding="async">' ~
+        '</picture>' ~
+        '<div class="main-map-popup-header">' ~
+        '<a href="' ~ path('show_rocks', { slug: area.slug }) ~ '" class="main-map-popup-link  fw-normal">' ~ area.name|e('html') ~ '</a>' ~
+        '<button type="button" class="main-map-popup-close" onclick="this.closest(\'.leaflet-popup\').querySelector(\'.leaflet-popup-close-button\').click()" aria-label="Schließen"><span>&times;</span></button>' ~
+        '</div></div>' ~
+        '<div class="main-map-popup-body">' ~ popupBody ~ '</div></div>' %}
+    {% set areaImage = '' %}
+    {% set marker = marker|merge([{
+        'lat': area.lat,
+        'lng': area.lng,
+        'popup': areaName,
+        'image': areaImage,
+        'travelTimeMinutes': area.travelTimeMinutes|default(null)
+    }]) %}
+{% endfor %}
+
+<div 
+    class="main-map-container d-flex flex-column h-100"
+    data-controller="main-map" 
+    data-main-map-markers-value="{{ marker|json_encode|e('html_attr') }}"
+>
+    <div class="main-map-filters flex-shrink-0 py-2 px-3" data-main-map-target="filters">
+        <div class="main-map-filters-scroll">
+            <ul class="main-map-filters-list">
+                <li class="main-map-filters-label">Entfernung von München:</li>
+                <li><button type="button" class="main-map-filter-tab active" data-main-map-target="filterBtn" data-range="all" aria-pressed="true">Alle</button></li>
+                <li><button type="button" class="main-map-filter-tab" data-main-map-target="filterBtn" data-range="0-60" aria-pressed="false">&lt; 1 h</button></li>
+                <li><button type="button" class="main-map-filter-tab" data-main-map-target="filterBtn" data-range="60-90" aria-pressed="false">1 – 1,5 h</button></li>
+                <li><button type="button" class="main-map-filter-tab" data-main-map-target="filterBtn" data-range="120-9999" aria-pressed="false">> 2 h</button></li>
+            </ul>
+        </div>
+    </div>
+    <div class="flex-grow-1 min-h-0" style="min-height: 400px;" data-main-map-target="map"></div>
+</div>

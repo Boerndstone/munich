@@ -28,14 +28,8 @@ class Topo
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     private bool $withSector = false;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $svg = null;
-
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private int $number;
-
-    #[ORM\Column(nullable: true)]
-    private ?array $path = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $pathCollection = null;
@@ -96,18 +90,6 @@ class Topo
         return $this;
     }
 
-    public function getSvg(): ?string
-    {
-        return $this->svg;
-    }
-
-    public function setSvg(?string $svg): self
-    {
-        $this->svg = $svg;
-
-        return $this;
-    }
-
     public function getNumber(): ?int
     {
         return $this->number;
@@ -116,18 +98,6 @@ class Topo
     public function setNumber(int $number): self
     {
         $this->number = $number;
-
-        return $this;
-    }
-
-    public function getPath(): ?array
-    {
-        return $this->path;
-    }
-
-    public function setPath(?array $path): static
-    {
-        $this->path = $path;
 
         return $this;
     }

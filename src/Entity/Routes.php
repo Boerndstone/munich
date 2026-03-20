@@ -101,6 +101,15 @@ class Routes
     #[Groups(['route:read'])]
     private ?bool $rockQuality = null;
 
+    /**
+     * Climbing style(s), e.g. ["sport", "slab", "crack"]
+     *
+     * @var array<string>|null
+     */
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    #[Groups(['route:read'])]
+    private ?array $climbingStyle = null;
+
     public function __construct()
     {
         $this->climbedRoutes = new ArrayCollection();
@@ -367,6 +376,24 @@ class Routes
     public function setRockQuality(?bool $rockQuality): static
     {
         $this->rockQuality = $rockQuality;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string>|null
+     */
+    public function getClimbingStyle(): ?array
+    {
+        return $this->climbingStyle;
+    }
+
+    /**
+     * @param array<string>|null $climbingStyle
+     */
+    public function setClimbingStyle(?array $climbingStyle): static
+    {
+        $this->climbingStyle = $climbingStyle;
 
         return $this;
     }

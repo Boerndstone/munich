@@ -4,6 +4,8 @@ namespace App\Controller\Admin;
 
 use App\Entity\Rock;
 use App\Form\Type\JsonFieldType;
+use App\Util\SlugUtil;
+use App\Form\Type\RockTranslationType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -131,10 +133,10 @@ class RockCrudController extends AbstractCrudController
 
         yield Field::new('slug')
             ->setLabel('URL des Fels')
+            ->hideOnForm()
             ->hideOnIndex()
-            ->hideOnDetail()
             ->setColumns('col-12')
-            ->setHelp('Die URL darf keine Leerzeichen oder Umlaute beinhalten!');
+            ->setHelp('Wird automatisch aus dem Namen erzeugt (Umlaute → ae/oe/ue/ss, Leerzeichen → _).');
 
         yield AssociationField::new('area')
             ->setLabel('Gebiet')
@@ -157,26 +159,15 @@ class RockCrudController extends AbstractCrudController
             ->setHelp('Reihenfolge auf der Live Seite in der Überischtstabelle')
             ->setColumns('col-12');
 
-        yield TextareaField::new('description')
-            ->setLabel('Beschreibung')
-            ->hideOnIndex()
-            ->hideOnDetail()
-            ->setHelp('Beschreibung zum Fels.')
-            ->setColumns('col-12');
-
-        yield TextareaField::new('nature')
-            ->setLabel('Naturschutz')
+        yield CollectionField::new('translations')
+            ->setLabel('Übersetzungen (Beschreibung, Zustieg, Naturschutz, Pflanzen)')
+            ->setEntryType(RockTranslationType::class)
+            ->allowAdd()
+            ->allowDelete()
             ->hideOnIndex()
             ->hideOnDetail()
             ->setColumns('col-12')
-            ->setHelp('Angaben die für den Naturschutz wichtig sind.');
-
-        yield TextareaField::new('access')
-            ->setLabel('Zustieg')
-            ->hideOnIndex()
-            ->hideOnDetail()
-            ->setColumns('col-12')
-            ->setHelp('Beschreibung des Zustiegs zum Fels.');
+            ->setHelp('Sprachversionen für die Frontend-Anzeige. Bevorzugt gegenüber den Feldern oben, sobald eine Übersetzung für die aktuelle Sprache existiert. Später nur noch Übersetzungen verwenden.');
 
         yield BooleanField::new('train')
             ->setLabel('Anfahrt mit Zug möglich')
@@ -185,6 +176,12 @@ class RockCrudController extends AbstractCrudController
             ->setColumns('col-12')
             ->setHelp('Ist der Fels gut mit dem Zug erreicht.');
 
+        yield BooleanField::new('bike')
+            ->setLabel('Mit dem Fahrrad erreichbar')
+            ->hideOnIndex()
+            ->hideOnDetail()
+            ->setColumns('col-12')
+            ->setHelp('Ist der Fels gut mit dem Fahrrad erreichbar.');
 
         yield ChoiceField::new('zone')
             ->setLabel('Zone')
@@ -251,38 +248,18 @@ class RockCrudController extends AbstractCrudController
             ->setColumns('col-12')
             ->setHelp('Wie gut ist der Fels mit Kindern geeignet.');
 
-        yield ChoiceField::new('sunny')
+        yield BooleanField::new('sunny')
             ->setLabel('Sonnig')
-            ->renderAsNativeWidget()
-            ->setChoices([
-                'keine Sonne' => '1',
-                'teils Sonne' => '2',
-                'sonnig' => '3',
-            ])
             ->hideOnIndex()
-            ->hideOnDetail()
             ->setColumns('col-12');
 
-        yield ChoiceField::new('rain')
+        yield BooleanField::new('rain')
             ->setLabel('Regensicher')
-            ->renderAsNativeWidget()
-            ->setChoices([
-                'regensicher' => '1',
-                'kaum regensicher' => '2',
-                'nicht regensicher' => '3',
-            ])
             ->hideOnIndex()
-            ->hideOnDetail()
             ->setColumns('col-12');
 
         yield Field::new('image')
             ->setLabel('Bilder')
-            ->hideOnIndex()
-            ->hideOnDetail()
-            ->setColumns('col-12');
-
-        yield Field::new('header_image')
-            ->setLabel('Header Bild')
             ->hideOnIndex()
             ->hideOnDetail()
             ->setColumns('col-12');
@@ -314,6 +291,22 @@ class RockCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->hideOnDetail()
             ->setColumns('col-12');
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof Rock) {
+            $entityInstance->setSlug(SlugUtil::nameToSlug($entityInstance->getName()));
+        }
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof Rock) {
+            $entityInstance->setSlug(SlugUtil::nameToSlug($entityInstance->getName()));
+        }
+        parent::updateEntity($entityManager, $entityInstance);
     }
 
     #[Route('/admin/rock/{rockId}/routes/reorder', name: 'admin_rock_routes_reorder', methods: ['POST'])]

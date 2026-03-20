@@ -9,6 +9,7 @@
 // Theme variables
 :root {
   --theme-bg: #ffffff;
+  --theme-bg-opacity: rgba(255, 255, 255, 0.9);
   --theme-bg-lighter: #ffffff;
   --theme-text: #000000;
   --theme-text-vise-versa: #ffffff;
@@ -45,6 +46,7 @@
 
 [data-theme="dark"] {
   --theme-bg: #000000;
+  --theme-bg-opacity: rgba(0, 0, 0, 0.2);
   --theme-bg-lighter: #171717;
   --theme-text: #ffffff;
   --theme-text-vise-versa: #000000;
@@ -78,12 +80,6 @@
   --purple-bg: #A78BFA;
   --purple-text: #3730A3;
 }
-
-
-
-
-
-
 
 // Layout & components
 @import "~bootstrap/scss/root";
@@ -179,6 +175,17 @@ body, .navbar {
 .navbar {
   border-bottom: 1px solid var(--theme-border);
 }
+.nav-link {
+    font-size: 14px;
+}
+// Sidebar area toggle: arrow right when collapsed, down when expanded
+.nav-area-chevron {
+    transition: transform 0.2s ease;
+    display: inline-block;
+}
+.nav-link[aria-expanded="true"] .nav-area-chevron {
+    transform: rotate(90deg);
+}
 .card {
     border: 1px solid var(--theme-shadow);
 }
@@ -201,10 +208,14 @@ font-size: 0.875em;
     background-color: var(--theme-bg-lighter) !important;
     color: var(--theme-text-vise-versa) !important;
 }
-.list-group, .list-group-item, .list-group-item::before {
-    background-color: var(--theme-bg-lighter) !important;
+.list-group, .list-group-item, .list-group-item:hover {
     color: var(--theme-text) !important;
-    a {color: var(--theme-text) !important;}
+}
+.list-group-item.active, .nav-link.active
+{
+    background-color: black !important;
+    color: white !important;
+    border-radius: 5px;
 }
 .accordion-button:focus {
     box-shadow: none !important;
@@ -225,6 +236,10 @@ hr {
 .badge {
     background-color: var(--theme-text) !important;
     color: var(--theme-bg) !important;
+}
+.badge-opacity {
+    background-color: var(--theme-bg-opacity) !important;
+    color: var(--theme-text) !important;
 }
 h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-item.active, .list-unstyled, .text {
       color: var(--theme-text)!important;
@@ -279,9 +294,187 @@ h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-
       h6 {
           color: var(--theme-text)!important;
       }
-      span {
-          color: var(--theme-text)!important;
-      }
+}
+
+.leaflet-popup-content-wrapper {
+    padding: 0 !important;
+    box-shadow: none !important;
+}
+
+// Main map filters: tab-like look + horizontal scroll (same style as rock page scrollable tabs)
+.main-map-filters {
+  overflow: hidden;
+  background: var(--theme-bg);
+}
+.main-map-filters-scroll {
+  overflow: hidden;
+}
+.main-map-filters-list {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+.main-map-filters-label {
+  flex-shrink: 0;
+  font-size: 14px;
+  color: var(--theme-text);
+  white-space: nowrap;
+}
+.main-map-filter-tab {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 8px 0;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--theme-text);
+  text-decoration: none;
+  transition: border-color 0.15s ease;
+  &:hover {
+    color: var(--theme-text);
+  }
+  &.active {
+    border-bottom-color: var(--theme-text);
+  }
+}
+
+// Area map filters: same tab look + horizontal scroll as main map
+.area-map-filters {
+  overflow: hidden;
+  background: var(--theme-bg);
+}
+// Icon-only filter tabs: ensure icon displays and active state is visible
+.main-map-filter-tab-icon {
+  min-width: 2rem;
+  .child-friendly, .sun, .umbrella, .train, .bike {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+}
+
+.main-map-container .leaflet-popup-content {
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.main-map-container .leaflet-popup-close-button {
+  display: none;
+}
+
+.main-map-popup-card {
+  width: 250px;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+  box-shadow: none;
+  background: none;
+}
+
+// Text-only popups (e.g. train stations): no image overlay — avoid absolute header + overflow clipping
+.main-map-popup-card--text-only {
+  overflow: visible;
+  border-radius: 12px;
+}
+
+.main-map-popup-image-wrap {
+  position: relative;
+}
+
+.main-map-popup-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  z-index: 1;
+}
+
+.main-map-popup-header .main-map-popup-link {
+  display: inline-block;
+  max-width: calc(100% - 48px);
+  padding: 4px 8px;
+  background: var(--theme-bg-opacity, rgba(255, 255, 255, 0.9));
+  border-radius: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--theme-text, #000);
+  &:hover {
+    color: var(--theme-text, #000);
+    text-decoration: underline;
+  }
+}
+
+.main-map-popup-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px 12px 0 0;
+  object-fit: cover;
+  object-position: center;
+}
+
+.main-map-popup-close {
+  position: relative;
+  top: auto;
+  right: auto;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.75);
+  color: #333;
+  font-size: 1.25rem;
+  line-height: 32px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  transition: background 0.2s;
+  z-index: 1;
+  &:hover {
+    background: rgba(255, 255, 255, 0.9);
+  }
+  span {
+    display: block;
+    line-height: 1;
+  }
+}
+
+.main-map-popup-body {
+  padding: 12px 14px;
+}
+
+.main-map-popup-link {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--theme-text, #000);
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
 }
 .list-item-icon {
     width: 8px; 
@@ -321,6 +514,23 @@ h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-
     body, .navbar {
         background-color: var(--theme-bg) !important;
         color: var(--theme-text);
+    }
+    .modal-content, .modal-header, .modal-body, .modal-footer {
+        background-color: var(--theme-bg);
+        color: var(--theme-text);
+    }
+    .form-check-input:checked[type=checkbox] {
+        background-color: var(--theme-bg) !important;
+        border-color: var(--theme-text) !important;
+        background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27%3e%3cpath fill=%27none%27 stroke=%27%23fff%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%273%27 d=%27m6 10 3 3 6-6%27/%3e%3c/svg%3e') !important;
+    }
+    .list-group, .list-group-item, .list-group-item:hover {
+        color: var(--theme-text) !important;
+    }
+    .list-group-item.active, .nav-link.active
+    {
+        background-color: white !important;
+        color: black !important;
     }
    .navbar {
         border-bottom: 1px solid var(--theme-border);
@@ -422,9 +632,6 @@ h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-
           h6 {
               color: var(--theme-bg-vise-versa)!important;
           }
-          span {
-              color: var(--theme-bg-vise-versa)!important;
-          }
       }
       .list-item-icon {
           border: 4px solid var(--theme-text);
@@ -524,6 +731,10 @@ $success: var(--green-base);
     @extend .icon-content-size;
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2c-4 0-8 .5-8 4v9.5A3.5 3.5 0 0 0 7.5 19L6 20.5v.5h2.23l2-2H14l2 2h2v-.5L16.5 19a3.5 3.5 0 0 0 3.5-3.5V6c0-3.5-3.58-4-8-4M7.5 17A1.5 1.5 0 0 1 6 15.5A1.5 1.5 0 0 1 7.5 14A1.5 1.5 0 0 1 9 15.5A1.5 1.5 0 0 1 7.5 17m3.5-7H6V6h5zm2 0V6h5v4zm3.5 7a1.5 1.5 0 0 1-1.5-1.5a1.5 1.5 0 0 1 1.5-1.5a1.5 1.5 0 0 1 1.5 1.5a1.5 1.5 0 0 1-1.5 1.5" /></svg>');
 }
+.bike {
+    @extend .icon-content-size;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000000" d="M19 10c-.56 0-1.09.11-1.59.28L14.46 4.5H11V6h2.54l.88 1.72L12 13.13l-1.77-4.18c.27-.1.51-.37.51-.7c0-.41-.33-.75-.74-.75H8c-.42 0-.76.34-.76.75S7.58 9 8 9h.61l2.25 5.25h-.94C9.56 11.85 7.5 10 5 10c-2.76 0-5 2.24-5 5s2.24 5 5 5c2.5 0 4.56-1.85 4.92-4.25h2.58l2.79-6.32l.79 1.53A4.98 4.98 0 0 0 14 15c0 2.76 2.24 5 5 5s5-2.24 5-5s-2.24-5-5-5M5 18.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5c1.67 0 3.07 1.18 3.41 2.75H4v1.5h4.41A3.495 3.495 0 0 1 5 18.5m14 0c-1.93 0-3.5-1.57-3.5-3.5c0-1.08.5-2.03 1.27-2.67l1.8 3.52l1.32-.72l-1.79-3.5c.29-.07.59-.13.9-.13c1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5"/></svg>');
+}
 .trolley {
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="rgb(38,38,38,1)" d="M13 2v8h8a8 8 0 0 0-8-8m6.32 13.89A7.948 7.948 0 0 0 21 11H6.44L5.5 9H2v2h2.22s1.89 4.07 2.12 4.42C5.24 16 4.5 17.17 4.5 18.5A3.5 3.5 0 0 0 8 22c1.76 0 3.22-1.3 3.46-3h2.08c.24 1.7 1.7 3 3.46 3a3.5 3.5 0 0 0 3.5-3.5c0-1.04-.46-1.97-1.18-2.61M8 20a1.5 1.5 0 0 1-1.5-1.5A1.5 1.5 0 0 1 8 17a1.5 1.5 0 0 1 1.5 1.5A1.5 1.5 0 0 1 8 20m9 0a1.5 1.5 0 0 1-1.5-1.5A1.5 1.5 0 0 1 17 17a1.5 1.5 0 0 1 1.5 1.5A1.5 1.5 0 0 1 17 20" /></svg>');
 }
@@ -549,6 +760,12 @@ $success: var(--green-base);
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000000" d="M5.59 7.41L7 6l6 6l-6 6l-1.41-1.41L10.17 12zm6 0L13 6l6 6l-6 6l-1.41-1.41L16.17 12z" /></svg>');
     background-repeat: no-repeat;
 }  
+
+.single-chevron-right {
+    @extend .icon-content-size;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000000" d="M8.59 16.58L13.17 12L8.59 7.41L10 6l6 6l-6 6z"/></svg>');
+    background-repeat: no-repeat;
+}
 
 .chevron-left {
     @extend .icon-content-size;
@@ -595,9 +812,19 @@ $success: var(--green-base);
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000000" d="M3 13a9 9 0 0 0 9 9c0-5-4.03-9-9-9m9-7.5A2.5 2.5 0 0 1 14.5 8a2.5 2.5 0 0 1-2.5 2.5A2.5 2.5 0 0 1 9.5 8A2.5 2.5 0 0 1 12 5.5m-6.4 4.75a2.5 2.5 0 0 0 2.5 2.5c.53 0 1.02-.17 1.4-.44v.19A2.5 2.5 0 0 0 12 15a2.5 2.5 0 0 0 2.5-2.5v-.19c.38.27.87.44 1.4.44a2.5 2.5 0 0 0 2.5-2.5c0-1-.59-1.85-1.43-2.25c.84-.4 1.43-1.26 1.43-2.25a2.5 2.5 0 0 0-2.5-2.5c-.53 0-1.02.16-1.4.44V3.5A2.5 2.5 0 0 0 12 1a2.5 2.5 0 0 0-2.5 2.5v.19c-.38-.28-.87-.44-1.4-.44a2.5 2.5 0 0 0-2.5 2.5c0 .99.59 1.85 1.43 2.25c-.84.4-1.43 1.25-1.43 2.25M12 22a9 9 0 0 0 9-9c-5 0-9 4-9 9"/></svg>');
     background-repeat: no-repeat;
 }
+.rock-general-improvement {
+    @extend .icon-content-size;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000000" d="m14.1 9l.9.9L5.9 19H5v-.9zm3.6-6c-.2 0-.5.1-.7.3l-1.8 1.8l3.7 3.8L20.7 7c.4-.4.4-1 0-1.4l-2.3-2.3c-.2-.2-.5-.3-.7-.3m-3.6 3.2L3 17.2V21h3.8l11-11.1zM7 2v3h3v2H7v3H5V7H2V5h3V2z"/></svg>');
+    background-repeat: no-repeat;
+}
 .weather {
     @extend .icon-content-size;
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000000" d="M6 19a5 5 0 0 1-5-5a5 5 0 0 1 5-5c1-2.35 3.3-4 6-4c3.43 0 6.24 2.66 6.5 6.03L19 11a4 4 0 0 1 4 4a4 4 0 0 1-4 4zm13-6h-2v-1a5 5 0 0 0-5-5c-2.5 0-4.55 1.82-4.94 4.19C6.73 11.07 6.37 11 6 11a3 3 0 0 0-3 3a3 3 0 0 0 3 3h13a2 2 0 0 0 2-2a2 2 0 0 0-2-2" /></svg>');
+    background-repeat: no-repeat;
+}
+.top-100 {
+    @extend .icon-content-size;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><!-- Icon from Material Design Icons by Pictogrammers - https://github.com/Templarian/MaterialDesign/blob/master/LICENSE --><path fill="currentColor" d="M20 13.09V7c0-2.21-3.58-4-8-4S4 4.79 4 7v10c0 2.21 3.59 4 8 4c.46 0 .9 0 1.33-.06A6 6 0 0 1 13 19v-.05c-.32.05-.65.05-1 .05c-3.87 0-6-1.5-6-2v-2.23c1.61.78 3.72 1.23 6 1.23c.65 0 1.27-.04 1.88-.11A5.99 5.99 0 0 1 19 13c.34 0 .67.04 1 .09m-2-.64c-1.3.95-3.58 1.55-6 1.55s-4.7-.6-6-1.55V9.64c1.47.83 3.61 1.36 6 1.36s4.53-.53 6-1.36zM12 9C8.13 9 6 7.5 6 7s2.13-2 6-2s6 1.5 6 2s-2.13 2-6 2m10 11l-3 3l-3-3h2v-4h2v4z"/></svg>');
     background-repeat: no-repeat;
 }
 .chevron-up {
@@ -626,6 +853,12 @@ footer {
     footer {
         background-color: oklch(20.5% 0 0); 
     }
+    .magnifier {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5l-1.5 1.5l-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16A6.5 6.5 0 0 1 3 9.5A6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14S14 12 14 9.5S12 5 9.5 5"/></svg>');
+    }
+    .single-chevron-right {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="M8.59 16.58L13.17 12L8.59 7.41L10 6l6 6l-6 6z"/></svg>');
+    }
     .modal-info {
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="M11 7v2h2V7zm3 10v-2h-1v-4h-3v2h1v2h-1v2zm8-5c0 5.5-4.5 10-10 10S2 17.5 2 12S6.5 2 12 2s10 4.5 10 10m-2 0c0-4.42-3.58-8-8-8s-8 3.58-8 8s3.58 8 8 8s8-3.58 8-8"/></svg>');
     }
@@ -647,6 +880,12 @@ footer {
     .weather {
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="M6 19a5 5 0 0 1-5-5a5 5 0 0 1 5-5c1-2.35 3.3-4 6-4c3.43 0 6.24 2.66 6.5 6.03L19 11a4 4 0 0 1 4 4a4 4 0 0 1-4 4zm13-6h-2v-1a5 5 0 0 0-5-5c-2.5 0-4.55 1.82-4.94 4.19C6.73 11.07 6.37 11 6 11a3 3 0 0 0-3 3a3 3 0 0 0 3 3h13a2 2 0 0 0 2-2a2 2 0 0 0-2-2" /></svg>');
     }
+    .top-100 {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><!-- Icon from Material Design Icons by Pictogrammers - https://github.com/Templarian/MaterialDesign/blob/master/LICENSE --><path fill="%23000000" d="M20 13.09V7c0-2.21-3.58-4-8-4S4 4.79 4 7v10c0 2.21 3.59 4 8 4c.46 0 .9 0 1.33-.06A6 6 0 0 1 13 19v-.05c-.32.05-.65.05-1 .05c-3.87 0-6-1.5-6-2v-2.23c1.61.78 3.72 1.23 6 1.23c.65 0 1.27-.04 1.88-.11A5.99 5.99 0 0 1 19 13c.34 0 .67.04 1 .09m-2-.64c-1.3.95-3.58 1.55-6 1.55s-4.7-.6-6-1.55V9.64c1.47.83 3.61 1.36 6 1.36s4.53-.53 6-1.36zM12 9C8.13 9 6 7.5 6 7s2.13-2 6-2s6 1.5 6 2s-2.13 2-6 2m10 11l-3 3l-3-3h2v-4h2v4z"/></svg>');
+    }
+    [data-theme="dark"] .top-100 {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><!-- Icon from Material Design Icons by Pictogrammers - https://github.com/Templarian/MaterialDesign/blob/master/LICENSE --><path fill="%23ffffff" d="M20 13.09V7c0-2.21-3.58-4-8-4S4 4.79 4 7v10c0 2.21 3.59 4 8 4c.46 0 .9 0 1.33-.06A6 6 0 0 1 13 19v-.05c-.32.05-.65.05-1 .05c-3.87 0-6-1.5-6-2v-2.23c1.61.78 3.72 1.23 6 1.23c.65 0 1.27-.04 1.88-.11A5.99 5.99 0 0 1 19 13c.34 0 .67.04 1 .09m-2-.64c-1.3.95-3.58 1.55-6 1.55s-4.7-.6-6-1.55V9.64c1.47.83 3.61 1.36 6 1.36s4.53-.53 6-1.36zM12 9C8.13 9 6 7.5 6 7s2.13-2 6-2s6 1.5 6 2s-2.13 2-6 2m10 11l-3 3l-3-3h2v-4h2v4z"/></svg>');
+    }
     .chevron-right {
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="M5.59 7.41L7 6l6 6l-6 6l-1.41-1.41L10.17 12zm6 0L13 6l6 6l-6 6l-1.41-1.41L16.17 12z" /></svg>');
     }
@@ -664,6 +903,9 @@ footer {
     }
     .train {
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="M12 2c-4 0-8 .5-8 4v9.5A3.5 3.5 0 0 0 7.5 19L6 20.5v.5h2.23l2-2H14l2 2h2v-.5L16.5 19a3.5 3.5 0 0 0 3.5-3.5V6c0-3.5-3.58-4-8-4M7.5 17A1.5 1.5 0 0 1 6 15.5A1.5 1.5 0 0 1 7.5 14A1.5 1.5 0 0 1 9 15.5A1.5 1.5 0 0 1 7.5 17m3.5-7H6V6h5zm2 0V6h5v4zm3.5 7a1.5 1.5 0 0 1-1.5-1.5a1.5 1.5 0 0 1 1.5-1.5a1.5 1.5 0 0 1 1.5 1.5a1.5 1.5 0 0 1-1.5 1.5" /></svg>');
+    }
+    .bike {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="M19 10c-.56 0-1.09.11-1.59.28L14.46 4.5H11V6h2.54l.88 1.72L12 13.13l-1.77-4.18c.27-.1.51-.37.51-.7c0-.41-.33-.75-.74-.75H8c-.42 0-.76.34-.76.75S7.58 9 8 9h.61l2.25 5.25h-.94C9.56 11.85 7.5 10 5 10c-2.76 0-5 2.24-5 5s2.24 5 5 5c2.5 0 4.56-1.85 4.92-4.25h2.58l2.79-6.32l.79 1.53A4.98 4.98 0 0 0 14 15c0 2.76 2.24 5 5 5s5-2.24 5-5s-2.24-5-5-5M5 18.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5c1.67 0 3.07 1.18 3.41 2.75H4v1.5h4.41A3.495 3.495 0 0 1 5 18.5m14 0c-1.93 0-3.5-1.57-3.5-3.5c0-1.08.5-2.03 1.27-2.67l1.8 3.52l1.32-.72l-1.79-3.5c.29-.07.59-.13.9-.13c1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5"/></svg>');
     }
     .rock-general-info {
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="M11 7v2h2V7zm3 10v-2h-1v-4h-3v2h1v2h-1v2zm8-5c0 5.5-4.5 10-10 10S2 17.5 2 12S6.5 2 12 2s10 4.5 10 10m-2 0c0-4.42-3.58-8-8-8s-8 3.58-8 8s3.58 8 8 8s8-3.58 8-8"/></svg>');
@@ -688,6 +930,10 @@ footer {
     }
     .rock-general-flowers {
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="M3 13a9 9 0 0 0 9 9c0-5-4.03-9-9-9m9-7.5A2.5 2.5 0 0 1 14.5 8a2.5 2.5 0 0 1-2.5 2.5A2.5 2.5 0 0 1 9.5 8A2.5 2.5 0 0 1 12 5.5m-6.4 4.75a2.5 2.5 0 0 0 2.5 2.5c.53 0 1.02-.17 1.4-.44v.19A2.5 2.5 0 0 0 12 15a2.5 2.5 0 0 0 2.5-2.5v-.19c.38.27.87.44 1.4.44a2.5 2.5 0 0 0 2.5-2.5c0-1-.59-1.85-1.43-2.25c.84-.4 1.43-1.26 1.43-2.25a2.5 2.5 0 0 0-2.5-2.5c-.53 0-1.02.16-1.4.44V3.5A2.5 2.5 0 0 0 12 1a2.5 2.5 0 0 0-2.5 2.5v.19c-.38-.28-.87-.44-1.4-.44a2.5 2.5 0 0 0-2.5 2.5c0 .99.59 1.85 1.43 2.25c-.84.4-1.43 1.25-1.43 2.25M12 22a9 9 0 0 0 9-9c-5 0-9 4-9 9"/></svg>');
+    }
+    .rock-general-improvement {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="m14.1 9l.9.9L5.9 19H5v-.9zm3.6-6c-.2 0-.5.1-.7.3l-1.8 1.8l3.7 3.8L20.7 7c.4-.4.4-1 0-1.4l-2.3-2.3c-.2-.2-.5-.3-.7-.3m-3.6 3.2L3 17.2V21h3.8l11-11.1zM7 2v3h3v2H7v3H5V7H2V5h3V2z"/></svg>');
+        background-repeat: no-repeat;
     }
     .user {
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2M7.07 18.28c.43-.9 3.05-1.78 4.93-1.78s4.5.88 4.93 1.78A7.893 7.893 0 0 1 12 20c-1.86 0-3.57-.64-4.93-1.72m11.29-1.45c-1.43-1.74-4.9-2.33-6.36-2.33s-4.93.59-6.36 2.33A7.928 7.928 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8c0 1.82-.62 3.5-1.64 4.83M12 6c-1.94 0-3.5 1.56-3.5 3.5S10.06 13 12 13s3.5-1.56 3.5-3.5S13.94 6 12 6m0 5a1.5 1.5 0 0 1-1.5-1.5A1.5 1.5 0 0 1 12 8a1.5 1.5 0 0 1 1.5 1.5A1.5 1.5 0 0 1 12 11" /></svg>');
@@ -769,6 +1015,10 @@ footer {
     background-repeat: no-repeat;
     animation: grow-shrink 4s infinite;
     animation-timing-function: ease-in-out;
+}
+.multi-pitch {
+    @extend .icon-content-size;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M13 9v6h3l-4 4l-4-4h3V9H8l4-4l4 4zM4 2h16v2H4zm0 18h16v2H4z"/></svg>');
 }
 .trash {
     @extend .icon-content-size;
@@ -905,13 +1155,6 @@ a {
     width: 20px;
     height: 20px;
 }
-.list-group-item.active {
-    color: white;
-    background-color: $primary;
-    border-color: $primary;
-}
-
-
 .scroll-container::-webkit-scrollbar {
     height: 2px;
 }
@@ -920,6 +1163,30 @@ a {
 .nav-pills .show>.nav-link {
     background-color: rgb(7, 89, 133) !important;
     color: white;
+}
+
+.nav-tabs {
+    background-color:   oklch(92.3% 0.003 48.717);
+    border: none;
+    .nav-link.active {
+        background-color: var(--bs-white) !important;
+        color: var(--bs-black) !important;
+    }
+    .nav-link {
+        border: none;
+        margin: 0;
+    }
+}
+.tab-content {
+    .form-control:focus  {
+        box-shadow: none;
+    }
+    .form-control:focus-visible {
+        outline: none;
+    }
+}
+.list-group-item-action:hover {
+    background-color: #dee2e6;
 }
 .error {
     .message-box {
@@ -968,17 +1235,32 @@ a {
     }
 }
 
+/* Outer: no overflow clip — dropdowns in the overlay must paint outside the image box */
 .image-container {
     width: 100%;
-    max-height: 300px;
-    /* Adjust the maximum height as needed */
-    overflow: hidden;
+    position: relative;
+    z-index: 1020; /* above .sticky-filter (1000) and following main content */
+    overflow: visible;
 }
 
-.image-container img {
+/* Inner: clip only the header image to max height */
+.image-container-media {
+    max-height: 300px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.image-container img,
+.image-container-media img {
     width: 100%;
     height: auto;
     object-fit: contain;
+    display: block;
+}
+
+/* Popper can use strategy:fixed; keep menu above page content below the hero */
+.image-container .dropdown-menu {
+    z-index: 1035;
 }
 
 .lg-backdrop {
@@ -1039,6 +1321,21 @@ input[data-autocomplete-target="input"]:focus {
     }
 }
 
+// Rocks sticky filter: single row + horizontal scroll on small screens; wrap on md+ when space is tight
+.rocks-sticky-filter__switches {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.75rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: stable;
+
+    @include media-breakpoint-up(md) {
+        flex-wrap: wrap;
+        overflow-x: visible;
+    }
+}
+
 
 .inline-gallery-container {
     width: 100%;
@@ -1053,6 +1350,75 @@ input[data-autocomplete-target="input"]:focus {
     /* Adjust this value to move the legend more to the left */
     top: 10px;
     /* Adjust this value to move the legend vertically */
+}
+
+// Modals: ensure modal content appears above backdrop (all modals need higher z-index than backdrop)
+.modal.fade,
+.modal.show {
+  --bs-modal-zindex: 10550;
+  z-index: 10550 !important;
+}
+.modal-backdrop.fade,
+.modal-backdrop.show {
+  --bs-backdrop-zindex: 10545;
+  z-index: 10545 !important;
+}
+
+#searchModal input.form-control::placeholder {
+  font-size: 0.875rem !important;
+}
+
+#searchModal #searchTabs {
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-wrap: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+
+  .nav-item {
+    flex-shrink: 0;
+  }
+}
+
+/* Two-layer topo: background image + paths overlay (supports high-res images) */
+.topo-two-layer {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+
+    .topo-two-layer__bg {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        vertical-align: top;
+    }
+
+    .topo-two-layer__overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* Re-enable pointer events for interactive path elements (tooltips) */
+        .stroke-behavior,
+        .number-circle,
+        .number-text,
+        .tooltip-trigger {
+            pointer-events: auto;
+        }
+    }
 }
 
 .number-circle {
@@ -1070,8 +1436,9 @@ input[data-autocomplete-target="input"]:focus {
 }
 
 .end-dot {
-    r: 10px;
+    r: 9px;
     fill: white;
+    stroke: #000;
     stroke-width: 1px;
 }
 
@@ -1096,20 +1463,11 @@ input[data-autocomplete-target="input"]:focus {
         stroke-width: 5;
     }
     .end-dot {
-        r: 7px;
+        r: 8px;
     }
 }
 .dropdown-toggle::after {
     display: none;
-}
-
-.active-item, .list-group-item:hover {
-    background-color: rgba(7, 89, 133, 0.9);
-}
-
-.active-item a,
-.list-group-item:hover a {
-    text-decoration: underline;
 }
 
 #form-check-language {
@@ -1248,3 +1606,34 @@ input[data-autocomplete-target="input"]:focus {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
+// Theme toggle button (shadcn-style ghost icon button)
+.theme-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: none;
+    border-radius: 0.375rem;
+    background: transparent;
+    color: var(--theme-text);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    outline: none;
+}
+.theme-toggle-btn:hover {
+    background-color: oklch(0 0 0 / 0.06);
+    color: var(--theme-text);
+}
+[data-theme="dark"] .theme-toggle-btn:hover {
+    background-color: var(--theme-bg-lighter);
+}
+.theme-toggle-btn:focus-visible {
+    box-shadow: 0 0 0 3px var(--theme-primary);
+}
+.theme-toggle-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    pointer-events: none;
+}

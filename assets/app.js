@@ -9,5 +9,8 @@
 import "./styles/app.css";
 import "./styles/global.scss";
 
+// Bootstrap JS (offcanvas, collapse, etc.) – required for data-bs-toggle on every page
+import "bootstrap";
+
 // start the Stimulus application
 import "./bootstrap";

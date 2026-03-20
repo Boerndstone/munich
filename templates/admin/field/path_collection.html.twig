@@ -1,5 +1,8 @@
-{# filepath: templates/admin/field/path_collection.html.twig #}
-{% set formatted_value = value|replace({'], [': '],\n['}) %}
-<pre>
-    {{ formatted_value|e('html') }}
-</pre>
+{# Display path collection: format PHP array literal for readability on detail view #}
+{% set formatted_value = value|default('')|replace({'], [': '],\n['}) %}
+{% if formatted_value is not empty %}
+<pre class="mb-0" style="max-height: 20em; overflow: auto; font-size: 0.85rem;">{{ formatted_value|e('html') }}</pre>
+<p class="text-muted small mt-1 mb-0">Tourenpfade (PHP oder JSON). Bearbeiten über „Bearbeiten“ oder im <a href="{{ path('admin_topo_path_helper') }}" target="_blank" rel="noopener">Topo Path Helper</a>.</p>
+{% else %}
+<span class="text-muted">—</span>
+{% endif %}

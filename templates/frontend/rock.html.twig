@@ -41,36 +41,36 @@
 {% endblock %}
 
 {% block structured_data %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Place",
-  "name": "{{ slug|custom_replace }}",
-  "description": "{{ (description|default(''))|striptags }}",
-  "url": "https://munichclimbs.de/Kletterfels/{{ slug }}",
-  {% if rockLat is not empty and rockLng is not empty %}
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": {{ rockLat }},
-    "longitude": {{ rockLng }}
-  },
-  {% endif %}
-  "address": {
-    "@type": "PostalAddress",
-    "addressRegion": "{{ areaName }}",
-    "addressCountry": "DE"
-  },
-  "image": "{% if rockPreviewImage is not empty and isImageAccessible(rockPreviewImage, 'rock') %}{{ getSocialMediaImageUrl(rockPreviewImage, 'rock') }}{% endif %}",
-  "mainEntity": {
-    "@type": "SportsActivityLocation",
-    "name": "Kletterfels {{ slug|custom_replace }}",
-    "description": "Klettergebiet in {{ areaName }} mit {% for route in routes %}{{ route.routeName }}{% if loop.last == false %}, {% else %}{% endif %}{% endfor %}",
-    "sport": "Klettern",
-    "numberOfRoutes": {{ routes|length }},
-    "areaServed": "{{ areaName }}"
-  }
-}
-</script>
+	<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "Place",
+			"name": "{{ slug|custom_replace }}",
+			"description": "{{ (description|default(''))|striptags }}",
+			"url": "https://munichclimbs.de/Kletterfels/{{ slug }}",
+			{% if rockLat is not empty and rockLng is not empty %}
+				"geo": {
+					"@type": "GeoCoordinates",
+					"latitude": {{ rockLat }},
+					"longitude": {{ rockLng }}
+				},
+			{% endif %}
+			"address": {
+				"@type": "PostalAddress",
+				"addressRegion": "{{ areaName }}",
+				"addressCountry": "DE"
+			},
+			"image": "{% if rockPreviewImage is not empty and isImageAccessible(rockPreviewImage, 'rock') %}{{ getSocialMediaImageUrl(rockPreviewImage, 'rock') }}{% endif %}",
+			"mainEntity": {
+				"@type": "SportsActivityLocation",
+				"name": "Kletterfels {{ slug|custom_replace }}",
+				"description": "Klettergebiet in {{ areaName }} mit {% for route in routes %}{{ route.routeName }}{% if loop.last == false %}, {% else %}{% endif %}{% endfor %}",
+				"sport": "Klettern",
+				"numberOfRoutes": {{ routes|length }},
+				"areaServed": "{{ areaName }}"
+			}
+		}
+	</script>
 {% endblock %}
 
 {% block body %}

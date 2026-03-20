@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
@@ -116,10 +117,10 @@ class TopoCrudController extends AbstractCrudController
             ->setColumns('col-12')
             ->setHelp('Entspricht der Topo-Id bei den Touren (Route → Topo ID).');
 
-        yield Field::new('withSector')
+        yield BooleanField::new('withSector')
             ->setLabel('Mit Sektoren')
             ->setColumns('col-12')
-            ->setTemplatePath('admin/field/votes.html.twig');
+            ->renderAsSwitch();
 
         yield TextareaField::new('pathCollection')
             ->setLabel('Tourenpfade (PHP oder JSON)')

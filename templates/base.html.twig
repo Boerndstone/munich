@@ -36,6 +36,8 @@
 	<body id="body" {% block body_attributes %} {% endblock %} class="{% block bodyclass %}{% endblock %}" data-controller="search-modal" data-search-modal-search-url-value="{{ path('search_autocomplete') }}">
 		<div data-controller="scroll-progress" class="bg-theme fixed-top" style="height: 3px; z-index: 10000;"></div>
 
+		<a href="#main-content" class="visually-hidden-focusable position-fixed top-0 start-0 m-2 btn btn-sm btn-primary" style="z-index: 1080;">{{ 'skip_to_content'|trans({}, 'messages') }}</a>
+
 		{% block body %}{% endblock %}
 
 		{% include 'partials/_footer.html.twig' with {'areas': getAreas()} %}
@@ -44,8 +46,8 @@
 
 		<div {{ stimulus_controller('cookie-consent') }}></div>
 
-		<a href="#body" data-controller="scrolltop" data-action="scroll@window->scrolltop#scrollFunction" data-scrolltop-target="top" class="btn btn-outline-secondary btn-sm btn-to-top">
-			<div class="chevron-up "></div>
+		<a href="#body" data-controller="scrolltop" data-action="scroll@window->scrolltop#scrollFunction" data-scrolltop-target="top" class="btn btn-outline-secondary btn-sm btn-to-top" aria-label="{{ 'scroll_to_top'|trans({}, 'messages') }}">
+			<div class="chevron-up" aria-hidden="true"></div>
 		</a>
 	</body>
 </html>

@@ -27,10 +27,10 @@
     data-controller="main-map" 
     data-main-map-markers-value="{{ marker|json_encode|e('html_attr') }}"
 >
-    <div class="main-map-filters flex-shrink-0 py-2 px-3" data-main-map-target="filters">
+    <div class="main-map-filters flex-shrink-0 py-2 px-3" data-main-map-target="filters" role="group" aria-labelledby="main-map-filter-legend">
         <div class="main-map-filters-scroll">
             <ul class="main-map-filters-list">
-                <li class="main-map-filters-label">Entfernung von München:</li>
+                <li id="main-map-filter-legend" class="main-map-filters-label">Entfernung von München:</li>
                 <li><button type="button" class="main-map-filter-tab active" data-main-map-target="filterBtn" data-range="all" aria-pressed="true">Alle</button></li>
                 <li><button type="button" class="main-map-filter-tab" data-main-map-target="filterBtn" data-range="0-60" aria-pressed="false">&lt; 1 h</button></li>
                 <li><button type="button" class="main-map-filter-tab" data-main-map-target="filterBtn" data-range="60-90" aria-pressed="false">1 – 1,5 h</button></li>
@@ -38,5 +38,5 @@
             </ul>
         </div>
     </div>
-    <div class="flex-grow-1 min-h-0" style="min-height: 400px;" data-main-map-target="map"></div>
+    <div class="flex-grow-1 min-h-0" style="min-height: 400px;" data-main-map-target="map" role="region" aria-label="{{ 'index.map_region'|trans({}, 'messages') }}"></div>
 </div>

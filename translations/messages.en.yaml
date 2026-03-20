@@ -1,4 +1,12 @@
 # Navigation
+skip_to_content: "Skip to main content"
+close: "Close"
+close_navigation: "Close navigation menu"
+scroll_to_top: "Scroll to top"
+index.map_open: "Show climbing areas on map"
+index.map_region: "Interactive map of climbing areas"
+index.areas_region_label: "Overview of all climbing areas"
+index.sidebar_label: "News, new routes and comments"
 rock: "Rock"
 search: "Search for rocks/routes"
 copyright: "All rights reserved."

@@ -1,4 +1,12 @@
 # Navigation
+skip_to_content: "Zum Inhalt springen"
+close: "Schließen"
+close_navigation: "Navigationsmenü schließen"
+scroll_to_top: "Nach oben scrollen"
+index.map_open: "Klettergebiete auf Karte anzeigen"
+index.map_region: "Interaktive Karte der Klettergebiete"
+index.areas_region_label: "Übersicht aller Klettergebiete"
+index.sidebar_label: "Aktuelles, neue Routen und Kommentare"
 rock: "Fels"
 search: "Suche nach Felsen/Routen"
 copyright: "Alle Rechte vorbehalten."

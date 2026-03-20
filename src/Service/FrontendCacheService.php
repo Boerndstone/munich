@@ -94,7 +94,7 @@ class FrontendCacheService
      */
     public function getRocksForArea(string $areaSlug): array
     {
-        $cacheKey = 'area_rocks_' . $areaSlug;
+        $cacheKey = 'area_rocks_v2_' . $areaSlug;
         
         return $this->cache->get($cacheKey, function (ItemInterface $item) use ($areaSlug): array {
             $item->expiresAfter(self::AREA_ROCKS_TTL);

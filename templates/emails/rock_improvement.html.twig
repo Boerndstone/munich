@@ -1,0 +1,50 @@
+{% extends 'emails/emailBase.html.twig' %}
+
+{% block content %}
+
+	<row>
+		<columns>
+			<spacer size="20"></spacer>
+			<h1>Aktualisierung für Fels</h1>
+			<p>
+				<strong>Fels:</strong> {{ rockName }}
+			</p>
+		</columns>
+	</row>
+	<row>
+		<columns>
+			<p>
+				Von: <strong>{{ name }}</strong>
+			</p>
+		</columns>
+	</row>
+	<row>
+		<columns>
+			<p>
+				<strong>Routename:</strong> {{ routeName }}
+			</p>
+			{% if grade is not empty %}
+			<p>
+				<strong>Schwierigkeitsgrad:</strong> {{ grade }}
+			</p>
+			{% endif %}
+			{% if firstAscent is not empty %}
+			<p>
+				<strong>Erstbegeher:</strong> {{ firstAscent }}
+			</p>
+			{% endif %}
+		</columns>
+	</row>
+	{% if comment is not empty %}
+	<row>
+		<columns>
+			<p>
+				<strong>Anmerkungen:</strong><br/>
+				{{ comment }}
+			</p>
+			<spacer size="20"></spacer>
+		</columns>
+	</row>
+	{% endif %}
+
+{% endblock %}

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topo Path Helper</title>
+    <style>
+        :root {
+            --bg: #1a1a1a;
+            --surface: #2d2d2d;
+            --border: #444;
+            --text: #e0e0e0;
+            --accent: #0d6efd;
+            --success: #198754;
+        }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 24px; line-height: 1.5; }
+        h1 { font-size: 1.25rem; margin: 0 0 8px; }
+        .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 24px; }
+        section { background: var(--surface); border-radius: 8px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); }
+        label { display: block; font-weight: 500; margin-bottom: 4px; font-size: 0.9rem; }
+        textarea { width: 100%; min-height: 120px; padding: 12px; border-radius: 6px; border: 1px solid var(--border); background: #1a1a1a; color: var(--text); font-family: 'Monaco', 'Consolas', monospace; font-size: 13px; resize: vertical; }
+        textarea:focus { outline: none; border-color: var(--accent); }
+        button { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; cursor: pointer; }
+        button:hover { filter: brightness(1.1); }
+        button.secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+        .row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+        .path-card { background: #1a1a1a; border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 12px; }
+        .path-card h4 { margin: 0 0 8px; font-size: 0.85rem; color: #aaa; }
+        .path-d { font-family: monospace; font-size: 11px; word-break: break-all; color: #9cdcfe; margin-bottom: 10px; }
+        .path-opts { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+        .path-opts label { display: inline-flex; align-items: center; gap: 6px; margin: 0; font-weight: normal; }
+        .path-opts input[type="checkbox"] { width: 18px; height: 18px; }
+        .path-opts select { padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+        .color-swatch { width: 24px; height: 24px; border-radius: 4px; border: 2px solid var(--border); cursor: pointer; }
+        input[type="color"] { width: 32px; height: 28px; padding: 2px; border: none; border-radius: 4px; cursor: pointer; background: transparent; }
+        .output-wrap { position: relative; }
+        .copy-btn { position: absolute; top: 8px; right: 8px; padding: 6px 12px; font-size: 12px; }
+        .toast { position: fixed; bottom: 24px; right: 24px; background: var(--success); color: white; padding: 12px 20px; border-radius: 6px; font-weight: 500; opacity: 0; transform: translateY(10px); transition: 0.2s; z-index: 1000; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .empty-state { color: #666; padding: 24px; text-align: center; }
+    </style>
+</head>
+<body>
+    <h1>Topo Path Helper</h1>
+    <p class="subtitle">Paste SVG paths from <a href="https://editor.method.ac/" target="_blank" rel="noopener">Method Draw</a> → configure options → copy PHP output</p>
+
+    <section>
+        <label>1. Paste SVG paths (raw HTML from Method Draw)</label>
+        <textarea id="input" placeholder='<path id="svg_2" d="m236,774c6,-209 30,-394..." stroke="#000" fill="#fff"/>
+<path id="svg_3" d="m539,684c-3,-78 6,-208..." stroke="#000" fill="#fff"/>'></textarea>
+        <div class="row" style="margin-top: 12px;">
+            <button onclick="parsePaths()">Parse paths</button>
+        </div>
+    </section>
+
+    <section>
+        <label>2. Configure each path</label>
+        <div id="paths"></div>
+        <div id="emptyState" class="empty-state">Parse paths first.</div>
+    </section>
+
+    <section>
+        <label>3. SVG settings (for SVG output)</label>
+        <div class="row" style="gap: 16px; margin-bottom: 0;">
+            <div>
+                <label style="margin-bottom: 4px;">ViewBox width</label>
+                <input type="number" id="svgWidth" value="1024" min="1" style="width: 100px; padding: 8px; border-radius: 4px; border: 1px solid var(--border); background: #1a1a1a; color: var(--text);">
+            </div>
+            <div>
+                <label style="margin-bottom: 4px;">ViewBox height</label>
+                <input type="number" id="svgHeight" value="820" min="1" style="width: 100px; padding: 8px; border-radius: 4px; border: 1px solid var(--border); background: #1a1a1a; color: var(--text);">
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+                <label style="margin-bottom: 4px;">Image URL</label>
+                <input type="text" id="svgImageUrl" placeholder="https://www.munichclimbs.de/build/images/topos/..." style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border); background: #1a1a1a; color: var(--text);">
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <label>4. PHP output (paste into your topo file)</label>
+        <div class="output-wrap">
+            <textarea id="output" readonly placeholder="Generate output after configuring paths."></textarea>
+            <button class="copy-btn secondary" onclick="copyOutput()">Copy</button>
+        </div>
+        <div class="row" style="margin-top: 12px;">
+            <button onclick="generateOutput()">Generate PHP</button>
+        </div>
+    </section>
+
+    <section>
+        <label>5. SVG output (full SVG with paths, copy and paste)</label>
+        <div class="output-wrap">
+            <textarea id="svgOutput" readonly placeholder="Generate SVG after configuring paths." style="min-height: 200px;"></textarea>
+            <button class="copy-btn secondary" onclick="copySvgOutput()">Copy SVG</button>
+        </div>
+        <div class="row" style="margin-top: 12px;">
+            <button onclick="generateSvgOutput()">Generate SVG</button>
+        </div>
+    </section>
+
+    <div id="toast" class="toast">Copied to clipboard!</div>
+
+    <script>
+        const COLOR_PRESETS = {
+            'Red (default)': '#E42522',
+            'Green': '#15803d',
+            'Amber': '#a16207',
+            'Black': '#000000',
+        };
+
+        let paths = [];
+
+        function parsePaths() {
+            const html = document.getElementById('input').value;
+            const pattern = /<path[^>]*\sd="([^"]*)"/g;
+            const dValues = [];
+            let m;
+            while ((m = pattern.exec(html)) !== null) {
+                dValues.push(m[1]);
+            }
+
+            if (dValues.length === 0) {
+                paths = [];
+                document.getElementById('paths').innerHTML = '';
+                document.getElementById('emptyState').textContent = 'No paths found. Paste SVG path elements with a "d" attribute.';
+                document.getElementById('emptyState').style.display = 'block';
+                return;
+            }
+
+            paths = dValues.map(d => ({
+                d,
+                color: '#E42522',
+                dashed: false,
+                dot: false,
+            }));
+
+            renderPaths();
+            document.getElementById('emptyState').style.display = 'none';
+        }
+
+        function renderPaths() {
+            const container = document.getElementById('paths');
+            container.innerHTML = paths.map((p, i) => `
+                <div class="path-card" data-index="${i}">
+                    <h4>Path ${i + 1}</h4>
+                    <div class="path-d">${escapeHtml(p.d)}</div>
+                    <div class="path-opts">
+                        <label>
+                            Color:
+                            <select onchange="updatePath(${i}, 'color', this.value)">
+                                ${Object.entries(COLOR_PRESETS).map(([name, hex]) =>
+                                    `<option value="${hex}" ${p.color === hex ? 'selected' : ''}>${name}</option>`
+                                ).join('')}
+                            </select>
+                        </label>
+                        <label>
+                            <input type="color" value="${p.color}" onchange="updatePath(${i}, 'color', this.value)" title="Custom color">
+                        </label>
+                        <label>
+                            <input type="checkbox" ${p.dashed ? 'checked' : ''} onchange="updatePath(${i}, 'dashed', this.checked)">
+                            Dashed
+                        </label>
+                        <label>
+                            <input type="checkbox" ${p.dot ? 'checked' : ''} onchange="updatePath(${i}, 'dot', this.checked)">
+                            Dot (anker)
+                        </label>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updatePath(index, key, value) {
+            if (paths[index]) {
+                paths[index][key] = value;
+                if (key === 'color') {
+                    const card = document.querySelector(`[data-index="${index}"]`);
+                    if (card) {
+                        const colorInput = card.querySelector('input[type="color"]');
+                        if (colorInput) colorInput.value = value;
+                        const sel = card.querySelector('select');
+                        if (sel) {
+                            const match = Object.values(COLOR_PRESETS).find(v => v.toLowerCase() === value.toLowerCase());
+                            sel.value = match || value;
+                        }
+                    }
+                }
+            }
+        }
+
+        function calculateEndpoint(d) {
+            const commands = d.split(/(?=[a-zA-Z])/).filter(Boolean);
+            let currentX = 0, currentY = 0;
+            let endX = 0, endY = 0;
+
+            for (const cmd of commands) {
+                const type = cmd[0];
+                const rest = cmd.slice(1).trim();
+                const values = rest ? rest.split(/[\s,]+/).map(parseFloat) : [];
+
+                switch (type) {
+                    case 'M':
+                    case 'm':
+                        currentX = values[0]; currentY = values[1];
+                        break;
+                    case 'L':
+                    case 'l':
+                        currentX += values[0]; currentY += values[1];
+                        break;
+                    case 'C':
+                    case 'c':
+                        currentX += values[4]; currentY += values[5];
+                        break;
+                    case 'S':
+                    case 's':
+                        currentX += values[2]; currentY += values[3];
+                        break;
+                    case 'Q':
+                    case 'q':
+                        currentX += values[2]; currentY += values[3];
+                        break;
+                    case 'T':
+                    case 't':
+                        currentX += values[0]; currentY += values[1];
+                        break;
+                    case 'A':
+                    case 'a':
+                        currentX += values[5]; currentY += values[6];
+                        break;
+                    case 'H':
+                    case 'h':
+                        currentX += values[0];
+                        break;
+                    case 'V':
+                    case 'v':
+                        currentY += values[0];
+                        break;
+                }
+                endX = currentX;
+                endY = currentY;
+            }
+            return [endX, endY];
+        }
+
+        function generateSvgOutput() {
+            const w = document.getElementById('svgWidth').value || 1024;
+            const h = document.getElementById('svgHeight').value || 820;
+            const imgUrl = document.getElementById('svgImageUrl').value || '';
+
+            const parts = [];
+            parts.push(`<div style="width: ${w}px; height: ${h}px;">`);
+            parts.push(`    <svg height="100%" width="100%" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="img-fluid">`);
+            if (imgUrl) {
+                parts.push(`        <image width="${w}" height="${h}" xlink:href="${escapeHtml(imgUrl)}" x="0" y="0"></image>`);
+            }
+            parts.push(`        <defs>`);
+            parts.push(`            <marker id="dot" markerWidth="10" markerHeight="10" refX="5" refY="5" markerUnits="strokeWidth">`);
+            parts.push(`                <circle cx="5" cy="5" r="3" fill="white"/>`);
+            parts.push(`            </marker>`);
+            parts.push(`        </defs>`);
+
+            paths.forEach((path, i) => {
+                const d = path.d;
+                const id = i + 1;
+                const color = path.color || '#E42522';
+                const dashed = path.dashed;
+                const dot = path.dot;
+
+                const m = d.match(/m([\d.]+),([\d.]+)/i);
+                if (!m) return;
+
+                const startX = m[1];
+                const startY = m[2];
+                const startYMinusOne = parseFloat(startY) - 1;
+
+                // Border path
+                if (dashed) {
+                    parts.push(`        <path id="border_${id}" d="${escapeHtml(d)}" stroke-width="4" stroke="#ffffff" fill="none" class="route-path-border dashed"></path>`);
+                } else {
+                    parts.push(`        <path id="border_${id}" d="${escapeHtml(d)}" stroke-width="4" stroke="#000000" fill="none" class="route-path-border"></path>`);
+                }
+
+                // Main path
+                // No path marker when dot: we draw the explicit end-dot circle instead (avoids white ring)
+                const markerAttr = '';
+                parts.push(`        <path id="svg_${id}" d="${escapeHtml(d)}" stroke-width="3" stroke="${color}"${markerAttr} fill="none" class="stroke-behavior"></path>`);
+
+                // Circle and text
+                const strokeColor = dashed ? '#ffffff' : '#000';
+                const circleClass = dashed ? 'number-circle' : 'number-circle tooltip-trigger';
+                parts.push(`        <circle cx="${startX}" cy="${startYMinusOne}" r="15" fill="${color}" stroke="${strokeColor}" stroke-width="1" class="${circleClass}" data-path-id="${id}"></circle>`);
+                parts.push(`        <text x="${startX}" y="${startY}" fill="#fff" class="number-text tooltip-trigger" data-path-id="${id}">${id}</text>`);
+
+                if (dot) {
+                    const [endX, endY] = calculateEndpoint(d);
+                    parts.push(`        <circle cx="${endX}" cy="${endY}" r="7" fill="#fff" class="end-dot"></circle>`);
+                }
+            });
+
+            parts.push(`    </svg>`);
+            parts.push(`</div>`);
+
+            document.getElementById('svgOutput').value = parts.join('\n');
+        }
+
+        function copySvgOutput() {
+            const el = document.getElementById('svgOutput');
+            el.select();
+            el.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(el.value).then(() => {
+                const t = document.getElementById('toast');
+                t.textContent = 'SVG copied to clipboard!';
+                t.classList.add('show');
+                setTimeout(() => t.classList.remove('show'), 2000);
+            });
+        }
+
+        function generateOutput() {
+            const lines = paths.map(p => {
+                const parts = [`'d' => '${p.d.replace(/'/g, "\\'")}'`];
+                if (p.color && p.color !== '#E42522') parts.push(`'color' => '${p.color}'`);
+                if (p.dashed) parts.push(`'dashed' => true`);
+                if (p.dot) parts.push(`'dot' => true`);
+                return `                [${parts.join(', ')}]`;
+            });
+            const output = `\$paths = [\n${lines.join(',\n')}\n            ];`;
+            document.getElementById('output').value = output;
+        }
+
+        function copyOutput() {
+            const el = document.getElementById('output');
+            el.select();
+            el.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(el.value).then(() => {
+                const t = document.getElementById('toast');
+                t.textContent = 'Copied to clipboard!';
+                t.classList.add('show');
+                setTimeout(() => t.classList.remove('show'), 2000);
+            });
+        }
+
+        function escapeHtml(s) {
+            const div = document.createElement('div');
+            div.textContent = s;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

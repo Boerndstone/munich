@@ -336,7 +336,20 @@ class RoutesRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findByGrades(array $gradeRanges, ?string $areaSlug = null): array
+    public function countByGrades(array $gradeRanges, ?string $areaSlug = null): int
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->select('COUNT(r.id)')
+            ->leftJoin('r.rock', 'rock')
+            ->leftJoin('r.area', 'area')
+            ->where('(area.online = 1 OR rock.online = 1)');
+
+        $this->applyGradeConditions($qb, $gradeRanges, $areaSlug);
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function findByGrades(array $gradeRanges, ?string $areaSlug = null, ?int $limit = null, int $offset = 0): array
     {
         $qb = $this->createQueryBuilder('r')
             ->leftJoin('r.rock', 'rock')
@@ -344,7 +357,20 @@ class RoutesRepository extends ServiceEntityRepository
             ->addSelect('rock', 'area')
             ->where('(area.online = 1 OR rock.online = 1)');
 
-        // Build grade conditions based on selected ranges using numerical values
+        $this->applyGradeConditions($qb, $gradeRanges, $areaSlug);
+
+        $qb = $qb->orderBy('r.name', 'ASC');
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
+        }
+        if ($offset > 0) {
+            $qb->setFirstResult($offset);
+        }
+        return $qb->getQuery()->getResult();
+    }
+
+    private function applyGradeConditions($qb, array $gradeRanges, ?string $areaSlug): void
+    {
         $gradeConditions = [];
         foreach ($gradeRanges as $range) {
             $rangeValues = $this->getNumericalRangeForGrade($range);
@@ -359,15 +385,10 @@ class RoutesRepository extends ServiceEntityRepository
             $qb->andWhere('(' . implode(' OR ', $gradeConditions) . ')');
         }
 
-        // Add area filter if specified
         if (!empty($areaSlug)) {
             $qb->andWhere('area.slug = :areaSlug')
                ->setParameter('areaSlug', $areaSlug);
         }
-
-        return $qb->orderBy('r.name', 'ASC')
-            ->getQuery()
-            ->getResult();
     }
 
     private function getNumericalRangeForGrade(string $range): array
@@ -484,6 +505,7 @@ class RoutesRepository extends ServiceEntityRepository
                 'r.rating',
                 'r.protection',
                 'r.rockQuality',
+                'r.climbingStyle',
                 'rock.name AS rockName',
                 'rock.slug AS rockSlug',
                 'area.slug AS areaSlug'

@@ -41,85 +41,29 @@
 			<section>
 				<div class="py-3 mb-3 d-flex align-items-center justify-content-between">
 					<h1 class="h2 mb-0 fw-medium">Klettergebiete um München</h1>
-					{% include 'partials/_collapseMap.html.twig' with { collapseId: 'collapseMap', ariaControls: 'collapseMap' } %}
+					{% include 'partials/_collapseMap.html.twig' with { modalId: 'modalMap' } %}
 				</div>
-			<div class="collapse mt-3" id="collapseMap">
-				<div class="z-10 mb-3">
-					{{ include('pageParts/mainMap.html.twig') }}
+				<div class="modal fade" id="modalMap" tabindex="-1" aria-labelledby="modalMapLabel" aria-hidden="true">
+					<div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
+						<div class="modal-content h-100 d-flex flex-column">
+							<div class="modal-header py-3 flex-shrink-0">
+								<h2 class="modal-title h5 mb-0" id="modalMapLabel">Klettergebiete um München</h2>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+							</div>
+							<div class="modal-body p-0 flex-grow-1 min-h-0 d-flex flex-column">
+								<div class="z-10 flex-grow-1 min-h-0 h-100">
+									{{ include('partials/_mainMap.html.twig') }}
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
-			</div>
 				<div class="row">
 					<div class="col-md-8">
 						<div class="row">
 							{% for area in areasData %}
 								<div class="col-12">
-									<a class="d-block" href="{{ path('show_rocks', { slug: area.slug } ) }}" title="Klettergebiet {{ area.name }}">
-										<div class="card mb-4 p-0 overflow-hidden">
-											<div class="row g-0">
-												<div class="col-md-6">
-													{% set url = 'https://www.munichclimbs.de/uploads/areas/' %}
-													{% include 'partials/_lazy-load-images.html.twig' with {
-														'area': area,
-														'media': {
-															'(min-width: 1200px)': url ~ area.image,
-															'(min-width: 800px)': url ~ area.image,
-														},
-													} %}
-												</div>
-												<div class="col-md-6">
-													<div class="card-body p-3">
-														<h2 class="h5 card-title mb-0">
-															{{ area.name }}
-														</h2>
-														<hr class="my-2"/>
-														<ul class="list-unstyled mb-0">
-															<li class="mb-2">Felsen
-																<span class="badge ms-2">{{ area.rocks }}</span>
-															</li>
-															<li>Touren
-																<span class="badge ms-2">{{ area.routes }}</span>
-															</li>
-														</ul>
-														<hr class="my-2"/>
-														<div class="d-flex justify-content-between">
-															<div class="d-flex flex-column">
-																<div class="text-center px-2 py-1 small text-white bg-green" style="font-size: .75rem;">1 - 5</div>
-																<div class="text-center text-white bg-gray-400 mt-1" style="font-size: .75rem;">
-																	<div class="px-2 py-1 bg-green">
-																		{{ area.amountEasy }}
-																	</div>
-																</div>
-															</div>
-															<div class="d-flex flex-column">
-																<div class="text-center px-2 py-1 small text-white bg-amber" style="font-size: .75rem;">6 - 7</div>
-																<div class="text-center text-white bg-gray-400 mt-1" style="font-size: .75rem;">
-																	<div class="px-2 py-1 bg-amber">
-																		{{ area.amountMiddle }}
-																	</div>
-																</div>
-															</div>
-															<div class="d-flex flex-column">
-																<div class="text-center px-2 py-1 small text-white bg-red" style="font-size: .75rem;">8 - 11</div>
-																<div class="text-center text-white bg-gray-400 mt-1" style="font-size: .75rem;">
-																	<div class="px-2 py-1 bg-red">
-																		{{ area.amountHard }}
-																	</div>
-																</div>
-															</div>
-															<div class="d-flex flex-column">
-																<div class="text-center px-2 py-1 small text-white" style="background-color:black; font-size: .75rem;">Proj.</div>
-																<div class="text-center text-white bg-gray-400 mt-1" style="font-size: .75rem;">
-																	<div style="background-color:black;" class="px-2 py-1">
-																		{{ area.amountProjects }}
-																	</div>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</a>
+									{{ include('partials/_areaCard.html.twig', { area: area, link: path('show_rocks', { slug: area.slug }) }) }}
 								</div>
 							{% endfor %}
 						</div>

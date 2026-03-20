@@ -6,6 +6,7 @@
 parameters:
   env(SITE_BASE_URL): "%env(SITE_BASE_SCHEME)%://%env(SITE_BASE_HOST)%"
   locale: "de"
+  app.topo_image_base_url: "https://www.munichclimbs.de"
 
 services:
   # default configuration for services in *this* file
@@ -41,6 +42,23 @@ services:
     tags:
       - { name: kernel.event_subscriber }
 
+  App\Service\TopoSvgParser:
+    arguments:
+      $baseUrl: "%app.topo_image_base_url%"
+
   App\Command\GenerateSitemapCommand:
     arguments:
       $projectDir: "%kernel.project_dir%"
+
+  App\Command\TravelTimeExportCommand:
+    arguments:
+      $projectDir: "%kernel.project_dir%"
+
+  App\Command\TravelTimeImportCommand:
+    arguments:
+      $projectDir: "%kernel.project_dir%"
+
+  App\Service\TravelTimeService:
+    arguments:
+      # Only used by app:travel-time:export. Set OSRM_SSL_VERIFY=0 in .env if export fails with cURL error 35.
+      $osrmSslVerify: "%env(bool:default:OSRM_SSL_VERIFY:1)%"

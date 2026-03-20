@@ -51,15 +51,6 @@ class Rock
     #[ORM\Column(type: Types::INTEGER)]
     protected ?int $nr = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $access = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $nature = null;
-
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $zone = null;
 
@@ -78,17 +69,14 @@ class Rock
     #[ORM\Column(nullable: true)]
     private ?bool $childFriendly = null;
 
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
-    private int $sunny;
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $sunny = null;
 
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
-    private int $rain;
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $rain = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $image = null;
-
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
-    private ?string $headerImage = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 6, nullable: true)]
     private ?string $lat = null;
@@ -110,6 +98,9 @@ class Rock
 
     #[ORM\Column(nullable: true)]
     private ?bool $train = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $bike = null;
 
     #[ORM\OneToMany(mappedBy: 'rock', targetEntity: RockTranslation::class, cascade: ['persist', 'remove'])]
     private Collection $translations;
@@ -168,42 +159,6 @@ class Rock
     public function setNr(?int $nr): self
     {
         $this->nr = $nr;
-
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): self
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function getAccess(): ?string
-    {
-        return $this->access;
-    }
-
-    public function setAccess(?string $access): self
-    {
-        $this->access = $access;
-
-        return $this;
-    }
-
-    public function getNature(): ?string
-    {
-        return $this->nature;
-    }
-
-    public function setNature(?string $nature): self
-    {
-        $this->nature = $nature;
 
         return $this;
     }
@@ -280,24 +235,24 @@ class Rock
         return $this;
     }
 
-    public function getSunny(): ?int
+    public function getSunny(): ?bool
     {
         return $this->sunny;
     }
 
-    public function setSunny(?int $sunny): self
+    public function setSunny(?bool $sunny): self
     {
         $this->sunny = $sunny;
 
         return $this;
     }
 
-    public function getRain(): ?int
+    public function getRain(): ?bool
     {
         return $this->rain;
     }
 
-    public function setRain(?int $rain): self
+    public function setRain(?bool $rain): self
     {
         $this->rain = $rain;
 
@@ -312,18 +267,6 @@ class Rock
     public function setImage(?string $image): self
     {
         $this->image = $image;
-
-        return $this;
-    }
-
-    public function getHeaderImage(): ?string
-    {
-        return $this->headerImage;
-    }
-
-    public function setHeaderImage(?string $headerImage): self
-    {
-        $this->headerImage = $headerImage;
 
         return $this;
     }
@@ -430,6 +373,18 @@ class Rock
     public function setTrain(?bool $train): static
     {
         $this->train = $train;
+
+        return $this;
+    }
+
+    public function isBike(): ?bool
+    {
+        return $this->bike;
+    }
+
+    public function setBike(?bool $bike): static
+    {
+        $this->bike = $bike;
 
         return $this;
     }

@@ -2,18 +2,18 @@
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title stay-black" id="top100RoutesModalLabel">Top 100 schwierigste Routen - {{ areaName }}</h5>
+				<h5 class="modal-title" id="top100RoutesModalLabel">Top 100 schwierigste Routen - {{ areaName }}</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
 				<div class="table-responsive">
-					<table class="table table-sm">
+					<table class="table table-sm small">
 						<thead>
 							<tr>
 								<th scope="col" style="width: 5%;">#</th>
 								<th scope="col">Route</th>
+								<th scope="col">Grad</th>
 								<th scope="col">Fels</th>
-								<th scope="col">Schwierigkeit</th>
 								<th scope="col">Erstbegeher</th>
 							</tr>
 						</thead>
@@ -39,6 +39,13 @@
 										</div>
 									</td>
 									<td>
+										{% if route.grade %}
+											{{ route.grade }}
+										{% else %}
+											<span class="text-muted">-</span>
+										{% endif %}
+									</td>
+									<td>
 										{% if route.areaSlug and route.rockSlug %}
 											<a href="{{ path('show_rock', {'areaSlug': route.areaSlug, 'slug': route.rockSlug}) }}" 
 											class="text-decoration-none">
@@ -50,18 +57,12 @@
 											<span class="text-muted">-</span>
 										{% endif %}
 									</td>
-									<td>
-										{% if route.grade %}
-											<span class="badge bg-secondary">{{ route.grade }}</span>
-										{% else %}
-											<span class="text-muted">-</span>
-										{% endif %}
-									</td>
+									
 									<td>
 										{% if route.firstAscent %}
 											{{ route.firstAscent }}
 											{% if route.yearFirstAscent %}
-												<small class="text-muted">({{ route.yearFirstAscent }})</small>
+												({{ route.yearFirstAscent }})
 											{% endif %}
 										{% else %}
 											<span class="text-muted">-</span>

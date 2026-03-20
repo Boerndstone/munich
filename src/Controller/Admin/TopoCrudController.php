@@ -9,7 +9,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class TopoCrudController extends AbstractCrudController
 {
@@ -21,6 +23,15 @@ class TopoCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return $actions
+            ->add(Crud::PAGE_INDEX, Action::new('editPaths', 'Tourenpfade bearbeiten', 'fa fa-pencil-square-o')
+                ->linkToRoute('admin_topo_edit_paths', fn (Topo $topo) => ['id' => $topo->getId()])
+                ->setCssClass('btn btn-secondary'))
+            ->add(Crud::PAGE_DETAIL, Action::new('editPaths', 'Tourenpfade bearbeiten', 'fa fa-pencil-square-o')
+                ->linkToRoute('admin_topo_edit_paths', fn (Topo $topo) => ['id' => $topo->getId()])
+                ->setCssClass('btn btn-secondary'))
+            ->add(Crud::PAGE_EDIT, Action::new('editPaths', 'Tourenpfade bearbeiten', 'fa fa-pencil-square-o')
+                ->linkToRoute('admin_topo_edit_paths', fn (Topo $topo) => ['id' => $topo->getId()])
+                ->setCssClass('btn btn-secondary'))
 
             ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
                 return $action
@@ -86,43 +97,36 @@ class TopoCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield Field::new('id')
-            ->hideonForm();
+            ->hideOnForm();
         yield Field::new('name')
             ->setLabel('Name')
             ->setColumns('col-12');
         yield AssociationField::new('rocks')
-            ->setLabel('Rock Id')
+            ->setLabel('Fels / Rock')
             ->setColumns('col-12');
-        /*yield ImageField::new('image')
-            ->setBasePath('uploads/topo')
-            ->setUploadDir('public/uploads/topo')
-            ->setUploadedFileNamePattern('[slug]-[timestamp].[extension]')
-            ->onlyOnForms()
-        ;*/
-        yield Field::new('image')
-            ->setLabel('Bild')
+
+        yield TextField::new('image')
+            ->setLabel('Bild (Dateiname)')
             ->hideOnIndex()
-            ->setColumns('col-12');
+            ->setColumns('col-12')
+            ->setHelp('Dateiname ohne Erweiterung (z.B. burgsteinSuedwand). Bild muss unter build/images/topos/ als .webp liegen. Zusammen mit den Tourenpfaden wird daraus das Topo auf der Fels-Seite gerendert.');
+
+        yield NumberField::new('number')
+            ->setLabel('Nummer Sektor')
+            ->setColumns('col-12')
+            ->setHelp('Entspricht der Topo-Id bei den Touren (Route → Topo ID).');
+
         yield Field::new('withSector')
             ->setLabel('Mit Sektoren')
             ->setColumns('col-12')
             ->setTemplatePath('admin/field/votes.html.twig');
-        yield TextareaField::new('svg')
-            ->setLabel('Topo SVG')
+
+        yield TextareaField::new('pathCollection')
+            ->setLabel('Tourenpfade (PHP oder JSON)')
             ->hideOnIndex()
-            ->hideOnDetail()
-            ->setColumns('col-12');
-        yield Field::new('pathCollection')
-            ->setLabel('Tourenpfade')
-            ->hideOnIndex()
-            ->hideOnDetail()
             ->setColumns('col-12')
-            ->setTemplatePath('admin/field/path_collection.html.twig'); // Use custom template
-        // Hier macht ein Association Field für die Topo Id bei der Route Sinn!
-        // In Entiy anlegen.
-        yield Field::new('number')
-            ->setLabel('Nummer Sektor')
-            ->setColumns('col-12')
-            ->setHelp('Die Nummer die zur Topo Id bei der Route korrespondiert!');
+            ->setNumOfRows(14)
+            ->setHelp('PHP-Array-Literal vom Topo Path Helper einfügen – oder ein JSON-Array. Wird mit dem Bild oben als Overlay gerendert (ViewBox immer 0 0 1024 820).')
+            ->setTemplatePath('admin/field/path_collection.html.twig');
     }
 }

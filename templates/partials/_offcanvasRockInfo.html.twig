@@ -66,12 +66,12 @@
 								<tr>
 									<td>{{"sunny"|trans}}:</td>
 									<td>
-										{% if rock.rockSunny == 1 %}
-											{{"sunny.property.sun"|trans}}
-										{% elseif rock.rockSunny == 2 %}
-											{{"sunny.property.partly"|trans}}
-										{% else %}
+										{% if rock.rockSunny is same as(true) %}
 											{{"sunny.property.sunny"|trans}}
+										{% elseif rock.rockSunny is same as(false) %}
+											{{"sunny.property.sun"|trans}}
+										{% else %}
+											-
 										{% endif %}
 									</td>
 								</tr>
@@ -88,14 +88,12 @@
 								<tr>
 									<td>{{"rain.proof"|trans}}:</td>
 									<td>
-										{% if rock.rockRain == 1 %}
+										{% if rock.rockRain is same as(true) %}
 											{{"rain.proof.good"|trans}}
-										{% elseif rock.rockRain == 2 %}
-											{{"rain.proof.medium"|trans}}
-										{% elseif rock.rockRain == 3 %}
+										{% elseif rock.rockRain is same as(false) %}
 											{{"rain.proof.not"|trans}}
 										{% else %}
-											{{"rain.proof.bad"|trans}}
+											&mdash;
 										{% endif %}
 									</td>
 								</tr>
@@ -126,7 +124,8 @@
 						</div>
 					</div>
 				</div>
-				{% if rock.rockDescription %}
+				{% set hasDescription = (description is defined and description is not null and description|striptags|trim != '') or (rock.rockDescription is defined and rock.rockDescription is not null and rock.rockDescription|striptags|trim != '') %}
+				{% if hasDescription %}
 					<div class="accordion-item">
 						<h2 class="accordion-header">
 							<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBeschreibung" aria-expanded="false" aria-controls="collapseBeschreibung">
@@ -136,16 +135,17 @@
 						</h2>
 						<div id="collapseBeschreibung" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 							<div class="accordion-body">
-								{% if description is defined and description is not null %}
-									{{description|raw}}
+								{% if description is defined and description is not null and description|striptags|trim != '' %}
+									{{ description|raw }}
 								{% else %}
-									{{rock.rockDescription|raw}}
+									{{ rock.rockDescription|raw }}
 								{% endif %}
 							</div>
 						</div>
 					</div>
 				{% endif %}
-				{% if rock.rockAccess %}
+				{% set hasAccess = (access is defined and access is not null and access|striptags|trim != '') or (rock.rockAccess is defined and rock.rockAccess is not null and rock.rockAccess|striptags|trim != '') %}
+				{% if hasAccess %}
 					<div class="accordion-item">
 						<h2 class="accordion-header" id="headingZustieg">
 							<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseZustieg" aria-expanded="false" aria-controls="collapseZustieg">
@@ -155,10 +155,10 @@
 						</h2>
 						<div id="collapseZustieg" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 							<div class="accordion-body">
-								{% if access is defined and access is not null %}
-									{{access|raw}}
+								{% if access is defined and access is not null and access|striptags|trim != '' %}
+									{{ access|raw }}
 								{% else %}
-									{{rock.rockAccess|raw}}
+									{{ rock.rockAccess|raw }}
 								{% endif %}
 							</div>
 						</div>
@@ -179,7 +179,8 @@
 						</div>
 					</div>
 				</div>
-				{% if rock.rockNature %}
+				{% set hasNature = (nature is defined and nature is not null and nature|striptags|trim != '') or (rock.rockNature is defined and rock.rockNature is not null and rock.rockNature|striptags|trim != '') %}
+				{% if hasNature %}
 					<div class="accordion-item">
 						<h2 class="accordion-header" id="headingNaturschutz">
 							<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNaturschutz" aria-expanded="false" aria-controls="collapseNaturschutz">
@@ -189,10 +190,10 @@
 						</h2>
 						<div id="collapseNaturschutz" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 							<div class="accordion-body">
-								{% if nature is defined and nature is not null %}
-									{{nature|raw}}
+								{% if nature is defined and nature is not null and nature|striptags|trim != '' %}
+									{{ nature|raw }}
 								{% else %}
-									{{rock.rockNature|raw}}
+									{{ rock.rockNature|raw }}
 								{% endif %}
 							</div>
 						</div>
@@ -213,7 +214,6 @@
 						</div>
 					</div>
 				{% endif %}
-
 				{% if jsonData %}
 					<div class="accordion-item">
 						<h2 class="accordion-header" id="headingBilder">
@@ -295,10 +295,40 @@
 								</td>
 								<td>{{"rock.quality"|trans}}</td>
 							</tr>
+							<tr>
+								<td>
+									<div class="multi-pitch d-inline-block"></div>
+								</td>
+								<td>{{"multi.pitch"|trans}}</td>
+							</tr>
 						</table>
+			</div>
+		</div>
+	</div>
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="headingImprovement">
+						<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseImprovement" aria-expanded="false" aria-controls="collapseImprovement">
+							<div class="rock-general-improvement text-black me-2"></div>
+							{{ "rock_improvement.title"|trans }}
+						</button>
+					</h2>
+					<div id="collapseImprovement" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+						<div class="accordion-body">
+							{% if improvementForm is defined and improvementForm is not null %}
+								<p class="small text-muted mb-3">{{ "rock_improvement.intro"|trans({"%rock_name%": rock.rockName}) }}</p>
+								{{ form_start(improvementForm, { 'action': path('show_rock', { areaSlug: areaSlug, slug: slug }), 'attr': { 'class': 'small' } }) }}
+								{{ form_row(improvementForm.rockName) }}
+								{{ form_row(improvementForm.name) }}
+								{{ form_row(improvementForm.routeName) }}
+								{{ form_row(improvementForm.grade) }}
+								{{ form_row(improvementForm.firstAscent) }}
+								{{ form_row(improvementForm.comment) }}
+								<button type="submit" class="btn btn-success text-green btn-sm mt-2">{{ "rock_improvement.submit"|trans }}</button>
+								{{ form_end(improvementForm) }}
+							{% endif %}
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-</div>{% endfor %}
+	</div>{% endfor %}

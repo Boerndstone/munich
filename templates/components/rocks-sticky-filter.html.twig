@@ -1,0 +1,62 @@
+{% set rock_filter_switches = [
+    {
+        id: 'flexSwitchCheckDefault',
+        target: 'childFriendly',
+        icon: 'child-friendly',
+        label: 'Kinderfreundlich',
+    },
+    {
+        id: 'sun',
+        target: 'sunny',
+        icon: 'sun',
+        label: 'Sonnig',
+    },
+    {
+        id: 'rain',
+        target: 'rain',
+        icon: 'umbrella',
+        label: 'Regenschutz',
+    },
+    {
+        id: 'train',
+        target: 'train',
+        icon: 'train',
+        trans_key: 'train.reachable',
+    },
+    {
+        id: 'bike',
+        target: 'bike',
+        trans_key: 'bike.reachable',
+        label_variant: 'train_plus_bike',
+    },
+] %}
+
+<div class="card py-2 mb-2 card-body sticky-filter">
+    <h2 class="h6 mb-2" id="resultsCounter"><span id="resultsCount">0</span> Felsen</h2>
+    <div class="rocks-sticky-filter__switches">
+        {% for f in rock_filter_switches %}
+            <div class="form-check form-switch flex-shrink-0">
+                <input
+                    id="{{ f.id }}"
+                    class="form-check-input"
+                    type="checkbox"
+                    data-action="change->filter#filterItems"
+                    data-filter-target="{{ f.target }}"
+                >
+                <label
+                    class="form-check-label{% if f.label_variant|default('') == 'train_plus_bike' %} d-flex align-items-center{% endif %}"
+                    for="{{ f.id }}"
+                >
+                    {% if f.label_variant|default('') == 'train_plus_bike' %}
+                        <div class="train"></div> + <div class="bike"></div>
+                    {% else %}
+                        <div class="{{ f.icon }}"></div>
+                    {% endif %}
+                    <span class="visually-hidden">
+                        {{- f.trans_key is defined ? f.trans_key|trans : f.label -}}
+                    </span>
+                </label>
+            </div>
+        {% endfor %}
+    </div>
+</div>

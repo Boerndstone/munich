@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Comment;
+use App\Entity\User;
 use App\Service\RockAccessService;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -16,13 +17,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class CommentCrudController extends AbstractCrudController
 {
     public function __construct(
-        private Security $security,
         private RockAccessService $rockAccessService,
     ) {
     }
@@ -107,15 +105,16 @@ class CommentCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        /** @var UserInterface|null $user */
-        $user = $this->security->getUser();
-
-        yield TextField::new('user')
-            ->setLabel('User')
-            ->setFormattedValue($user instanceof UserInterface ? $user->getUserIdentifier() : '')
+        yield AssociationField::new('user')
+            ->setLabel('Autor')
             ->setDisabled()
             ->setColumns('col-12')
-            ->hideOnIndex();
+            ->hideOnIndex()
+            ->formatValue(static function ($value, Comment $comment): string {
+                $author = $comment->getUser();
+
+                return $author instanceof User ? $author->getUserIdentifier() : '—';
+            });
         yield AssociationField::new('route')
             ->setLabel('Route')
             ->setColumns('col-12')

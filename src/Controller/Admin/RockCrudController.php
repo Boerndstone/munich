@@ -4,7 +4,6 @@ namespace App\Controller\Admin;
 
 use App\Entity\Rock;
 use App\Form\Type\JsonFieldType;
-use App\Util\SlugUtil;
 use App\Form\Type\RockTranslationType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
@@ -29,12 +28,32 @@ use App\Repository\RoutesRepository;
 use App\Entity\Routes;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use App\Controller\Admin\DashboardController;
+use App\Entity\User;
+use App\Service\RockAccessService;
+use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 
 class RockCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private readonly RockAccessService $rockAccessService,
+    ) {
+    }
+
     public static function getEntityFqcn(): string
     {
         return Rock::class;
+    }
+
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+        $this->rockAccessService->restrictRockQueryBuilder($qb, $this->getUser());
+
+        return $qb;
     }
 
     public function configureFilters(Filters $filters): Filters
@@ -51,7 +70,8 @@ class RockCrudController extends AbstractCrudController
                 return $action
                     ->setIcon('fa fa-plus')
                     ->setLabel('Fels hinzufügen')
-                    ->setCssClass('btn btn-success');
+                    ->setCssClass('btn btn-success')
+                    ->displayIf(fn () => $this->canCreateOrDeleteRockInAdmin());
             })
 
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {
@@ -88,7 +108,8 @@ class RockCrudController extends AbstractCrudController
             })
             ->update(Crud::PAGE_DETAIL, Action::DELETE, function (Action $action) {
                 return $action
-                    ->setLabel('Löschen');
+                    ->setLabel('Löschen')
+                    ->displayIf(fn () => $this->canCreateOrDeleteRockInAdmin());
             })
             ->add(Crud::PAGE_DETAIL, Action::new('importRoutes', 'Routen importieren')
                 ->linkToRoute('admin_rock_import_routes', function (Rock $rock): array {
@@ -293,22 +314,6 @@ class RockCrudController extends AbstractCrudController
             ->setColumns('col-12');
     }
 
-    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        if ($entityInstance instanceof Rock) {
-            $entityInstance->setSlug(SlugUtil::nameToSlug($entityInstance->getName()));
-        }
-        parent::persistEntity($entityManager, $entityInstance);
-    }
-
-    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        if ($entityInstance instanceof Rock) {
-            $entityInstance->setSlug(SlugUtil::nameToSlug($entityInstance->getName()));
-        }
-        parent::updateEntity($entityManager, $entityInstance);
-    }
-
     #[Route('/admin/rock/{rockId}/routes/reorder', name: 'admin_rock_routes_reorder', methods: ['POST'])]
     public function reorderRoutes(int $rockId, Request $request, EntityManagerInterface $entityManager, RoutesRepository $routesRepository): JsonResponse
     {
@@ -328,6 +333,10 @@ class RockCrudController extends AbstractCrudController
         
         if (!$rock) {
             return new JsonResponse(['success' => false, 'message' => 'Rock not found'], 404);
+        }
+
+        if (!$this->rockAccessService->canEditRock($this->getUser(), $rock)) {
+            throw $this->createAccessDeniedException();
         }
 
         // Fetch all routes in a single query to avoid N+1 problem
@@ -372,6 +381,10 @@ class RockCrudController extends AbstractCrudController
                 ->setController(RockCrudController::class)
                 ->setAction('index')
                 ->generateUrl());
+        }
+
+        if (!$this->rockAccessService->canEditRock($this->getUser(), $rock)) {
+            throw $this->createAccessDeniedException();
         }
 
         if ($request->isMethod('POST')) {
@@ -620,6 +633,10 @@ class RockCrudController extends AbstractCrudController
                 ->generateUrl());
         }
 
+        if (!$this->rockAccessService->canEditRock($this->getUser(), $rock)) {
+            throw $this->createAccessDeniedException();
+        }
+
         if ($request->isMethod('POST')) {
             $token = $request->request->get('_token');
             if (!$this->isCsrfTokenValid('rock_geolocation', $token)) {
@@ -670,5 +687,15 @@ class RockCrudController extends AbstractCrudController
             'rock' => $rock,
             'detailUrl' => $detailUrl,
         ]);
+    }
+
+    private function canCreateOrDeleteRockInAdmin(): bool
+    {
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        return !$this->rockAccessService->isRockScoped($user);
     }
 }

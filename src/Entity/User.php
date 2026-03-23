@@ -44,6 +44,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Comment::class)]
     private Collection $comments;
 
+    /**
+     * Crags this user may edit when they have ROLE_ROCK_EDITOR (super admins ignore this list).
+     *
+     * @var Collection<int, Rock>
+     */
+    #[ORM\ManyToMany(targetEntity: Rock::class, inversedBy: 'rockEditors')]
+    #[ORM\JoinTable(name: 'user_editable_rock')]
+    private Collection $editableRocks;
+
     #[ORM\Column(length: 255)]
     #[Groups(['comment:read'])]
     private ?string $username = null;
@@ -54,6 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->editableRocks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -216,6 +226,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(string $username): static
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Rock>
+     */
+    public function getEditableRocks(): Collection
+    {
+        return $this->editableRocks;
+    }
+
+    public function addEditableRock(Rock $rock): static
+    {
+        if (!$this->editableRocks->contains($rock)) {
+            $this->editableRocks->add($rock);
+        }
+
+        return $this;
+    }
+
+    public function removeEditableRock(Rock $rock): static
+    {
+        $this->editableRocks->removeElement($rock);
 
         return $this;
     }

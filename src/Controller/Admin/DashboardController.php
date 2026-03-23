@@ -64,7 +64,7 @@ class DashboardController extends AbstractDashboardController
     }
 
     // Have to to make user in db + user form!!!
-    #[\Symfony\Component\Security\Http\Attribute\IsGranted('ROLE_SUPER_ADMIN')]
+    #[\Symfony\Component\Security\Http\Attribute\IsGranted('ROLE_ADMIN')]
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\RockRepository;
+use App\Util\SlugUtil;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
@@ -10,8 +11,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use ApiPlatform\Metadata\Get;
 
 #[ORM\Entity(repositoryClass: RockRepository::class)]
@@ -153,6 +155,22 @@ class Rock
         $this->slug = $slug;
 
         return $this;
+    }
+
+    /**
+     * Runs before property validation: the admin form hides slug, so it stays empty on create until we derive it from the name.
+     */
+    #[Assert\Callback]
+    public function synchronizeSlugFromName(ExecutionContextInterface $context): void
+    {
+        $name = $this->name;
+        if (null === $name || '' === trim($name)) {
+            return;
+        }
+
+        if (null === $this->slug || '' === $this->slug) {
+            $this->slug = SlugUtil::nameToSlug($name);
+        }
     }
 
     public function getNr(): ?int

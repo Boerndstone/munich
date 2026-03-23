@@ -77,13 +77,12 @@ class UserCrudController extends AbstractCrudController
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         if ($entityInstance instanceof User) {
-            $id = $entityInstance->getId();
-            if (null !== $id) {
-                $existing = $entityManager->find(User::class, $id);
-                $incoming = $entityInstance->getAvatar();
-                if (null === $incoming || '' === $incoming) {
-                    $entityInstance->setAvatar($existing?->getAvatar() ?? '');
-                }
+            $incoming = $entityInstance->getAvatar();
+            if (null === $incoming || '' === $incoming) {
+                $unitOfWork = $entityManager->getUnitOfWork();
+                $originalData = $unitOfWork->getOriginalEntityData($entityInstance);
+                $previousAvatar = $originalData['avatar'] ?? null;
+                $entityInstance->setAvatar($previousAvatar ?? '');
             }
         }
         parent::updateEntity($entityManager, $entityInstance);

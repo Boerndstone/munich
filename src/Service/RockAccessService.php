@@ -171,7 +171,7 @@ final class RockAccessService
             return;
         }
 
-        $qb->andWhere('entity.rock IN (:editableRockIds)')
+        $qb->andWhere('IDENTITY(entity.rock) IN (:editableRockIds)')
             ->setParameter('editableRockIds', $ids);
     }
 

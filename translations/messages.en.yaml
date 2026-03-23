@@ -49,6 +49,7 @@ bad.routeprotection: "Bad protection!"
 dangerous.routeprotection: "Dangerous protection!"
 rock.quality: "Rock quality not ideal. Be careful of stones!"
 multi.pitch: "Multi-pitch"
+crack.climbing: "Crack climbing"
 
 # Rock improvement / contribute form
 rock_improvement.title: "Contribute"

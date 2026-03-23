@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Comment;
 use App\Entity\Rock;
 use App\Entity\Routes;
 use App\Entity\Topo;
@@ -86,6 +87,18 @@ final class RockAccessService
         }
 
         return $this->canEditRock($user, $route->getRock());
+    }
+
+    /**
+     * Route comments in admin: allowed when the comment’s route belongs to an editable rock.
+     */
+    public function canModerateComment(?UserInterface $user, ?Comment $comment): bool
+    {
+        if (null === $comment) {
+            return false;
+        }
+
+        return $this->canEditRoute($user, $comment->getRoute());
     }
 
     public function canEditTopo(?UserInterface $user, ?Topo $topo): bool
@@ -217,6 +230,29 @@ final class RockAccessService
         $qb->andWhere(
             '(entity.videoRocks IS NOT NULL AND IDENTITY(entity.videoRocks) IN (:editableRockIds))'
             .' OR (entity.videoRoutes IS NOT NULL AND IDENTITY(entity.videoRoutes) IN (SELECT vr.id FROM '.$routesFqcn.' vr WHERE IDENTITY(vr.rock) IN (:editableRockIds)))'
+        )->setParameter('editableRockIds', $ids);
+    }
+
+    public function restrictCommentsQueryBuilder(QueryBuilder $qb, ?UserInterface $user): void
+    {
+        if (!$user instanceof User) {
+            return;
+        }
+
+        $ids = $this->getEditableRockIds($user);
+        if (null === $ids) {
+            return;
+        }
+
+        if ([] === $ids) {
+            $qb->andWhere('1 = 0');
+
+            return;
+        }
+
+        $routesFqcn = Routes::class;
+        $qb->andWhere(
+            'entity.route IS NOT NULL AND IDENTITY(entity.route) IN (SELECT r.id FROM '.$routesFqcn.' r WHERE IDENTITY(r.rock) IN (:editableRockIds))'
         )->setParameter('editableRockIds', $ids);
     }
 }

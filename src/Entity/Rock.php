@@ -13,10 +13,10 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use ApiPlatform\Metadata\Get;
 
 #[ORM\Entity(repositoryClass: RockRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     operations: [
         new Get(normalizationContext: ['groups' => ['rock:read']]), // Single item
@@ -124,8 +124,25 @@ class Rock
     public function setName(string $name): self
     {
         $this->name = $name;
+        if ('' !== trim($name)) {
+            $this->slug = SlugUtil::nameToSlug($name);
+        }
 
         return $this;
+    }
+
+    /**
+     * Ensures slug is derived from name when persisting (e.g. API/hydration without setName()).
+     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function ensureSlugFromNameForPersistence(): void
+    {
+        if (null === $this->name || '' === trim($this->name)) {
+            return;
+        }
+
+        $this->slug = SlugUtil::nameToSlug($this->name);
     }
 
     public function getArea(): ?Area
@@ -155,22 +172,6 @@ class Rock
         $this->slug = $slug;
 
         return $this;
-    }
-
-    /**
-     * Runs before property validation: the admin form hides slug, so it stays empty on create until we derive it from the name.
-     */
-    #[Assert\Callback]
-    public function synchronizeSlugFromName(ExecutionContextInterface $context): void
-    {
-        $name = $this->name;
-        if (null === $name || '' === trim($name)) {
-            return;
-        }
-
-        if (null === $this->slug || '' === $this->slug) {
-            $this->slug = SlugUtil::nameToSlug($name);
-        }
     }
 
     public function getNr(): ?int

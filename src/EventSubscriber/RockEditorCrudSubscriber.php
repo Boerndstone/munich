@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber;
 
+use App\Entity\Comment;
 use App\Entity\Rock;
 use App\Entity\Routes;
 use App\Entity\Topo;
@@ -42,7 +43,7 @@ final class RockEditorCrudSubscriber implements EventSubscriberInterface
         }
 
         $fqcn = $context->getCrud()->getEntityFqcn();
-        if (!\in_array($fqcn, [Rock::class, Routes::class, Topo::class, Videos::class], true)) {
+        if (!\in_array($fqcn, [Rock::class, Routes::class, Topo::class, Videos::class, Comment::class], true)) {
             return;
         }
 
@@ -79,6 +80,7 @@ final class RockEditorCrudSubscriber implements EventSubscriberInterface
             $instance instanceof Routes => $this->rockAccessService->canEditRoute($user, $instance),
             $instance instanceof Topo => $this->rockAccessService->canEditTopo($user, $instance),
             $instance instanceof Videos => $this->rockAccessService->canEditVideo($user, $instance),
+            $instance instanceof Comment => $this->rockAccessService->canModerateComment($user, $instance),
             default => true,
         };
 

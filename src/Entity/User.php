@@ -183,9 +183,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return sprintf('/uploads/avatars/%s', $this->avatar);
     }
 
-    public function setAvatar(string $avatar): self
+    public function setAvatar(?string $avatar): self
     {
-        $this->avatar = $avatar;
+        $this->avatar = $avatar ?? '';
 
         return $this;
     }

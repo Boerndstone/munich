@@ -3,27 +3,41 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Comment;
+use App\Service\RockAccessService;
+use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use \Symfony\Bundle\SecurityBundle\Security;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class CommentCrudController extends AbstractCrudController
 {
-    private $security;
-
-    public function __construct(Security $security)
-    {
-        $this->security = $security;
+    public function __construct(
+        private Security $security,
+        private RockAccessService $rockAccessService,
+    ) {
     }
 
     public static function getEntityFqcn(): string
     {
         return Comment::class;
+    }
+
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+        $this->rockAccessService->restrictCommentsQueryBuilder($qb, $this->getUser());
+
+        return $qb;
     }
 
     public function configureActions(Actions $actions): Actions
@@ -93,20 +107,23 @@ class CommentCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        /** @var \Symfony\Component\Security\Core\User\UserInterface|null $user */
+        /** @var UserInterface|null $user */
         $user = $this->security->getUser();
-
-        // dd($user->getUserIdentifier());
 
         yield TextField::new('user')
             ->setLabel('User')
-            ->setFormattedValue($user->getUserIdentifier())
+            ->setFormattedValue($user instanceof UserInterface ? $user->getUserIdentifier() : '')
             ->setDisabled()
             ->setColumns('col-12')
             ->hideOnIndex();
         yield AssociationField::new('route')
             ->setLabel('Route')
-            ->setColumns('col-12');
+            ->setColumns('col-12')
+            ->setQueryBuilder(function (QueryBuilder $qb) {
+                $this->rockAccessService->restrictRoutesQueryBuilder($qb, $this->getUser());
+
+                return $qb;
+            });
         yield TextEditorField::new('comment')
             ->setLabel('Kommentar zur Route')
             ->setColumns('col-12')

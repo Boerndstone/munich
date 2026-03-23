@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AvatarField;
@@ -34,6 +35,8 @@ class UserCrudController extends AbstractCrudController
             ->setBasePath('uploads/avatars')
             ->setUploadDir('public/uploads/avatars')
             ->setUploadedFileNamePattern('[slug]-[timestamp].[extension]')
+            ->setRequired(false)
+            ->setHelp('Leer lassen, um das aktuelle Bild beim Speichern zu behalten.')
             ->onlyOnForms();
         yield EmailField::new('email');
         yield TextField::new('firstname');
@@ -58,5 +61,30 @@ class UserCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_INDEX, 'Übersicht der Nutzer')
             ->setPageTitle(Crud::PAGE_NEW, 'Nutzer hinzufügen')
             ->showEntityActionsInlined();
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof User) {
+            $avatar = $entityInstance->getAvatar();
+            if (null === $avatar || '' === $avatar) {
+                $entityInstance->setAvatar('');
+            }
+        }
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof User) {
+            $incoming = $entityInstance->getAvatar();
+            if (null === $incoming || '' === $incoming) {
+                $unitOfWork = $entityManager->getUnitOfWork();
+                $originalData = $unitOfWork->getOriginalEntityData($entityInstance);
+                $previousAvatar = $originalData['avatar'] ?? null;
+                $entityInstance->setAvatar($previousAvatar ?? '');
+            }
+        }
+        parent::updateEntity($entityManager, $entityInstance);
     }
 }

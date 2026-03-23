@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber;
 
+use App\Entity\Comment;
 use App\Entity\Rock;
 use App\Entity\Routes;
 use App\Entity\Topo;
@@ -47,6 +48,7 @@ final class RockEditorEntityLifecycleSubscriber implements EventSubscriberInterf
             $entity instanceof Routes => $this->assertCanEditRoute($user, $entity),
             $entity instanceof Topo => $this->assertCanEditTopo($user, $entity),
             $entity instanceof Videos => $this->assertCanEditVideo($user, $entity),
+            $entity instanceof Comment => $this->assertCanModerateComment($user, $entity),
             default => null,
         };
     }
@@ -64,6 +66,7 @@ final class RockEditorEntityLifecycleSubscriber implements EventSubscriberInterf
             $entity instanceof Routes => $this->assertCanEditRoute($user, $entity),
             $entity instanceof Topo => $this->assertCanEditTopo($user, $entity),
             $entity instanceof Videos => $this->assertCanEditVideo($user, $entity),
+            $entity instanceof Comment => $this->assertCanModerateComment($user, $entity),
             default => null,
         };
     }
@@ -81,8 +84,16 @@ final class RockEditorEntityLifecycleSubscriber implements EventSubscriberInterf
             $entity instanceof Routes => $this->assertCanEditRoute($user, $entity),
             $entity instanceof Topo => $this->assertCanEditTopo($user, $entity),
             $entity instanceof Videos => $this->assertCanEditVideo($user, $entity),
+            $entity instanceof Comment => $this->assertCanModerateComment($user, $entity),
             default => null,
         };
+    }
+
+    private function assertCanModerateComment(User $user, Comment $comment): void
+    {
+        if (!$this->rockAccessService->canModerateComment($user, $comment)) {
+            throw new AccessDeniedException('You cannot moderate this comment.');
+        }
     }
 
     private function assertCanEditRock(User $user, Rock $rock): void

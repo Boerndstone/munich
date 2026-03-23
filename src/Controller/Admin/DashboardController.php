@@ -153,14 +153,14 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home')->setPermission(new Expression('is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ROCK_EDITOR")'));
+        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home')->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToCrud('Gebiete', 'fa fa-tags', Area::class)->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToCrud('Felsen', 'fa fa-home', Rock::class);
         yield MenuItem::linkToCrud('Touren', 'fa fa-home', Routes::class);
         yield MenuItem::linkToCrud('Topos', 'fa fa-home', Topo::class)->setPermission(new Expression('is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ROCK_EDITOR")'));
-        yield MenuItem::linkToRoute('Topo Path Helper', 'fa fa-pencil-square-o', 'admin_topo_path_helper')->setPermission(new Expression('is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ROCK_EDITOR")'));
+        yield MenuItem::linkToRoute('Topo Path Helper', 'fa fa-pencil-square-o', 'admin_topo_path_helper')->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToCrud('Photos', 'fa fa-camera-retro', Photos::class)->setPermission('ROLE_SUPER_ADMIN');
-        yield MenuItem::linkToCrud('Kommentare', 'fa fa-comment', Comment::class)->setPermission('ROLE_MODERATOR');
+        yield MenuItem::linkToCrud('Kommentare', 'fa fa-comment', Comment::class)->setPermission(new Expression('is_granted("ROLE_MODERATOR") or is_granted("ROLE_ROCK_EDITOR")'));
         yield MenuItem::linkToCrud('Videos', 'fa fa-video', Videos::class);
         yield MenuItem::linkToCrud('User', 'fa fa-user', User::class)->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToRoute('Geolocation', 'fa fa-map-marker', 'admin_geolocation')->setPermission('ROLE_SUPER_ADMIN');

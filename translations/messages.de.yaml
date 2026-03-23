@@ -49,6 +49,7 @@ bad.routeprotection: "Schlecht abgesichert!"
 dangerous.routeprotection: "Gefährlich abgesichert!"
 rock.quality: "Felsqualität nicht ideal. Vorsicht Steine!"
 multi.pitch: "Mehrseillängen-Tour"
+crack.climbing: "Risskletterei"
 
 # Rock improvement / contribute form
 rock_improvement.title: "Mithelfen"

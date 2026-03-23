@@ -693,7 +693,7 @@ class RockCrudController extends AbstractCrudController
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
-            return true;
+            return false;
         }
 
         return !$this->rockAccessService->isRockScoped($user);

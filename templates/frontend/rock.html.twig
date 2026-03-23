@@ -203,7 +203,10 @@
 																<span data-routeparams-target="route-rock-quality"></span>
 															</span>
 															{% if route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'multi-pitch' in (route.routeClimbingStyle|default('[]')) %}
-																<span class="d-inline-block ms-1" title="Mehrseillängen Tour"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M13 9v6h3l-4 4l-4-4h3V9H8l4-4l4 4zM4 2h16v2H4zm0 18h16v2H4z"/></svg></span>
+																<span class="d-inline-block ms-1 multi-pitch" title="Mehrseillängen Tour"></span>
+																<span class="d-inline-block ms-1 multi-pitch" title="Mehrseillängen Tour" role="img" aria-label="Mehrseillängen Tour"></span>
+															{% elseif route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'crack' in (route.routeClimbingStyle|default('[]')) %}
+																<span class="d-inline-block ms-1 crack-climbing" title="Riss" role="img" aria-label="Riss"></span>
 															{% endif %}
 															{% if route.videoLink is not empty %}
 																<a href="{{ route.videoLink }}" alt="Video von Route {{ route.routeName }} " target="_blank">

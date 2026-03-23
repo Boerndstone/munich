@@ -4,6 +4,10 @@ namespace App\Controller\Admin;
 
 use App\Entity\Routes;
 use App\Service\GradeTranslationService;
+use App\Service\RockAccessService;
+use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -13,18 +17,29 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 
 class RoutesCrudController extends AbstractCrudController
 {
     public function __construct(
-        private GradeTranslationService $gradeTranslationService
+        private GradeTranslationService $gradeTranslationService,
+        private RockAccessService $rockAccessService,
     ) {
     }
 
     public static function getEntityFqcn(): string
     {
         return Routes::class;
+    }
+
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+        $this->rockAccessService->restrictRoutesQueryBuilder($qb, $this->getUser());
+
+        return $qb;
     }
 
     public function configureFilters(Filters $filters): Filters

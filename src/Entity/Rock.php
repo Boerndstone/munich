@@ -105,6 +105,10 @@ class Rock
     #[ORM\OneToMany(mappedBy: 'rock', targetEntity: RockTranslation::class, cascade: ['persist', 'remove'])]
     private Collection $translations;
 
+    /** @var Collection<int, User> */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'editableRocks')]
+    private Collection $rockEditors;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -311,6 +315,15 @@ class Rock
     {
         $this->routes = new ArrayCollection();
         $this->translations = new ArrayCollection();
+        $this->rockEditors = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getRockEditors(): Collection
+    {
+        return $this->rockEditors;
     }
 
     /**

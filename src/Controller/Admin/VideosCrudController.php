@@ -152,22 +152,23 @@ class VideosCrudController extends AbstractCrudController
 
     /**
      * Same idea as Routes: area follows the chosen crag or route (tour wins if both are set).
+     * Always re-syncs videoArea based on current associations, clearing it if no area can be derived.
      */
     private function syncVideoAreaFromRockOrRoute(Videos $video): void
     {
+        $area = null;
+
         $route = $video->getVideoRoutes();
         if (null !== $route) {
             $area = $route->getArea() ?? $route->getRock()?->getArea();
-            if (null !== $area) {
-                $video->setVideoArea($area);
+        } else {
+            $rock = $video->getVideoRocks();
+            if (null !== $rock) {
+                $area = $rock->getArea();
             }
-
-            return;
         }
 
-        $rock = $video->getVideoRocks();
-        if (null !== $rock && null !== $rock->getArea()) {
-            $video->setVideoArea($rock->getArea());
-        }
+        // Keep videoArea strictly in sync with current route/rock, even if that means setting it to null.
+        $video->setVideoArea($area);
     }
 }

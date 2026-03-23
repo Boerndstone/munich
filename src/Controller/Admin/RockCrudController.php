@@ -4,7 +4,6 @@ namespace App\Controller\Admin;
 
 use App\Entity\Rock;
 use App\Form\Type\JsonFieldType;
-use App\Util\SlugUtil;
 use App\Form\Type\RockTranslationType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
@@ -313,22 +312,6 @@ class RockCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->hideOnDetail()
             ->setColumns('col-12');
-    }
-
-    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        if ($entityInstance instanceof Rock) {
-            $entityInstance->setSlug(SlugUtil::nameToSlug($entityInstance->getName()));
-        }
-        parent::persistEntity($entityManager, $entityInstance);
-    }
-
-    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        if ($entityInstance instanceof Rock) {
-            $entityInstance->setSlug(SlugUtil::nameToSlug($entityInstance->getName()));
-        }
-        parent::updateEntity($entityManager, $entityInstance);
     }
 
     #[Route('/admin/rock/{rockId}/routes/reorder', name: 'admin_rock_routes_reorder', methods: ['POST'])]

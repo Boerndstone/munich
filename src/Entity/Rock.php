@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\RockRepository;
+use App\Util\SlugUtil;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
@@ -10,11 +11,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Metadata\Get;
 
 #[ORM\Entity(repositoryClass: RockRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     operations: [
         new Get(normalizationContext: ['groups' => ['rock:read']]), // Single item
@@ -105,6 +107,10 @@ class Rock
     #[ORM\OneToMany(mappedBy: 'rock', targetEntity: RockTranslation::class, cascade: ['persist', 'remove'])]
     private Collection $translations;
 
+    /** @var Collection<int, User> */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'editableRocks')]
+    private Collection $rockEditors;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -118,8 +124,25 @@ class Rock
     public function setName(string $name): self
     {
         $this->name = $name;
+        if ('' !== trim($name)) {
+            $this->slug = SlugUtil::nameToSlug($name);
+        }
 
         return $this;
+    }
+
+    /**
+     * Ensures slug is derived from name when persisting (e.g. API/hydration without setName()).
+     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function ensureSlugFromNameForPersistence(): void
+    {
+        if (null === $this->name || '' === trim($this->name)) {
+            return;
+        }
+
+        $this->slug = SlugUtil::nameToSlug($this->name);
     }
 
     public function getArea(): ?Area
@@ -311,6 +334,15 @@ class Rock
     {
         $this->routes = new ArrayCollection();
         $this->translations = new ArrayCollection();
+        $this->rockEditors = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getRockEditors(): Collection
+    {
+        return $this->rockEditors;
     }
 
     /**

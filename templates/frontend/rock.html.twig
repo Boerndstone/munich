@@ -204,7 +204,8 @@
 															</span>
 															{% if route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'multi-pitch' in (route.routeClimbingStyle|default('[]')) %}
 																<span class="d-inline-block ms-1 multi-pitch" title="Mehrseillängen Tour"></span>
-															{% elseif route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'crack' in (route.routeClimbingStyle|default('[]')) %}
+															{% endif %}
+															{% if route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'crack' in (route.routeClimbingStyle|default('[]')) %}
 																<span class="d-inline-block ms-1 crack-climbing" title="Riss"></span>
 															{% endif %}
 															{% if route.videoLink is not empty %}

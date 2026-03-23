@@ -33,17 +33,19 @@
 									</div>
 									<div class="col">
 										<div class="d-flex align-items-center">
-											{% set percent = 100 / rock.amountRoutes %}
-											{% set easy = percent * rock.amountEasy %}
-											{% set middle = percent * rock.amountMiddle %}
-											{% set hard = percent * rock.amountHard %}
-											{% set project = percent * rock.amountProjects %}
-											<div class="progress d-flex" style="height: 1rem; width: 6rem;">
-												<div class="progress-bar bg-green" role="img" style="width: {{ easy }}%;" aria-label="Leichte Routen (Grad 1-5): {{ easy|round }} Prozent"></div>
-												<div class="progress-bar bg-amber" role="img" style="width: {{ middle }}%;" aria-label="Mittlere Routen (Grad 6-7): {{ middle|round }} Prozent"></div>
-												<div class="progress-bar bg-red" role="img" style="width: {{ hard }}%;" aria-label="Schwere Routen (Grad 8-11): {{ hard|round }} Prozent"></div>
-												<div class="progress-bar" role="img" style="width: {{ project }}%; background-color: black" aria-label="Projekte: {{ project|round }} Prozent"></div>
-											</div>
+											{% if rock.amountRoutes > 0 %}
+												{% set percent = 100 / rock.amountRoutes %}
+												{% set easy = percent * rock.amountEasy %}
+												{% set middle = percent * rock.amountMiddle %}
+												{% set hard = percent * rock.amountHard %}
+												{% set project = percent * rock.amountProjects %}
+												<div class="progress d-flex" style="height: 1rem; width: 6rem;">
+													<div class="progress-bar bg-green" role="img" style="width: {{ easy }}%;" aria-label="Leichte Routen (Grad 1-5): {{ easy|round }} Prozent"></div>
+													<div class="progress-bar bg-amber" role="img" style="width: {{ middle }}%;" aria-label="Mittlere Routen (Grad 6-7): {{ middle|round }} Prozent"></div>
+													<div class="progress-bar bg-red" role="img" style="width: {{ hard }}%;" aria-label="Schwere Routen (Grad 8-11): {{ hard|round }} Prozent"></div>
+													<div class="progress-bar" role="img" style="width: {{ project }}%; background-color: black" aria-label="Projekte: {{ project|round }} Prozent"></div>
+												</div>
+											{% endif %}
 										</div>
 									</div>
 									<div class="col text-end">

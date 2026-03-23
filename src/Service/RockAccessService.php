@@ -215,8 +215,8 @@ final class RockAccessService
 
         $routesFqcn = Routes::class;
         $qb->andWhere(
-            '(entity.videoRocks IS NOT NULL AND entity.videoRocks IN (:editableRockIds))'
-            .' OR (entity.videoRoutes IS NOT NULL AND entity.videoRoutes IN (SELECT vr.id FROM '.$routesFqcn.' vr WHERE IDENTITY(vr.rock) IN (:editableRockIds)))'
+            '(entity.videoRocks IS NOT NULL AND IDENTITY(entity.videoRocks) IN (:editableRockIds))'
+            .' OR (entity.videoRoutes IS NOT NULL AND IDENTITY(entity.videoRoutes) IN (SELECT vr.id FROM '.$routesFqcn.' vr WHERE IDENTITY(vr.rock) IN (:editableRockIds)))'
         )->setParameter('editableRockIds', $ids);
     }
 }

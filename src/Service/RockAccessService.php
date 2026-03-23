@@ -113,16 +113,21 @@ final class RockAccessService
         }
 
         $rock = $video->getVideoRocks();
-        if (null !== $rock) {
-            return $this->canEditRock($user, $rock);
-        }
-
         $route = $video->getVideoRoutes();
-        if (null !== $route) {
-            return $this->canEditRoute($user, $route);
+
+        if (null === $rock && null === $route) {
+            return false;
         }
 
-        return false;
+        if (null !== $rock && !$this->canEditRock($user, $rock)) {
+            return false;
+        }
+
+        if (null !== $route && !$this->canEditRoute($user, $route)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

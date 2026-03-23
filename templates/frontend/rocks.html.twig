@@ -197,12 +197,12 @@
 																			{% set middle = percent * rock.amountMiddle %}
 																			{% set hard = percent * rock.amountHard %}
 																			{% set project = percent * rock.amountProjects %}
-																		<div class="progress d-flex" style="height: 1rem; width: 6rem;">
-																			<div class="progress-bar bg-green" role="progressbar" style="width: {{ easy }}%;" aria-valuenow="{{ easy }}" aria-valuemin="0" aria-valuemax="100" aria-label="Leichte Routen (Grad 1-5): {{ easy|round }}%"></div>
-																			<div class="progress-bar bg-amber" role="progressbar" style="width: {{ middle }}%;" aria-valuenow="{{ middle }}" aria-valuemin="0" aria-valuemax="100" aria-label="Mittlere Routen (Grad 6-7): {{ middle|round }}%"></div>
-																			<div class="progress-bar bg-red" role="progressbar" style="width: {{ hard }}%;" aria-valuenow="{{ hard }}" aria-valuemin="0" aria-valuemax="100" aria-label="Schwere Routen (Grad 8-11): {{ hard|round }}%"></div>
-																			<div class="progress-bar" role="progressbar" style="width: {{ project }}%; background-color: black" aria-valuenow="{{ project }}" aria-valuemin="0" aria-valuemax="100" aria-label="Projekte: {{ project|round }}%"></div>
-																		</div>
+																			<div class="progress d-flex" style="height: 1rem; width: 6rem;">
+																				<div class="progress-bar bg-green" role="img" style="width: {{ easy }}%;" aria-label="Leichte Routen (Grad 1-5): {{ easy|round }} Prozent"></div>
+																				<div class="progress-bar bg-amber" role="img" style="width: {{ middle }}%;" aria-label="Mittlere Routen (Grad 6-7): {{ middle|round }} Prozent"></div>
+																				<div class="progress-bar bg-red" role="img" style="width: {{ hard }}%;" aria-label="Schwere Routen (Grad 8-11): {{ hard|round }} Prozent"></div>
+																				<div class="progress-bar" role="img" style="width: {{ project }}%; background-color: black" aria-label="Projekte: {{ project|round }} Prozent"></div>
+																			</div>
 																		</div>
 																	</div>
 																	<div class="col text-end">

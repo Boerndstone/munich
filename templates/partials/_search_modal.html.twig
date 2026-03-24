@@ -26,22 +26,24 @@
 
 				<div class="tab-content mb-4">
 					<div class="tab-pane fade show active" id="pane-name" role="tabpanel">
+						<label for="searchModalNameInput" class="visually-hidden">Suche nach Felsen oder Routen</label>
 						<div class="d-flex align-items-center form-control form-control-sm border-black text-black">
-							<i class="fas fa-search magnifier me-2" style="color: #6c757d;"></i>
-							<input type="search" class="form-control border-0 p-0 small" name="searchName" data-search-modal-target="nameInput" placeholder="Suche nach Felsen oder Routen..." data-action="input->search-modal#searchNameDebounced keydown.enter->search-modal#searchName" minlength="2">
+							<i class="fas fa-search magnifier me-2" style="color: #6c757d;" aria-hidden="true"></i>
+							<input type="search" id="searchModalNameInput" class="form-control border-0 p-0 small" name="searchName" data-search-modal-target="nameInput" placeholder="Suche nach Felsen oder Routen..." data-action="input->search-modal#searchNameDebounced keydown.enter->search-modal#searchName" minlength="2">
 						</div>
 					</div>
 					<div class="tab-pane fade" id="pane-firstascent" role="tabpanel">
+						<label for="searchModalFirstAscentInput" class="visually-hidden">Name des Erstbegehers</label>
 						<div class="d-flex align-items-center form-control form-control-sm border-black text-black">
-							<i class="fas fa-search magnifier me-2" style="color: #6c757d;"></i>
-							<input type="search" class="form-control border-0 p-0" data-search-modal-target="firstAscentInput" placeholder="Name des Erstbegehers..." data-action="input->search-modal#searchFirstAscentDebounced keydown.enter->search-modal#searchFirstAscent" minlength="2">
+							<i class="fas fa-search magnifier me-2" style="color: #6c757d;" aria-hidden="true"></i>
+							<input type="search" id="searchModalFirstAscentInput" class="form-control border-0 p-0" data-search-modal-target="firstAscentInput" placeholder="Name des Erstbegehers..." data-action="input->search-modal#searchFirstAscentDebounced keydown.enter->search-modal#searchFirstAscent" minlength="2">
 						</div>
 					</div>
 					<div class="tab-pane fade" id="pane-grade" role="tabpanel">
 						<div class="row mb-3">
 							<div class="col-12 col-md-6 mb-2">
-								<label class="form-label small fw-medium">Gebiet</label>
-								<select class="form-select form-select-sm" data-search-modal-target="areaSelect">
+								<label class="form-label small fw-medium" for="searchModalGradeAreaSelect">Gebiet</label>
+								<select id="searchModalGradeAreaSelect" class="form-select form-select-sm" data-search-modal-target="areaSelect">
 									<option value="">Alle Gebiete</option>
 									{% for area in getSidebarAreas() %}
 										<option value="{{ area.slug }}">{{ area.name }}</option>
@@ -49,15 +51,17 @@
 								</select>
 							</div>
 							<div class="col-12 mb-2">
-								<label class="form-label small fw-medium">Schwierigkeitsgrade</label>
-								<div class="d-flex flex-wrap gap-2">
-									{% for i in 1..11 %}
-										<div class="form-check form-check-inline">
-											<input class="form-check-input" type="checkbox" data-search-modal-target="gradeCheck" value="{{ i }}" id="searchGrade{{ i }}">
-											<label class="form-check-label small" for="searchGrade{{ i }}">{{ i }}</label>
-										</div>
-									{% endfor %}
-								</div>
+								<fieldset class="border-0 m-0 p-0">
+									<legend class="form-label small fw-medium float-none w-auto p-0 mb-2">Schwierigkeitsgrade</legend>
+									<div class="d-flex flex-wrap gap-2">
+										{% for i in 1..11 %}
+											<div class="form-check form-check-inline">
+												<input class="form-check-input" type="checkbox" data-search-modal-target="gradeCheck" value="{{ i }}" id="searchGrade{{ i }}">
+												<label class="form-check-label small" for="searchGrade{{ i }}">{{ i }}</label>
+											</div>
+										{% endfor %}
+									</div>
+								</fieldset>
 							</div>
 							<div class="col-12">
 								<button class="btn btn-outline-secondary btn-sm" type="button" data-action="click->search-modal#searchByGrade">
@@ -69,8 +73,8 @@
 					<div class="tab-pane fade" id="pane-attributes" role="tabpanel">
 						<div class="row mb-3">
 							<div class="col-12 col-md-6 mb-2">
-								<label class="form-label small fw-medium">Gebiet</label>
-								<select class="form-select form-select-sm" data-search-modal-target="areaSelectAttributes">
+								<label class="form-label small fw-medium" for="searchModalAttributesAreaSelect">Gebiet</label>
+								<select id="searchModalAttributesAreaSelect" class="form-select form-select-sm" data-search-modal-target="areaSelectAttributes">
 									<option value="">Alle Gebiete</option>
 									{% for area in getSidebarAreas() %}
 										<option value="{{ area.slug }}">{{ area.name }}</option>
@@ -78,8 +82,9 @@
 								</select>
 							</div>
 							<div class="col-12 mb-2">
-								<label class="form-label small fw-medium">Eigenschaften</label>
-								<div class="d-flex flex-wrap gap-3">
+								<fieldset class="border-0 m-0 p-0">
+									<legend class="form-label small fw-medium float-none w-auto p-0 mb-2">Eigenschaften</legend>
+									<div class="d-flex flex-wrap gap-3">
 									<div class="form-check d-flex align-items-center gap-2">
 										<input class="form-check-input" type="checkbox" data-search-modal-target="attrChildFriendly" value="1" id="searchAttrChildFriendly">
 										<label class="form-check-label small d-flex align-items-center gap-1 mb-0" for="searchAttrChildFriendly">
@@ -115,7 +120,8 @@
 											{{ "bike.reachable"|trans }}
 										</label>
 									</div>
-								</div>
+									</div>
+								</fieldset>
 							</div>
 							<div class="col-12">
 								<button class="btn btn-outline-secondary btn-sm" type="button" data-action="click->search-modal#searchByAttributes">

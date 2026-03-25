@@ -1,18 +1,20 @@
-<div class="card">
-	<h3 class="text-white fs-5 fw-light px-3 py-2 mb-2 rounded-top bg-warning">Neuste Kommentare</h3>
-	<ul class="list-unstyled">
+<div class="overflow-hidden rounded-lg border-b border-gray-200 border-l border-r border-t border-amber-700 bg-white shadow-md dark:border-b-gray-700 dark:border-l-amber-700 dark:border-r-amber-700 dark:border-t-amber-700 dark:bg-black">
+	<h3 class="mb-0 bg-amber-700 px-3 py-2 text-lg font-light leading-normal text-white dark:bg-amber-700">Neuste Kommentare</h3>
+	<ul class="my-2 list-none px-0">
 		{% for comment in latestComments %}
-			<li class="px-3 mb-2 hover:bg-gray-300" style="line-height: 1.3rem;">
-				<a class="fs-6 text-truncate text-black d-block" href="{{ path('show_rock', { 'areaSlug': comment.areaSlug, slug: comment.rockSlug }) }}">
-					<span class="d-inline-block me-2 list-item-icon" aria-hidden="true"></span>
-					<span class="fw-normal pr-2">
-						{{ comment.routeName }}
-						({{ comment.rockName }})
-					</span>
-					<span class="fw-light d-block ms-2 text-truncate" style="padding-left: 12px;">{{ comment.commentComment|raw }}</span>
-					<span class="fw-light d-block ms-2 text-truncate" style="padding-left: 12px;">
-						{{ comment.username }}
-						<i>({{ comment.commentDate|date("d/m/Y", "Europe/Berlin") }})</i>
+			<li class="mb-2">
+				<a class="flex items-start gap-x-2 px-2 py-1 leading-[1.3rem] text-black no-underline hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800" href="{{ path('show_rock', { 'areaSlug': comment.areaSlug, slug: comment.rockSlug }) }}">
+					<span class="w-4 shrink-0 select-none pt-0.5 text-center text-base leading-none text-amber-700 pe-1 dark:text-amber-500" aria-hidden="true">&#8226;</span>
+					<span class="min-w-0 flex-1">
+						<span class="block truncate text-sm font-normal text-gray-900 dark:text-gray-100">
+							{{ comment.routeName }}
+							({{ comment.rockName }})
+						</span>
+						<span class="block max-w-full truncate ps-0 text-sm font-light text-gray-900 dark:text-gray-100">{{ comment.commentComment|striptags|raw }}</span>
+						<span class="block truncate ps-0 text-sm font-light text-gray-800 dark:text-gray-200">
+							{{ comment.username }}
+							<i>({{ comment.commentDate|date("d/m/Y", "Europe/Berlin") }})</i>
+						</span>
 					</span>
 				</a>
 			</li>

@@ -38,7 +38,6 @@
 														<span data-routeparams-target="route-rock-quality"></span>
 													</span>
 													{% if route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'multi-pitch' in (route.routeClimbingStyle|default('[]')) %}
-														<span class="d-inline-block ms-1 multi-pitch" title="Mehrseillängen Tour"></span>
 														<span class="d-inline-block ms-1 multi-pitch" title="Mehrseillängen Tour" role="img" aria-label="Mehrseillängen Tour"></span>
 													{% elseif route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'crack' in (route.routeClimbingStyle|default('[]')) %}
 														<span class="d-inline-block ms-1 crack-climbing" title="Riss" role="img" aria-label="Riss"></span>

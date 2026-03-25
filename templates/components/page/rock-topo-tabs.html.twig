@@ -1,0 +1,14 @@
+{# Expects: topos #}
+{% if topos is not empty %}
+	<div class="sticky-top border-bottom" style="top: 50px;">
+		<div class="scrollable-tabs-container container position-relative" {{ stimulus_controller('tabs') }}>
+			<ul class="p-0">
+				{% for topo in topos %}
+					<li>
+						<a class="d-inline-block py-2 text-black fw-medium" href="#{{ topo.topoName|custom_replace|lower }}">{{ topo.topoName }}</a>
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+{% endif %}

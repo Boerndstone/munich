@@ -84,7 +84,7 @@
 					</div>
 					<div class="{% if app.request.attributes.get('_route') == 'show_rock' and hasTranslationDescription is defined and hasTranslationDescription or app.request.attributes.get('_route') == 'show_rock_en' and hasTranslationDescription is defined and hasTranslationDescription %}col-2{% else %}d-none{% endif %} col-md-1 d-flex justify-content-end">
 						{% if app.request.attributes.get('_route') == 'show_rock' and hasTranslationDescription is defined and hasTranslationDescription or app.request.attributes.get('_route') == 'show_rock_en' and hasTranslationDescription is defined and hasTranslationDescription  %}
-							{{ include('partials/_language_switch.html.twig', { 
+							{{ include('components/layout/language-switch.html.twig', { 
 								hasTranslationDescription: hasTranslationDescription,
 								areaSlug: app.request.attributes.get('areaSlug'),
 								rockSlug: app.request.attributes.get('slug')

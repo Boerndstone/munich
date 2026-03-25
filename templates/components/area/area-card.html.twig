@@ -6,7 +6,7 @@
 <div class="card mb-4 p-0 overflow-hidden">
 	<div class="row g-0">
 		<div class="col-md-6 position-relative">
-			{% include 'partials/_lazy-load-images.html.twig' with {
+			{% include 'components/area/lazy-load-images.html.twig' with {
 				'area': area,
 				'url': url,
 				'media': {
@@ -17,7 +17,7 @@
 		</div>
 		<div class="col-md-6">
 			<div class="card-body p-3">
-				{{ include('partials/_areaCardBody.html.twig', { area: area }) }}
+				{{ include('components/area/area-card-body.html.twig', { area: area }) }}
 			</div>
 		</div>
 	</div>

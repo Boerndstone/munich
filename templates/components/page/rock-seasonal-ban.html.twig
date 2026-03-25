@@ -1,0 +1,14 @@
+{# Expects: rock, currentDate (day-of-year 0–365) #}
+<section class="container">
+	<div class="row">
+		<div class="col-md-12">
+			{% if rock.rockBanned == 1 and currentDate < 181 %}
+				<div class="alert alert-danger my-3" role="alert">
+					<strong class="font-bold">Jahreszeitliche Sperrung!</strong>
+					<span class="block sm:inline">{{ rock.rockName }}
+						ist leider noch bis zum 30.06. gesperrt!</span>
+				</div>
+			{% endif %}
+		</div>
+	</div>
+</section>

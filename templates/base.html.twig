@@ -41,9 +41,9 @@
 		<a id="main-content" tabindex="-1"></a>
 		{% block body %}{% endblock %}
 
-		{% include 'partials/_footer.html.twig' with {'areas': getAreas()} %}
+		{% include 'components/layout/footer.html.twig' with {'areas': getAreas()} %}
 
-		{{ include('partials/_search_modal.html.twig') }}
+		{{ include('components/layout/search-modal.html.twig') }}
 
 		<div {{ stimulus_controller('cookie-consent') }}></div>
 

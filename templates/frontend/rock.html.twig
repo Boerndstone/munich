@@ -23,7 +23,7 @@
 		{% set image = getSocialMediaImageUrl(rockPreviewImage, 'rock') %}
 		{% set image_alt = getImageAltText(slug|custom_replace, areaName, 'rock') %}
 	{% endif %}
-	{% include 'partials/_meta_tags.html.twig' with {
+	{% include 'components/seo/meta-tags.html.twig' with {
 		'title': setTitle,
 		'description': description,
 		'url': 'https://munichclimbs.de/Kletterfels/' ~ slug,
@@ -74,225 +74,18 @@
 {% endblock %}
 
 {% block body %}
-	{{ include('partials/_navigation.html.twig', [ rocks ]) }}
+	{{ include('components/layout/navigation.html.twig') }}
 	<main id="main-content">
-		<div class="container">
-			{% for message in app.flashes('success') %}
-				<div class="alert alert-success alert-dismissible fade show mt-3" role="alert" data-controller="auto-dismiss-alert" data-auto-dismiss-alert-dismiss-after-value="2">
-					{{ message }}
-					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				</div>
-			{% endfor %}
-			{% for message in app.flashes('error') %}
-				<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-					{{ message }}
-					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				</div>
-			{% endfor %}
-		</div>
+		{{ include('components/page/rock-flash-messages.html.twig') }}
+		{% set currentDate = "now"|date("z") %}
 		{% for rock in rocks %}
-			<div class="image-container position-relative">
-				<div class="image-container-media">
-				{% if rock.rockImage is not empty %}
-					<picture>
-						<source media="(min-width: 1200px)" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-large-@1x.webp') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-large-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-large-@3x.webp') }} 3x">
-						<source media="(min-width: 800px)" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-medium-@1x.webp') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-medium-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-medium-@3x.webp') }} 3x">
-						<img src="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~'-small-@1x.webp') }}" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-small-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-small-@3x.webp') }} 3x" alt="{{ setTitle }}" width="800" height="300" fetchpriority="high" decoding="async">
-					</picture>
-				{% else %}
-					<div class="fallback-image"></div>
-				{% endif %}
-				</div>
-				<div class="container my-3 position-absolute" style="top: 0; right: 0; left:0;">
-					<div class="bg-image pb-3 rounded ">
-						<div class="p-3 rounded shadow-3 alert-light d-flex align-items-center justify-content-between" style="background-color: rgba(255, 255, 255, 0.6);">
-							<div class="d-flex flex-column w-100">
-								<div class="d-flex align-items-center justify-content-between">
-									<h1 class="h3 mb-0 fw-medium stay-black">
-										{{ rock.rockName }}
-									</h1>
-									<button class="btn btn-outline-secondary btn-sm d-flex" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" aria-label="Fels-Informationen anzeigen">
-										<div class="modal-info" style="width: 22px; height: 22px;"></div>
-										<span class="ms-1 d-none d-md-block">{{ "rock"|trans }}</span>
-									</button>
-								</div>
-								<nav class="mt-1" aria-label="breadcrumb">
-									<ol class="breadcrumb text-black fw-normal mb-0" style="font-size: 12px">
-										<li class="breadcrumb-item">
-											<a class="text-primary" href="{{path('index')}}">
-												<span class="home d-inline-block"></span>
-											</a>
-										</li>
-										<li class="breadcrumb-item stay-black">
-											<a class="stay-black"href="{{ path('show_rocks', { slug: rock.areaSlug }) }}">{{ rock.areaName }}</a>
-										</li>
-										<li class="breadcrumb-item active stay-black" aria-current="page">{{ rock.rockName }}</li>
-									</ol>
-								</nav>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			{% if topos is not empty %}
-				<div class="sticky-top border-bottom" style="top: 50px;">
-					<div class="scrollable-tabs-container container position-relative" {{ stimulus_controller('tabs') }}>
-						<ul class="p-0">
-							{% for topo in topos %}
-								<li>
-									<a class="d-inline-block py-2 text-black fw-medium" href="#{{ topo.topoName|custom_replace|lower }}">{{ topo.topoName }}</a>
-								</li>
-							{% endfor %}
-						</ul>
-					</div>
-				</div>
-			{% endif %}
-			<section class="container">
-				<div class="row">
-					<div class="col-md-12">
-						{% set currentDate =  "now"|date("z") %}
-						{% if rock.rockBanned == 1 and currentDate < 181 %}
-							<div class="alert alert-danger my-3" role="alert">
-								<strong class="font-bold">Jahreszeitliche Sperrung!</strong>
-								<span class="block sm:inline">{{ rock.rockName }}
-									ist leider noch bis zum 30.06. gesperrt!</span>
-							</div>
-						{% endif %}
-					</div>
-				</div>
-			</section>
+			{{ include('components/page/rock-hero.html.twig', { rock: rock, setTitle: setTitle }) }}
+			{{ include('components/page/rock-topo-tabs.html.twig', { topos: topos }) }}
+			{{ include('components/page/rock-seasonal-ban.html.twig', { rock: rock, currentDate: currentDate }) }}
 		{% endfor %}
 		{# Offcanvas outside .image-container so backdrop/panel stack above the hero (z-index context) #}
-		{{ include('partials/_offcanvasRockInfo.html.twig', { rocks: rocks, improvementForm: improvementForm|default(null), areaSlug: areaSlug, slug: slug }) }}
-		<div class="container" {{ stimulus_controller('modal-route-information') }}>
-			<div class="row">
-				<div class="col-md-9 p-0 p-md-2">
-					{% for topoName, topoData in groupedRoutes %}
-						<div class="card mt-3 overflow-hidden border-0 rounded-0" id="{{ topoName|custom_replace|lower }}">
-							<div class="card-body p-0">
-								<section data-controller="route-information-tooltip">
-									{% if topoData.topoImage is not empty and topoData.topoPathCollection is not empty %}
-										{% set srcsetData = topoData.topoImage|topo_image_srcset %}
-										{% set viewBoxValue = '0 0 1024 820' %}
-										{% set aspectRatio = viewBoxValue|viewbox_to_aspect_ratio %}
-										{% set pathsSvg = topo_paths_overlay(topoData.topoPathCollection, null) %}
-										{% if pathsSvg is not empty %}
-										<div class="topo-two-layer"{% if aspectRatio %} style="aspect-ratio: {{ aspectRatio }};"{% endif %}>
-											<img class="topo-two-layer__bg" src="{{ srcsetData.src|default(topoData.topoImage) }}"{% if srcsetData.srcset %} srcset="{{ srcsetData.srcset }}" sizes="{{ srcsetData.sizes }}"{% endif %} alt="{{ 'topo.image_alt'|trans({ '%topo_name%': topoName, '%rock_name%': (rocks|first).rockName|default(''), '%area_name%': (rocks|first).areaName|default('') }) }}" loading="lazy" decoding="async">
-											<div class="topo-two-layer__overlay" aria-hidden="true">
-												<svg height="100%" width="100%" viewBox="{{ viewBoxValue }}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="img-fluid preserve-aspect-ratio">
-													{{ pathsSvg|raw }}
-												</svg>
-											</div>
-										</div>
-										{% endif %}
-									{% endif %}
-									<table class="table mb-0 small fw-medium 0">
-										<tbody>
-											{% for route in topoData.routes %}
-												<tr id="{{ route.routeName|replace({' ': ''})|lower }}" data-route-id="{{loop.index}}" data-route-information="{{ route.routeName }} {{ route.routeGrade }}">
-													<td class="py-2">
-														<span>{{loop.index}}</span>
-													</td>
-													<td class="py-2">
-														<div class="d-flex align-items-center">
-															<span class="me-1 ">{{ route.routeName }}</span>
-															<span style="line-height: 0;" data-controller="routeparams" data-routeparams-rating="{{ route.routeRating }}" data-routeparams-protection="{{ route.routeProtection }}" data-routeparams-route-rock-quality="{{ route.rockQuality }}">
-																<span data-routeparams-target="rating"></span>
-																<span data-routeparams-target="protection"></span>
-																<span data-routeparams-target="route-rock-quality"></span>
-															</span>
-															{% if route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'multi-pitch' in (route.routeClimbingStyle|default('[]')) %}
-																<span class="d-inline-block ms-1 multi-pitch" title="Mehrseillängen Tour"></span>
-																<span class="d-inline-block ms-1 multi-pitch" title="Mehrseillängen Tour" role="img" aria-label="Mehrseillängen Tour"></span>
-															{% elseif route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'crack' in (route.routeClimbingStyle|default('[]')) %}
-																<span class="d-inline-block ms-1 crack-climbing" title="Riss" role="img" aria-label="Riss"></span>
-															{% endif %}
-															{% if route.videoLink is not empty %}
-																<a href="{{ route.videoLink }}" alt="Video von Route {{ route.routeName }} " target="_blank">
-																	<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 24 24" class="text-black"><path fill="currentColor" d="M15 8v8H5V8h10m1-2H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4V7c0-.55-.45-1-1-1z"/></svg>
-																</a>
-															{% endif %}
-														</div>
-													</td>
-													<td class="py-2">
-														<span>{{ route.routeGrade }}</span>
-													</td>
-													<td class="d-none d-lg-table-cell py-2" style="white-space: nowrap;">
-														<span>{{ route.routefirstAscent }}
-															{% if route.routeyearFirstAscent %}
-																{{ route.routeyearFirstAscent }}
-															{% endif %}
-														</span>
-													</td>
-													<td class="py-2">
-														{% if route.routeComment is not empty %}
-															<button class="btn btn-sm m-0 p-0 border-0 shadow-none rounded-circle" 
-																data-action="modal-route-information#openModal"
-																data-modal-route-information-name-value="{{ route.routeName }}"
-																data-modal-route-information-grade-value="{{ route.routeGrade }}"
-																data-modal-route-information-first-ascent-value="{{ route.routefirstAscent }}"
-																data-modal-route-information-year-first-ascent-value="{{ route.routeyearFirstAscent }}"
-																data-modal-route-information-comments-value="{{ route.routeComment|json_encode|e('html_attr') }}">
-																<div class="modal-info"></div>
-															</button>
-														{% endif %}
-													</td>
-												</tr>
-											{% endfor %}
-										</tbody>
-									</table>
-								</section>
-							</div>
-						</div>
-					{% endfor %}
-				</div>
-			</div>
-			
-			{# Shared modal for route information - populated dynamically to reduce DOM size #}
-			<div id="sharedRouteModal" class="modal fade" tabindex="-1" aria-hidden="true" aria-labelledby="sharedRouteModalTitle" data-modal-route-information-target="modal">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h2 class="h6 modal-title stay-black" data-modal-route-information-target="title"></h2>
-							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-						</div>
-						<div class="modal-body" data-modal-route-information-target="content">
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+		{{ include('components/rock/offcanvas-rock-info.html.twig', { rocks: rocks, improvementForm: improvementForm|default(null), areaSlug: areaSlug, slug: slug }) }}
+		{{ include('components/page/rock-grouped-routes.html.twig', { groupedRoutes: groupedRoutes, rocks: rocks }) }}
 	</main>
-	<script>
-		// Handle smooth scrolling to route anchors with offset for fixed navigation
-		// Uses requestIdleCallback for non-blocking execution when available
-		(function() {
-			const hash = window.location.hash;
-			if (!hash) return;
-			
-			const scrollToTarget = function() {
-				const targetElement = document.querySelector(hash);
-				if (!targetElement) return;
-				
-				targetElement.classList.add('route-highlight');
-				
-				const navigationHeight = 50;
-				const extraOffset = 10;
-				const elementTop = targetElement.getBoundingClientRect().top + window.scrollY;
-				
-				window.scrollTo({
-					top: Math.max(0, elementTop - navigationHeight - extraOffset),
-					behavior: 'smooth'
-				});
-			};
-			
-			// Execute when browser is idle or on DOMContentLoaded as fallback
-			if ('requestIdleCallback' in window) {
-				requestIdleCallback(scrollToTarget, { timeout: 200 });
-			} else {
-				document.addEventListener('DOMContentLoaded', scrollToTarget);
-			}
-		})();
-	</script>
+	{{ include('components/page/rock-hash-scroll.html.twig') }}
 {% endblock %}

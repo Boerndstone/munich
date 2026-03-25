@@ -1,0 +1,50 @@
+{# Expects: setTitle, areaName, areaImage, areaKletterkonzeption (truthy), top100Routes (iterable) #}
+<div class="image-container position-relative">
+	<div class="image-container-media">
+		{% if areaImage is not empty %}
+			<picture>
+				<source media="(min-width: 1200px)" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-large-@1x.webp') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-large-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-large-@3x.webp') }} 3x">
+				<source media="(min-width: 800px)" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-medium-@1x.webp') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-medium-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-medium-@3x.webp') }} 3x">
+				<img src="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-small-@1x.webp') }}" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-small-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ areaImage ~ '-small-@3x.webp') }} 3x" alt="{{ setTitle }}" fetchpriority="high" decoding="async">
+			</picture>
+		{% else %}
+			<div style="height: 100px"></div>
+		{% endif %}
+	</div>
+	<div class="container my-3 position-absolute" style="top: 0; right: 0; left:0;">
+		<div class="bg-image pb-3 rounded ">
+			<div class="p-3 rounded shadow-3 alert-light d-flex align-items-center justify-content-between" style="background-color: rgba(255, 255, 255, 0.6);">
+				<div class="d-flex align-items-center">
+					<h1 class="h3 mb-0 fw-medium stay-black me-2">
+						{{ areaName }}
+					</h1>
+				</div>
+				<div class="d-flex align-items-center">
+					<div class="dropdown">
+						<button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}' data-bs-auto-close="true" aria-expanded="false" aria-haspopup="true" aria-label="Weitere Informationen">
+							<div class="modal-info"></div>
+						</button>
+						<ul class="dropdown-menu dropdown-menu-end">
+							{% if areaKletterkonzeption %}
+								<li>
+									<button type="button" class="dropdown-item d-flex align-items-center text-start small" data-bs-toggle="modal" data-bs-target="#kletterkonzeptionModal"><div class="modal-info me-2"></div> Kletterkonzeption - {{ areaName }}</button>
+								</li>
+							{% endif %}
+							{% if top100Routes is not empty %}
+								<li>
+									<button type="button" class="dropdown-item d-flex align-items-center text-start small" data-bs-toggle="modal" data-bs-target="#top100RoutesModal"><div class="top-100 me-2"></div> Top 100 schwierigste Routen - {{ areaName }}</button>
+								</li>
+							{% endif %}
+							<li>
+								<button type="button" class="dropdown-item d-flex align-items-center text-start small" data-bs-toggle="modal" data-bs-target="#modalWeather"><div class="weather me-2"></div> Wetter</button>
+							</li>
+							<li>
+								<button type="button" class="dropdown-item d-flex align-items-center text-start small" data-bs-toggle="modal" data-bs-target="#modalAreaMap"><div class="map me-2"></div>Übersichtskarte {{ areaName }}</button>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

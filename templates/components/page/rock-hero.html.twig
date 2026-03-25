@@ -1,0 +1,44 @@
+{# Expects: rock, setTitle #}
+<div class="image-container position-relative">
+	<div class="image-container-media">
+		{% if rock.rockImage is not empty %}
+			<picture>
+				<source media="(min-width: 1200px)" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-large-@1x.webp') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-large-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-large-@3x.webp') }} 3x">
+				<source media="(min-width: 800px)" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-medium-@1x.webp') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-medium-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-medium-@3x.webp') }} 3x">
+				<img src="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~'-small-@1x.webp') }}" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-small-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-small-@3x.webp') }} 3x" alt="{{ setTitle }}" width="800" height="300" fetchpriority="high" decoding="async">
+			</picture>
+		{% else %}
+			<div class="fallback-image"></div>
+		{% endif %}
+	</div>
+	<div class="container my-3 position-absolute" style="top: 0; right: 0; left:0;">
+		<div class="bg-image pb-3 rounded ">
+			<div class="p-3 rounded shadow-3 alert-light d-flex align-items-center justify-content-between" style="background-color: rgba(255, 255, 255, 0.6);">
+				<div class="d-flex flex-column w-100">
+					<div class="d-flex align-items-center justify-content-between">
+						<h1 class="h3 mb-0 fw-medium stay-black">
+							{{ rock.rockName }}
+						</h1>
+						<button class="btn btn-outline-secondary btn-sm d-flex" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" aria-label="Fels-Informationen anzeigen">
+							<div class="modal-info" style="width: 22px; height: 22px;"></div>
+							<span class="ms-1 d-none d-md-block">{{ "rock"|trans }}</span>
+						</button>
+					</div>
+					<nav class="mt-1" aria-label="breadcrumb">
+						<ol class="breadcrumb text-black fw-normal mb-0" style="font-size: 12px">
+							<li class="breadcrumb-item">
+								<a class="text-primary" href="{{path('index')}}">
+									<span class="home d-inline-block"></span>
+								</a>
+							</li>
+							<li class="breadcrumb-item stay-black">
+								<a class="stay-black"href="{{ path('show_rocks', { slug: rock.areaSlug }) }}">{{ rock.areaName }}</a>
+							</li>
+							<li class="breadcrumb-item active stay-black" aria-current="page">{{ rock.rockName }}</li>
+						</ol>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

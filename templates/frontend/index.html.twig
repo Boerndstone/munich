@@ -20,12 +20,12 @@
 			{% set description = description ~ ', ' %}
 		{% endif %}
 	{% endfor %}
-	{% include 'partials/_meta_tags.html.twig' with {
+	{% include 'components/seo/meta-tags.html.twig' with {
 		'title': 'Munichclimbs',
 		'description': description,
 		'url': 'https://munichclimbs.de/'
 	} %}
-	{% include 'partials/_json_ld.html.twig' with {
+	{% include 'components/seo/json-ld.html.twig' with {
 		'type': 'index',
 		'title': 'Munichclimbs',
 		'description': description,
@@ -35,45 +35,28 @@
 {% endblock %}
 
 {% block body %}
-	{{ include('partials/_navigation.html.twig') }}
+	{{ include('components/layout/navigation.html.twig') }}
 	<main id="main-content">
 		<div class="container my-3">
 			<section aria-labelledby="index-page-heading">
-				<div class="py-3 mb-3 d-flex align-items-center justify-content-between">
-					<h1 class="h2 mb-0 fw-medium" id="index-page-heading">Klettergebiete um München</h1>
-					{% include 'partials/_collapseMap.html.twig' with { modalId: 'modalMap', ariaLabel: 'index.map_open'|trans({}, 'messages') } %}
-				</div>
-				<div class="modal fade" id="modalMap" tabindex="-1" aria-labelledby="modalMapLabel" aria-hidden="true">
-					<div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
-						<div class="modal-content h-100 d-flex flex-column">
-							<div class="modal-header py-3 flex-shrink-0">
-								<h2 class="modal-title h5 mb-0" id="modalMapLabel">Klettergebiete um München</h2>
-								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
-							</div>
-							<div class="modal-body p-0 flex-grow-1 min-h-0 d-flex flex-column">
-								<div class="z-10 flex-grow-1 min-h-0 h-100">
-									{{ include('partials/_mainMap.html.twig') }}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				{{ include('components/page/index-header-with-map.html.twig') }}
+				{{ include('components/page/index-main-map-modal.html.twig') }}
 				<div class="row">
 					<div class="col-md-8">
 						<section class="row" aria-label="{{ 'index.areas_region_label'|trans({}, 'messages') }}">
 							{% for area in areasData %}
 								<div class="col-12">
-									{{ include('partials/_areaCard.html.twig', { area: area, link: path('show_rocks', { slug: area.slug }) }) }}
+									{{ include('components/area/area-card.html.twig', { area: area, link: path('show_rocks', { slug: area.slug }) }) }}
 								</div>
 							{% endfor %}
 						</section>
 					</div>
 					<div class="col-md-4">
 						<aside class="gap-3 row-gap-3" style="display: grid;" aria-label="{{ 'index.sidebar_label'|trans({}, 'messages') }}">
-							{{ include('partials/_banned-rocks.html.twig') }}
-							{{ include('partials/_support-project.html.twig') }}
-							{{ include('partials/_latest-routes.html.twig') }}
-							{{ include('partials/_latest-comments.html.twig') }}
+							{{ include('components/home/banned-rocks.html.twig') }}
+							{{ include('components/home/support-project.html.twig') }}
+							{{ include('components/home/latest-routes.html.twig') }}
+							{{ include('components/home/latest-comments.html.twig') }}
 						</aside>
 					</div>
 				</div>

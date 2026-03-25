@@ -1,0 +1,15 @@
+<div class="modal fade" id="modalMap" tabindex="-1" aria-labelledby="modalMapLabel" aria-hidden="true">
+	<div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
+		<div class="modal-content h-100 d-flex flex-column">
+			<div class="modal-header py-3 flex-shrink-0">
+				<h2 class="modal-title h5 mb-0" id="modalMapLabel">Klettergebiete um München</h2>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+			</div>
+			<div class="modal-body p-0 flex-grow-1 min-h-0 d-flex flex-column">
+				<div class="z-10 flex-grow-1 min-h-0 h-100">
+					{{ include('components/map/main-map.html.twig') }}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

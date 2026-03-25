@@ -4,63 +4,14 @@
 {% endblock %}
 
 {% block body %}
-	{{ include('partials/_navigation.html.twig') }}
+	{{ include('components/layout/navigation.html.twig') }}
 	<main id="main-content">
 		<div class="container my-3">
 			<section>
 				<div class="py-3 mb-3 d-flex align-items-center justify-content-between">
 					<h1 class="h2 mb-0 fw-medium">Neuste Routen</h1>
 				</div>
-			<section>
-				<div class="row">
-					<div class="col-12">
-						<div class="card mt-3 overflow-hidden border-0 rounded-0">
-							<div class="card-body p-0">
-								<table class="table mb-0 small fw-medium">
-									<thead>
-										<tr>
-											<th class="th-sm">
-												<i class="fas fa-align-justify"></i>
-											</th>
-											<th class="th-sm">Tour</th>
-											<th class="th-sm">Schwierigkeit</th>
-											<th class="th-sm">Erstbegeher</th>
-											<th class="th-sm">Fels</th>
-										</tr>
-									</thead>
-									<tbody>
-										{% for latestRoute in latestRoutes %}
-											<tr>
-												<td>{{loop.index}}</td>
-												<td>
-													<a href="{{ path('show_rock', { 'areaSlug': latestRoute.area.name, slug: latestRoute.rock.slug }) }}" title="Tourenname: {{ latestRoute.name }}, Fels: {{ latestRoute.rock }}" class="text-primary">{{ latestRoute.name }}
-													</a>
-													{% set star = '<i class="fas fa-star" style="color: rgb(202 138 4)"></i>' %}
-													{% if latestRoute.rating == 1 %}
-														{{ star|raw }}
-													{% elseif latestRoute.rating == 2 %}
-														{{ star|raw }}{{ star|raw }}
-													{% elseif latestRoute.rating == 3 %}
-														{{ star|raw }}{{ star|raw }}{{ star|raw }}
-													{% endif %}
-													{% if latestRoute.protection == 2 %}
-														<i class="fa fa-exclamation-triangle text-danger"></i>
-													{% elseif latestRoute.protection == 3 %}
-														<i class="fa fa-ambulance text-danger"></i>
-													{% endif %}
-												</td>
-												<td>{{ latestRoute.grade }}</td>
-												<td>{{ latestRoute.firstAscent }}
-													{{ latestRoute.yearFirstAscent }}</td>
-												<td>{{ latestRoute.rock }}</td>
-											</tr>
-										{% endfor %}
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
+				{{ include('components/page/latest-routes-page-table.html.twig', { latestRoutes: latestRoutes }) }}
 			</section>
 		</div>
 	</main>

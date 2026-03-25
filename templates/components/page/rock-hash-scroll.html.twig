@@ -1,0 +1,28 @@
+<script>
+	(function() {
+		const hash = window.location.hash;
+		if (!hash) return;
+
+		const scrollToTarget = function() {
+			const targetElement = document.querySelector(hash);
+			if (!targetElement) return;
+
+			targetElement.classList.add('route-highlight');
+
+			const navigationHeight = 50;
+			const extraOffset = 10;
+			const elementTop = targetElement.getBoundingClientRect().top + window.scrollY;
+
+			window.scrollTo({
+				top: Math.max(0, elementTop - navigationHeight - extraOffset),
+				behavior: 'smooth'
+			});
+		};
+
+		if ('requestIdleCallback' in window) {
+			requestIdleCallback(scrollToTarget, { timeout: 200 });
+		} else {
+			document.addEventListener('DOMContentLoaded', scrollToTarget);
+		}
+	})();
+</script>

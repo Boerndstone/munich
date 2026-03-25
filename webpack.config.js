@@ -13,6 +13,7 @@ Encore
 
   // global.scss is bundled via app.js; avoid a second entry (duplicate compile + unused output)
   .enableSassLoader()
+  .enablePostCssLoader()
 
   /*
    * ENTRY CONFIG - Frontend only

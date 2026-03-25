@@ -74,7 +74,7 @@
 {% endblock %}
 
 {% block body %}
-	{{ include('components/layout/navigation.html.twig', [ rocks ]) }}
+	{{ include('components/layout/navigation.html.twig') }}
 	<main id="main-content">
 		{{ include('components/page/rock-flash-messages.html.twig') }}
 		{% set currentDate = "now"|date("z") %}

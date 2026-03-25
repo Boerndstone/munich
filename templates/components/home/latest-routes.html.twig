@@ -1,19 +1,20 @@
-<div class="card">
-	<h3 class="text-white fs-5 fw-light px-3 py-2 mb-2 rounded-top bg-primary">Neuste Routen</h3>
-	<ul class="list-unstyled">
+<div class="overflow-hidden rounded-lg border-b border-gray-200 border-l border-r border-t border-sky-800 bg-white shadow-md dark:border-b-gray-700 dark:border-l-sky-700 dark:border-r-sky-700 dark:border-t-sky-700 dark:bg-black">
+	<h3 class="mb-0 bg-sky-800 px-3 py-2 text-lg font-light leading-normal text-white dark:bg-sky-900">Neuste Routen</h3>
+	<ul class="my-2 list-none px-0">
 		{% for latestRoute in latestRoutes %}
-			<li class="px-3 mb-2 hover:bg-gray-300" style="line-height: 1.3rem;">
-				<a class="fs-6 text-truncate text-black block" href="{{ path('show_rock', { 'areaSlug': latestRoute.areaSlug, slug: latestRoute.rockSlug }) }}">
-					<span class="d-inline-block me-2 list-item-icon" aria-hidden="true"></span>
-					<span class="fw-normal pr-2">{{ latestRoute.name }}</span>
-					<span class="fw-normal">{{ latestRoute.grade }}</span>
-					<span class="fw-light d-block ms-2 text-truncate" style="padding-left: 12px;">{{ latestRoute.rockName }}</span>
+			<li class="mb-2">
+				<a class="flex items-start gap-x-2 px-2 py-1 leading-[1.3rem] text-black no-underline hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800" href="{{ path('show_rock', { 'areaSlug': latestRoute.areaSlug, slug: latestRoute.rockSlug }) }}">
+					<span class="w-4 shrink-0 select-none pt-0.5 text-center text-base leading-none text-sky-800 pe-1 dark:text-sky-400" aria-hidden="true">&#8226;</span>
+					<span class="min-w-0 flex-1">
+						<span class="block truncate text-sm font-normal text-gray-900 dark:text-gray-100">{{ latestRoute.name }} {{ latestRoute.grade }}</span>
+						<span class="block truncate ps-0 text-sm font-light text-gray-900 dark:text-gray-100">{{ latestRoute.rockName }}</span>
+					</span>
 				</a>
 			</li>
 		{% endfor %}
 	</ul>
-	<hr class="my-2 border-dotted">
-	<a class="d-flex align-items-center text-sm font-semibold px-3 pb-2 " href="{{ path('neuesteRouten') }}">
+	<hr class="my-2 border-0 border-t border-dotted border-gray-300 dark:border-gray-600">
+	<a class="flex items-center px-2 pb-2 text-sm font-semibold text-sky-800 no-underline hover:underline dark:text-sky-400" href="{{ path('neuesteRouten') }}">
 		<span class="chevron-right" aria-hidden="true"></span>Mehr aktuelle Touren
 	</a>
 </div>

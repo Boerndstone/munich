@@ -2,6 +2,7 @@ const colors = require('tailwindcss/colors')
 
 module.exports = {
   //prefix: 'munich-',
+  darkMode: 'class',
   important: true,
   corePlugins: {
   },
@@ -37,9 +38,6 @@ module.exports = {
       teal: colors.teal,
       sky: colors.sky,
     },
-    listStyleType: {
-        square: 'square'
-    },
     screens: {
       sm: '640px',
       md: '768px',
@@ -50,6 +48,9 @@ module.exports = {
       padding: '.5rem',
     },
     extend: {
+      listStyleType: {
+        square: 'square',
+      },
     }
   },
   plugins: [

@@ -36,8 +36,9 @@ export default class extends Controller {
       actualTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
     
-    // Update the HTML data attribute
+    // Update the HTML data attribute (SCSS) and .dark class (Tailwind dark:)
     document.documentElement.setAttribute('data-theme', actualTheme);
+    document.documentElement.classList.toggle('dark', actualTheme === 'dark');
     
     // Save the user's preference to localStorage
     localStorage.setItem('theme', theme);
@@ -75,6 +76,7 @@ export default class extends Controller {
         if (localStorage.getItem('theme') === 'system') {
           const actualTheme = e.matches ? 'dark' : 'light';
           document.documentElement.setAttribute('data-theme', actualTheme);
+          document.documentElement.classList.toggle('dark', actualTheme === 'dark');
         }
       };
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', this.systemThemeListener);

@@ -11,7 +11,6 @@ Encore
   // public path used by the web server to access the output path
   .setPublicPath("/build")
 
-  // global.scss is bundled via app.js; avoid a second entry (duplicate compile + unused output)
   .enableSassLoader()
   .enablePostCssLoader()
 

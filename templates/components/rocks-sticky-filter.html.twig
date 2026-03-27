@@ -31,11 +31,11 @@
     },
 ] %}
 
-<div class="card py-2 mb-2 card-body sticky-filter">
-    <h2 class="h6 mb-2" id="resultsCounter"><span id="resultsCount">0</span> Felsen</h2>
+<div class="mb-2 rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-md dark:border-gray-700 dark:bg-black lg:sticky lg:top-[55px] lg:z-[1000]">
+    <h2 class="mb-2 text-base font-medium leading-tight text-gray-900 dark:text-gray-100" id="resultsCounter"><span id="resultsCount">0</span> Felsen</h2>
     <div class="rocks-sticky-filter__switches">
         {% for f in rock_filter_switches %}
-            <div class="form-check form-switch flex-shrink-0">
+            <div class="form-check form-switch shrink-0">
                 <input
                     id="{{ f.id }}"
                     class="form-check-input"
@@ -44,15 +44,17 @@
                     data-filter-target="{{ f.target }}"
                 >
                 <label
-                    class="form-check-label{% if f.label_variant|default('') == 'train_plus_bike' %} d-flex align-items-center{% endif %}"
+                    class="form-check-label cursor-pointer select-none{% if f.label_variant|default('') == 'train_plus_bike' %} inline-flex items-center gap-1{% endif %}"
                     for="{{ f.id }}"
                 >
                     {% if f.label_variant|default('') == 'train_plus_bike' %}
-                        <div class="train"></div> + <div class="bike"></div>
+                        <div class="train"></div>
+                        <span aria-hidden="true" class="text-gray-600 dark:text-gray-400">+</span>
+                        <div class="bike"></div>
                     {% else %}
                         <div class="{{ f.icon }}"></div>
                     {% endif %}
-                    <span class="visually-hidden">
+                    <span class="sr-only">
                         {{- f.trans_key is defined ? f.trans_key|trans : f.label -}}
                     </span>
                 </label>

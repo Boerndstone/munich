@@ -1,7 +1,7 @@
 {# Reusable area card. Pass `area` and optional `link` (href for the card). Omit `link` for a non-clickable card. #}
 {% set url = url|default('https://www.munichclimbs.de/uploads/areas/') %}
 {% if link is defined and link is not empty %}
-	<a class="block no-underline text-inherit focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black" href="{{ link }}" title="Klettergebiet {{ area.name }}">
+	<a class="block no-underline text-gray-900 dark:text-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black" href="{{ link }}" title="Klettergebiet {{ area.name }}">
 {% endif %}
 <div class="mb-4 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-black">
 	<div class="grid grid-cols-1 gap-0 md:grid-cols-2">

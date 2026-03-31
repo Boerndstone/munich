@@ -103,6 +103,125 @@ class GradeTranslationService
     ];
 
     /**
+     * Maps each known grade string to a UIAA-style chart column (3–11) for rock list histograms.
+     * null = excluded from these columns (projects, very easy, or unmapped).
+     *
+     * @var array<string, int|null>
+     */
+    private const GRADE_TO_UIAA_CHART_BUCKET = [
+        '0' => null,
+        '1' => null,
+        '2-' => null,
+        '2' => null,
+        '2+' => null,
+        '3-' => 3,
+        '3' => 3,
+        '3+' => 3,
+        '4-' => 4,
+        '4' => 4,
+        '4a' => 4,
+        '4b' => 4,
+        '4c' => 4,
+        '4c+' => 4,
+        '4+' => 4,
+        '5-' => 5,
+        '5' => 5,
+        '5/5+' => 5,
+        '5+' => 5,
+        '5+/6-' => 6,
+        '5a' => 5,
+        '5a+' => 6,
+        '5b' => 6,
+        '5b+' => 6,
+        '5c' => 6,
+        '5c+' => 6,
+        '6-' => 6,
+        '6-/6' => 6,
+        '6' => 6,
+        '6/6+' => 6,
+        '6+' => 6,
+        '6+/7-' => 7,
+        '6a' => 6,
+        '6a/6a+' => 6,
+        '6a+' => 6,
+        '6a+/6b' => 6,
+        '6b' => 6,
+        '6b/6b+' => 7,
+        '6b+' => 7,
+        '6c' => 7,
+        '6c+' => 7,
+        '6c+/7a' => 7,
+        '7-' => 7,
+        '7-/7' => 7,
+        '7' => 7,
+        '7/7+' => 7,
+        '7+' => 7,
+        '7+/8-' => 8,
+        '7a' => 7,
+        '7a/7a+' => 7,
+        '7a+' => 7,
+        '7b' => 7,
+        '7b+' => 7,
+        '7b+/7c' => 8,
+        '7c' => 8,
+        '7c/7c+' => 8,
+        '7c+' => 8,
+        '8-' => 8,
+        '8-/8' => 8,
+        '8' => 8,
+        '8/8+' => 8,
+        '8+' => 8,
+        '8+/9-' => 9,
+        '8a' => 8,
+        '8a/8a+' => 8,
+        '8a+' => 8,
+        '8a+/8b' => 8,
+        '8b' => 8,
+        '8b/8b+' => 9,
+        '8b+' => 9,
+        '8b+/8c' => 9,
+        '8c' => 9,
+        '8c+' => 9,
+        '8c+/9a' => 9,
+        '9-' => 9,
+        '9-/9' => 9,
+        '9' => 9,
+        '9/9+' => 9,
+        '9+' => 9,
+        '9+/10-' => 10,
+        '9a' => 9,
+        '9a/9a+' => 10,
+        '9a+' => 10,
+        '10-' => 10,
+        '10-/10' => 10,
+        '10' => 10,
+        '10/10+' => 10,
+        '10+' => 10,
+        '10+/11-' => 11,
+        '11-' => 11,
+        '11-/11' => 11,
+        '11' => 11,
+    ];
+
+    /**
+     * Grade strings per UIAA chart column (3–11) for SQL IN (...) clauses.
+     *
+     * @return array<int, list<string>>
+     */
+    public static function gradesGroupedByUiaaChartBucket(): array
+    {
+        $grouped = [];
+        foreach (self::GRADE_TO_UIAA_CHART_BUCKET as $grade => $bucket) {
+            if ($bucket !== null) {
+                $grouped[$bucket][] = $grade;
+            }
+        }
+        ksort($grouped);
+
+        return $grouped;
+    }
+
+    /**
      * Convert a grade string to its numeric equivalent
      */
     public function gradeToNumber(?string $grade): ?int

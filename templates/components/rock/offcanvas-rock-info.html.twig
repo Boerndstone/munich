@@ -16,7 +16,7 @@
 					<div id="collapseAllgemein" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
 						<div class="accordion-body p-0">
 							<table class="table table-striped table-sm fw-medium border-0">
-								<tr>
+								{# <tr>
 									<td colspan="2">
 										<div class="d-flex me-2">
 											<div class="d-flex flex-column me-2">
@@ -53,7 +53,21 @@
 											</div>
 										</div>
 									</td>
-								</tr>
+								</tr> #}
+								{% if rock.amountRoutes is defined and rock.amountRoutes > 0 %}
+									<tr>
+										<td colspan="2" class="border-0 pt-2">
+											{{ include('components/grade-distribution-chart.html.twig', {
+												grade_chart_source: rock,
+												route_count: rock.amountRoutes,
+												aria_label_prefix: rock.rockName ~ '. ',
+												wrapper_class: 'max-w-full justify-start',
+												include_projects_column: true,
+												project_count: rock.amountProjects|default(0)
+											}) }}
+										</td>
+									</tr>
+								{% endif %}
 								<tr>
 									<td>{{"height"|trans}}:</td>
 									<td>{{ rock.rockHeight }}

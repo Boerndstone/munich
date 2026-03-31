@@ -9,6 +9,6 @@ import GradeFilterController from "./controllers/grade_filter_controller";
 const application = window.Stimulus || Application.start();
 window.Stimulus = application;
 
-// Register filter controllers
+// Register filter controllers (rock-grade-chart lives in app/bootstrap for index + rocks)
 application.register("filter", FilterController);
 application.register("grade_filter", GradeFilterController);

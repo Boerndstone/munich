@@ -134,6 +134,7 @@ class FrontendController extends AbstractController
             $rockSlug = $rock['rockSlug'];
             $rock['routeGrades'] = isset($gradesByRock[$rockSlug]) ? implode(',', $gradesByRock[$rockSlug]) : '';
         }
+        unset($rock);
 
         $response = $this->render('frontend/rocks.html.twig', [
             'areaName' => $areaName,

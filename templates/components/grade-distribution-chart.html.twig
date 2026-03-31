@@ -1,0 +1,68 @@
+{# Bar chart of route counts per grade (3–11). Stimulus: rock-grade-chart (Chart.js, app bundle).
+   Pass either:
+   - grade_chart_counts: array of 9 integers [grad3 … grad11], and route_count, OR
+   - grade_chart_source: object with grade_chart_3 … grade_chart_11, plus route_count (or .routes).
+   Optional: include_projects_column + project_count — 10th bar labeled "Proj." on the chart.
+   Optional: aria_label_prefix, wrapper_class.
+   Optional: chart_summary_include_rocks + chart_rocks_count — e.g. index cards show "Touren · Felsen" above the chart.
+   Optional: hide_chart_summary_line — omit the route total line above the canvas (e.g. area rocks listing).
+#}
+{% if grade_chart_counts is not defined %}
+	{% set grade_chart_counts = [
+		attribute(grade_chart_source, 'grade_chart_3')|default(0),
+		attribute(grade_chart_source, 'grade_chart_4')|default(0),
+		attribute(grade_chart_source, 'grade_chart_5')|default(0),
+		attribute(grade_chart_source, 'grade_chart_6')|default(0),
+		attribute(grade_chart_source, 'grade_chart_7')|default(0),
+		attribute(grade_chart_source, 'grade_chart_8')|default(0),
+		attribute(grade_chart_source, 'grade_chart_9')|default(0),
+		attribute(grade_chart_source, 'grade_chart_10')|default(0),
+		attribute(grade_chart_source, 'grade_chart_11')|default(0)
+	] %}
+{% endif %}
+{% if include_projects_column|default(false) %}
+	{% set grade_chart_counts = grade_chart_counts|merge([project_count|default(0)]) %}
+{% endif %}
+{% set route_total = route_count|default(0) %}
+{% if route_total < 1 and grade_chart_source is defined %}
+	{% set route_total = grade_chart_source.routes|default(0) %}
+{% endif %}
+{% if route_total > 0 %}
+	{% set rocks_n = chart_rocks_count|default(0) %}
+	{% if chart_summary_include_rocks|default(false) %}
+		{% set chart_summary_visible = 'grade_chart.summary_routes_and_rocks'|trans({ '%routes%': route_total, '%rocks%': rocks_n }) %}
+		{% set chart_aria_total_fragment = 'grade_chart.aria_summary_routes_and_rocks'|trans({ '%routes%': route_total, '%rocks%': rocks_n }) %}
+	{% else %}
+		{% set chart_summary_visible = 'grade_chart.total_routes'|trans({ '%count%': route_total }) %}
+		{% set chart_aria_total_fragment = 'grade_chart.aria_total_prefix'|trans({ '%count%': route_total }) %}
+	{% endif %}
+	{% if hide_chart_summary_line|default(false) %}
+		{% set chart_aria_total_fragment = '' %}
+	{% endif %}
+	<div class="not-prose flex min-w-0 flex-col {{ hide_chart_summary_line|default(false) ? 'gap-0' : 'gap-0.5' }} {{ wrapper_class|default('') }}">
+		{% if not hide_chart_summary_line|default(false) %}
+			<p class="mb-2 w-full text-left text-xs font-medium tabular-nums text-black dark:text-white pointer-events-none" aria-hidden="true">
+				{{ chart_summary_visible }}
+			</p>
+		{% endif %}
+		<p class="mb-0.5 w-full text-left text-[10px] font-normal leading-tight text-gray-500 dark:text-gray-400 pointer-events-none" aria-hidden="true">
+			<span>{{ 'grade_chart.legend_y'|trans }}</span>
+		</p>
+		<div
+			class="pointer-events-none flex w-full items-end gap-1"
+			data-controller="rock-grade-chart"
+			data-rock-grade-chart-counts-value="{{ grade_chart_counts|json_encode|e('html_attr') }}"
+			data-rock-grade-chart-aria-prefix-value="{{ aria_label_prefix|default('')|e('html_attr') }}"
+			data-rock-grade-chart-aria-total-prefix-value="{{ chart_aria_total_fragment|e('html_attr') }}"
+			role="img"
+			aria-label="{{ aria_label_prefix|default('') }}{{ chart_aria_total_fragment }}Routen je Gradstufe."
+		>
+			<div class="relative h-28 min-w-0 flex-1">
+				<canvas class="max-h-28 h-full w-full" aria-hidden="true"></canvas>
+			</div>
+		</div>
+		<p class="mb-0 mt-1 w-full text-left text-[10px] font-normal leading-tight text-gray-500 dark:text-gray-400 pointer-events-none" aria-hidden="true">
+			<span>{{ 'grade_chart.legend_x'|trans }}</span>
+		</p>
+	</div>
+{% endif %}

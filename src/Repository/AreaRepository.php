@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Area;
 use App\Entity\Routes;
+use App\Service\GradeTranslationService;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -104,7 +106,56 @@ class AreaRepository extends ServiceEntityRepository
             ->groupBy('area.id', 'area.name', 'area.slug', 'area.image', 'area.lat', 'area.lng', 'area.travelTimeMinutes', 'area.sequence')
             ->orderBy('area.sequence');
 
-        return $qb->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+        $areas = $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
+
+        $gradeChartsByAreaId = $this->getAreaGradeChartCountsByAreaId();
+        foreach ($areas as &$row) {
+            $id = (int) ($row['areaId'] ?? 0);
+            $grades = $gradeChartsByAreaId[$id] ?? null;
+            for ($g = 3; $g <= 11; ++$g) {
+                $key = 'grade_chart_'.$g;
+                $row[$key] = $grades !== null ? (int) ($grades[$key] ?? 0) : 0;
+            }
+        }
+        unset($row);
+
+        return $areas;
+    }
+
+    /**
+     * Per-area route counts for grade columns 3–11 (one row per route, no area×rocks cartesian join).
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function getAreaGradeChartCountsByAreaId(): array
+    {
+        $groupedGrades = GradeTranslationService::gradesGroupedByUiaaChartBucket();
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('IDENTITY(route.area) AS areaId')
+            ->from(Routes::class, 'route')
+            ->groupBy('route.area');
+
+        foreach (range(3, 11) as $bucket) {
+            $grades = $groupedGrades[$bucket] ?? [];
+            $param = 'area_grade_chart_'.$bucket;
+            if ($grades === []) {
+                $qb->addSelect('0 AS grade_chart_'.$bucket);
+            } else {
+                $qb->addSelect('SUM(CASE WHEN route.grade IN (:'.$param.') THEN 1 ELSE 0 END) AS grade_chart_'.$bucket)
+                    ->setParameter($param, $grades, ArrayParameterType::STRING);
+            }
+        }
+
+        $rows = $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
+        $out = [];
+        foreach ($rows as $row) {
+            if (!isset($row['areaId']) || $row['areaId'] === null) {
+                continue;
+            }
+            $out[(int) $row['areaId']] = $row;
+        }
+
+        return $out;
     }
 
     public function sidebarNavigation()

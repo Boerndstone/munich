@@ -1,66 +1,47 @@
-{# Single rock row on the area "rocks" listing (card + link + route mix bar). Expects: rock, areaName, currentDate #}
+{# Single rock row on the area "rocks" listing. Expects: rock, areaName, currentDate #}
 <div class="col-12 rock-item {% if currentDate < 181 and rock.banned > 0 %}banned{% endif %}" data-child-friendly="{{ rock.rockChild == 1 ? 'true' : 'false' }}" data-rock-sunny="{{ rock.rockSunny ? 'true' : 'false' }}" data-rock-rain="{{ rock.rockRain ? 'true' : 'false' }}" data-rock-train="{{ rock.rockTrain == 1 ? 'true' : 'false' }}" data-rock-bike="{{ (rock.rockBike is defined and rock.rockBike == 1) ? 'true' : 'false' }}">
-	<a href="{{ path('show_rock', { 'areaSlug': rock.areaSlug, slug: rock.rockSlug }) }}" class="d-block text-black">
-		<div class="card py-2 mb-2 card-body">
-			<div class="row align-items-center">
-				<div class="col-auto px-0">
+	<a href="{{ path('show_rock', { 'areaSlug': rock.areaSlug, slug: rock.rockSlug }) }}" class="block text-black no-underline dark:text-white">
+		<div class="rock-item-card mb-2 rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-md dark:border-gray-700 dark:bg-black">
+			<div class="flex items-start gap-3">
+				<div class="shrink-0">
 					{% if rock.previewImage is defined and rock.previewImage is not null %}
 						<picture>
 							<source type="image/webp" srcset="https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}.webp, https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}@2x.webp 2x, https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}@3x.webp 3x">
-							<img src="https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}.webp" alt="Klettergebiet, {{ areaName}}, Fels: {{ rock.rockName }}" title="Klettergebiet, {{ areaName }}, Fels: {{ rock.rockName }}" loading="lazy" decoding="async" fetchpriority="low" class="shadow d-inline-block" style="height: 50px; width: 50px; object-fit: cover; border-radius: 50%;">
+							<img src="https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}.webp" alt="Klettergebiet, {{ areaName}}, Fels: {{ rock.rockName }}" title="Klettergebiet, {{ areaName }}, Fels: {{ rock.rockName }}" loading="lazy" decoding="async" fetchpriority="low" class="inline-block h-[50px] w-[50px] rounded-full object-cover shadow-md">
 						</picture>
 					{% else %}
-						<div class="d-flex align-items-center justify-content-center shadow" style="height: 50px; width: 50px; object-fit: cover; border-radius: 50%;">
-							<svg role="img" aria-label="Klettergebiet, {{ areaName}}, Fels: {{ rock.rockName }}" title="Klettergebiet, {{ areaName }}, Fels: {{ rock.rockName }}" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24">
+						<div class="flex h-[50px] w-[50px] items-center justify-center rounded-full shadow-md">
+							<svg role="img" aria-label="Klettergebiet, {{ areaName}}, Fels: {{ rock.rockName }}" title="Klettergebiet, {{ areaName }}, Fels: {{ rock.rockName }}" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24" class="text-gray-600 dark:text-gray-400">
 								<title>Klettergebiet, {{ areaName}}, Fels: {{ rock.rockName }}</title>
 								<path fill="currentColor" d="M23 18H1l7.25-9.67l2 2.67L14 6zm-11.5-5.33L14 16h5l-5-6.67zM5 16h6.5l-3.25-4.33z"/>
 							</svg>
 						</div>
 					{% endif %}
 				</div>
-				<div class="col">
-					<div class="overflow-hidden flex-nowrap">
-						<div class="d-flex align-items-bottom justify-content-between">
-							<h2 class="h6 mb-0 fw-normal d-inline-block text-truncate text-truncate-rock-name">{{rock.rockName}}</h2>
-							<div class="d-flex align-items-center">
-								<p class="small mb-0">{{ rock.rockHeight }} m</p>
-								<div class="mx-1 text d-block" style="width: 1px; height: 14px;"></div>
-								<p class="small mb-0">{{ rock.rockOrientation }}</p>
-							</div>
+				<div class="flex min-w-0 flex-1 flex-col gap-1.5">
+					<div class="min-w-0 flex items-center justify-between">
+						<h2 class="mb-0 min-w-0 max-w-[150px] truncate text-base font-normal leading-tight lg:max-w-none">{{ rock.rockName }}</h2>
+						<div class="mt-0.5 flex flex-wrap items-center gap-1 text-sm text-gray-800 dark:text-gray-200">
+							<p class="mb-0">{{ rock.rockHeight }} m</p>
+							<div class="h-3.5 w-px shrink-0 bg-gray-400 dark:bg-gray-600" aria-hidden="true"></div>
+							<p class="mb-0">{{ rock.rockOrientation }}</p>
 						</div>
-						<div class="row align-items-center">
-							<div class="col-12">
-								<div class="row align-items-center g-0">
-									<div class="col-auto">
-										<small class="d-inline-block me-2" style="width: 2rem;">{{ rock.amountRoutes }}</small>
-									</div>
-									<div class="col">
-										<div class="d-flex align-items-center">
-											{% if rock.amountRoutes > 0 %}
-												{% set percent = 100 / rock.amountRoutes %}
-												{% set easy = percent * rock.amountEasy %}
-												{% set middle = percent * rock.amountMiddle %}
-												{% set hard = percent * rock.amountHard %}
-												{% set project = percent * rock.amountProjects %}
-												<div class="progress d-flex" style="height: 1rem; width: 6rem;">
-													<div class="progress-bar bg-green" role="img" style="width: {{ easy }}%;" aria-label="Leichte Routen (Grad 1-5): {{ easy|round }} Prozent"></div>
-													<div class="progress-bar bg-amber" role="img" style="width: {{ middle }}%;" aria-label="Mittlere Routen (Grad 6-7): {{ middle|round }} Prozent"></div>
-													<div class="progress-bar bg-red" role="img" style="width: {{ hard }}%;" aria-label="Schwere Routen (Grad 8-11): {{ hard|round }} Prozent"></div>
-													<div class="progress-bar" role="img" style="width: {{ project }}%; background-color: black" aria-label="Projekte: {{ project|round }} Prozent"></div>
-												</div>
-											{% endif %}
-										</div>
-									</div>
-									<div class="col text-end">
-										{% if currentDate < 181 and rock.banned == 1 %}
-											<span class="badge fw-light " style="background-color: #b91c1c !important;">gesperrt bis: {{ date(date("now")|date("Y") ~ "-01-01")|date_modify("+180 days")|date('d.m.') }}</span>
-										{% elseif currentDate < 181 and rock.banned == 2 %}
-											<span class="badge fw-light " style="background-color: #b91c1c !important;">gesperrt bis: {{ date(date("now")|date("Y") ~ "-01-01")|date_modify("+211 days")|date('d.m.') }}</span>
-										{% endif %}
-									</div>
-								</div>
-							</div>
+					</div>
+					{% set rock_show_ban_badge = currentDate < 181 and (rock.banned == 1 or rock.banned == 2) %}
+					<div class="flex min-w-0 items-end justify-between gap-2">
+						<div class="{{ rock_show_ban_badge ? 'w-1/2' : 'w-full' }} min-w-0">
+							{{ include('components/rock-list-grade-strip.html.twig', {
+								rock: rock,
+								aria_label_prefix: 'Klettergebiet ' ~ areaName ~ ', Fels ' ~ rock.rockName ~ '. ',
+								include_projects_column: true,
+								project_count: rock.amountProjects|default(0)
+							}) }}
 						</div>
+						{% if currentDate < 181 and rock.banned == 1 %}
+							<span class="mb-px max-w-[9.5rem] shrink-0 self-end text-right text-[10px] font-light leading-tight text-white"><span class="rounded bg-red-700 px-1.5 py-0.5 dark:bg-red-800">gesperrt bis: {{ date(date("now")|date("Y") ~ "-01-01")|date_modify("+180 days")|date('d.m.') }}</span></span>
+						{% elseif currentDate < 181 and rock.banned == 2 %}
+							<span class="mb-px max-w-[9.5rem] shrink-0 self-end text-right text-[10px] font-light leading-tight text-white"><span class="rounded bg-red-700 px-1.5 py-0.5 dark:bg-red-800">gesperrt bis: {{ date(date("now")|date("Y") ~ "-01-01")|date_modify("+211 days")|date('d.m.') }}</span></span>
+						{% endif %}
 					</div>
 				</div>
 			</div>

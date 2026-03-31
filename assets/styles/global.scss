@@ -1327,16 +1327,21 @@ input[data-autocomplete-target="input"]:focus {
 
         /* Re-enable pointer events for interactive path elements (tooltips) */
         .stroke-behavior,
+        .route-path-hit,
         .number-circle,
         .number-text,
         .tooltip-trigger {
             pointer-events: auto;
         }
+
+        .route-path-hit {
+            pointer-events: stroke;
+        }
     }
 }
 
 .number-circle {
-    r: 17px;
+    r: 19px;
 }
 
 .number-text {
@@ -1354,6 +1359,7 @@ input[data-autocomplete-target="input"]:focus {
     fill: white;
     stroke: #000;
     stroke-width: 1px;
+    pointer-events: none;
 }
 
 .stroke-behavior {
@@ -1365,7 +1371,7 @@ input[data-autocomplete-target="input"]:focus {
 
 @include media-breakpoint-up(lg) {
     .number-circle {
-        r: 15px;
+        r: 17px;
     }
     .number-text {
         font-size: 18px;

@@ -46,7 +46,7 @@
 						<section class="row" aria-label="{{ 'index.areas_region_label'|trans({}, 'messages') }}">
 							{% for area in areasData %}
 								<div class="col-12">
-									{{ include('components/area/area-card.html.twig', { area: area, link: path('show_rocks', { slug: area.slug }) }) }}
+									{{ include('components/area/area-card.html.twig', { area: area, link: path('show_rocks', { slug: area.slug }), chart_summary_include_rocks: true }) }}
 								</div>
 							{% endfor %}
 						</section>

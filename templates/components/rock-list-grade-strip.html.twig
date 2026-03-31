@@ -1,0 +1,68 @@
+{# Horizontal grade cells for area rocks listing only. One column per grade (3–11) or Proj. with count &gt; 0 only. #}
+{% set include_proj = include_projects_column|default(true) %}
+{% set proj_n = project_count|default(0) %}
+{% set route_total = rock.amountRoutes|default(0) %}
+{% set strip_bg = {
+	3: 'bg-green-500 dark:bg-green-400',
+	4: 'bg-green-600 dark:bg-green-500',
+	5: 'bg-green-700 dark:bg-green-600',
+	6: 'bg-amber-500 dark:bg-amber-400',
+	7: 'bg-amber-600 dark:bg-amber-500',
+	8: 'bg-red-500 dark:bg-red-400',
+	9: 'bg-red-600 dark:bg-red-500',
+	10: 'bg-red-700 dark:bg-red-600',
+	11: 'bg-red-800 dark:bg-red-700',
+} %}
+{% set strip_text_on_color = 'text-white' %}
+{% set segments = [] %}
+{% for g in 3..11 %}
+	{% set n = attribute(rock, 'grade_chart_' ~ g)|default(0) %}
+	{% if n > 0 %}
+		{% set segments = segments|merge([{ kind: 'grade', g: g, n: n }]) %}
+	{% endif %}
+{% endfor %}
+{% if include_proj and proj_n > 0 %}
+	{% set segments = segments|merge([{ kind: 'proj', n: proj_n }]) %}
+{% endif %}
+{% set aria_parts = [] %}
+{% for seg in segments %}
+	{% if seg.kind == 'grade' %}
+		{% set aria_parts = aria_parts|merge(['Grad ' ~ seg.g ~ ': ' ~ seg.n]) %}
+	{% else %}
+		{% set aria_parts = aria_parts|merge(['Projekte: ' ~ seg.n]) %}
+	{% endif %}
+{% endfor %}
+{% set aria_label = aria_label_prefix|default('') ~ 'Routen je Gradstufe. ' ~ aria_parts|join('; ') %}
+{% if route_total > 0 and segments is not empty %}
+	<div class="not-prose w-full min-w-0">
+		<div class="mb-px flex text-center text-[10px] font-bold leading-none text-black dark:text-white pointer-events-none" aria-hidden="true">
+			{% for seg in segments %}
+				<div class="min-w-0 flex-1 px-px">{{ seg.kind == 'grade' ? seg.g : 'Proj.' }}</div>
+			{% endfor %}
+		</div>
+		<div
+			class="flex h-5 w-full overflow-hidden rounded border border-gray-300 dark:border-gray-600"
+			role="img"
+			aria-label="{{ aria_label|e('html_attr') }}"
+		>
+			{% for seg in segments %}
+				{% set seg_divider = not loop.first ? ' border-l border-white/25 dark:border-black/20' : '' %}
+				{% if seg.kind == 'grade' %}
+					<div
+						class="flex min-w-0 flex-1 items-center justify-center px-px text-center text-[10px] font-semibold leading-none tabular-nums{{ seg_divider }} {{ strip_bg[seg.g] }} {{ strip_text_on_color }}"
+						title="Grad {{ seg.g }}: {{ seg.n }}"
+					>
+						{{ seg.n }}
+					</div>
+				{% else %}
+					<div
+						class="flex min-w-0 flex-1 items-center justify-center px-px text-center text-[10px] font-semibold leading-none tabular-nums{{ seg_divider }} bg-gray-800 text-white dark:bg-gray-500"
+						title="{{ 'projects'|trans }}: {{ seg.n }}"
+					>
+						{{ seg.n }}
+					</div>
+				{% endif %}
+			{% endfor %}
+		</div>
+	</div>
+{% endif %}

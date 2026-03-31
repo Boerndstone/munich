@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Rock;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Service\GradeTranslationService;
 use App\Repository\RoutesRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Rock|null find($id, $lockMode = null, $lockVersion = null)
@@ -123,7 +125,7 @@ class RockRepository extends ServiceEntityRepository
 
     public function getRocksInformation($areaSlug)
     {
-        return $this->createQueryBuilder('rock')
+        $qb = $this->createQueryBuilder('rock')
             ->select(
                 'rock.name as rockName',
                 'rock.slug as rockSlug',
@@ -153,14 +155,26 @@ class RockRepository extends ServiceEntityRepository
             ->where('area.slug LIKE :areaSlug')
             ->andWhere('rock.online = 1')
             ->setParameter('areaSlug', $areaSlug)
-            ->groupBy('rock.id')
-            ->getQuery()
-            ->getResult();
+            ->groupBy('rock.id');
+
+        $groupedGrades = GradeTranslationService::gradesGroupedByUiaaChartBucket();
+        foreach (range(3, 11) as $bucket) {
+            $grades = $groupedGrades[$bucket] ?? [];
+            $param = 'rock_grade_chart_'.$bucket;
+            if ($grades === []) {
+                $qb->addSelect('0 AS grade_chart_'.$bucket);
+            } else {
+                $qb->addSelect('SUM(CASE WHEN route.grade IN (:'.$param.') THEN 1 ELSE 0 END) AS grade_chart_'.$bucket)
+                    ->setParameter($param, $grades, ArrayParameterType::STRING);
+            }
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     public function getRockInformation($rockSlug)
     {
-        return $this->createQueryBuilder('rock')
+        $qb = $this->createQueryBuilder('rock')
             ->select(
                 'rock.name as rockName',
                 'rock.slug as rockSlug',
@@ -193,9 +207,21 @@ class RockRepository extends ServiceEntityRepository
             ->where('rock.slug LIKE :rockSlug')
             ->andWhere('rock.online = 1')
             ->setParameter('rockSlug', $rockSlug)
-            ->groupBy('rock.id')
-            ->getQuery()
-            ->getResult();
+            ->groupBy('rock.id');
+
+        $groupedGrades = GradeTranslationService::gradesGroupedByUiaaChartBucket();
+        foreach (range(3, 11) as $bucket) {
+            $grades = $groupedGrades[$bucket] ?? [];
+            $param = 'single_rock_grade_chart_'.$bucket;
+            if ($grades === []) {
+                $qb->addSelect('0 AS grade_chart_'.$bucket);
+            } else {
+                $qb->addSelect('SUM(CASE WHEN route.grade IN (:'.$param.') THEN 1 ELSE 0 END) AS grade_chart_'.$bucket)
+                    ->setParameter($param, $grades, ArrayParameterType::STRING);
+            }
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     public function getRoutesTopo($rockSlug)

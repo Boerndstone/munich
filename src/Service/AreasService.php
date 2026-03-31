@@ -23,7 +23,7 @@ class AreasService
      */
     public function getAreasInformation(): array
     {
-        return $this->cache->get('areas_information', function (ItemInterface $item): array {
+        return $this->cache->get('areas_information_v2', function (ItemInterface $item): array {
             $item->expiresAfter(self::CACHE_TTL);
 
             return $this->areaRepository->getAreasInformation();
@@ -78,6 +78,7 @@ class AreasService
      */
     public function clearCache(): void
     {
+        $this->cache->delete('areas_information_v2');
         $this->cache->delete('areas_information');
         $this->cache->delete('areas_footer');
         $this->cache->delete('areas_sidebar');

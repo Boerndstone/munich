@@ -36,7 +36,7 @@ class AreasServiceTest extends TestCase
         $this->cache
             ->expects($this->once())
             ->method('get')
-            ->with('areas_information', $this->isType('callable'))
+            ->with('areas_information_v2', $this->isType('callable'))
             ->willReturn($expectedAreas);
 
         $result = $this->service->getAreasInformation();
@@ -58,7 +58,7 @@ class AreasServiceTest extends TestCase
         $this->cache
             ->expects($this->once())
             ->method('get')
-            ->with('areas_information', $this->isType('callable'))
+            ->with('areas_information_v2', $this->isType('callable'))
             ->willReturnCallback(function (string $key, callable $callback) {
                 $item = $this->createMock(ItemInterface::class);
                 $item->expects($this->once())
@@ -165,10 +165,11 @@ class AreasServiceTest extends TestCase
     public function testClearCacheDeletesAllCacheKeys(): void
     {
         $this->cache
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(4))
             ->method('delete')
             ->willReturnCallback(function (string $key): bool {
                 $this->assertContains($key, [
+                    'areas_information_v2',
                     'areas_information',
                     'areas_footer',
                     'areas_sidebar',
@@ -223,7 +224,7 @@ class AreasServiceTest extends TestCase
         $this->cache
             ->expects($this->once())
             ->method('get')
-            ->with('areas_information', $this->isType('callable'))
+            ->with('areas_information_v2', $this->isType('callable'))
             ->willReturn([]);
 
         $result = $this->service->getAreasInformation();

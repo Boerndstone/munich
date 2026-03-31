@@ -69,5 +69,13 @@ rock_improvement.submit: "Submit"
 rock_improvement.success: "Thank you! Your message has been sent."
 rock_improvement.validation_error: "Please try again."
 
+# Grade distribution chart
+grade_chart.total_routes: "%count% routes"
+grade_chart.aria_total_prefix: "Total %count% routes. "
+grade_chart.summary_routes_and_rocks: "%routes% routes · %rocks% rocks"
+grade_chart.aria_summary_routes_and_rocks: "Total %routes% routes, %rocks% rocks. "
+grade_chart.legend_x: "Grade (UIAA)"
+grade_chart.legend_y: "Amount"
+
 # Topo (route overview image)
 topo.image_alt: "Climbing topo „%topo_name%“ at %rock_name% in %area_name%"

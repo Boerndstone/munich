@@ -6,8 +6,29 @@
 		{% set pictureHtml = '<picture><source type="image/webp" srcset="' ~ rockImageBaseUrl ~ rock.previewImage ~ 'area-map.webp 1x, ' ~ rockImageBaseUrl ~ rock.previewImage ~ 'area-map@2x.webp 2x, ' ~ rockImageBaseUrl ~ rock.previewImage ~ 'area-map@3x.webp 3x" type="image/webp"><img class="main-map-popup-image" src="' ~ rockImageBaseUrl ~ rock.previewImage ~ 'area-map.webp" alt="' ~ ('Klettergebiet ' ~ areaName ~ ', Fels: ' ~ rock.rockName)|e('html_attr') ~ '" loading="lazy" decoding="async"></picture>' %}
 	{% endif %}
 	{% set rockLink = path('show_rock', { 'areaSlug': rock.areaSlug, slug: rock.rockSlug }) %}
-	{% set rockCardArea = { routes: rock.amountRoutes|default(0), amountEasy: rock.amountEasy|default(0), amountMiddle: rock.amountMiddle|default(0), amountHard: rock.amountHard|default(0), amountProjects: rock.amountProjects|default(0) } %}
-	{% set popupBody = include('components/area/area-card-body.html.twig', { area: rockCardArea, ulClass: 'mt-2', showTravelTime: false, showRocksCount: false }) %}
+	{% set rockCardArea = {
+		routes: rock.amountRoutes|default(0),
+		amountEasy: rock.amountEasy|default(0),
+		amountMiddle: rock.amountMiddle|default(0),
+		amountHard: rock.amountHard|default(0),
+		amountProjects: rock.amountProjects|default(0),
+		grade_chart_3: rock.grade_chart_3|default(0),
+		grade_chart_4: rock.grade_chart_4|default(0),
+		grade_chart_5: rock.grade_chart_5|default(0),
+		grade_chart_6: rock.grade_chart_6|default(0),
+		grade_chart_7: rock.grade_chart_7|default(0),
+		grade_chart_8: rock.grade_chart_8|default(0),
+		grade_chart_9: rock.grade_chart_9|default(0),
+		grade_chart_10: rock.grade_chart_10|default(0),
+		grade_chart_11: rock.grade_chart_11|default(0)
+	} %}
+	{% set popupBody = include('components/area/area-card-body.html.twig', {
+		area: rockCardArea,
+		ulClass: 'mt-2',
+		showTravelTime: false,
+		showRocksCount: false,
+		aria_label_prefix: 'Klettergebiet ' ~ areaName ~ ', Fels ' ~ rock.rockName ~ '. '
+	}) %}
 	{% set rockName = '<div class="main-map-popup-card">' ~
 		'<div class="main-map-popup-image-wrap">' ~
 		pictureHtml ~

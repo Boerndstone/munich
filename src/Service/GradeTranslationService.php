@@ -222,6 +222,18 @@ class GradeTranslationService
     }
 
     /**
+     * UIAA chart column (3–11) for histograms / topo colors, or null for projects and unmapped grades.
+     */
+    public static function uiaaChartBucketForGrade(?string $grade): ?int
+    {
+        if ($grade === null || $grade === '') {
+            return null;
+        }
+
+        return self::GRADE_TO_UIAA_CHART_BUCKET[$grade] ?? null;
+    }
+
+    /**
      * Convert a grade string to its numeric equivalent
      */
     public function gradeToNumber(?string $grade): ?int

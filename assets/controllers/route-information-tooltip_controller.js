@@ -18,8 +18,32 @@ export default class extends Controller {
     });
 
     const interactive = this.element.querySelectorAll("[data-path-id]");
-    const pathIds = Array.from(interactive).map((element) => ({
-      pathId: element.getAttribute("data-path-id"),
+
+    // De-duplicate by pathId and prefer .route-path-hit elements when multiple
+    // elements share the same data-path-id (e.g. hit-path + circle + text).
+    const pathIdMap = new Map();
+    interactive.forEach((element) => {
+      const pathId = element.getAttribute("data-path-id");
+      if (!pathId) {
+        return;
+      }
+      const existingElement = pathIdMap.get(pathId);
+      if (!existingElement) {
+        pathIdMap.set(pathId, element);
+        return;
+      }
+
+      const isPreferred = element.classList.contains("route-path-hit");
+      const existingIsPreferred = existingElement.classList.contains("route-path-hit");
+
+      // Only replace if the new element is preferred and the existing one is not.
+      if (isPreferred && !existingIsPreferred) {
+        pathIdMap.set(pathId, element);
+      }
+    });
+
+    const pathIds = Array.from(pathIdMap.entries()).map(([pathId, element]) => ({
+      pathId,
       element,
     }));
 

@@ -543,9 +543,6 @@
 					if (paths[idx]) {
 						paths[idx].dot = el.checked;
 						syncDrawnPathsFromPaths();
-						if (drawSvg && drawSvg.getAttribute('viewBox')) {
-							redrawOverlay();
-						}
 					}
 				});
 			});

@@ -3,7 +3,10 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Topo;
+use App\Repository\RoutesRepository;
 use App\Repository\TopoRepository;
+use App\Service\GradeTranslationService;
+use App\Service\TopoPathGradeColorService;
 use App\Service\TopoPathRendererService;
 use App\Service\TopoSvgParser;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -19,9 +22,11 @@ class TopoPathHelperController extends AbstractDashboardController
 {
     public function __construct(
         private TopoRepository $topoRepository,
+        private RoutesRepository $routesRepository,
         private TopoPathRendererService $pathRenderer,
         private TopoSvgParser $topoSvgParser,
         private RockAccessService $rockAccessService,
+        private TopoPathGradeColorService $topoPathGradeColorService,
     ) {
     }
 
@@ -59,6 +64,32 @@ class TopoPathHelperController extends AbstractDashboardController
             $imageUrl = $srcset['src'] ?? ('https://www.munichclimbs.de/build/images/topos/' . $topo->getImage() . '.webp');
         }
 
+        $routesForColors = [];
+        $rock = $topo->getRocks();
+        if ($rock !== null) {
+            $routeRows = $this->routesRepository->createQueryBuilder('r')
+                ->where('r.rock = :rock')
+                ->andWhere('r.topoId = :topoNumber')
+                ->setParameter('rock', $rock)
+                ->setParameter('topoNumber', $topo->getNumber())
+                ->orderBy('r.nr', 'ASC')
+                ->addOrderBy('r.id', 'ASC')
+                ->getQuery()
+                ->getResult();
+
+            foreach ($routeRows as $route) {
+                $grade = $route->getGrade();
+                $bucket = GradeTranslationService::uiaaChartBucketForGrade($grade);
+                $routesForColors[] = [
+                    'nr' => $route->getNr(),
+                    'name' => $route->getName() ?? '',
+                    'grade' => $grade ?? '',
+                    'chartBucket' => $bucket,
+                    'strokeHex' => $this->topoPathGradeColorService->strokeHexForGrade($grade),
+                ];
+            }
+        }
+
         // Do not pass pathsOverlaySvg to path-helper — it can contain broken content if pathCollection was saved as JS/SVG. Use pathsJson only.
         $topoEdit = [
             'id' => $topo->getId(),
@@ -70,6 +101,7 @@ class TopoPathHelperController extends AbstractDashboardController
             'pathsOverlaySvg' => '', // step 0 overlay is built client-side from pathsJson only
             'saveUrl' => $this->generateUrl('admin_topo_save_paths', ['id' => $topo->getId()]),
             'backUrl' => $this->container->get(AdminUrlGenerator::class)->setController(TopoCrudController::class)->setAction('edit')->setEntityId($topo->getId())->generateUrl(),
+            'routesForColors' => $routesForColors,
         ];
 
         $topoEditJson = json_encode($topoEdit, \JSON_UNESCAPED_SLASHES);

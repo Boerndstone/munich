@@ -1253,10 +1253,78 @@ input[data-autocomplete-target="input"]:focus {
 
 // @tailwindcss/forms sizes all [type=checkbox] as 1rem × 1rem and checked as background-size 100% 100%.
 // That breaks Bootstrap 5 switches (track should be 2em wide; knob must not fill the whole track).
-.form-switch .form-check-input {
+// Exclude #languageSwitch so Tailwind utilities (e.g. h-2.5) on the navbar language switch are not overridden.
+.form-switch .form-check-input:not(#languageSwitch) {
     width: 2em !important;
     height: 1em !important;
     background-size: contain !important;
+}
+
+// Navbar rock page: DE/EN label inside the switch track (no adjacent icon)
+#form-check-language.form-switch {
+    padding-left: 0;
+    margin-bottom: 0;
+
+    .language-switch-inner {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 0;
+    }
+
+    .form-check-input {
+        float: none;
+        margin-left: 0 !important;
+        width: 2.85em !important;
+        background-size: contain !important;
+        position: relative;
+        z-index: 1;
+    }
+
+    .language-switch-caption {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .language-switch-lang {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.5rem;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: 0.02em;
+    }
+
+    .language-switch-lang--de {
+        right: 0.3em;
+        color: #212529;
+    }
+
+    .language-switch-lang--en {
+        left: 0.3em;
+        color: #fff;
+    }
+
+    .form-check-input:not(:checked) ~ .language-switch-caption .language-switch-lang--en {
+        display: none;
+    }
+
+    .form-check-input:checked ~ .language-switch-caption .language-switch-lang--de {
+        display: none;
+    }
+}
+
+[data-theme="dark"] #form-check-language.form-switch {
+    .language-switch-lang--de {
+        color: rgba(255, 255, 255, 0.92);
+    }
+
+    .form-check-input:checked ~ .language-switch-caption .language-switch-lang--en {
+        color: #000;
+    }
 }
 
 .leaflet-top.leaflet-right .info.legend {
@@ -1388,48 +1456,6 @@ input[data-autocomplete-target="input"]:focus {
 }
 .dropdown-toggle::after {
     display: none;
-}
-
-#form-check-language {
-    .form-switch .form-check-input {
-        position: relative;
-        width: 3rem;
-        height: 1.5rem;
-        background-color: #e9ecef;
-        border: 1px solid #ced4da;
-        border-radius: 1.5rem;
-        transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
-    }
-
-    .form-switch .form-check-input::before {
-        content: 'DE';
-        position: absolute;
-        right: 0.5rem;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 10px;
-    }
-       .form-switch .form-check-input:checked::before {
-           content: 'EN';
-           left: 0.5rem;
-           right: auto;
-           color: white;
-       }
-
-    .form-switch .form-check-input::after {
-        content: '';
-        position: absolute;
-        transform: translateY(-50%);
-        transition: left 0.15s ease-in-out, right 0.15s ease-in-out;
-    }
-
-    .form-switch .form-check-input:not(:checked)::after {
-        left: 0.25rem;
-    }
-
-    .form-switch .form-check-input:checked::after {
-        right: 0.25rem;
-    }
 }
 
 .banned {

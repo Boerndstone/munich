@@ -48,7 +48,7 @@ class TopoPathRendererService
             $borderStroke = $dashed ? '#ffffff' : '#000000';
             $borderClass = $dashed ? 'route-path-border dashed' : 'route-path-border';
             $parts[] = sprintf(
-                '<path id="border_%d" d="%s" stroke-width="4" stroke="%s" fill="none" class="%s"></path>',
+                '<path id="border_%d" d="%s" stroke-width="4" stroke="%s" fill="none" class="%s" pointer-events="none"></path>',
                 $id,
                 $this->escapeAttr($d),
                 $borderStroke,
@@ -57,16 +57,22 @@ class TopoPathRendererService
             // No path marker when dot: we draw the explicit end-dot circle instead (avoids white ring)
             $markerAttr = '';
             $parts[] = sprintf(
-                '<path id="svg_%d" d="%s" stroke-width="3" stroke="%s"%s fill="none" class="stroke-behavior"></path>',
+                '<path id="svg_%d" d="%s" stroke-width="3" stroke="%s"%s fill="none" class="stroke-behavior" pointer-events="none"></path>',
                 $id,
                 $this->escapeAttr($d),
                 $this->escapeAttr($color),
                 $markerAttr
             );
+            // Wider invisible stroke for clicks along the route (keeps visible line thin)
+            $parts[] = sprintf(
+                '<path d="%s" stroke="rgba(0,0,0,0)" stroke-width="14" fill="none" class="route-path-hit tooltip-trigger" data-path-id="%d"></path>',
+                $this->escapeAttr($d),
+                $id
+            );
             $circleStroke = $dashed ? '#ffffff' : '#000';
             $circleClass = $dashed ? 'number-circle' : 'number-circle tooltip-trigger';
             $parts[] = sprintf(
-                '<circle cx="%s" cy="%s" r="15" fill="%s" stroke="%s" stroke-width="1" class="%s" data-path-id="%d"></circle>',
+                '<circle cx="%s" cy="%s" r="18" fill="%s" stroke="%s" stroke-width="1" class="%s" data-path-id="%d"></circle>',
                 $startX,
                 $startYMinusOne,
                 $this->escapeAttr($color),
@@ -268,6 +274,7 @@ class TopoPathRendererService
         $allowedAttributes = [
             'id'            => true,
             'class'         => true,
+            'pointer-events'=> true,
             'd'             => true,
             'fill'          => true,
             'stroke'        => true,

@@ -1,8 +1,21 @@
 {% if hasTranslationDescription %}
-	<span id="form-check-language">
-		<div class="form-check form-switch">
-			<input class="form-check-input" type="checkbox" role="switch" id="languageSwitch" onchange="location.href=this.checked ? '{{ path('show_rock_en', { 'areaSlug': areaSlug, 'slug': rockSlug }) }}' : '{{ path('show_rock', { 'areaSlug': areaSlug, 'slug': rockSlug }) }}'" {% if app.request.locale == 'en' %} checked {% endif %}>
-			<label class="form-check-label visually-hidden" for="languageSwitch">Sprache wechseln (Deutsch/English)</label>
+	{% set language_url_de = path('show_rock', { areaSlug: areaSlug, slug: rockSlug }) %}
+	{% set language_url_en = path('show_rock_en', { areaSlug: areaSlug, slug: rockSlug }) %}
+	<div class="form-check form-switch shrink-0" id="form-check-language">
+		<div class="language-switch-inner">
+			<input
+				class="form-check-input h-2.5"
+				type="checkbox"
+				role="switch"
+				id="languageSwitch"
+				aria-label="{{ 'nav.language_switch'|trans }}"
+				onchange="location.href=this.checked?'{{ language_url_en|e('js') }}':'{{ language_url_de|e('js') }}'"
+				{% if app.request.locale == 'en' %}checked{% endif %}
+			>
+			<span class="language-switch-caption" aria-hidden="true">
+				<span class="language-switch-lang language-switch-lang--de">DE</span>
+				<span class="language-switch-lang language-switch-lang--en">EN</span>
+			</span>
 		</div>
-	</span>
+	</div>
 {% endif %}

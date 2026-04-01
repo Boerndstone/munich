@@ -276,20 +276,21 @@
 
                 // Border path
                 if (dashed) {
-                    parts.push(`        <path id="border_${id}" d="${escapeHtml(d)}" stroke-width="4" stroke="#ffffff" fill="none" class="route-path-border dashed"></path>`);
+                    parts.push(`        <path id="border_${id}" d="${escapeHtml(d)}" stroke-width="4" stroke="#ffffff" fill="none" class="route-path-border dashed" pointer-events="none"></path>`);
                 } else {
-                    parts.push(`        <path id="border_${id}" d="${escapeHtml(d)}" stroke-width="4" stroke="#000000" fill="none" class="route-path-border"></path>`);
+                    parts.push(`        <path id="border_${id}" d="${escapeHtml(d)}" stroke-width="4" stroke="#000000" fill="none" class="route-path-border" pointer-events="none"></path>`);
                 }
 
                 // Main path
                 // No path marker when dot: we draw the explicit end-dot circle instead (avoids white ring)
                 const markerAttr = '';
-                parts.push(`        <path id="svg_${id}" d="${escapeHtml(d)}" stroke-width="3" stroke="${color}"${markerAttr} fill="none" class="stroke-behavior"></path>`);
+                parts.push(`        <path id="svg_${id}" d="${escapeHtml(d)}" stroke-width="3" stroke="${color}"${markerAttr} fill="none" class="stroke-behavior" pointer-events="none"></path>`);
+                parts.push(`        <path d="${escapeHtml(d)}" stroke="rgba(0,0,0,0)" stroke-width="14" fill="none" class="route-path-hit tooltip-trigger" data-path-id="${id}"></path>`);
 
                 // Circle and text
                 const strokeColor = dashed ? '#ffffff' : '#000';
                 const circleClass = dashed ? 'number-circle' : 'number-circle tooltip-trigger';
-                parts.push(`        <circle cx="${startX}" cy="${startYMinusOne}" r="15" fill="${color}" stroke="${strokeColor}" stroke-width="1" class="${circleClass}" data-path-id="${id}"></circle>`);
+                parts.push(`        <circle cx="${startX}" cy="${startYMinusOne}" r="18" fill="${color}" stroke="${strokeColor}" stroke-width="1" class="${circleClass}" data-path-id="${id}"></circle>`);
                 parts.push(`        <text x="${startX}" y="${startY}" fill="#fff" class="number-text tooltip-trigger" data-path-id="${id}">${id}</text>`);
 
                 if (dot) {

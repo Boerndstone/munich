@@ -1,48 +1,43 @@
 {# Single rock row on the area "rocks" listing. Expects: rock, areaName, currentDate #}
 <div class="col-12 rock-item {% if currentDate < 181 and rock.banned > 0 %}banned{% endif %}" data-child-friendly="{{ rock.rockChild == 1 ? 'true' : 'false' }}" data-rock-sunny="{{ rock.rockSunny ? 'true' : 'false' }}" data-rock-rain="{{ rock.rockRain ? 'true' : 'false' }}" data-rock-train="{{ rock.rockTrain == 1 ? 'true' : 'false' }}" data-rock-bike="{{ (rock.rockBike is defined and rock.rockBike == 1) ? 'true' : 'false' }}">
-	<a href="{{ path('show_rock', { 'areaSlug': rock.areaSlug, slug: rock.rockSlug }) }}" class="block text-black no-underline dark:text-white">
-		<div class="rock-item-card mb-2 rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-md dark:border-gray-700 dark:bg-black">
-			<div class="flex items-start gap-3">
-				<div class="shrink-0">
-					{% if rock.previewImage is defined and rock.previewImage is not null %}
-						<picture>
-							<source type="image/webp" srcset="https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}.webp, https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}@2x.webp 2x, https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}@3x.webp 3x">
-							<img src="https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}.webp" alt="Klettergebiet, {{ areaName}}, Fels: {{ rock.rockName }}" title="Klettergebiet, {{ areaName }}, Fels: {{ rock.rockName }}" loading="lazy" decoding="async" fetchpriority="low" class="inline-block h-[50px] w-[50px] rounded-full object-cover shadow-md">
-						</picture>
-					{% else %}
-						<div class="flex h-[50px] w-[50px] items-center justify-center rounded-full shadow-md">
-							<svg role="img" aria-label="Klettergebiet, {{ areaName}}, Fels: {{ rock.rockName }}" title="Klettergebiet, {{ areaName }}, Fels: {{ rock.rockName }}" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24" class="text-gray-600 dark:text-gray-400">
-								<title>Klettergebiet, {{ areaName}}, Fels: {{ rock.rockName }}</title>
-								<path fill="currentColor" d="M23 18H1l7.25-9.67l2 2.67L14 6zm-11.5-5.33L14 16h5l-5-6.67zM5 16h6.5l-3.25-4.33z"/>
-							</svg>
-						</div>
-					{% endif %}
+	<a href="{{ path('show_rock', { 'areaSlug': rock.areaSlug, slug: rock.rockSlug }) }}" class="group block rounded-lg text-black no-underline outline-none ring-offset-2 ring-offset-white transition-none focus-visible:ring-2 focus-visible:ring-gray-500 dark:text-white dark:ring-offset-black dark:focus-visible:ring-gray-400">
+		<div class="rock-item-card mb-2 flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md transition-[box-shadow,border-color,background-color] duration-200 ease-out group-hover:border-gray-300 group-hover:bg-neutral-50 group-hover:shadow-lg dark:border-gray-700 dark:bg-black dark:group-hover:border-gray-600 dark:group-hover:bg-neutral-950/80">
+			<div class="relative w-[75px] shrink-0 self-stretch overflow-hidden bg-gray-200 dark:bg-gray-800">
+				{% if rock.previewImage is defined and rock.previewImage is not null %}
+					<picture class="absolute inset-0 block">
+						<source type="image/webp" srcset="https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}.webp, https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}@2x.webp 2x, https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}@3x.webp 3x">
+						<img src="https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}.webp" alt="Klettergebiet, {{ areaName}}, Fels: {{ rock.rockName }}" title="Klettergebiet, {{ areaName }}, Fels: {{ rock.rockName }}" loading="lazy" decoding="async" fetchpriority="low" class="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]">
+					</picture>
+				{% else %}
+					<div class="flex h-full min-h-[3.5rem] w-full items-center justify-center">
+						<svg role="img" aria-label="Klettergebiet, {{ areaName}}, Fels: {{ rock.rockName }}" title="Klettergebiet, {{ areaName }}, Fels: {{ rock.rockName }}" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24" class="text-gray-600 dark:text-gray-400">
+							<title>Klettergebiet, {{ areaName}}, Fels: {{ rock.rockName }}</title>
+							<path fill="currentColor" d="M23 18H1l7.25-9.67l2 2.67L14 6zm-11.5-5.33L14 16h5l-5-6.67zM5 16h6.5l-3.25-4.33z"/>
+						</svg>
+					</div>
+				{% endif %}
+				{% if currentDate < 181 and rock.banned == 1 %}
+					<span class="pointer-events-none absolute inset-x-1 top-1.5 z-10 text-center text-[9px] font-light leading-tight text-white drop-shadow-sm"><span class="rounded bg-red-700 px-1 py-px dark:bg-red-800">gesperrt bis: {{ date(date("now")|date("Y") ~ "-01-01")|date_modify("+180 days")|date('d.m.') }}</span></span>
+				{% elseif currentDate < 181 and rock.banned == 2 %}
+					<span class="pointer-events-none absolute inset-x-1 top-1.5 z-10 text-center text-[9px] font-light leading-tight text-white drop-shadow-sm"><span class="rounded bg-red-700 px-1 py-px dark:bg-red-800">gesperrt bis: {{ date(date("now")|date("Y") ~ "-01-01")|date_modify("+211 days")|date('d.m.') }}</span></span>
+				{% endif %}
+			</div>
+			<div class="flex min-w-0 flex-1 flex-col gap-1.5 px-3 py-2">
+				<div class="min-w-0 flex items-center justify-between">
+					<h2 class="mb-0 min-w-0 max-w-[150px] truncate text-base font-normal leading-tight lg:max-w-none">{{ rock.rockName }}</h2>
+					<div class="mt-0.5 flex flex-wrap items-center gap-1 text-sm text-gray-800 dark:text-gray-200">
+						<p class="mb-0">{{ rock.rockHeight }} m</p>
+						<div class="h-3.5 w-px shrink-0 bg-gray-400 dark:bg-gray-600" aria-hidden="true"></div>
+						<p class="mb-0">{{ rock.rockOrientation }}</p>
+					</div>
 				</div>
-				<div class="flex min-w-0 flex-1 flex-col gap-1.5">
-					<div class="min-w-0 flex items-center justify-between">
-						<h2 class="mb-0 min-w-0 max-w-[150px] truncate text-base font-normal leading-tight lg:max-w-none">{{ rock.rockName }}</h2>
-						<div class="mt-0.5 flex flex-wrap items-center gap-1 text-sm text-gray-800 dark:text-gray-200">
-							<p class="mb-0">{{ rock.rockHeight }} m</p>
-							<div class="h-3.5 w-px shrink-0 bg-gray-400 dark:bg-gray-600" aria-hidden="true"></div>
-							<p class="mb-0">{{ rock.rockOrientation }}</p>
-						</div>
-					</div>
-					{% set rock_show_ban_badge = currentDate < 181 and (rock.banned == 1 or rock.banned == 2) %}
-					<div class="flex min-w-0 items-end justify-between gap-2">
-						<div class="{{ rock_show_ban_badge ? 'w-1/2' : 'w-full' }} min-w-0">
-							{{ include('components/rock-list-grade-strip.html.twig', {
-								rock: rock,
-								aria_label_prefix: 'Klettergebiet ' ~ areaName ~ ', Fels ' ~ rock.rockName ~ '. ',
-								include_projects_column: true,
-								project_count: rock.amountProjects|default(0)
-							}) }}
-						</div>
-						{% if currentDate < 181 and rock.banned == 1 %}
-							<span class="mb-px max-w-[9.5rem] shrink-0 self-end text-right text-[10px] font-light leading-tight text-white"><span class="rounded bg-red-700 px-1.5 py-0.5 dark:bg-red-800">gesperrt bis: {{ date(date("now")|date("Y") ~ "-01-01")|date_modify("+180 days")|date('d.m.') }}</span></span>
-						{% elseif currentDate < 181 and rock.banned == 2 %}
-							<span class="mb-px max-w-[9.5rem] shrink-0 self-end text-right text-[10px] font-light leading-tight text-white"><span class="rounded bg-red-700 px-1.5 py-0.5 dark:bg-red-800">gesperrt bis: {{ date(date("now")|date("Y") ~ "-01-01")|date_modify("+211 days")|date('d.m.') }}</span></span>
-						{% endif %}
-					</div>
+				<div class="min-w-0 w-full">
+					{{ include('components/rock-list-grade-strip.html.twig', {
+						rock: rock,
+						aria_label_prefix: 'Klettergebiet ' ~ areaName ~ ', Fels ' ~ rock.rockName ~ '. ',
+						include_projects_column: true,
+						project_count: rock.amountProjects|default(0)
+					}) }}
 				</div>
 			</div>
 		</div>

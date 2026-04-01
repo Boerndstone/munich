@@ -35,13 +35,14 @@
 {% set aria_label = aria_label_prefix|default('') ~ 'Routen je Gradstufe. ' ~ aria_parts|join('; ') %}
 {% if route_total > 0 and segments is not empty %}
 	<div class="not-prose w-full min-w-0">
-		<div class="mb-px flex text-center text-[10px] font-bold leading-none text-black dark:text-white pointer-events-none" aria-hidden="true">
+		<div class="mb-px flex text-center text-[10px] font-bold leading-none tabular-nums text-gray-600 dark:text-gray-300 pointer-events-none" aria-hidden="true">
 			{% for seg in segments %}
-				<div class="min-w-0 flex-1 px-px">{{ seg.kind == 'grade' ? seg.g : 'Proj.' }}</div>
+				{% set amt_divider = not loop.first ? ' border-l border-black/[0.08] dark:border-white/[0.12]' : '' %}
+				<div class="min-w-0 flex-1 px-px{{ amt_divider }}">{{ seg.n }}</div>
 			{% endfor %}
 		</div>
 		<div
-			class="flex h-5 w-full overflow-hidden rounded border border-gray-300 dark:border-gray-600"
+			class="flex h-5 w-full overflow-hidden rounded"
 			role="img"
 			aria-label="{{ aria_label|e('html_attr') }}"
 		>
@@ -52,14 +53,14 @@
 						class="flex min-w-0 flex-1 items-center justify-center px-px text-center text-[10px] font-semibold leading-none tabular-nums{{ seg_divider }} {{ strip_bg[seg.g] }} {{ strip_text_on_color }}"
 						title="Grad {{ seg.g }}: {{ seg.n }}"
 					>
-						{{ seg.n }}
+						{{ seg.g }}
 					</div>
 				{% else %}
 					<div
-						class="flex min-w-0 flex-1 items-center justify-center px-px text-center text-[10px] font-semibold leading-none tabular-nums{{ seg_divider }} bg-gray-800 text-white dark:bg-gray-500"
+						class="flex min-w-0 flex-1 items-center justify-center px-px text-center text-[10px] font-semibold leading-none{{ seg_divider }} bg-gray-800 text-white dark:bg-gray-500"
 						title="{{ 'projects'|trans }}: {{ seg.n }}"
 					>
-						{{ seg.n }}
+						Proj.
 					</div>
 				{% endif %}
 			{% endfor %}

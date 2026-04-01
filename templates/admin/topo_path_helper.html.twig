@@ -26,14 +26,6 @@
 		.topo-path-helper-root button:hover { filter: brightness(1.1); }
 		.topo-path-helper-root button.secondary { background: var(--tph-surface); color: var(--tph-text); border: 1px solid var(--tph-border); }
 		.topo-path-helper-root .row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
-		.topo-path-helper-root .path-card { background: #1a1a1a; border: 1px solid var(--tph-border); border-radius: 6px; padding: 12px; margin-bottom: 12px; }
-		.topo-path-helper-root .path-card h4 { margin: 0 0 8px; font-size: 0.85rem; color: #aaa; }
-		.topo-path-helper-root .path-d { font-family: monospace; font-size: 11px; word-break: break-all; color: #9cdcfe; margin-bottom: 10px; }
-		.topo-path-helper-root .path-opts { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
-		.topo-path-helper-root .path-opts label { display: inline-flex; align-items: center; gap: 6px; margin: 0; font-weight: normal; }
-		.topo-path-helper-root .path-opts input[type="checkbox"] { width: 18px; height: 18px; }
-		.topo-path-helper-root .path-opts select { padding: 6px 10px; border-radius: 4px; border: 1px solid var(--tph-border); background: var(--tph-surface); color: var(--tph-text); }
-		.topo-path-helper-root input[type="color"] { width: 32px; height: 28px; padding: 2px; border: none; border-radius: 4px; cursor: pointer; background: transparent; }
 		.topo-path-helper-root .output-wrap { position: relative; }
 		.topo-path-helper-root .copy-btn { position: absolute; top: 8px; right: 8px; padding: 6px 12px; font-size: 12px; }
 		.topo-path-helper-root .toast { position: fixed; bottom: 24px; right: 24px; background: var(--tph-success); color: white; padding: 12px 20px; border-radius: 6px; font-weight: 500; opacity: 0; transform: translateY(10px); transition: 0.2s; z-index: 1000; }
@@ -51,10 +43,16 @@
 		.topo-path-helper-root .tph-draw-area__overlay svg circle.edit-point { cursor: grab; }
 		.topo-path-helper-root .tph-draw-toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
 		.topo-path-helper-root .tph-draw-hint { font-size: 0.85rem; color: #888; margin-top: 8px; }
-		.topo-path-helper-root .path-card-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-		.topo-path-helper-root .path-card-actions button { padding: 4px 10px; font-size: 12px; }
 		.topo-path-helper-root .tph-save-topo-bar { margin-bottom: 16px; padding: 12px; background: var(--tph-surface); border: 1px solid var(--tph-success); border-radius: 8px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 		.topo-path-helper-root .tph-save-topo-bar button.save { background: var(--tph-success); }
+		.topo-path-helper-root .tph-routes-hint { font-size: 0.85rem; color: #888; margin: 0 0 12px; }
+		.topo-path-helper-root .tph-routes-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 12px; }
+		.topo-path-helper-root .tph-routes-table th,
+		.topo-path-helper-root .tph-routes-table td { border: 1px solid var(--tph-border); padding: 6px 8px; text-align: left; }
+		.topo-path-helper-root .tph-routes-table th { background: var(--tph-surface); }
+		.topo-path-helper-root .tph-color-swatch { display: inline-block; width: 1.25rem; height: 1.25rem; border-radius: 3px; border: 1px solid #666; vertical-align: middle; margin-right: 6px; }
+		.topo-path-helper-root .tph-routes-table label.tph-route-dot-label { display: inline-flex; align-items: center; gap: 6px; margin: 0; font-weight: normal; cursor: pointer; }
+		.topo-path-helper-root .tph-routes-table .tph-route-dot { width: 18px; height: 18px; margin: 0; cursor: pointer; }
 	</style>
 {% endblock %}
 
@@ -74,7 +72,7 @@
 				<a href="{{ topoEdit.backUrl }}" class="btn secondary">Zurück zum Topo</a>
 			</div>
 			{% endif %}
-			<p class="subtitle">Paste SVG paths from <a href="https://editor.method.ac/" target="_blank" rel="noopener">Method Draw</a> (supports Bezier curves) → configure options → copy PHP. Or draw paths on the image (polyline). Add, delete, or reorder paths in step 2.</p>
+			<p class="subtitle">Paste SVG paths from <a href="https://editor.method.ac/" target="_blank" rel="noopener">Method Draw</a> (supports Bezier curves) → Farben und Dot pro Route in der Tabelle → PHP kopieren. Oder Pfade auf dem Bild zeichnen (Polylinie) und nach Schritt 1 kopieren.</p>
 
 			<section>
 				<label>0. Draw paths on image (like Method Draw)</label>
@@ -115,18 +113,20 @@
 				<div class="row" style="margin-top: 12px;">
 					<button type="button" id="tph-parse">Parse paths</button>
 				</div>
+				<div id="tph-parse-status" class="empty-state" style="display: none; margin-top: 12px;"></div>
+			</section>
+
+			<section id="tph-routes-section" style="display: none;">
+				<label>Routen an diesem Topo (Farben wie Grad-Karte)</label>
+				<p class="tph-routes-hint">Reihenfolge: <strong>1. Pfad</strong> in Schritt 1 = <strong>erste Zeile</strong> (kleinste Routen-Nr.), 2. Pfad = 2. Zeile, usw. (nicht: Pfad-Index = Nr.−1). <strong>Dot (Anker)</strong> = weißer Punkt am Linienende. Checkbox nur aktiv, wenn es einen Pfad an dieser Zeilenposition gibt.</p>
+				<div id="tph-routes-table-wrap"></div>
+				<button type="button" class="secondary" id="tph-apply-grade-colors">Grad-Farben auf Pfade anwenden</button>
 			</section>
 
 			<section>
-				<label>2. Configure each path</label>
-				<div id="tph-paths"></div>
-				<div id="tph-emptyState" class="empty-state">Parse paths first.</div>
-			</section>
-
-			<section>
-				<label>3. PHP output (paste into your topo file)</label>
+				<label>2. PHP output (paste into your topo file)</label>
 				<div class="output-wrap">
-					<textarea id="tph-output" readonly placeholder="Generate output after configuring paths."></textarea>
+					<textarea id="tph-output" readonly placeholder="Generate output after paths + table are set."></textarea>
 					<button type="button" class="copy-btn secondary" id="tph-copyPhp">Copy</button>
 				</div>
 				<div class="row" style="margin-top: 12px;">
@@ -150,6 +150,12 @@
 	{% verbatim %}
 	<script>
 	(function() {
+		function escapeHtml(s) {
+			var div = document.createElement('div');
+			div.textContent = s;
+			return div.innerHTML;
+		}
+
 		// --- Step 0: Draw on image ---
 		var drawArea = document.getElementById('tph-drawArea');
 		var drawImg = document.getElementById('tph-drawImg');
@@ -355,7 +361,7 @@
 				var newD = pathToD(editingPathPoints);
 				drawnPaths[selectedPathIndex].d = newD;
 				if (paths[selectedPathIndex]) paths[selectedPathIndex].d = newD;
-				renderPaths();
+				pathsUiSync();
 			}
 			selectedPathIndex = null;
 			editingPathPoints = null;
@@ -371,8 +377,7 @@
 			paths.splice(selectedPathIndex, 1);
 			selectedPathIndex = null;
 			editingPathPoints = null;
-			renderPaths();
-			redrawOverlay();
+			pathsUiSync();
 			updateDrawPathButtons();
 			document.getElementById('tph-drawStatus').textContent = 'Path deleted. ' + (drawnPaths.length ? drawnPaths.length + ' path(s) left.' : 'Click on the image to add points.');
 		}
@@ -398,7 +403,7 @@
 				var newD = pathToD(editingPathPoints);
 				drawnPaths[selectedPathIndex].d = newD;
 				if (paths[selectedPathIndex]) paths[selectedPathIndex].d = newD;
-				renderPaths();
+				pathsUiSync();
 				draggingPointIndex = null;
 				document.removeEventListener('mousemove', dragMove);
 				document.removeEventListener('mouseup', dragUp);
@@ -465,7 +470,7 @@
 			document.getElementById('tph-input').value = html;
 			parsePaths();
 			navigator.clipboard.writeText(html).then(function() {
-				showToast('Paths copied to Step 1 and parsed. You can now configure colors in Step 2.');
+				showToast('Pfade nach Schritt 1 kopiert und geparst. Farben/Dot in der Routen-Tabelle.');
 			});
 			document.getElementById('tph-drawStatus').textContent = 'Copied ' + drawnPaths.length + ' path(s) to Step 1.';
 		}
@@ -479,9 +484,97 @@
 		drawSvg.addEventListener('click', onDrawSvgClick);
 		drawSvg.addEventListener('mousedown', onDrawSvgMouseDown);
 
-		// --- Steps 1–3 ---
-		const COLOR_PRESETS = { 'Red (default)': '#E42522', 'Green': '#15803d', 'Amber': '#a16207', 'Black': '#000000' };
+		// --- Steps 1–2 (paths + routes table; no per-path card UI) ---
 		let paths = [];
+
+		/** Same order as rock page: routes for this topo sorted by Nr. ascending. */
+		function routesSortedByNr(te) {
+			if (!te || !Array.isArray(te.routesForColors)) return [];
+			return te.routesForColors.slice().sort(function(a, b) {
+				var an = a.nr != null && a.nr !== '' ? Number(a.nr) : Infinity;
+				var bn = b.nr != null && b.nr !== '' ? Number(b.nr) : Infinity;
+				return an - bn;
+			});
+		}
+
+		function autoApplyGradeColorsIfTopoRoutes() {
+			var te = window.TOPO_EDIT;
+			var sorted = routesSortedByNr(te);
+			if (!sorted.length || !paths.length) return;
+			for (var i = 0; i < paths.length; i++) {
+				var route = sorted[i];
+				if (route && route.strokeHex) {
+					paths[i].color = route.strokeHex;
+				}
+			}
+		}
+
+		function updateParseStatus() {
+			var el = document.getElementById('tph-parse-status');
+			if (!el) return;
+			if (paths.length === 0) {
+				el.style.display = 'block';
+				el.textContent = 'Keine Pfade. In Schritt 1 SVG mit path-Elementen einfügen oder aus Schritt 0 kopieren.';
+				return;
+			}
+			el.style.display = 'block';
+			var hasRoutes = window.TOPO_EDIT && Array.isArray(window.TOPO_EDIT.routesForColors) && window.TOPO_EDIT.routesForColors.length;
+			el.textContent = hasRoutes
+				? paths.length + ' Pfad(e). Farben und Dot (Anker) in der Routen-Tabelle.'
+				: paths.length + ' Pfad(e). Topo bearbeiten für Farb-Tabelle; sonst Standardfarbe rot im PHP.';
+		}
+
+		function pathsUiSync() {
+			syncDrawnPathsFromPaths();
+			if (drawSvg && drawSvg.getAttribute('viewBox')) {
+				redrawOverlay();
+			}
+			populateRoutesForColorsSection();
+			updateParseStatus();
+		}
+
+		function wireRouteTableDotCheckboxes() {
+			var wrap = document.getElementById('tph-routes-table-wrap');
+			if (!wrap) return;
+			wrap.querySelectorAll('.tph-route-dot').forEach(function(el) {
+				el.addEventListener('change', function() {
+					var idx = parseInt(el.getAttribute('data-path-index'), 10);
+					if (isNaN(idx) || idx < 0) return;
+					if (paths[idx]) {
+						paths[idx].dot = el.checked;
+						syncDrawnPathsFromPaths();
+						if (drawSvg && drawSvg.getAttribute('viewBox')) {
+							redrawOverlay();
+						}
+					}
+				});
+			});
+		}
+
+		function populateRoutesForColorsSection() {
+			var te = window.TOPO_EDIT;
+			var sec = document.getElementById('tph-routes-section');
+			var wrap = document.getElementById('tph-routes-table-wrap');
+			if (!sec || !wrap) return;
+			if (!te || !Array.isArray(te.routesForColors) || te.routesForColors.length === 0) {
+				sec.style.display = 'none';
+				return;
+			}
+			sec.style.display = 'block';
+			var sorted = routesSortedByNr(te);
+			var rows = sorted.map(function(r, rowIdx) {
+				var bucket = r.chartBucket == null ? '—' : String(r.chartBucket);
+				var nr = r.nr != null ? String(r.nr) : '';
+				var hex = r.strokeHex || '';
+				var hasPath = rowIdx < paths.length;
+				var dotOn = hasPath && !!paths[rowIdx].dot;
+				var disabledAttr = hasPath ? '' : ' disabled';
+				var checkedAttr = dotOn ? ' checked' : '';
+				return '<tr><td>' + escapeHtml(nr) + '</td><td>' + escapeHtml(r.name || '') + '</td><td>' + escapeHtml(r.grade || '') + '</td><td>' + escapeHtml(bucket) + '</td><td><span class="tph-color-swatch" style="background-color:' + escapeHtml(hex) + '" title="' + escapeHtml(hex) + '"></span><code style="font-size:11px">' + escapeHtml(hex) + '</code></td><td><label class="tph-route-dot-label"><input type="checkbox" class="tph-route-dot" data-path-index="' + rowIdx + '"' + disabledAttr + checkedAttr + '> Anker</label></td></tr>';
+			}).join('');
+			wrap.innerHTML = '<table class="tph-routes-table"><thead><tr><th>Nr</th><th>Route</th><th>Grad</th><th>Bucket</th><th>Farbe</th><th>Dot</th></tr></thead><tbody>' + rows + '</tbody></table>';
+			wireRouteTableDotCheckboxes();
+		}
 
 		function parsePaths() {
 			const html = document.getElementById('tph-input').value;
@@ -492,90 +585,17 @@
 
 			if (dValues.length === 0) {
 				paths = [];
-				document.getElementById('tph-paths').innerHTML = '';
-				document.getElementById('tph-emptyState').textContent = 'No paths found. Paste SVG path elements with a "d" attribute.';
-				document.getElementById('tph-emptyState').style.display = 'block';
+				pathsUiSync();
+				var st = document.getElementById('tph-parse-status');
+				if (st) {
+					st.style.display = 'block';
+					st.textContent = 'Keine path-Elemente mit d-Attribut gefunden.';
+				}
 				return;
 			}
 			paths = dValues.map(d => ({ d, color: '#E42522', dashed: false, dot: false }));
-			renderPaths();
-			document.getElementById('tph-emptyState').style.display = 'none';
-		}
-
-		function renderPaths() {
-			const container = document.getElementById('tph-paths');
-			var colorOpts = function(p) {
-				return Object.keys(COLOR_PRESETS).map(function(name) {
-					var hex = COLOR_PRESETS[name];
-					return '<option value="' + hex + '"' + (p.color === hex ? ' selected' : '') + '>' + name + '</option>';
-				}).join('');
-			};
-			container.innerHTML = paths.map(function(p, i) {
-				var color = p.color || '#E42522';
-				return '<div class="path-card" data-index="' + i + '">' +
-					'<h4>Path ' + (i + 1) + '</h4>' +
-					'<div class="path-d">' + escapeHtml(p.d) + '</div>' +
-					'<div class="path-opts">' +
-					'<label>Color: <select data-tph-path="' + i + '" data-tph-opt="color">' + colorOpts(p) + '</select></label>' +
-					'<label><input type="color" value="' + color + '" data-tph-path="' + i + '" data-tph-opt="color" title="Custom color"></label>' +
-					'<label><input type="checkbox"' + (p.dashed ? ' checked' : '') + ' data-tph-path="' + i + '" data-tph-opt="dashed"> Dashed</label>' +
-					'<label><input type="checkbox"' + (p.dot ? ' checked' : '') + ' data-tph-path="' + i + '" data-tph-opt="dot"> Dot (anker)</label>' +
-					'</div>' +
-					'<div class="path-card-actions">' +
-					'<button type="button" class="secondary tph-path-delete" data-index="' + i + '">Delete</button>' +
-					'<button type="button" class="secondary tph-path-move-up" data-index="' + i + '"' + (i === 0 ? ' disabled' : '') + '>Move up</button>' +
-					'<button type="button" class="secondary tph-path-move-down" data-index="' + i + '"' + (i === paths.length - 1 ? ' disabled' : '') + '>Move down</button>' +
-					'</div></div>';
-			}).join('');
-			container.querySelectorAll('[data-tph-path]').forEach(el => {
-				const i = parseInt(el.getAttribute('data-tph-path'), 10);
-				const opt = el.getAttribute('data-tph-opt');
-				el.addEventListener('change', function() {
-					updatePath(i, opt, el.type === 'checkbox' ? el.checked : el.value);
-				});
-			});
-			container.querySelectorAll('.tph-path-delete').forEach(btn => {
-				btn.addEventListener('click', function() {
-					const i = parseInt(this.getAttribute('data-index'), 10);
-					paths.splice(i, 1);
-					renderPaths();
-					document.getElementById('tph-emptyState').style.display = paths.length ? 'none' : 'block';
-				});
-			});
-			container.querySelectorAll('.tph-path-move-up').forEach(btn => {
-				btn.addEventListener('click', function() {
-					const i = parseInt(this.getAttribute('data-index'), 10);
-					if (i > 0) {
-						const t = paths[i]; paths[i] = paths[i - 1]; paths[i - 1] = t;
-						renderPaths();
-					}
-				});
-			});
-			container.querySelectorAll('.tph-path-move-down').forEach(btn => {
-				btn.addEventListener('click', function() {
-					const i = parseInt(this.getAttribute('data-index'), 10);
-					if (i < paths.length - 1) {
-						const t = paths[i]; paths[i] = paths[i + 1]; paths[i + 1] = t;
-						renderPaths();
-					}
-				});
-			});
-			syncDrawnPathsFromPaths();
-		}
-
-		function updatePath(index, key, value) {
-			if (paths[index]) {
-				paths[index][key] = value;
-				if (key === 'color') {
-					const card = document.querySelector('.path-card[data-index="' + index + '"]');
-					if (card) {
-						const colorInput = card.querySelector('input[type="color"]');
-						if (colorInput) colorInput.value = value;
-						const sel = card.querySelector('select');
-						if (sel) sel.value = Object.values(COLOR_PRESETS).includes(value) ? value : sel.value;
-					}
-				}
-			}
+			autoApplyGradeColorsIfTopoRoutes();
+			pathsUiSync();
 		}
 
 		function calculateEndpoint(d) {
@@ -636,10 +656,37 @@
 			setTimeout(function() { t.classList.remove('show'); }, 2000);
 		}
 
-		function escapeHtml(s) {
-			var div = document.createElement('div');
-			div.textContent = s;
-			return div.innerHTML;
+		function applyGradeColorsFromRoutes() {
+			var te = window.TOPO_EDIT;
+			var sorted = routesSortedByNr(te);
+			if (!sorted.length) {
+				showToast('Keine Routendaten für dieses Topo.');
+				return;
+			}
+			if (!paths.length) {
+				showToast('Zuerst Pfade parsen (Schritt 1).');
+				return;
+			}
+			var applied = 0;
+			var missing = 0;
+			for (var i = 0; i < paths.length; i++) {
+				var route = sorted[i];
+				if (route && route.strokeHex) {
+					paths[i].color = route.strokeHex;
+					applied++;
+				} else {
+					missing++;
+				}
+			}
+			pathsUiSync();
+			var msg = applied + ' Pfad(e) eingefärbt (Zeile i = Pfad i, Routen nach Nr. sortiert).';
+			if (missing > 0) {
+				msg += ' ' + missing + ' ohne Route in dieser Zeile.';
+			}
+			if (paths.length > sorted.length) {
+				msg += ' (' + (paths.length - sorted.length) + ' Pfad(e) mehr als Routen — ohne Farbe.)';
+			}
+			showToast(msg);
 		}
 
 		document.getElementById('tph-parse').addEventListener('click', parsePaths);
@@ -658,13 +705,19 @@
 						var d = (p && (p.d != null ? p.d : p.path)) || '';
 						return { d: d, color: (p && p.color) || '#E42522', dot: !!(p && p.dot) };
 					}).filter(function(p) { return p.d !== ''; });
-					renderPaths();
-					document.getElementById('tph-emptyState').style.display = paths.length ? 'none' : 'block';
+					autoApplyGradeColorsIfTopoRoutes();
+					pathsUiSync();
 				} catch (e) { paths = []; drawnPaths = []; }
 			}
 			if (te.imageUrl) {
 				loadDrawImage();
 			}
+		}
+
+		populateRoutesForColorsSection();
+		var applyGradBtn = document.getElementById('tph-apply-grade-colors');
+		if (applyGradBtn) {
+			applyGradBtn.addEventListener('click', applyGradeColorsFromRoutes);
 		}
 
 		// Save to topo (when editing)

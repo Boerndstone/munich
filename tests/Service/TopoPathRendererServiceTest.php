@@ -83,6 +83,7 @@ class TopoPathRendererServiceTest extends TestCase
         $this->assertStringContainsString('data-path-id="1"', $svg);
         $this->assertStringContainsString('data-path-id="2"', $svg);
         $this->assertStringContainsString('data-path-id="3"', $svg);
+        $this->assertStringContainsString('route-path-hit', $svg);
         $countBorder = substr_count($svg, 'id="border_');
         $this->assertSame(3, $countBorder, 'Expected exactly 3 border paths');
     }
@@ -145,7 +146,8 @@ class TopoPathRendererServiceTest extends TestCase
         $svg = $this->service->renderPathsToSvg($paths);
         $this->assertStringContainsString('id="border_1"', $svg);
         $this->assertStringContainsString('id="border_2"', $svg);
-        $this->assertStringContainsString('url(#dot)"', $svg);
+        $this->assertStringContainsString('id="dot"', $svg);
+        $this->assertStringContainsString('route-path-hit', $svg);
         $this->assertSame(2, substr_count($svg, 'id="border_'));
     }
 }

@@ -12,7 +12,6 @@ use App\Service\TopoSvgParser;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use App\Service\RockAccessService;
-use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -30,7 +29,7 @@ class TopoPathHelperController extends AbstractDashboardController
     ) {
     }
 
-    #[IsGranted(new Expression('is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ROCK_EDITOR")'))]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     #[Route('/admin/topo-path-helper', name: 'admin_topo_path_helper')]
     public function index(): Response
     {
@@ -39,7 +38,7 @@ class TopoPathHelperController extends AbstractDashboardController
         ]);
     }
 
-    #[IsGranted(new Expression('is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ROCK_EDITOR")'))]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     #[Route('/admin/topo/{id}/edit-paths', name: 'admin_topo_edit_paths', requirements: ['id' => '\d+'])]
     public function editPaths(int $id): Response
     {
@@ -113,7 +112,7 @@ class TopoPathHelperController extends AbstractDashboardController
         ]);
     }
 
-    #[IsGranted(new Expression('is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ROCK_EDITOR")'))]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     #[Route('/admin/topo/{id}/save-paths', name: 'admin_topo_save_paths', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function savePaths(int $id, Request $request): Response
     {

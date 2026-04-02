@@ -30,10 +30,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\ExpressionLanguage\Expression;
-
 
 class DashboardController extends AbstractDashboardController
 {
@@ -44,6 +44,7 @@ class DashboardController extends AbstractDashboardController
     private RequestStack $requestStack;
     private AreasService $areasService;
     private FrontendCacheService $frontendCacheService;
+    private AdminUrlGenerator $adminUrlGenerator;
 
     public function __construct(
         RoutesRepository $routesRepository,
@@ -52,7 +53,8 @@ class DashboardController extends AbstractDashboardController
         ChartBuilderInterface $chartBuilder,
         RequestStack $requestStack,
         AreasService $areasService,
-        FrontendCacheService $frontendCacheService
+        FrontendCacheService $frontendCacheService,
+        AdminUrlGenerator $adminUrlGenerator,
     ) {
         $this->areaRepository = $areaRepository;
         $this->rockRepository = $rockRepository;
@@ -61,6 +63,7 @@ class DashboardController extends AbstractDashboardController
         $this->requestStack = $requestStack;
         $this->areasService = $areasService;
         $this->frontendCacheService = $frontendCacheService;
+        $this->adminUrlGenerator = $adminUrlGenerator;
     }
 
     // Have to to make user in db + user form!!!
@@ -68,22 +71,20 @@ class DashboardController extends AbstractDashboardController
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
-        // return parent::index();
+        $user = $this->getUser();
+        if ($user instanceof User
+            && \in_array('ROLE_ROCK_EDITOR', $user->getRoles(), true)
+            && !\in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true)
+        ) {
+            $url = $this->adminUrlGenerator
+                ->setDashboard(self::class)
+                ->setController(RockCrudController::class)
+                ->setAction(Action::INDEX)
+                ->generateUrl();
 
-        // Option 1. You can make your dashboard redirect to some common page of your backend
-        //
-        // $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-        // return $this->redirect($adminUrlGenerator->setController(OneOfYourCrudController::class)->generateUrl());
+            return $this->redirect($url);
+        }
 
-        // Option 2. You can make your dashboard redirect to different pages depending on the user
-        //
-        // if ('jane' === $this->getUser()->getUsername()) {
-        //     return $this->redirect('...');
-        // }
-
-        // Option 3. You can render some custom template to display a proper dashboard with widgets, etc.
-        // (tip: it's easier if your template extends from @EasyAdmin/page/content.html.twig)
-        //
         $areas = $this->areaRepository->findAllAreasAlphabetical();
         $getRoutes = $this->routesRepository->getAllRoutes();
         $getAreas = $this->areaRepository->getAllAreas();
@@ -157,11 +158,11 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Gebiete', 'fa fa-tags', Area::class)->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToCrud('Felsen', 'fa fa-home', Rock::class);
         yield MenuItem::linkToCrud('Touren', 'fa fa-home', Routes::class);
-        yield MenuItem::linkToCrud('Topos', 'fa fa-home', Topo::class)->setPermission(new Expression('is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ROCK_EDITOR")'));
+        yield MenuItem::linkToCrud('Topos', 'fa fa-home', Topo::class)->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToRoute('Topo Path Helper', 'fa fa-pencil-square-o', 'admin_topo_path_helper')->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToCrud('Photos', 'fa fa-camera-retro', Photos::class)->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToCrud('Kommentare', 'fa fa-comment', Comment::class)->setPermission(new Expression('is_granted("ROLE_MODERATOR") or is_granted("ROLE_ROCK_EDITOR")'));
-        yield MenuItem::linkToCrud('Videos', 'fa fa-video', Videos::class);
+        yield MenuItem::linkToCrud('Videos', 'fa fa-video', Videos::class)->setPermission(new Expression('is_granted("ROLE_SUPER_ADMIN") or not is_granted("ROLE_ROCK_EDITOR")'));
         yield MenuItem::linkToCrud('User', 'fa fa-user', User::class)->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToRoute('Geolocation', 'fa fa-map-marker', 'admin_geolocation')->setPermission('ROLE_SUPER_ADMIN');
     }

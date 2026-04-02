@@ -231,10 +231,14 @@ class RoutesCrudController extends AbstractCrudController
             ->setColumns('col-12')
             ->setChoices($this->getGradeChoices())
             ->setHelp('Wählen Sie den Schwierigkeitsgrad aus. Der numerische Wert wird automatisch gesetzt.');
-        yield BooleanField::new('climbed')
+        $climbedField = BooleanField::new('climbed')
             ->setLabel('Bereits geklettert')
             ->setColumns('col-12')
             ->renderAsSwitch();
+        if ($this->rockAccessService->isRockScoped($this->getUser())) {
+            $climbedField->hideOnForm()->hideOnIndex()->hideOnDetail();
+        }
+        yield $climbedField;
         yield Field::new('first_ascent')
             ->setLabel('Erstbegeher')
             ->setColumns('col-12')

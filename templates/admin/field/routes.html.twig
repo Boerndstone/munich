@@ -2,6 +2,7 @@
 {# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
 {# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
 {% if ea.crud.currentAction == 'detail' or ea.crud.currentAction == 'edit' %}
+    {% set hideClimbedUi = is_granted('ROLE_ROCK_EDITOR') and not is_granted('ROLE_SUPER_ADMIN') %}
     {% set rock = entity.instance %}
     {% set rockId = rock.id %}
     {% set routes = field.value|sort((a, b) => 
@@ -17,7 +18,7 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 <h6 class="mb-0">Routen ({{ routes|length }})</h6>
-                {% if climbedCount > 0 %}
+                {% if not hideClimbedUi and climbedCount > 0 %}
                     <small class="text-muted">Geklettert: {{ climbedCount }} / {{ routes|length }}</small>
                 {% endif %}
             </div>
@@ -30,12 +31,14 @@
             <button type="button" class="btn btn-sm btn-outline-secondary filter-btn" data-filter="all">
                 Alle ({{ routes|length }})
             </button>
+            {% if not hideClimbedUi %}
             <button type="button" class="btn btn-sm btn-outline-success filter-btn" data-filter="climbed">
                 Geklettert ({{ climbedCount }})
             </button>
             <button type="button" class="btn btn-sm btn-outline-danger filter-btn" data-filter="not-climbed">
                 Nicht geklettert ({{ routes|length - climbedCount }})
             </button>
+            {% endif %}
         </div>
 
         <div id="routes-list-{{ rockId }}" class="routes-sortable">
@@ -47,7 +50,9 @@
                         <th style="width: 50px;">Nr.</th>
                         <th>Name</th>
                         <th>Schwierigkeitsgrad</th>
+                        {% if not hideClimbedUi %}
                         <th>Geklettert</th>
+                        {% endif %}
                         <th>Erstbegeher</th>
                         <th style="width: 100px;">Aktionen</th>
                     </tr>
@@ -57,7 +62,7 @@
                     <tr data-route-id="{{ route.id }}" 
                         data-route-nr="{{ route.nr ?? loop.index }}" 
                         data-route-topo-id="{{ route.topoId ?? '' }}"
-                        class="route-row {% if route.climbed == true %}route-climbed{% else %}route-not-climbed{% endif %}">
+                        class="route-row{% if not hideClimbedUi %} {% if route.climbed == true %}route-climbed{% else %}route-not-climbed{% endif %}{% endif %}">
                         <td class="drag-handle" style="cursor: move;">
                             <i class="fa fa-grip-vertical text-muted"></i>
                         </td>
@@ -65,6 +70,7 @@
                         <td>{{ route.nr ?? loop.index }}</td>
                         <td>{{ route.name }}</td>
                         <td>{{ route.grade ?? '-' }}</td>
+                        {% if not hideClimbedUi %}
                         <td>
                             {% if route.climbed == 0 %}
                                 <div class="badge bg-danger text-white"><i class="fa-fw fa fa-close"></i></div> 
@@ -74,6 +80,7 @@
                                 <div class="badge bg-secondary text-white">-</div>
                             {% endif %}
                         </td>
+                        {% endif %}
                         <td>{{ route.firstAscent ?? '-' }} {% if route.yearFirstAscent %} ({{ route.yearFirstAscent }}){% endif %}</td>
                         <td>
                             <a href="{{ ea_url().setController('App\\Controller\\Admin\\RoutesCrudController').setAction('edit').setEntityId(route.id) }}" 
@@ -246,6 +253,7 @@
                             </div>
                             
                             <div class="row">
+                                {% if not hideClimbedUi %}
                                 <div class="col-md-6 mb-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="route-climbed-{{ rockId }}" name="climbed" value="1">
@@ -254,7 +262,8 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                {% endif %}
+                                <div class="{% if hideClimbedUi %}col-12{% else %}col-md-6{% endif %} mb-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="route-rock-quality-{{ rockId }}" name="rock_quality" value="1">
                                         <label class="form-check-label" for="route-rock-quality-{{ rockId }}">

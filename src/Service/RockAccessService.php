@@ -18,8 +18,11 @@ final class RockAccessService
     /**
      * Scoped rock editors: ROLE_ROCK_EDITOR without ROLE_SUPER_ADMIN.
      * Full admins without ROLE_ROCK_EDITOR are not scoped (see {@see getEditableRockIds()}).
+     *
+     * For Twig and security expressions, prefer {@see \App\Security\Voter\RockScopedEditorVoter::ATTRIBUTE}
+     * (e.g. is_granted("ROCK_SCOPED_EDITOR")) so this definition stays single-sourced.
      */
-    public function isRockScoped(UserInterface $user): bool
+    public function isRockScoped(?UserInterface $user): bool
     {
         if (!$user instanceof User) {
             return false;
@@ -29,7 +32,7 @@ final class RockAccessService
             && !$this->bypassesRockScope($user);
     }
 
-    public function bypassesRockScope(UserInterface $user): bool
+    public function bypassesRockScope(?UserInterface $user): bool
     {
         if (!$user instanceof User) {
             return true;

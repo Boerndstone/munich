@@ -2,7 +2,7 @@
 {# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
 {# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
 {% if ea.crud.currentAction == 'detail' or ea.crud.currentAction == 'edit' %}
-    {% set hideClimbedUi = is_granted('ROLE_ROCK_EDITOR') and not is_granted('ROLE_SUPER_ADMIN') %}
+    {% set hideClimbedUi = is_granted('ROCK_SCOPED_EDITOR') %}
     {% set rock = entity.instance %}
     {% set rockId = rock.id %}
     {% set routes = field.value|sort((a, b) => 
@@ -14,7 +14,7 @@
          data-controller="routes-sortable"
          data-routes-sortable-rock-id-value="{{ rockId }}"
          data-routes-sortable-reorder-url-value="{{ path('admin_rock_routes_reorder', {rockId: rockId}) }}">
-        {% set climbedCount = routes|filter(r => r.climbed == true)|length %}
+        {% set climbedCount = hideClimbedUi ? 0 : routes|filter(r => r.climbed == true)|length %}
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 <h6 class="mb-0">Routen ({{ routes|length }})</h6>

@@ -45,9 +45,15 @@
 				{{ chart_summary_visible }}
 			</p>
 		{% endif %}
-		<p class="mb-0.5 w-full text-left text-[10px] font-normal leading-tight text-gray-500 dark:text-gray-400 pointer-events-none" aria-hidden="true">
-			<span>{{ 'grade_chart.legend_y'|trans }}</span>
-		</p>
+		<div class="flex justify-content-between">
+			<p class="mb-0 w-full text-left text-[10px] font-normal leading-tight text-gray-500 dark:text-gray-400 pointer-events-none flex items-center gap-1" aria-hidden="true">
+				<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="currentColor" d="M4.08 11.92L12 4l7.92 7.92l-1.42 1.41l-5.5-5.5V22h-2V7.83l-5.5 5.5zM12 4h10V2H2v2z"/></svg><span>{{ 'grade_chart.legend_y'|trans }}</span>
+			</p>
+			<p class="mb-0 w-full text-right text-[10px] font-normal leading-tight text-gray-500 dark:text-gray-400 pointer-events-none flex items-center justify-end gap-1" aria-hidden="true">
+				<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="currentColor" d="M12.08 4.08L20 12l-7.92 7.92l-1.41-1.42l5.5-5.5H2v-2h14.17l-5.5-5.5zM20 12v10h2V2h-2z"/></svg>
+				<span>{{ 'grade_chart.legend_x'|trans }}</span>
+			</p>
+		</div>
 		<div
 			class="pointer-events-none flex w-full items-end gap-1"
 			data-controller="rock-grade-chart"
@@ -61,8 +67,6 @@
 				<canvas class="max-h-28 h-full w-full" aria-hidden="true"></canvas>
 			</div>
 		</div>
-		<p class="mb-0 mt-1 w-full text-left text-[10px] font-normal leading-tight text-gray-500 dark:text-gray-400 pointer-events-none" aria-hidden="true">
-			<span>{{ 'grade_chart.legend_x'|trans }}</span>
-		</p>
+		
 	</div>
 {% endif %}

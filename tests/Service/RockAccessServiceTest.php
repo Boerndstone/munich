@@ -47,6 +47,12 @@ final class RockAccessServiceTest extends TestCase
         $this->assertNull($this->service->getEditableRockIds($user));
     }
 
+    public function testNullUserIsNotRockScoped(): void
+    {
+        $this->assertFalse($this->service->isRockScoped(null));
+        $this->assertTrue($this->service->bypassesRockScope(null));
+    }
+
     public function testScopedUserWithAssignedRockCanEdit(): void
     {
         $rock = new Rock();

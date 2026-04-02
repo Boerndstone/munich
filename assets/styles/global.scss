@@ -1290,7 +1290,7 @@ input[data-autocomplete-target="input"]:focus {
 
     .language-switch-lang {
         position: absolute;
-        top: 50%;
+        // top: 50%;
         transform: translateY(-50%);
         font-size: 0.5rem;
         font-weight: 700;
@@ -1299,12 +1299,14 @@ input[data-autocomplete-target="input"]:focus {
     }
 
     .language-switch-lang--de {
-        right: 0.3em;
+        top: 15px;
+        right: 5px;
         color: #212529;
     }
 
     .language-switch-lang--en {
-        left: 0.3em;
+        top: 15px;
+        left: 5px;
         color: #fff;
     }
 

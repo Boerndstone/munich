@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Rock;
 use App\Entity\Topo;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -38,6 +39,21 @@ class TopoRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+
+    /**
+     * All topos belonging to a rock (Route.topo_id matches Topo.number for this rock).
+     *
+     * @return list<Topo>
+     */
+    public function findAllForRock(Rock $rock): array
+    {
+        return $this->createQueryBuilder('t')
+            ->where('t.rocks = :rock')
+            ->setParameter('rock', $rock)
+            ->orderBy('t.number', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 
     public function findRoutesByTopoNumber($topoNumber)
     {

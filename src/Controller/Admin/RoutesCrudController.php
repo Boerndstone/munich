@@ -188,7 +188,7 @@ class RoutesCrudController extends AbstractCrudController
         $choices = $this->routeTopoChoiceService->choicesForRock($rock);
 
         $form->add('topo_id', ChoiceType::class, [
-            'label' => 'Topo',
+            'label' => 'Sektor',
             'required' => false,
             'placeholder' => 'Topo wählen …',
             'choices' => $choices,
@@ -198,7 +198,7 @@ class RoutesCrudController extends AbstractCrudController
                 'class' => 'form-select',
                 'data-admin-route-topo-sync-target' => 'topo',
             ],
-            'help' => 'Topos dieses Felsen (Anzeige: Name, Speicherung: Toponummer). Liste aktualisiert sich, wenn Sie den Fels ändern.',
+            'help' => 'Wähle den entsprechenden Sektor.',
         ]);
     }
 

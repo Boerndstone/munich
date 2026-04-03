@@ -41,7 +41,8 @@ class TopoRepository extends ServiceEntityRepository
 
 
     /**
-     * All topos belonging to a rock (Route.topo_id matches Topo.number for this rock).
+     * Topos for a rock usable as route topo targets (Route.topo_id stores Topo.number).
+     * Rows with no number are omitted; they cannot map to routes.topo_id.
      *
      * @return list<Topo>
      */
@@ -49,6 +50,7 @@ class TopoRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
             ->where('t.rocks = :rock')
+            ->andWhere('t.number IS NOT NULL')
             ->setParameter('rock', $rock)
             ->orderBy('t.number', 'ASC')
             ->getQuery()

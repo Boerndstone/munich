@@ -37,20 +37,51 @@ final class RouteTopoChoiceService
         $nameCounts = [];
         foreach ($numberedTopos as $topo) {
             $name = (string) ($topo->getName() ?? '');
+            $number = $topo->getNumber();
+            if ($number === null) {
+                continue;
+            }
+
+            $name = (string) ($topo->getName() ?? '');
             $nameCounts[$name] = ($nameCounts[$name] ?? 0) + 1;
         }
 
         $choices = [];
-        foreach ($numberedTopos as $topo) {
-            $name = (string) ($topo->getName() ?? '');
+        foreach ($topos as $topo) {
             $number = $topo->getNumber();
+            if ($number === null) {
+                continue;
+            }
+
+            $name = (string) ($topo->getName() ?? '');
             $label = $name;
             if (($nameCounts[$name] ?? 0) > 1) {
                 $label = $name.' (Nr. '.$number.')';
             }
+
+            $label = $this->uniqueLabel($choices, $label);
             $choices[$label] = $number;
         }
 
         return $choices;
+    }
+
+    /**
+     * @param array<string, int> $choices
+     */
+    private function uniqueLabel(array $choices, string $label): string
+    {
+        if (!array_key_exists($label, $choices)) {
+            return $label;
+        }
+
+        $suffix = 2;
+        $candidate = $label.' #'.$suffix;
+        while (array_key_exists($candidate, $choices)) {
+            ++$suffix;
+            $candidate = $label.' #'.$suffix;
+        }
+
+        return $candidate;
     }
 }

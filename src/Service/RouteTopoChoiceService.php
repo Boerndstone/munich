@@ -28,20 +28,27 @@ final class RouteTopoChoiceService
 
         /** @var list<Topo> $topos */
         $topos = $this->topoRepository->findAllForRock($rock);
+        /** @var list<Topo> $numberedTopos */
+        $numberedTopos = array_values(array_filter(
+            $topos,
+            static fn (Topo $topo): bool => $topo->getNumber() !== null
+        ));
+
         $nameCounts = [];
-        foreach ($topos as $topo) {
+        foreach ($numberedTopos as $topo) {
             $name = (string) ($topo->getName() ?? '');
             $nameCounts[$name] = ($nameCounts[$name] ?? 0) + 1;
         }
 
         $choices = [];
-        foreach ($topos as $topo) {
+        foreach ($numberedTopos as $topo) {
             $name = (string) ($topo->getName() ?? '');
+            $number = $topo->getNumber();
             $label = $name;
             if (($nameCounts[$name] ?? 0) > 1) {
-                $label = $name.' (Nr. '.$topo->getNumber().')';
+                $label = $name.' (Nr. '.$number.')';
             }
-            $choices[$label] = $topo->getNumber();
+            $choices[$label] = $number;
         }
 
         return $choices;

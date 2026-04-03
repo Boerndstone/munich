@@ -2,8 +2,11 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Rock;
 use App\Entity\Routes;
+use App\Repository\RockRepository;
 use App\Service\GradeTranslationService;
+use App\Service\RouteTopoChoiceService;
 use App\Service\RockAccessService;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -20,12 +23,21 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 class RoutesCrudController extends AbstractCrudController
 {
     public function __construct(
         private GradeTranslationService $gradeTranslationService,
         private RockAccessService $rockAccessService,
+        private RouteTopoChoiceService $routeTopoChoiceService,
+        private RockRepository $rockRepository,
     ) {
     }
 
@@ -110,7 +122,84 @@ class RoutesCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_DETAIL, static function (Routes $routes) {
                 return $routes->getName();
             })
-            ->setFormOptions(['attr' => ['novalidate' => null]]);
+            ->setFormOptions([
+                'attr' => [
+                    'novalidate' => null,
+                    'data-controller' => 'admin-route-topo-sync',
+                    'data-admin-route-topo-sync-url-template-value' => str_replace(
+                        '888888888',
+                        '__ROCK_ID__',
+                        $this->generateUrl('admin_routes_topos_for_rock', ['rockId' => 888888888])
+                    ),
+                ],
+            ]);
+    }
+
+    public function createNewFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
+    {
+        $builder = parent::createNewFormBuilder($entityDto, $formOptions, $context);
+        $this->attachRouteTopoFormListeners($builder);
+
+        return $builder;
+    }
+
+    public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
+    {
+        $builder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
+        $this->attachRouteTopoFormListeners($builder);
+
+        return $builder;
+    }
+
+    private function attachRouteTopoFormListeners(FormBuilderInterface $builder): void
+    {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+            $route = $event->getData();
+            $form = $event->getForm();
+            $rock = $route instanceof Routes ? $route->getRock() : null;
+            $this->replaceTopoChoiceField($form, $rock);
+        });
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
+            $data = $event->getData();
+            if (!\is_array($data)) {
+                return;
+            }
+            $form = $event->getForm();
+            $rockId = $data['rock'] ?? null;
+            $rock = null;
+            if ($rockId !== null && $rockId !== '') {
+                $rock = $this->rockRepository->find((int) $rockId);
+            }
+            $this->replaceTopoChoiceField($form, $rock);
+        });
+    }
+
+    /**
+     * Topo is not an ORM relation on Routes; choices are Topos for the selected Rock (Topo.rocks).
+     * Rebuilt on load and on submit so labels match routes.topo_id ↔ topo.number.
+     */
+    private function replaceTopoChoiceField(FormInterface $form, ?Rock $rock): void
+    {
+        if ($form->has('topo_id')) {
+            $form->remove('topo_id');
+        }
+
+        $choices = $this->routeTopoChoiceService->choicesForRock($rock);
+
+        $form->add('topo_id', ChoiceType::class, [
+            'label' => 'Sektor',
+            'required' => false,
+            'placeholder' => 'Topo wählen …',
+            'choices' => $choices,
+            'empty_data' => null,
+            'property_path' => 'topoId',
+            'attr' => [
+                'class' => 'form-select',
+                'data-admin-route-topo-sync-target' => 'topo',
+            ],
+            'help' => 'Wähle den entsprechenden Sektor.',
+        ]);
     }
 
     public function createEntity(string $entityFqcn): Routes
@@ -223,9 +312,38 @@ class RoutesCrudController extends AbstractCrudController
             ->setLabel('Gebiet')
             ->setColumns('col-12')
             ->hideOnForm();
-        yield AssociationField::new('rock')
+
+        $rockField = AssociationField::new('rock')
             ->setLabel('Fels')
-            ->setColumns('col-12');
+            ->setColumns('col-12')
+            ->setCrudController(RockCrudController::class);
+
+        if ($this->routesFormRockChoiceCount() > 10) {
+            $rockField
+                ->autocomplete()
+                ->setFormTypeOption('attr', [
+                    'data-admin-route-topo-sync-target' => 'rock',
+                ]);
+        } else {
+            $rockField
+                ->renderAsNativeWidget()
+                ->setFormTypeOption('attr', [
+                    'class' => 'form-select',
+                    'data-admin-route-topo-sync-target' => 'rock',
+                ])
+                ->setQueryBuilder(function (QueryBuilder $qb): QueryBuilder {
+                    $this->rockAccessService->restrictRockQueryBuilder($qb, $this->getUser());
+                    $qb->orderBy('entity.name', 'ASC');
+
+                    return $qb;
+                });
+        }
+
+        yield $rockField;
+        yield Field::new('topo_id')
+            ->setLabel('Topo-Nr.')
+            ->hideOnForm()
+            ->hideOnIndex();
         yield ChoiceField::new('grade')
             ->setLabel('Schwierigkeitsgrad')
             ->setColumns('col-12')
@@ -303,11 +421,7 @@ class RoutesCrudController extends AbstractCrudController
                     'fantastisch   => drei Sterne' => '3',
                 ]
             );
-        yield Field::new('topo_id')
-            ->setLabel('Topo ID')
-            ->setColumns('col-12')
-            ->hideOnIndex();
-        
+
     }
 
     /**
@@ -323,5 +437,17 @@ class RoutesCrudController extends AbstractCrudController
         }
         
         return $choices;
+    }
+
+    /**
+     * Rocks available for this user in the route form (same rules as Fels dropdown / Rock CRUD).
+     */
+    private function routesFormRockChoiceCount(): int
+    {
+        $qb = $this->rockRepository->createQueryBuilder('entity');
+        $qb->select('COUNT(entity.id)');
+        $this->rockAccessService->restrictRockQueryBuilder($qb, $this->getUser());
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 }

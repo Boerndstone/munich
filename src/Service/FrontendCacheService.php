@@ -66,7 +66,7 @@ class FrontendCacheService
      */
     public function getBannedRocks(): array
     {
-        return $this->cache->get('frontend_banned_rocks', function (ItemInterface $item): array {
+        return $this->cache->get('frontend_banned_rocks_v2', function (ItemInterface $item): array {
             $item->expiresAfter(self::BANNED_ROCKS_TTL);
             
             return $this->rockRepository->saisonalGesperrt();
@@ -138,7 +138,7 @@ class FrontendCacheService
     {
         $this->cache->delete('frontend_latest_routes');
         $this->cache->delete('frontend_latest_comments');
-        $this->cache->delete('frontend_banned_rocks');
+        $this->cache->delete('frontend_banned_rocks_v2');
         // Note: Area-specific caches will expire naturally or can be cleared individually
     }
 

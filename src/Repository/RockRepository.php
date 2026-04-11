@@ -99,7 +99,8 @@ class RockRepository extends ServiceEntityRepository
      *     name: string,
      *     slug: string,
      *     areaName: string,
-     *     areaSlug: string
+     *     areaSlug: string,
+     *     banned: int|null
      * }>
      */
     public function saisonalGesperrt(): array
@@ -109,6 +110,7 @@ class RockRepository extends ServiceEntityRepository
                 'rock.id',
                 'rock.name',
                 'rock.slug',
+                'rock.banned AS banned',
                 'area.name AS areaName',
                 'area.slug AS areaSlug'
             )

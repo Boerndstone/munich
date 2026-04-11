@@ -129,13 +129,13 @@ class FrontendCacheServiceTest extends TestCase
     public function testGetBannedRocksReturnsCachedData(): void
     {
         $expectedBannedRocks = [
-            ['id' => 1, 'name' => 'Banned Rock 1', 'slug' => 'banned-rock-1', 'areaName' => 'Area A', 'areaSlug' => 'area-a'],
+            ['id' => 1, 'name' => 'Banned Rock 1', 'slug' => 'banned-rock-1', 'banned' => 1, 'areaName' => 'Area A', 'areaSlug' => 'area-a'],
         ];
 
         $this->cache
             ->expects($this->once())
             ->method('get')
-            ->with('frontend_banned_rocks', $this->isType('callable'))
+            ->with('frontend_banned_rocks_v2', $this->isType('callable'))
             ->willReturn($expectedBannedRocks);
 
         $result = $this->service->getBannedRocks();
@@ -146,7 +146,7 @@ class FrontendCacheServiceTest extends TestCase
     public function testGetBannedRocksCallsRepositoryOnCacheMiss(): void
     {
         $expectedBannedRocks = [
-            ['id' => 1, 'name' => 'Banned Rock 1', 'slug' => 'banned-rock-1', 'areaName' => 'Area A', 'areaSlug' => 'area-a'],
+            ['id' => 1, 'name' => 'Banned Rock 1', 'slug' => 'banned-rock-1', 'banned' => 1, 'areaName' => 'Area A', 'areaSlug' => 'area-a'],
         ];
 
         $this->rockRepository
@@ -157,7 +157,7 @@ class FrontendCacheServiceTest extends TestCase
         $this->cache
             ->expects($this->once())
             ->method('get')
-            ->with('frontend_banned_rocks', $this->isType('callable'))
+            ->with('frontend_banned_rocks_v2', $this->isType('callable'))
             ->willReturnCallback(function (string $key, callable $callback) {
                 $item = $this->createMock(ItemInterface::class);
                 $item->expects($this->once())
@@ -180,7 +180,7 @@ class FrontendCacheServiceTest extends TestCase
                 $this->assertContains($key, [
                     'frontend_latest_routes',
                     'frontend_latest_comments',
-                    'frontend_banned_rocks',
+                    'frontend_banned_rocks_v2',
                 ]);
                 return true;
             });
@@ -243,7 +243,7 @@ class FrontendCacheServiceTest extends TestCase
         $this->cache
             ->expects($this->once())
             ->method('get')
-            ->with('frontend_banned_rocks', $this->isType('callable'))
+            ->with('frontend_banned_rocks_v2', $this->isType('callable'))
             ->willReturn([]);
 
         $result = $this->service->getBannedRocks();

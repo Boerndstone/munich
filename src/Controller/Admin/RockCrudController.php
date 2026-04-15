@@ -29,6 +29,7 @@ use App\Entity\Routes;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use App\Controller\Admin\DashboardController;
 use App\Entity\User;
+use App\Service\GradeTranslationService;
 use App\Service\RockAccessService;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -40,6 +41,7 @@ class RockCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly RockAccessService $rockAccessService,
+        private readonly GradeTranslationService $gradeTranslationService,
     ) {
     }
 
@@ -169,6 +171,7 @@ class RockCrudController extends AbstractCrudController
             ->setLabel(false)
             ->onlyOnDetail()
             ->setTemplatePath('admin/field/routes.html.twig')
+            ->setCustomOption('gradeFormChoices', $this->gradeTranslationService->getGradeFormChoices())
             ->addCssClass('field-address')
             ->setColumns('col-12');
 

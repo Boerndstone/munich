@@ -300,59 +300,11 @@ class GradeTranslationService
     ];
 
     /**
-     * Hueco (V) and YDS sport approximations aligned with Wikipedia’s “Comparison bouldering” table (2016 CAI / IFSC-style);
-     * “+” Font steps without a dedicated Wikipedia row use a slash band (e.g. V3/V4).
+     * “Chart: Climbing Grades Compared” from Bergfreunde (UIAA with Arabic numerals, French, Fb, V columns only).
+     * {@link https://www.bergfreunde.eu/climbing-grade-calculator/}
      *
-     * @var array<string, array{hueco: string, yds: string}>
+     * @var list<array{uiaa: string, french: string, fb: string, v: string}>
      */
-    * Approximate boulder grade cross-reference from Fontainebleau to Hueco/V and YDS.
-    *
-    * @var array<string, array{hueco: string, yds: string}>
-    */
-    private const BOULDER_HUECO_YDS = [
-       'FB 3' => ['hueco' => '—', 'yds' => '—'],
-       'FB 4-' => ['hueco' => 'V0−', 'yds' => '5.8'],
-       'FB 4' => ['hueco' => 'V0', 'yds' => '5.9'],
-       'FB 4+' => ['hueco' => 'V0+', 'yds' => '5.10a/b'],
-       'FB 5' => ['hueco' => 'V1', 'yds' => '5.10c/d'],
-       'FB 5+' => ['hueco' => 'V2', 'yds' => '5.10d/5.11a/b'],
-       'FB 6A' => ['hueco' => 'V3', 'yds' => '5.11c'],
-       'FB 6A+' => ['hueco' => 'V3/V4', 'yds' => '≈ 5.11c–5.12a'],
-       'FB 6B' => ['hueco' => 'V4', 'yds' => '5.12a'],
-       'FB 6B+' => ['hueco' => 'V4/V5', 'yds' => '≈ 5.12a–5.12b'],
-       'FB 6C' => ['hueco' => 'V5', 'yds' => '5.12b'],
-       'FB 6C+' => ['hueco' => 'V5/V6', 'yds' => '≈ 5.12b–5.12c'],
-       'FB 7A' => ['hueco' => 'V6', 'yds' => '5.12c'],
-       'FB 7A+' => ['hueco' => 'V7', 'yds' => '5.12d'],
-       'FB 7B' => ['hueco' => 'V8', 'yds' => '5.13a'],
-       'FB 7B+' => ['hueco' => 'V8/V9', 'yds' => '≈ 5.13a–5.13c'],
-       'FB 7C' => ['hueco' => 'V9', 'yds' => '5.13c'],
-       'FB 7C+' => ['hueco' => 'V10', 'yds' => '5.13d'],
-       'FB 8A' => ['hueco' => 'V11', 'yds' => '5.14a'],
-       'FB 8A+' => ['hueco' => 'V12', 'yds' => '5.14b'],
-       'FB 8B' => ['hueco' => 'V13', 'yds' => '5.14c'],
-       'FB 8B+' => ['hueco' => 'V14', 'yds' => '5.14d'],
-       'FB 8C' => ['hueco' => 'V15', 'yds' => '5.15a'],
-       'FB 8C+' => ['hueco' => 'V16', 'yds' => '5.15b'],
-       'FB 9A' => ['hueco' => 'V17', 'yds' => '5.15c'],
-    ];
-
-    /**
-    * Returns the approximate Hueco/V and YDS grades for a Fontainebleau boulder grade.
-    *
-    * @return array{hueco: string, yds: string}|null
-    */
-    public function getBoulderHuecoYds(string $fontainebleauGrade): ?array
-    {
-       return self::BOULDER_HUECO_YDS[$fontainebleauGrade] ?? null;
-    }
-
-    /**
-    * “Chart: Climbing Grades Compared” from Bergfreunde (UIAA with Arabic numerals, French, Fb, V columns only).
-    * {@link https://www.bergfreunde.eu/climbing-grade-calculator/}
-    *
-    * @var list<array{uiaa: string, french: string, fb: string, v: string}>
-    */
     private const BERGFREUNDE_CLIMBING_GRADES_COMPARED = [
         ['uiaa' => '1', 'french' => '1', 'fb' => '1', 'v' => 'VB-'],
         ['uiaa' => '2', 'french' => '2', 'fb' => '1', 'v' => 'VB-'],

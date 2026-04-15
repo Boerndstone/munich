@@ -1,4 +1,4 @@
-{# Horizontal grade cells for area rocks listing only. One column per grade (3–11) or Proj. with count &gt; 0 only. #}
+{# Horizontal grade cells for area rocks listing only. Columns 3–11 = UIAA chart buckets from the API (sport + Fontainebleau FB …); Proj. optional. #}
 {% set include_proj = include_projects_column|default(true) %}
 {% set proj_n = project_count|default(0) %}
 {% set route_total = rock.amountRoutes|default(0) %}

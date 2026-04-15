@@ -14,6 +14,9 @@ final class GradeTranslationServiceUiaaBucketTest extends TestCase
         self::assertSame(3, GradeTranslationService::uiaaChartBucketForGrade('3'));
         self::assertSame(7, GradeTranslationService::uiaaChartBucketForGrade('7a'));
         self::assertSame(11, GradeTranslationService::uiaaChartBucketForGrade('11'));
+        self::assertSame(8, GradeTranslationService::uiaaChartBucketForGrade('FB 7A'));
+        self::assertSame(10, GradeTranslationService::uiaaChartBucketForGrade('FB 7C'));
+        self::assertSame(5, GradeTranslationService::uiaaChartBucketForGrade('FB 3'));
     }
 
     public function testNullAndEmptyReturnNull(): void

@@ -148,7 +148,7 @@ class RockRepository extends ServiceEntityRepository
                 'COUNT(DISTINCT route.id) AS amountRoutes',
                 'SUM(CASE WHEN route.gradeNo > 0 AND route.gradeNo <= 15 THEN 1 ELSE 0 END) AS amountEasy',
                 'SUM(CASE WHEN route.gradeNo > 15 AND route.gradeNo <= 29 THEN 1 ELSE 0 END) AS amountMiddle',
-                'SUM(CASE WHEN route.gradeNo > 29 AND route.gradeNo <= 60 THEN 1 ELSE 0 END) AS amountHard',
+                'SUM(CASE WHEN route.gradeNo > 29 AND route.gradeNo <= 65 THEN 1 ELSE 0 END) AS amountHard',
                 'SUM(CASE WHEN route.gradeNo = 0 OR route.gradeNo IS NULL THEN 1 ELSE 0 END) AS amountProjects'
             )
             ->orderBy('rock.nr', 'ASC')
@@ -200,7 +200,7 @@ class RockRepository extends ServiceEntityRepository
                 'COUNT(DISTINCT route.id) AS amountRoutes',
                 'SUM(CASE WHEN route.gradeNo > 0 AND route.gradeNo <= 15 THEN 1 ELSE 0 END) AS amountEasy',
                 'SUM(CASE WHEN route.gradeNo > 15 AND route.gradeNo <= 29 THEN 1 ELSE 0 END) AS amountMiddle',
-                'SUM(CASE WHEN route.gradeNo > 29 AND route.gradeNo <= 60 THEN 1 ELSE 0 END) AS amountHard',
+                'SUM(CASE WHEN route.gradeNo > 29 AND route.gradeNo <= 65 THEN 1 ELSE 0 END) AS amountHard',
                 'SUM(CASE WHEN route.gradeNo = 0 OR route.gradeNo IS NULL THEN 1 ELSE 0 END) AS amountProjects'
             )
             ->orderBy('rock.id', 'ASC')

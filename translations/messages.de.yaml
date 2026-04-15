@@ -78,5 +78,15 @@ grade_chart.aria_summary_routes_and_rocks: "Insgesamt %routes% Touren, %rocks% F
 grade_chart.legend_x: "Grad (UIAA)"
 grade_chart.legend_y: "Anzahl"
 
+# Gradvergleich (Bergfreunde: UIAA römisch, Französisch, Fb, V)
+grade_comparison_free_climbing.meta_title: "Klettergradvergleich (UIAA, Französisch, Font, V) | Munichclimbs"
+grade_comparison_free_climbing.meta_description: "UIAA (arabische Ziffern), französische Sportskala, Fontainebleau-Bouldergrad und Hueco-V-Skala nach der Bergfreunde-Gradrechner-Tabelle."
+grade_comparison_free_climbing.nav_link: "Tabelle Schwierigkeitsgrade"
+grade_comparison_free_climbing.heading: "Tabelle Schwierigkeitsgrade"
+grade_comparison_free_climbing.col_french: "Franz. Sport"
+grade_comparison_free_climbing.col_fb: "Fb (Font)"
+grade_comparison_free_climbing.col_v: "V (Hueco)"
+grade_comparison_free_climbing.col_uiaa: "UIAA"
+
 # Topo (route overview image)
 topo.image_alt: "Klettertopo „%topo_name%“ am Fels %rock_name% in %area_name%"

@@ -394,17 +394,71 @@ class GradeTranslationService
         return array_keys(self::GRADE_MAPPING);
     }
 
+    private const GRADE_FORM_BUCKET_UIAA = 0;
+
+    private const GRADE_FORM_BUCKET_FRENCH = 1;
+
+    private const GRADE_FORM_BUCKET_FB = 2;
+
+    /**
+     * Admin form ordering: UIAA-style grades, then French sport, then Fontainebleau (FB).
+     */
+    private static function gradeFormChoiceBucket(string $grade): int
+    {
+        if (str_starts_with($grade, 'FB ')) {
+            return self::GRADE_FORM_BUCKET_FB;
+        }
+
+        // French sport uses a/b/c after a digit (e.g. 5a, 6b+, 7c+/8a); UIAA uses plain numerals (6-, 7+).
+        if (preg_match('/\d[abc]/i', $grade) === 1) {
+            return self::GRADE_FORM_BUCKET_FRENCH;
+        }
+
+        return self::GRADE_FORM_BUCKET_UIAA;
+    }
+
     /**
      * @return array<string, string> ChoiceField label => stored grade value
      */
     public function getGradeFormChoices(): array
     {
-        $choices = [];
+        $buckets = [
+            self::GRADE_FORM_BUCKET_UIAA => [],
+            self::GRADE_FORM_BUCKET_FRENCH => [],
+            self::GRADE_FORM_BUCKET_FB => [],
+        ];
+
         foreach (array_keys(self::GRADE_MAPPING) as $grade) {
-            $choices[$grade] = $grade;
+            $b = self::gradeFormChoiceBucket($grade);
+            $buckets[$b][$grade] = $grade;
         }
 
-        return $choices;
+        $numericSort = static function (string $a, string $b): int {
+            return (self::GRADE_MAPPING[$a] ?? 0) <=> (self::GRADE_MAPPING[$b] ?? 0);
+        };
+
+        foreach ($buckets as $bucketKey => &$bucket) {
+            if ($bucketKey === self::GRADE_FORM_BUCKET_UIAA) {
+                $zero = $bucket['0'] ?? null;
+                $one = $bucket['1'] ?? null;
+                unset($bucket['0'], $bucket['1']);
+                uksort($bucket, $numericSort);
+                if ($one !== null) {
+                    $bucket = ['1' => $one] + $bucket;
+                }
+                if ($zero !== null) {
+                    $bucket = ['0' => $zero] + $bucket;
+                }
+            } else {
+                uksort($bucket, $numericSort);
+            }
+        }
+        unset($bucket);
+
+        // Use + not array_merge(): grade keys like "0" and "1" are numeric strings and would be reindexed.
+        return $buckets[self::GRADE_FORM_BUCKET_UIAA]
+            + $buckets[self::GRADE_FORM_BUCKET_FRENCH]
+            + $buckets[self::GRADE_FORM_BUCKET_FB];
     }
 
     /**

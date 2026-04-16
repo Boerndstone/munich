@@ -22,34 +22,24 @@ export default class extends Controller {
         let visibleCount = 0
         let totalCount = this.rockItemTargets.length
 
-        console.log(`Filtering: Grade ${minGrade}-${maxGrade}`)
-
-        this.rockItemTargets.forEach((rock, index) => {
-            // Get the route grades from the data attribute
+        this.rockItemTargets.forEach((rock) => {
+            // Get the route grades from the data attribute (grade_no; includes Fontainebleau FB … up to 61)
             const routeGradesString = rock.dataset.routeGrades || ''
             const routeGrades = routeGradesString ? routeGradesString.split(',').map(grade => parseInt(grade.trim())).filter(grade => !isNaN(grade)) : []
-            
-            console.log(`Rock ${index}: Route grades: [${routeGrades.join(', ')}]`)
-            
+
             // Check if any route grade falls within the selected range
             let hasRoutesInRange = false
-            
+
             // Convert grade range to numerical ranges
             const minRange = this.getMinRangeForGrade(minGrade)
             const maxRange = this.getMaxRangeForGrade(maxGrade)
-            
-            console.log(`  -> Checking range ${minRange}-${maxRange}`)
-            console.log(`  -> Grade ${minGrade} maps to min ${minRange}, Grade ${maxGrade} maps to max ${maxRange}`)
-            
+
             for (const grade of routeGrades) {
                 if (grade >= minRange && grade <= maxRange) {
                     hasRoutesInRange = true
-                    console.log(`  -> Grade ${grade} matches range ${minRange}-${maxRange}`)
                     break
                 }
             }
-            
-            console.log(`  -> Has routes in range: ${hasRoutesInRange}`)
             
             if (hasRoutesInRange) {
                 rock.style.display = ''
@@ -61,7 +51,6 @@ export default class extends Controller {
 
         // Update info text
         this.filterInfoTarget.textContent = `${visibleCount} von ${totalCount} Felsen angezeigt`
-        console.log(`Result: ${visibleCount} of ${totalCount} rocks visible`)
     }
 
     getMinRangeForGrade(grade) {
@@ -73,9 +62,9 @@ export default class extends Controller {
 
     getMaxRangeForGrade(grade) {
         const ranges = {
-            1: 1, 2: 4, 3: 7, 4: 10, 5: 15, 6: 20, 7: 27, 8: 35, 9: 43, 10: 51, 11: 57
+            1: 1, 2: 4, 3: 7, 4: 10, 5: 15, 6: 20, 7: 27, 8: 35, 9: 43, 10: 51, 11: 61
         }
-        return ranges[grade] || 57
+        return ranges[grade] || 61
     }
 
     updateValueDisplay() {

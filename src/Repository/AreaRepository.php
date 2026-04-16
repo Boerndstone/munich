@@ -97,7 +97,7 @@ class AreaRepository extends ServiceEntityRepository
                 'COUNT(DISTINCT rock.id) AS rocks',
                 'COUNT(DISTINCT CASE WHEN route.gradeNo > 0 AND route.gradeNo <= 15 THEN route.id ELSE 0 END) AS amountEasy',
                 'COUNT(DISTINCT CASE WHEN route.gradeNo > 15 AND route.gradeNo <= 29 THEN route.id ELSE 0 END) AS amountMiddle',
-                'COUNT(DISTINCT CASE WHEN route.gradeNo > 29 AND route.gradeNo <= 60 THEN route.id ELSE 0 END) AS amountHard',
+                'COUNT(DISTINCT CASE WHEN route.gradeNo > 29 THEN route.id ELSE 0 END) AS amountHard',
                 'COUNT(DISTINCT CASE WHEN route.gradeNo = 0 OR route.gradeNo IS NULL THEN route.id ELSE 0 END) AS amountProjects'
             )
             ->leftJoin('area.routes', 'route')

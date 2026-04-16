@@ -63,6 +63,12 @@
 								<div class="text-truncate">Impressum</div>
 							</a>
 						</li>
+						<li class="nav-item">
+							<a class="nav-link d-flex align-items-center" href="{{ path(app.request.locale == 'en' ? 'free_climbing_grade_comparison_en' : 'free_climbing_grade_comparison') }}">
+								<div class="chart d-inline-block me-3"></div>
+								<span class="text-truncate">{{ 'grade_comparison_free_climbing.nav_link'|trans }}</span>
+							</a>
+						</li>
 					</ul>
 				</div>
 			</div>

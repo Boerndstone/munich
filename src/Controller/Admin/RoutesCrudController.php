@@ -429,14 +429,7 @@ class RoutesCrudController extends AbstractCrudController
      */
     private function getGradeChoices(): array
     {
-        $grades = $this->gradeTranslationService->getAvailableGrades();
-        $choices = [];
-        
-        foreach ($grades as $grade) {
-            $choices[$grade] = $grade;
-        }
-        
-        return $choices;
+        return $this->gradeTranslationService->getGradeFormChoices();
     }
 
     /**

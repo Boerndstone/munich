@@ -94,7 +94,7 @@ class FrontendCacheService
      */
     public function getRocksForArea(string $areaSlug): array
     {
-        $cacheKey = 'area_rocks_v3_' . $areaSlug;
+        $cacheKey = 'area_rocks_v4_' . $areaSlug;
         
         return $this->cache->get($cacheKey, function (ItemInterface $item) use ($areaSlug): array {
             $item->expiresAfter(self::AREA_ROCKS_TTL);
@@ -147,7 +147,8 @@ class FrontendCacheService
      */
     public function clearAreaCache(string $areaSlug, int $areaId): void
     {
-        $this->cache->delete('area_rocks_' . $areaSlug);
+        $this->cache->delete('area_rocks_v3_' . $areaSlug);
+        $this->cache->delete('area_rocks_v4_' . $areaSlug);
         $this->cache->delete('area_route_grades_' . $areaSlug);
         $this->cache->delete('area_top100_routes_' . $areaId);
     }

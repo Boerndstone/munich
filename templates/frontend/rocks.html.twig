@@ -56,15 +56,15 @@
 				{% endif %}
 				{{ include('components/page/area-weather-modal.html.twig', { areaLat: areaLat, areaLng: areaLng }) }}
 				{{ include('components/page/area-map-modal.html.twig', { areaName: areaName }) }}
-				<div class="row" data-controller="filter">
-					<div class="col-12 col-md-8 order-2 order-lg-1">
-						<div class="row">
+				<div class="grid grid-cols-1 gap-3 md:grid-cols-12 md:gap-4" data-controller="filter">
+					<div class="order-2 min-w-0 md:order-2 md:col-span-8 lg:order-1">
+						<div class="flex flex-col">
 							{% for rock in rocks %}
 								{{ include('components/rock-area-list-item.html.twig', { rock: rock, areaName: areaName, currentDate: currentDate }) }}
 							{% endfor %}
 						</div>
 					</div>
-					<div class="col-12 col-md-4 order-1 order-lg-2">
+					<div class="order-1 min-w-0 md:order-1 md:col-span-4 lg:order-2">
 						{{ include('components/rocks-sticky-filter.html.twig') }}
 					</div>
 				</div>

@@ -65,10 +65,14 @@ var point = {
 
 L.geoJSON(point).addTo(rockMap);
 }
-var collapseRockMap = document.getElementById('collapseRockMap');
-collapseRockMap.addEventListener('shown.bs.collapse', (e) => {
+var rockMapDetails = document.getElementById('rockMapDetails');
+if (rockMapDetails) {
+rockMapDetails.addEventListener('toggle', function () {
+if (rockMapDetails.open) {
 setTimeout(function () {
 rockMap.invalidateSize();
 }, 40);
+}
 });
+}
 </script>

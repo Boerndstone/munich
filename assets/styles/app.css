@@ -106,6 +106,35 @@
     transform: rotate(90deg);
 }
 
+/* Rock page info drawer (right panel); same fullscreen flex shell as nav dialog. */
+.rock-info-dialog:not([open]) {
+    display: none !important;
+}
+
+.rock-info-dialog[open] {
+    display: flex !important;
+    box-sizing: border-box;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+.rock-info-dialog::backdrop {
+    background: transparent;
+}
+
+.rock-info-dialog details[open] .rock-accordion-chevron {
+    transform: rotate(90deg);
+}
+
 @media (max-width: 575.98px) {
     .background-image-height {
         height: 120px;

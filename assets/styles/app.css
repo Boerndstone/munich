@@ -5,6 +5,85 @@
 @source "../../templates/**/*.{html,twig}";
 @source "../**/*.{js,ts,jsx,tsx,vue}";
 
+/* Symfony UX Toolkit (Shadcn) design tokens — used by templates/components/Button.html.twig etc. */
+:root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --radius: 0.625rem;
+}
+
+.dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.145 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.145 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.985 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.396 0.141 25.723);
+    --destructive-foreground: oklch(0.637 0.237 25.331);
+    --border: oklch(0.269 0 0);
+    --input: oklch(0.269 0 0);
+    --ring: oklch(0.439 0 0);
+}
+
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+    /* UX Toolkit components expect border-color / focus ring tokens; avoid overriding site body theme. */
+    * {
+        @apply border-border outline-ring/50;
+    }
+}
+
 /* Matches previous tailwind.config.js container + legacy app.css rule */
 @utility container {
     margin-inline: auto;
@@ -75,6 +154,90 @@
 /* Native <dialog> fullscreen map modals — ::backdrop is not practical with @apply alone */
 .map-fullscreen-dialog::backdrop {
     background-color: rgb(0 0 0 / 0.45);
+}
+
+/* Mobile navigation drawer */
+.nav-offcanvas-dialog:not([open]) {
+    display: none !important;
+}
+
+.nav-offcanvas-dialog[open] {
+    display: flex !important;
+    flex-direction: row;
+    align-items: stretch;
+    box-sizing: border-box;
+    width: 100vw;
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+.nav-offcanvas-dialog::backdrop {
+    background-color: rgb(0 0 0 / 0.35);
+}
+
+/* Rock info panel (right) */
+.rock-info-dialog:not([open]) {
+    display: none !important;
+}
+
+.rock-info-dialog[open] {
+    display: flex !important;
+    flex-direction: column;
+    box-sizing: border-box;
+    position: fixed;
+    inset: 0 0 0 auto;
+    margin: 0;
+    width: min(100vw, 28rem);
+    max-width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 0;
+    border: none;
+    padding: 0;
+    translate: 0 0;
+}
+
+.rock-info-dialog::backdrop {
+    background-color: rgb(0 0 0 / 0.35);
+}
+
+/* Search dialog (large centered) */
+.search-modal-dialog:not([open]) {
+    display: none !important;
+}
+
+.search-modal-dialog[open] {
+    display: flex !important;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: min(100vw, 48rem);
+    max-width: none;
+    max-height: min(100vh, 100dvh);
+    height: auto;
+    margin: auto;
+    border: none;
+    padding: 0;
+    translate: 0 0;
+}
+
+.search-modal-dialog::backdrop {
+    background-color: rgb(0 0 0 / 0.45);
+}
+
+.rock-drawer-details > summary {
+    list-style: none;
+}
+
+.rock-drawer-details > summary::-webkit-details-marker {
+    display: none;
 }
 
 @media (max-width: 575.98px) {

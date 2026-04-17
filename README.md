@@ -70,7 +70,14 @@ Das Projekt kann komplett mit Docker laufen: PHP 8.2 + Apache + MySQL 8.
    docker compose exec app php bin/console cache:clear
    ```
 
-5. **Fahrtzeiten ab München** (optional, für „ca. X Min. ab München“ in der Karten-Popup): Travel-Zeiten liegen in der DB; der Server ruft **kein** OSRM auf.
+5. **Composer / `vendor` im Container**  
+   `docker-compose.yml` legt `vendor` in ein **eigenes Docker-Volume** (nicht dein lokaler `./vendor`). Wenn sich `composer.lock` oder `composer.json` ändern (z. B. neues Paket wie `symfony/ux-toolkit`), musst du die Abhängigkeiten **im Container** neu installieren, sonst fehlen Pakete trotz neuem Image:
+   ```bash
+   docker compose run --rm app composer install
+   ```
+   (Alternativ bei laufendem Stack: `docker compose exec app composer install`.)
+
+6. **Fahrtzeiten ab München** (optional, für „ca. X Min. ab München“ in der Karten-Popup): Travel-Zeiten liegen in der DB; der Server ruft **kein** OSRM auf.
    - **Lokal/Docker** (wo HTTPS funktioniert): `php bin/console app:travel-time:export` → erzeugt `var/travel_times.json`.
    - Datei auf den Live-Server legen (Upload oder im Repo), dann **auf dem Server**: `php bin/console app:travel-time:import`.
    - So ist kein Outbound-HTTPS und kein SSL-Trick auf dem Host nötig.
@@ -84,6 +91,7 @@ Das Projekt kann komplett mit Docker laufen: PHP 8.2 + Apache + MySQL 8.
 | `docker compose exec app php bin/console …` | Symfony-Kommando im App-Container ausführen (DB: Host `mysql`) |
 | `docker compose exec app bash` | Shell im App-Container öffnen |
 | `docker compose logs -f app` | Logs der App anzeigen |
+| `docker compose run --rm app composer install` | `vendor`-Volume nach Lock-Änderungen aktualisieren (s. Schritt 5) |
 | **http://localhost:8081** | phpMyAdmin (Datenbank-Verwaltung) |
 
 ### Konfiguration

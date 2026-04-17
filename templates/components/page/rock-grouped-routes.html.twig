@@ -1,5 +1,5 @@
 {# Expects: groupedRoutes, rocks (for topo image alt) #}
-<div class="container" {{ stimulus_controller('modal-route-information') }}>
+<div class="mx-auto max-w-[1024px] px-2" {{ stimulus_controller('modal-route-information') }}>
 	<div class="row">
 		<div class="col-md-9 p-0 p-md-2">
 			{% for topoName, topoData in groupedRoutes %}

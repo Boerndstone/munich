@@ -1,10 +1,4 @@
-// Configuration
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/variables-dark";
-@import "~bootstrap/scss/maps";
-@import "~bootstrap/scss/mixins";
-@import "~bootstrap/scss/utilities";
+// Bootstrap SCSS removed from the public `app` bundle (Tailwind in app.css). Admin uses a separate Encore entry.
 
 // Theme variables
 :root {
@@ -81,45 +75,6 @@
   --purple-text: #3730A3;
 }
 
-// Layout & components
-@import "~bootstrap/scss/root";
-@import "~bootstrap/scss/reboot";
-@import "~bootstrap/scss/type";
-@import "~bootstrap/scss/images";
-@import "~bootstrap/scss/containers";
-@import "~bootstrap/scss/grid";
-@import "~bootstrap/scss/tables";
-@import "~bootstrap/scss/forms";
-@import "~bootstrap/scss/buttons";
-@import "~bootstrap/scss/transitions";
-@import "~bootstrap/scss/dropdown";
-@import "~bootstrap/scss/button-group";
-@import "~bootstrap/scss/nav";
-@import "~bootstrap/scss/navbar";
-@import "~bootstrap/scss/card";
-@import "~bootstrap/scss/accordion";
-@import "~bootstrap/scss/breadcrumb";
-@import "~bootstrap/scss/pagination";
-@import "~bootstrap/scss/badge";
-@import "~bootstrap/scss/alert";
-// @import "~bootstrap/scss/progress";
-@import "~bootstrap/scss/list-group";
-@import "~bootstrap/scss/close";
-// @import "~bootstrap/scss/toasts";
-@import "~bootstrap/scss/modal";
-@import "~bootstrap/scss/tooltip";
-// @import "~bootstrap/scss/popover";
-// @import "~bootstrap/scss/carousel";
-// @import "~bootstrap/scss/spinners";
-@import "~bootstrap/scss/offcanvas";
-// @import "~bootstrap/scss/placeholders";
-
-// Helpers
-@import "~bootstrap/scss/helpers";
-
-// Utilities
-@import "~bootstrap/scss/utilities/api";
-
 @import "~lightgallery/scss/lightgallery.scss";
 @import "~lightgallery/scss/lg-thumbnail.scss";
 @import "~vanilla-cookieconsent/dist/cookieconsent.css";
@@ -167,16 +122,13 @@
 }
 
 // Apply theme variables
-body, .navbar {
+body {
   background-color: var(--theme-bg);
   color: var(--theme-text);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 .container {
     max-width: 1024px;
-}
-.navbar {
-  border-bottom: 1px solid var(--theme-border);
 }
 .nav-link {
     font-size: 14px;
@@ -483,8 +435,8 @@ h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-
     border: 1px solid var(--theme-shadow);
 }
 
+/* Scroll-to-top: visibility toggled by scrolltop_controller (hidden / inline-flex). */
 .btn-to-top {
-    display: none;
     position: fixed;
     bottom: 20px;
     right: 30px;
@@ -1211,7 +1163,7 @@ input[data-autocomplete-target="input"]:focus {
         outline: none;
     }
 }
-@include media-breakpoint-up(lg) {
+@media (min-width: 992px) {
     .lg-img-wrap {
         .lg-object {
             max-width: 750px;
@@ -1230,7 +1182,7 @@ input[data-autocomplete-target="input"]:focus {
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
 }
-@include media-breakpoint-up(lg) {
+@media (min-width: 992px) {
     .text-truncate-rock-name {
         max-width: 100%;
     }
@@ -1245,7 +1197,7 @@ input[data-autocomplete-target="input"]:focus {
     -webkit-overflow-scrolling: touch;
     scrollbar-gutter: stable;
 
-    @include media-breakpoint-up(md) {
+    @media (min-width: 768px) {
         flex-wrap: wrap;
         overflow-x: visible;
     }
@@ -1336,19 +1288,7 @@ input[data-autocomplete-target="input"]:focus {
     /* Adjust this value to move the legend vertically */
 }
 
-// Modals: ensure modal content appears above backdrop (all modals need higher z-index than backdrop)
-.modal.fade,
-.modal.show {
-  --bs-modal-zindex: 10550;
-  z-index: 10550 !important;
-}
-.modal-backdrop.fade,
-.modal-backdrop.show {
-  --bs-backdrop-zindex: 10545;
-  z-index: 10545 !important;
-}
-
-#searchModal input.form-control::placeholder {
+#searchModal input::placeholder {
   font-size: 0.875rem !important;
 }
 
@@ -1439,7 +1379,7 @@ input[data-autocomplete-target="input"]:focus {
     stroke-width: 6;
 }
 
-@include media-breakpoint-up(lg) {
+@media (min-width: 992px) {
     .number-circle {
         r: 17px;
     }
@@ -1455,9 +1395,6 @@ input[data-autocomplete-target="input"]:focus {
     .end-dot {
         r: 8px;
     }
-}
-.dropdown-toggle::after {
-    display: none;
 }
 
 .banned {
@@ -1536,10 +1473,3 @@ input[data-autocomplete-target="input"]:focus {
 // Tailwind v4 + `@import "tailwindcss" important` puts `.collapse { visibility: collapse !important }` inside
 // `@layer utilities`. Unlayered `!important` rules do NOT reliably beat layered `!important` (Cascade 5
 // reverses layer order for !important). Re-declare inside the same layer so Bootstrap `.collapse` works again.
-@layer utilities {
-    .accordion-collapse.collapse,
-    #offcanvasRight .collapse,
-    #offcanvasNavbar .collapse {
-        visibility: visible !important;
-    }
-}

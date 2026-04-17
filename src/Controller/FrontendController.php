@@ -101,7 +101,11 @@ class FrontendController extends AbstractController
     #[Route('/{slug}', name: 'show_rocks')]
     public function showRocksArea(
         FrontendCacheService $frontendCacheService,
-        #[MapEntity] Area $area,
+        #[MapEntity(
+            mapping: ['slug' => 'slug'],
+            message: 'Die Seite konnte nicht gefunden werden.',
+        )]
+        Area $area,
         string $slug
     ): Response {
 
@@ -176,7 +180,11 @@ class FrontendController extends AbstractController
         TopoRepository $topoRepository,
         PhotosRepository $photosRepository,
         RouteGroupingService $routeGroupingService,
-        #[MapEntity] Rock $rock,
+        #[MapEntity(
+            expr: 'repository.findOneByAreaSlugAndRockSlug(areaSlug, slug)',
+            message: 'Die Seite konnte nicht gefunden werden.',
+        )]
+        Rock $rock,
         $areaSlug,
         $slug,
         Packages $assetPackages,

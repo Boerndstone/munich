@@ -1,3 +1,8 @@
-<button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#{{ modalId }}" aria-label="{{ ariaLabel|default('Zeige Karte') }}">
-	<div class="map" aria-hidden="true"></div>
+<button
+	type="button"
+	class="inline-flex items-center gap-1.5 rounded-md border border-gray-600 bg-white px-2 py-1 text-sm font-medium text-gray-800 shadow-xs hover:bg-gray-50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-gray-400 dark:border-gray-500 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
+	onclick="document.getElementById('{{ modalId }}').showModal()"
+	aria-label="{{ ariaLabel|default('Zeige Karte') }}"
+>
+	<div class="map shrink-0" aria-hidden="true"></div>
 </button>

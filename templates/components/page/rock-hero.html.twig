@@ -1,5 +1,5 @@
 {# Expects: rock, setTitle #}
-<div class="image-container position-relative">
+<div class="image-container">
 	<div class="image-container-media">
 		{% if rock.rockImage is not empty %}
 			<picture>
@@ -11,30 +11,35 @@
 			<div class="fallback-image"></div>
 		{% endif %}
 	</div>
-	<div class="container my-3 position-absolute" style="top: 0; right: 0; left:0;">
-		<div class="bg-image pb-3 rounded ">
-			<div class="p-3 rounded shadow-3 alert-light d-flex align-items-center justify-content-between" style="background-color: rgba(255, 255, 255, 0.6);">
-				<div class="d-flex flex-column w-100">
-					<div class="d-flex align-items-center justify-content-between">
-						<h1 class="h3 mb-0 fw-medium stay-black">
+	<div class="container absolute left-0 right-0 top-0 my-3">
+		<div class="rounded pb-3">
+			<div class="flex items-center justify-between rounded-md bg-white/60 p-3 shadow-md">
+				<div class="flex w-full flex-col">
+					<div class="flex items-center justify-between gap-2">
+						<h1 class="stay-black mb-0 text-xl font-medium md:text-2xl">
 							{{ rock.rockName }}
 						</h1>
-						<button class="btn btn-outline-secondary btn-sm d-flex" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" aria-label="Fels-Informationen anzeigen">
-							<div class="modal-info" style="width: 22px; height: 22px;"></div>
-							<span class="ms-1 d-none d-md-block">{{ "rock"|trans }}</span>
+						<button type="button" class="inline-flex shrink-0 items-center rounded-md border border-gray-600 bg-white px-2 py-1 text-sm font-medium text-gray-800 hover:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-gray-400" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" aria-label="Fels-Informationen anzeigen">
+							<div class="modal-info shrink-0 bg-center bg-no-repeat" style="width: 22px; height: 22px;" aria-hidden="true"></div>
+							<span class="ms-1 hidden md:inline">{{ "rock"|trans }}</span>
 						</button>
 					</div>
 					<nav class="mt-1" aria-label="breadcrumb">
-						<ol class="breadcrumb text-black fw-normal mb-0" style="font-size: 12px">
-							<li class="breadcrumb-item">
-								<a class="text-primary" href="{{path('index')}}">
-									<span class="home d-inline-block"></span>
+						<ol class="mb-0 flex list-none flex-wrap items-center gap-x-2 gap-y-1 p-0 text-[12px] font-normal text-black">
+							<li class="inline-flex items-center">
+								<a class="text-primary hover:underline" href="{{ path('index') }}">
+									<span class="home inline-block shrink-0" aria-hidden="true"></span>
+									<span class="sr-only">Start</span>
 								</a>
 							</li>
-							<li class="breadcrumb-item stay-black">
-								<a class="stay-black"href="{{ path('show_rocks', { slug: rock.areaSlug }) }}">{{ rock.areaName }}</a>
+							<li class="inline-flex items-center gap-x-2">
+								<span class="text-gray-600" aria-hidden="true">/</span>
+								<a class="stay-black text-black hover:underline" href="{{ path('show_rocks', { slug: rock.areaSlug }) }}">{{ rock.areaName }}</a>
 							</li>
-							<li class="breadcrumb-item active stay-black" aria-current="page">{{ rock.rockName }}</li>
+							<li class="stay-black inline-flex items-center gap-x-2 text-black" aria-current="page">
+								<span class="text-gray-600" aria-hidden="true">/</span>
+								<span>{{ rock.rockName }}</span>
+							</li>
 						</ol>
 					</nav>
 				</div>

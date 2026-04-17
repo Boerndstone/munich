@@ -1,4 +1,5 @@
-{% for rock in rocks %}
+{% if rocks is not empty %}
+	{% set rock = rocks|first %}
 	<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
 		<div class="offcanvas-header">
 			<h5 class="offcanvas-title fw-bold" id="offcanvasRightLabel">{{ rock.rockName }}</h5>
@@ -8,7 +9,7 @@
 			<div class="accordion" id="accordionExample">
 				<div class="accordion-item">
 					<h2 class="accordion-header">
-						<button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAllgemein" aria-expanded=" true" aria-controls="collapseallgemein">
+						<button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAllgemein" aria-expanded="true" aria-controls="collapseAllgemein">
 							<div class="rock-general-info text-black me-2"></div>
 							{{"general.information"|trans}}
 						</button>
@@ -215,7 +216,7 @@
 				{% endif %}
 				{% if flowers is defined and flowers is not null %}
 					<div class="accordion-item">
-						<h2 class="accordion-header" id="headingNaturschutz">
+						<h2 class="accordion-header" id="headingFlowers">
 							<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFlowers" aria-expanded="false" aria-controls="collapseFlowers">
 								<div class="rock-general-flowers text-black me-2"></div>
 								{{"plants"|trans}}
@@ -241,17 +242,16 @@
 								{% for data in jsonData %}
 									<div class="col-3 col-md-4 mb-1">
 										<a class="lg-item" data-target="lg-item" data-src="{{ data.src }}">
-											<img src="{{ data.thumb }}" class="w-100 shadow-1-strong mb-3" alt="{{ data.subHtml }}"/>
-										</p>
-									</a>
-								</div>
-							{% endfor %}
+											<img src="{{ data.thumb }}" class="w-100 shadow-1-strong mb-3" alt="{{ data.subHtml }}">
+										</a>
+									</div>
+								{% endfor %}
 						</div>
 					</div>
 				</div>
 			{% endif %}
 			<div class="accordion-item">
-				<h2 class="accordion-header" id="headingBilder">
+				<h2 class="accordion-header" id="headingLegend">
 					<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLegend" aria-expanded="false" aria-controls="collapseLegend">
 						<div class="rock-general-signs text-black me-2"></div>
 						{{"explanation.symbols"|trans}}
@@ -351,4 +351,5 @@
 				</div>
 			</div>
 		</div>
-	</div>{% endfor %}
+	</div>
+{% endif %}

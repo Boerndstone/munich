@@ -92,13 +92,22 @@ export default class extends Controller {
       });
     }
 
-    // Resize map when modal is shown
-    const modal = this.element.closest(".modal");
-    if (modal) {
-      modal.addEventListener("shown.bs.modal", () => {
-        setTimeout(() => this.areaMap.invalidateSize(), 40);
+    const dialog = this.element.closest("dialog");
+    if (dialog) {
+      this._dialogOpenObserver = new MutationObserver(() => {
+        if (dialog.open) {
+          setTimeout(() => this.areaMap.invalidateSize(), 40);
+        }
+      });
+      this._dialogOpenObserver.observe(dialog, {
+        attributes: true,
+        attributeFilter: ["open"],
       });
     }
+  }
+
+  disconnect() {
+    this._dialogOpenObserver?.disconnect();
   }
 
   toggleLayer(e) {

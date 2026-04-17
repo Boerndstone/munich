@@ -34,6 +34,49 @@
     height: 200px;
 }
 
+/*
+ * Native <dialog> map overlays:
+ * - Never use Tailwind `flex` on <dialog> without `[open]` — it overrides UA `display:none` when closed.
+ * - When open, UA `width/height: fit-content` shrinks the box so `h-full` / Leaflet get 0 height; force viewport flex layout only for `[open]`.
+ */
+.map-fullscreen-dialog:not([open]) {
+    display: none !important;
+}
+
+.map-fullscreen-dialog[open] {
+    display: flex !important;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100vw;
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    min-height: 0;
+    margin: 0;
+}
+
+.map-fullscreen-dialog[open] > .map-fullscreen-dialog__panel {
+    flex: 1 1 0%;
+    min-height: 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Leaflet measures the map pane from .leaflet-container; keep it filling the flex slot */
+.map-fullscreen-dialog[open] .leaflet-container {
+    height: 100%;
+    width: 100%;
+}
+
+/* Native <dialog> fullscreen map modals — ::backdrop is not practical with @apply alone */
+.map-fullscreen-dialog::backdrop {
+    background-color: rgb(0 0 0 / 0.45);
+}
+
 @media (max-width: 575.98px) {
     .background-image-height {
         height: 120px;

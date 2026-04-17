@@ -23,11 +23,11 @@
 {% endfor %}
 
 <div 
-    class="main-map-container d-flex flex-column h-100"
+    class="main-map-container flex min-h-0 flex-1 flex-col"
     data-controller="main-map" 
     data-main-map-markers-value="{{ marker|json_encode|e('html_attr') }}"
 >
-    <div class="main-map-filters flex-shrink-0 py-2 px-3" data-main-map-target="filters" role="group" aria-labelledby="main-map-filter-legend">
+    <div class="main-map-filters shrink-0 px-3 py-2" data-main-map-target="filters" role="group" aria-labelledby="main-map-filter-legend">
         <div class="main-map-filters-scroll">
             <ul class="main-map-filters-list">
                 <li id="main-map-filter-legend" class="main-map-filters-label">Entfernung von München:</li>
@@ -38,5 +38,5 @@
             </ul>
         </div>
     </div>
-    <div class="flex-grow-1 min-h-0" style="min-height: 400px;" data-main-map-target="map" role="region" aria-label="{{ 'index.map_region'|trans({}, 'messages') }}"></div>
+    <div class="min-h-0 flex-1" data-main-map-target="map" role="region" aria-label="{{ 'index.map_region'|trans({}, 'messages') }}"></div>
 </div>

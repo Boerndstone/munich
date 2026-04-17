@@ -1153,7 +1153,8 @@ a {
 .image-container {
     width: 100%;
     position: relative;
-    z-index: 1020; /* above rocks sticky filter bar (lg:z-[1000]) and following main content */
+    /* Below fixed nav (z-[1045]); still above rocks sticky filter (lg:z-[1000]) and in-flow main */
+    z-index: 1005;
     overflow: visible;
 }
 
@@ -1532,8 +1533,7 @@ input[data-autocomplete-target="input"]:focus {
 // reverses layer order for !important). Re-declare inside the same layer so Bootstrap `.collapse` works again.
 @layer utilities {
     .accordion-collapse.collapse,
-    #offcanvasRight .collapse,
-    #offcanvasNavbar .collapse {
+    #offcanvasRight .collapse {
         visibility: visible !important;
     }
 }

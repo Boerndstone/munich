@@ -51,13 +51,13 @@
 {% set railwayStation = areaRailwayStation %}
 
 <div 
-	class="main-map-container d-flex flex-column h-100" 
+	class="main-map-container flex min-h-0 flex-1 flex-col" 
 	data-controller="map" 
 	data-map-markers-area="{{ marker|json_encode|e('html_attr') }}" 
 	data-map-zoom="{{ intialZoom|json_encode|e('html_attr') }}" 
 	data-map-railway-stations="{{ railwayStation|json_encode|e('html_attr') }}"
 >
-	<div class="area-map-filters flex-shrink-0 py-2 px-3">
+	<div class="area-map-filters shrink-0 px-3 py-2">
 		<div class="main-map-filters-scroll">
 			<ul class="main-map-filters-list">
 				<li class="main-map-filters-label">Filter:</li>
@@ -72,5 +72,5 @@
 			</ul>
 		</div>
 	</div>
-	<div class="flex-grow-1 min-h-0" style="min-height: 400px;" data-map-target="map"></div>
+	<div class="min-h-0 flex-1" data-map-target="map"></div>
 </div>

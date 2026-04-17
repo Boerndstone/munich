@@ -15,28 +15,30 @@
 {% block body %}
 	{{ include('components/layout/navigation.html.twig') }}
 	<main id="main-content">
-		<div class="container my-3">
-			<section class="mb-4">
-				<h1 class="h2 mb-3 fw-medium">{{ 'grade_comparison_free_climbing.heading'|trans }}</h1>
+		<div class="mx-auto my-4 w-full max-w-[1024px] px-2 sm:px-4">
+			<section class="mb-6">
+				<div class="mb-3 flex items-center justify-between py-3">
+					<h1 class="mb-0 text-3xl font-medium leading-tight text-gray-900 dark:text-gray-100">{{ 'grade_comparison_free_climbing.heading'|trans }}</h1>
+				</div>
 			</section>
-			<section class="mb-4">
-				<div class="table-responsive rounded border border-secondary-subtle">
-					<table class="table table-sm table-striped mb-0 align-middle">
-						<thead class="table-light">
+			<section class="mb-6">
+				<div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm dark:border-gray-700">
+					<table class="min-w-full border-collapse text-left text-sm text-gray-900 dark:text-gray-100">
+						<thead class="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700 dark:border-gray-700 dark:bg-gray-800/90 dark:text-gray-300">
 							<tr>
-								<th scope="col">{{ 'grade_comparison_free_climbing.col_uiaa'|trans }}</th>
-								<th scope="col">{{ 'grade_comparison_free_climbing.col_french'|trans }}</th>
-								<th scope="col">{{ 'grade_comparison_free_climbing.col_fb'|trans }}</th>
-								<th scope="col">{{ 'grade_comparison_free_climbing.col_v'|trans }}</th>
+								<th scope="col" class="whitespace-nowrap px-3 py-2.5 sm:px-4">{{ 'grade_comparison_free_climbing.col_uiaa'|trans }}</th>
+								<th scope="col" class="whitespace-nowrap px-3 py-2.5 sm:px-4">{{ 'grade_comparison_free_climbing.col_french'|trans }}</th>
+								<th scope="col" class="whitespace-nowrap px-3 py-2.5 sm:px-4">{{ 'grade_comparison_free_climbing.col_fb'|trans }}</th>
+								<th scope="col" class="whitespace-nowrap px-3 py-2.5 sm:px-4">{{ 'grade_comparison_free_climbing.col_v'|trans }}</th>
 							</tr>
 						</thead>
-						<tbody class="font-monospace small">
+						<tbody class="divide-y divide-gray-200 font-mono text-xs sm:text-sm dark:divide-gray-700">
 							{% for row in comparisonRows %}
-								<tr>
-									<td>{{ row.uiaa }}</td>
-									<td>{{ row.french }}</td>
-									<td>{{ row.fb }}</td>
-									<td>{{ row.v }}</td>
+								<tr class="odd:bg-white even:bg-gray-50/90 dark:odd:bg-gray-900 dark:even:bg-gray-950/60">
+									<td class="whitespace-nowrap px-3 py-2 align-middle sm:px-4">{{ row.uiaa }}</td>
+									<td class="whitespace-nowrap px-3 py-2 align-middle sm:px-4">{{ row.french }}</td>
+									<td class="whitespace-nowrap px-3 py-2 align-middle sm:px-4">{{ row.fb }}</td>
+									<td class="whitespace-nowrap px-3 py-2 align-middle sm:px-4">{{ row.v }}</td>
 								</tr>
 							{% endfor %}
 						</tbody>

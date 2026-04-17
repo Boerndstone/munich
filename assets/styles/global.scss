@@ -1532,3 +1532,14 @@ input[data-autocomplete-target="input"]:focus {
     height: 1.125rem;
     pointer-events: none;
 }
+
+// Tailwind v4 + `@import "tailwindcss" important` puts `.collapse { visibility: collapse !important }` inside
+// `@layer utilities`. Unlayered `!important` rules do NOT reliably beat layered `!important` (Cascade 5
+// reverses layer order for !important). Re-declare inside the same layer so Bootstrap `.collapse` works again.
+@layer utilities {
+    .accordion-collapse.collapse,
+    #offcanvasRight .collapse,
+    #offcanvasNavbar .collapse {
+        visibility: visible !important;
+    }
+}

@@ -1,16 +1,8 @@
 const colors = require('tailwindcss/colors')
 
+// Loaded via @config from assets/styles/app.css (Tailwind v4).
+// darkMode + important live in app.css (@custom-variant, @import … important).
 module.exports = {
-  //prefix: 'munich-',
-  darkMode: 'class',
-  important: true,
-  corePlugins: {
-  },
-  //purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
-  content: [
-    "./assets/**/*.{vue,js,ts,jsx,tsx}",
-    "./templates/**/*.{html,twig}",
-],
   theme: {
     colors: {
       transparent: 'transparent',
@@ -45,17 +37,10 @@ module.exports = {
       md: '768px',
       lg: '1024px'
     },
-    container: {
-      center: true,
-      padding: '.5rem',
-    },
     extend: {
       listStyleType: {
         square: 'square',
       },
     }
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-  ],
 }

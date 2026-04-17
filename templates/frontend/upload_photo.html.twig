@@ -1,45 +1,55 @@
 {% extends 'base.html.twig' %}
-{% form_theme form 'bootstrap_5_layout.html.twig' %}
+{% form_theme form 'form_div_layout.html.twig' %}
 
 {% block title %}Foto hochladen - Munichclimbs{% endblock %}
 
 {% block body %}
 	{{ include('components/layout/navigation.html.twig') }}
 	<main id="main-content">
-		<div class="container my-3">
+		<div class="mx-auto my-3 max-w-[1024px] px-2">
 			<section>
-				<div class="py-3 mb-3 d-flex align-items-center justify-content-between">
-					<h1 class="h2 mb-0 fw-medium">Foto hochladen</h1>
+				<div class="mb-3 flex items-center justify-between py-3">
+					<h1 class="mb-0 text-2xl font-medium text-gray-900 dark:text-gray-100">Foto hochladen</h1>
 				</div>
 			</section>
 			<section>
-				<p class="text-muted mb-4">
+				<p class="mb-4 text-sm text-gray-600 dark:text-gray-400">
 					Helfen Sie mit, die Seite zu verbessern! Wählen Sie einen Fels und optional eine Route, laden Sie ein Foto hoch.
 					Ihr Foto wird von einem Administrator geprüft und nach Freigabe auf der Seite veröffentlicht.
 				</p>
 
 				{% for message in app.flashes('success') %}
-					<div class="alert alert-success alert-dismissible fade show" role="alert">
+					<div class="relative mb-3 rounded-md border border-green-600 bg-green-50 px-3 py-2 pe-10 text-sm text-green-900 dark:border-green-500 dark:bg-green-950/40 dark:text-green-100" role="alert">
 						{{ message }}
-						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						<button type="button" class="absolute end-2 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-green-800 hover:bg-green-100 dark:text-green-200 dark:hover:bg-green-900/50" onclick="this.closest('[role=alert]').remove()" aria-label="Schließen">
+							<span class="sr-only">Schließen</span>
+							<svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+							</svg>
+						</button>
 					</div>
 				{% endfor %}
 
 				{% for message in app.flashes('error') %}
-					<div class="alert alert-danger alert-dismissible fade show" role="alert">
+					<div class="relative mb-3 rounded-md border border-red-600 bg-red-50 px-3 py-2 pe-10 text-sm text-red-900 dark:border-red-500 dark:bg-red-950/40 dark:text-red-100" role="alert">
 						{{ message }}
-						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						<button type="button" class="absolute end-2 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-red-800 hover:bg-red-100 dark:text-red-200 dark:hover:bg-red-900/50" onclick="this.closest('[role=alert]').remove()" aria-label="Schließen">
+							<span class="sr-only">Schließen</span>
+							<svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+							</svg>
+						</button>
 					</div>
 				{% endfor %}
 
-				{{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'novalidate': 'novalidate', 'data-turbo': 'false'}}) }}
+				{{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'novalidate': 'novalidate', 'data-turbo': 'false', 'class': 'space-y-4 text-sm'}}) }}
 					{{ form_row(form.belongsToRock) }}
 					{{ form_row(form.belongsToRoute, {'help': 'Optional: Wählen Sie eine Route, wenn das Foto zu einer spezifischen Route gehört.'}) }}
 					{{ form_row(form.image, {'help': 'Maximale Dateigröße: 10MB. Erlaubte Formate: JPEG, PNG, WebP, GIF'}) }}
 					{{ form_row(form.description) }}
 					{{ form_row(form.uploaderName) }}
 					{{ form_row(form.uploaderEmail, {'help': 'Ihre E-Mail wird nicht veröffentlicht und nur für Rückfragen verwendet.'}) }}
-					<button type="submit" class="btn btn-success text-green mb-5">Foto hochladen</button>
+					<button type="submit" class="mb-5 inline-flex rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-green-500">Foto hochladen</button>
 				{{ form_end(form) }}
 			</section>
 		</div>

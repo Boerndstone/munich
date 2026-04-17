@@ -16,11 +16,10 @@ export default class extends Controller {
   }
 
   dismiss() {
-    const btn = this.element.querySelector(".btn-close");
-    if (btn) {
-      btn.click();
-    } else {
-      this.element.remove();
+    if (this.timeoutId) {
+      window.clearTimeout(this.timeoutId);
+      this.timeoutId = null;
     }
+    this.element.remove();
   }
 }

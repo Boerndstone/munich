@@ -1,39 +1,48 @@
 {# Expects: areaLat, areaLng #}
-<div class="modal fade" id="modalWeather" tabindex="-1" aria-labelledby="modalWeatherLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-		<div class="modal-content">
-			<div class="modal-header py-2">
-				<h2 class="modal-title h6 mb-0" id="modalWeatherLabel">Wetter</h2>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
-			</div>
-			<div class="modal-body">
-				<div class="card py-2 card-body border-0 shadow-none">
-					<div {{ stimulus_controller('weather') }} data-weather-area-lat="{{ areaLat }}" data-weather-area-lng="{{ areaLng }}">
-						<div class="current-weather d-flex align-items-center">
-							<div class="icon icon-weather"></div>
-							<div id="temperature"></div>
+<dialog
+	id="modalWeather"
+	class="search-modal-dialog z-[10560] max-w-4xl overflow-hidden rounded-lg bg-white text-gray-900 shadow-xl dark:bg-gray-900 dark:text-gray-100"
+	aria-labelledby="modalWeatherLabel"
+	aria-modal="true"
+	onclick="if (event.target === this) this.close()"
+>
+	<div class="flex max-h-[min(90vh,720px)] flex-col" onclick="event.stopPropagation()">
+		<div class="flex shrink-0 items-center justify-between border-b border-gray-200 px-3 py-2 dark:border-gray-700">
+			<h2 class="text-base font-semibold text-gray-900 dark:text-gray-100" id="modalWeatherLabel">Wetter</h2>
+			<button type="button" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-gray-600 hover:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-gray-400 dark:hover:bg-gray-800" onclick="this.closest('dialog').close()" aria-label="Schließen">
+				<span class="sr-only">Schließen</span>
+				<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+				</svg>
+			</button>
+		</div>
+		<div class="min-h-0 flex-1 overflow-y-auto p-3">
+			<div class="rounded-lg border border-gray-200 bg-gray-50/80 py-2 dark:border-gray-700 dark:bg-gray-800/50">
+				<div {{ stimulus_controller('weather') }} data-weather-area-lat="{{ areaLat }}" data-weather-area-lng="{{ areaLng }}">
+					<div class="current-weather flex items-center gap-2 px-2">
+						<div class="icon icon-weather" aria-hidden="true"></div>
+						<div id="temperature"></div>
+					</div>
+					<div class="forecast mt-2 flex flex-wrap gap-2 px-2">
+						<div class="day flex min-w-[5.5rem] flex-1 flex-col rounded-lg border border-gray-200 bg-white p-2 dark:border-gray-600 dark:bg-gray-900">
+							<div class="forecast-text text-xs"></div>
+							<div class="mt-1 flex items-center gap-1">
+								<div class="icon icon-weather" aria-hidden="true"></div>
+								<div class="temp text-sm"></div>
+							</div>
 						</div>
-						<div class="forecast row">
-							<div class="day col-3 card card-body m-2">
-								<div class="forecast-text"></div>
-								<div class="d-flex align-items-center">
-									<div class="icon icon-weather"></div>
-									<div class="temp"></div>
-								</div>
+						<div class="day flex min-w-[5.5rem] flex-1 flex-col rounded-lg border border-gray-200 bg-white p-2 dark:border-gray-600 dark:bg-gray-900">
+							<div class="forecast-text text-xs"></div>
+							<div class="mt-1 flex items-center gap-1">
+								<div class="icon icon-weather" aria-hidden="true"></div>
+								<div class="temp text-sm"></div>
 							</div>
-							<div class="day col-3 card card-body m-2">
-								<div class="forecast-text"></div>
-								<div class="d-flex align-items-center">
-									<div class="icon icon-weather"></div>
-									<div class="temp"></div>
-								</div>
-							</div>
-							<div class="day col-3 card card-body m-2">
-								<div class="forecast-text"></div>
-								<div class="d-flex align-items-center">
-									<div class="icon icon-weather"></div>
-									<div class="temp"></div>
-								</div>
+						</div>
+						<div class="day flex min-w-[5.5rem] flex-1 flex-col rounded-lg border border-gray-200 bg-white p-2 dark:border-gray-600 dark:bg-gray-900">
+							<div class="forecast-text text-xs"></div>
+							<div class="mt-1 flex items-center gap-1">
+								<div class="icon icon-weather" aria-hidden="true"></div>
+								<div class="temp text-sm"></div>
 							</div>
 						</div>
 					</div>
@@ -41,4 +50,4 @@
 			</div>
 		</div>
 	</div>
-</div>
+</dialog>

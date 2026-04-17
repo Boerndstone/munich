@@ -30,6 +30,12 @@ if ($input->hasParameterOption('--no-debug', true)) {
 
 (new Dotenv())->bootEnv(dirname(__DIR__) . '/.env');
 
+// Large Twig graphs (EasyAdmin, Twig components, API Platform) can exceed PHP’s default 128M during cache:warmup.
+if (\function_exists('ini_set')) {
+    $memoryLimit = $_ENV['PHP_CLI_MEMORY_LIMIT'] ?? $_SERVER['PHP_CLI_MEMORY_LIMIT'] ?? '512M';
+    ini_set('memory_limit', (string) $memoryLimit);
+}
+
 if ($_SERVER['APP_DEBUG']) {
     umask(0000);
 

@@ -1,11 +1,10 @@
 import { Controller } from "@hotwired/stimulus";
-import { Modal } from "bootstrap";
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
   static values = { searchUrl: { type: String, default: '/search' } };
   static targets = [
-    "trigger", "modal", "nameInput", "firstAscentInput", "areaSelect",
+    "modal", "nameInput", "firstAscentInput", "areaSelect",
     "areaSelectAttributes", "gradeCheck", "attrChildFriendly", "attrSunny", "attrRainProtected", "attrTrain", "attrBike",
     "resultsContainer", "resultsCount", "rocksSection", "rocksList",
     "routesSection", "routesTable", "emptyState", "idleState",
@@ -13,45 +12,69 @@ export default class extends Controller {
   ];
 
   connect() {
-    this.bootstrapModal = null;
     this._debounceTimers = {};
-    this._gradePagination = null; // { grades, area, totalCount, page, perPage }
-    const tabsEl = document.getElementById('searchTabs');
-    if (tabsEl) {
-      tabsEl.addEventListener('shown.bs.tab', (e) => {
-        this.clearResults();
-        this.scrollActiveTabToCenter(e.target);
-      });
-    }
+    this._gradePagination = null;
+    this._onTabClick = (e) => {
+      const btn = e.target.closest("[data-search-tab]");
+      if (!btn || !this.element.contains(btn)) return;
+      e.preventDefault();
+      this.activateTab(btn.getAttribute("data-search-tab"));
+      this.clearResults();
+      this.scrollActiveTabToCenter(btn);
+    };
+    const tabsEl = document.getElementById("searchTabs");
+    tabsEl?.addEventListener("click", this._onTabClick);
   }
 
   disconnect() {
-    if (this.bootstrapModal) {
-      this.bootstrapModal.dispose();
-    }
+    const tabsEl = document.getElementById("searchTabs");
+    tabsEl?.removeEventListener("click", this._onTabClick);
+  }
+
+  activateTab(tabId) {
+    const tabs = this.element.querySelectorAll("#searchTabs [role='tab']");
+    const panes = this.element.querySelectorAll(".search-tab-panel");
+    tabs.forEach((t) => {
+      const active = t.getAttribute("data-search-tab") === tabId;
+      t.setAttribute("aria-selected", active ? "true" : "false");
+      t.classList.toggle("border-black", active);
+      t.classList.toggle("bg-white", active);
+      t.classList.toggle("text-black", active);
+      t.classList.toggle("border-transparent", !active);
+      t.classList.toggle("bg-transparent", !active);
+      t.classList.toggle("text-gray-600", !active);
+    });
+    panes.forEach((p) => {
+      const show = p.id === `pane-${tabId}`;
+      p.classList.toggle("hidden", !show);
+    });
   }
 
   scrollActiveTabToCenter(activeButton) {
-    const tabsEl = document.getElementById('searchTabs');
+    const tabsEl = document.getElementById("searchTabs");
     if (!tabsEl || !activeButton) return;
-    const container = tabsEl;
     const btn = activeButton;
-    const scrollLeft = btn.offsetLeft - (container.offsetWidth / 2) + (btn.offsetWidth / 2);
-    container.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
+    const scrollLeft = btn.offsetLeft - (tabsEl.offsetWidth / 2) + (btn.offsetWidth / 2);
+    tabsEl.scrollTo({ left: Math.max(0, scrollLeft), behavior: "smooth" });
   }
 
   open(event) {
     event?.preventDefault();
     if (!this.hasModalTarget) return;
-    if (!this.bootstrapModal) {
-      this.bootstrapModal = new Modal(this.modalTarget);
-      this.modalTarget.addEventListener('shown.bs.modal', () => {
-        const activeBtn = document.querySelector('#searchTabs .nav-link.active');
-        if (activeBtn) this.scrollActiveTabToCenter(activeBtn);
-      });
+    if (typeof this.modalTarget.showModal === "function") {
+      this.modalTarget.showModal();
     }
-    this.bootstrapModal.show();
-    setTimeout(() => this.modalTarget.querySelector('input[type="search"]')?.focus(), 300);
+    requestAnimationFrame(() => {
+      const activeBtn = this.element.querySelector("#searchTabs [aria-selected='true']");
+      if (activeBtn) this.scrollActiveTabToCenter(activeBtn);
+      this.modalTarget.querySelector("input[type='search']")?.focus();
+    });
+  }
+
+  close() {
+    if (this.hasModalTarget && typeof this.modalTarget.close === "function") {
+      this.modalTarget.close();
+    }
   }
 
   searchNameDebounced() {
@@ -90,16 +113,19 @@ export default class extends Controller {
 
   clearResults() {
     this._gradePagination = null;
-    if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.add('d-none');
-    if (this.hasIdleStateTarget) this.idleStateTarget.classList.remove('d-none');
+    if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.add("hidden");
+    if (this.hasIdleStateTarget) this.idleStateTarget.classList.remove("hidden");
     if (this.hasResultsCountTarget) this.resultsCountTarget.textContent = '0';
     if (this.hasRocksListTarget) this.rocksListTarget.innerHTML = '';
     if (this.hasRoutesTableTarget) this.routesTableTarget.innerHTML = '';
-    if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add('d-none');
-    if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add('d-none');
-    if (this.hasPagerContainerTarget) this.pagerContainerTarget.classList.add('d-none');
+    if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add("hidden");
+    if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add("hidden");
+    if (this.hasPagerContainerTarget) {
+      this.pagerContainerTarget.classList.add("hidden");
+      this.pagerContainerTarget.classList.remove("flex");
+    }
     if (this.hasEmptyStateTarget) {
-      this.emptyStateTarget.classList.add('d-none');
+      this.emptyStateTarget.classList.add("hidden");
       this.emptyStateTarget.textContent = 'Keine Ergebnisse gefunden.';
     }
   }
@@ -178,91 +204,92 @@ export default class extends Controller {
   }
 
   showLoading() {
-    if (this.hasIdleStateTarget) this.idleStateTarget.classList.add('d-none');
-    if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.remove('d-none');
-    if (this.hasEmptyStateTarget) this.emptyStateTarget.classList.add('d-none');
-    if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add('d-none');
-    if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add('d-none');
-    if (this.hasRoutesTableTarget) this.routesTableTarget.innerHTML = '<div class="text-center py-3">Lade...</div>';
+    if (this.hasIdleStateTarget) this.idleStateTarget.classList.add("hidden");
+    if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.remove("hidden");
+    if (this.hasEmptyStateTarget) this.emptyStateTarget.classList.add("hidden");
+    if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add("hidden");
+    if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add("hidden");
+    if (this.hasRoutesTableTarget) this.routesTableTarget.innerHTML = '<div class="py-3 text-center text-sm text-gray-600">Lade...</div>';
   }
 
   renderResults(data) {
     const { rocks = [], routes = [], searchMode, totalCount, page, perPage } = data;
     const total = searchMode === 'grade' && totalCount != null ? totalCount : (rocks.length + routes.length);
 
-    if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.remove('d-none');
-    if (this.hasIdleStateTarget) this.idleStateTarget.classList.add('d-none');
+    if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.remove("hidden");
+    if (this.hasIdleStateTarget) this.idleStateTarget.classList.add("hidden");
     if (this.hasResultsCountTarget) this.resultsCountTarget.textContent = total;
 
-    // Grade pagination state and pager UI
     if (searchMode === 'grade' && totalCount != null && page != null && perPage != null) {
       const grades = this.gradeCheckTargets.filter(cb => cb.checked).map(cb => cb.value);
       const area = this.areaSelectTarget?.value || '';
       this._gradePagination = { grades, area, totalCount, page, perPage };
       const totalPages = Math.ceil(totalCount / perPage);
       if (this.hasPagerContainerTarget) {
-        this.pagerContainerTarget.classList.remove('d-none');
+        this.pagerContainerTarget.classList.remove("hidden");
+        this.pagerContainerTarget.classList.add("flex");
         if (this.hasPagerInfoTarget) this.pagerInfoTarget.textContent = `Seite ${page} von ${totalPages}`;
         if (this.hasPagerPrevTarget) this.pagerPrevTarget.disabled = page <= 1;
         if (this.hasPagerNextTarget) this.pagerNextTarget.disabled = page >= totalPages;
       }
     } else {
       this._gradePagination = null;
-      if (this.hasPagerContainerTarget) this.pagerContainerTarget.classList.add('d-none');
+      if (this.hasPagerContainerTarget) {
+        this.pagerContainerTarget.classList.add("hidden");
+        this.pagerContainerTarget.classList.remove("flex");
+      }
     }
 
     if (total === 0) {
-      if (this.hasEmptyStateTarget) this.emptyStateTarget.classList.remove('d-none');
-      if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add('d-none');
-      if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add('d-none');
+      if (this.hasEmptyStateTarget) this.emptyStateTarget.classList.remove("hidden");
+      if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add("hidden");
+      if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add("hidden");
       return;
     }
 
-    if (this.hasEmptyStateTarget) this.emptyStateTarget.classList.add('d-none');
+    if (this.hasEmptyStateTarget) this.emptyStateTarget.classList.add("hidden");
 
-    // Rocks (for name search and attributes search)
     if ((searchMode === 'name' || searchMode === 'attributes') && rocks.length > 0 && this.hasRocksSectionTarget && this.hasRocksListTarget) {
-      this.rocksSectionTarget.classList.remove('d-none');
+      this.rocksSectionTarget.classList.remove("hidden");
       this.rocksListTarget.innerHTML = rocks.map(r => `
-        <li class="list-group-item list-group-item-action p-1">
-          <a href="${r.url}" class="text-decoration-none">${this.escapeHtml(r.name)}</a>
+        <li class="border-b border-gray-200 px-2 py-2 text-sm last:border-0 dark:border-gray-700">
+          <a href="${r.url}" class="text-gray-900 no-underline hover:underline dark:text-gray-100">${this.escapeHtml(r.name)}</a>
         </li>
       `).join('');
     } else if (this.hasRocksSectionTarget) {
-      this.rocksSectionTarget.classList.add('d-none');
+      this.rocksSectionTarget.classList.add("hidden");
     }
 
-    // Routes table
     if (routes.length > 0 && this.hasRoutesSectionTarget && this.hasRoutesTableTarget) {
-      this.routesSectionTarget.classList.remove('d-none');
+      this.routesSectionTarget.classList.remove("hidden");
       this.routesTableTarget.innerHTML = routes.map(r => {
         const routeAnchor = r.name ? `#${String(r.name).replace(/\s+/g, '').toLowerCase()}` : '';
         const fullUrl = r.url + routeAnchor;
         return `
-        <li class="list-group-item list-group-item-action px-0 w-full" style="border-bottom: 1px solid #dee2e6;">
-          <a href="${fullUrl}" class="text-decoration-none d-flex align-items-center justify-content-between row p-1">
-            <div class="col-5 small d-flex align-items-center text-truncate">${this.escapeHtml(r.name)}</div>
-            <div class="col-1 small ">${r.grade ? `${this.escapeHtml(r.grade)}` : ''}</div>
-            <div class="col-3 small text-truncate">${this.escapeHtml(r.rock)}</div>
-            <div class="col-3 small text-truncate">${this.escapeHtml(r.area)}</div>
+        <li class="w-full border-b border-gray-200 px-0 py-1 last:border-0 dark:border-gray-700">
+          <a href="${fullUrl}" class="flex flex-wrap items-center gap-1 p-1 text-sm text-gray-900 no-underline hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800">
+            <span class="w-[40%] min-w-0 truncate sm:w-2/5">${this.escapeHtml(r.name)}</span>
+            <span class="w-8 shrink-0 sm:w-12">${r.grade ? `${this.escapeHtml(r.grade)}` : ''}</span>
+            <span class="min-w-0 flex-1 truncate">${this.escapeHtml(r.rock)}</span>
+            <span class="hidden w-1/4 truncate sm:inline-block">${this.escapeHtml(r.area)}</span>
           </a>
         </li>
         `;
       }).join('');
     } else if (this.hasRoutesSectionTarget) {
-      this.routesSectionTarget.classList.add('d-none');
+      this.routesSectionTarget.classList.add("hidden");
     }
   }
 
   renderError(msg) {
-    if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.remove('d-none');
+    if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.remove("hidden");
     if (this.hasResultsCountTarget) this.resultsCountTarget.textContent = '0';
     if (this.hasEmptyStateTarget) {
-      this.emptyStateTarget.classList.remove('d-none');
+      this.emptyStateTarget.classList.remove("hidden");
       this.emptyStateTarget.textContent = `Fehler: ${msg}`;
     }
-    if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add('d-none');
-    if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add('d-none');
+    if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add("hidden");
+    if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add("hidden");
   }
 
   escapeHtml(text) {

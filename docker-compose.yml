@@ -19,9 +19,12 @@ services:
       # Optional: override MAILER_DSN for local (e.g. Mailpit or log)
       # MAILER_DSN: smtp://mailpit:1025
     volumes:
-      # Mount source so you can edit code without rebuilding (vendor stays in image)
+      # Mount source so you can edit code without rebuilding.
       - .:/var/www/html
-      # Prevent overwriting vendor in the container with host’s (empty) vendor
+      # Persist vendor inside Docker (not from the host). After composer.lock / composer.json
+      # changes you MUST refresh it, or new packages (e.g. symfony/ux-toolkit) stay missing:
+      #   docker compose run --rm app composer install
+      # (or: docker compose exec app composer install  while the stack is up)
       - /var/www/html/vendor
     depends_on:
       mysql:

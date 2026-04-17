@@ -1,80 +1,86 @@
-<div id="top100RoutesModal" class="modal fade" tabindex="-1" aria-hidden="true" aria-labelledby="top100RoutesModalLabel" data-modal-route-information-target="modal">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="top100RoutesModalLabel">Top 100 - {{ areaName }}</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<div class="table-responsive">
-					<table class="table table-sm small">
-						<thead>
-							<tr>
-								<th scope="col" style="width: 5%;">#</th>
-								<th scope="col">Route</th>
-								<th scope="col">Grad</th>
-								<th scope="col">Fels</th>
-								<th scope="col">Erstbegeher</th>
-							</tr>
-						</thead>
-						<tbody>
-							{% for route in top100Routes %}
-								<tr>
-									<td>{{ loop.index }}</td>
-									<td>
-										<div class="d-flex items-bottom">
-											{% if route.areaSlug and route.rockSlug %}
-												<a href="{{ path('show_rock', {'areaSlug': route.areaSlug, 'slug': route.rockSlug}) }}#{{ route.name|replace({' ': ''})|lower }}" 
-												class="text-decoration-none fw-medium me-1">
-													{{ route.name|raw }}
-												</a>
-											{% else %}
-												<span class="text-decoration-none fw-medium me-1">{{ route.name }}</span>
-											{% endif %}
-											<span class="mb-0 pb-0" style="line-height: 0;" data-controller="routeparams" data-routeparams-rating="{{ route.rating }}" data-routeparams-protection="{{ route.protection }}" data-routeparams-route-rock-quality="{{ route.rockQuality }}">
-												<span data-routeparams-target="rating"></span>
-												<span data-routeparams-target="protection"></span>
-												<span data-routeparams-target="route-rock-quality"></span>
-											</span>
-										</div>
-									</td>
-									<td>
-										{% if route.grade %}
-											{{ route.grade }}
-										{% else %}
-											<span class="text-muted">-</span>
-										{% endif %}
-									</td>
-									<td>
+<dialog
+	id="top100RoutesModal"
+	class="search-modal-dialog z-[10560] max-w-4xl overflow-hidden rounded-lg bg-white text-gray-900 shadow-xl dark:bg-gray-900 dark:text-gray-100"
+	aria-labelledby="top100RoutesModalLabel"
+	aria-modal="true"
+	onclick="if (event.target === this) this.close()"
+>
+	<div class="flex max-h-[min(90vh,720px)] flex-col" onclick="event.stopPropagation()">
+		<div class="flex shrink-0 items-center justify-between border-b border-gray-200 px-3 py-2 dark:border-gray-700">
+			<h2 class="text-base font-semibold text-gray-900 dark:text-gray-100" id="top100RoutesModalLabel">Top 100 - {{ areaName }}</h2>
+			<button type="button" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-gray-600 hover:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-gray-400 dark:hover:bg-gray-800" onclick="this.closest('dialog').close()" aria-label="Schließen">
+				<span class="sr-only">Schließen</span>
+				<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+				</svg>
+			</button>
+		</div>
+		<div class="min-h-0 flex-1 overflow-y-auto p-3">
+			<div class="overflow-x-auto">
+				<table class="w-full min-w-[32rem] border-collapse text-sm">
+					<thead>
+						<tr class="border-b border-gray-200 text-left dark:border-gray-700">
+							<th class="w-[5%] py-2 pe-2 font-semibold" scope="col">#</th>
+							<th class="py-2 pe-2 font-semibold" scope="col">Route</th>
+							<th class="py-2 pe-2 font-semibold" scope="col">Grad</th>
+							<th class="py-2 pe-2 font-semibold" scope="col">Fels</th>
+							<th class="py-2 font-semibold" scope="col">Erstbegeher</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for route in top100Routes %}
+							<tr class="border-b border-gray-100 dark:border-gray-800">
+								<td class="py-2 pe-2 align-top">{{ loop.index }}</td>
+								<td class="py-2 pe-2 align-top">
+									<div class="flex flex-wrap items-end gap-1">
 										{% if route.areaSlug and route.rockSlug %}
-											<a href="{{ path('show_rock', {'areaSlug': route.areaSlug, 'slug': route.rockSlug}) }}" 
-											class="text-decoration-none">
-												{{ route.rockName }}
+											<a href="{{ path('show_rock', {'areaSlug': route.areaSlug, 'slug': route.rockSlug}) }}#{{ route.name|replace({' ': ''})|lower }}"
+												class="font-medium text-gray-900 no-underline hover:underline dark:text-gray-100">
+												{{ route.name|raw }}
 											</a>
-										{% elseif route.rockName %}
-											<span class="text-muted">{{ route.rockName }}</span>
 										{% else %}
-											<span class="text-muted">-</span>
+											<span class="font-medium text-gray-900 dark:text-gray-100">{{ route.name|raw }}</span>
 										{% endif %}
-									</td>
-									
-									<td>
-										{% if route.firstAscent %}
-											{{ route.firstAscent }}
-											{% if route.yearFirstAscent %}
-												({{ route.yearFirstAscent }})
-											{% endif %}
-										{% else %}
-											<span class="text-muted">-</span>
+										<span class="inline-flex items-end leading-none" data-controller="routeparams" data-routeparams-rating="{{ route.rating }}" data-routeparams-protection="{{ route.protection }}" data-routeparams-route-rock-quality="{{ route.rockQuality }}">
+											<span data-routeparams-target="rating"></span>
+											<span data-routeparams-target="protection"></span>
+											<span data-routeparams-target="route-rock-quality"></span>
+										</span>
+									</div>
+								</td>
+								<td class="py-2 pe-2 align-top">
+									{% if route.grade %}
+										{{ route.grade }}
+									{% else %}
+										<span class="text-gray-500 dark:text-gray-400">-</span>
+									{% endif %}
+								</td>
+								<td class="py-2 pe-2 align-top">
+									{% if route.areaSlug and route.rockSlug %}
+										<a href="{{ path('show_rock', {'areaSlug': route.areaSlug, 'slug': route.rockSlug}) }}" class="text-gray-800 no-underline hover:underline dark:text-gray-200">
+											{{ route.rockName }}
+										</a>
+									{% elseif route.rockName %}
+										<span class="text-gray-500 dark:text-gray-400">{{ route.rockName }}</span>
+									{% else %}
+										<span class="text-gray-500 dark:text-gray-400">-</span>
+									{% endif %}
+								</td>
+								<td class="py-2 align-top">
+									{% if route.firstAscent %}
+										{{ route.firstAscent }}
+										{% if route.yearFirstAscent %}
+											({{ route.yearFirstAscent }})
 										{% endif %}
-									</td>
-								</tr>
-							{% endfor %}
-						</tbody>
-					</table>
-				</div>
+									{% else %}
+										<span class="text-gray-500 dark:text-gray-400">-</span>
+									{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>
-</div>
-
+</dialog>

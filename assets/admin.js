@@ -1,4 +1,6 @@
 import './styles/admin.css';
+// Bootstrap JS for EasyAdmin and admin Twig that use data-bs-* (separate from public app bundle).
+import 'bootstrap';
 import './bootstrap';
 
 // Register admin-specific Stimulus controllers

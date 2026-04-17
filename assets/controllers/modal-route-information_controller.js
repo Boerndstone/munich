@@ -1,29 +1,23 @@
-import { Controller } from "stimulus";
-import { Modal } from "bootstrap";
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = ["modal", "title", "content"];
 
-  // Parse date from various formats (PHP DateTime object, ISO string, MySQL datetime)
   parseDate(dateValue) {
     if (!dateValue) return null;
-    
-    // If it's a PHP DateTime object serialized as JSON
+
     if (typeof dateValue === 'object' && dateValue.date) {
       return new Date(dateValue.date.replace(' ', 'T'));
     }
-    
-    // If it's a string, try to parse it
+
     if (typeof dateValue === 'string') {
-      // Replace space with T for ISO compatibility (MySQL format: "2024-01-15 10:30:00")
       const isoString = dateValue.replace(' ', 'T');
       const parsed = new Date(isoString);
       if (!isNaN(parsed.getTime())) {
         return parsed;
       }
     }
-    
-    // Fallback: try direct parsing
+
     const fallback = new Date(dateValue);
     return isNaN(fallback.getTime()) ? null : fallback;
   }
@@ -35,16 +29,14 @@ export default class extends Controller {
   }
 
   openModal(event) {
-    // Get the button that was clicked
     const button = event.currentTarget;
-    
-    // Read values from the button's data attributes
+
     const name = button.dataset.modalRouteInformationNameValue || '';
     const grade = button.dataset.modalRouteInformationGradeValue || '';
     const firstAscent = button.dataset.modalRouteInformationFirstAscentValue || '';
     const yearFirstAscentRaw = button.dataset.modalRouteInformationYearFirstAscentValue;
     const yearFirstAscent = (yearFirstAscentRaw && yearFirstAscentRaw !== '0') ? yearFirstAscentRaw : '';
-    
+
     let comments = [];
     try {
       const commentsData = button.dataset.modalRouteInformationCommentsValue;
@@ -55,17 +47,15 @@ export default class extends Controller {
       console.error('Error parsing comments:', e);
     }
 
-    // Populate the shared modal with route-specific data
     if (this.hasTitleTarget) {
       this.titleTarget.textContent = `${name} (${grade})`;
     }
 
     if (this.hasContentTarget) {
       let html = '';
-      
-      // First ascent info (mobile)
+
       if (firstAscent || yearFirstAscent) {
-        html += `<p class="fw-medium small mb-0 d-lg-none">`;
+        html += `<p class="mb-0 text-sm font-medium text-gray-900 lg:hidden dark:text-gray-100">`;
         if (firstAscent) {
           html += `Erstbegeher: ${firstAscent} `;
         }
@@ -74,13 +64,12 @@ export default class extends Controller {
         }
         html += `</p>`;
       }
-      
-      // Comments
+
       if (comments && comments.length > 0) {
         comments.forEach((commentData, index) => {
-          html += `<p class="mt-2 small fw-normal">${commentData.comment || ''}</p>`;
+          html += `<p class="mt-2 text-sm font-normal text-gray-800 dark:text-gray-200">${commentData.comment || ''}</p>`;
           if (commentData.username) {
-            html += `<p class="mt-2 fst-italic small fw-normal">`;
+            html += `<p class="mt-2 text-sm font-normal italic text-gray-600 dark:text-gray-400">`;
             html += commentData.username;
             if (commentData.date) {
               const formattedDate = this.formatDate(commentData.date);
@@ -91,20 +80,16 @@ export default class extends Controller {
             html += `</p>`;
           }
           if (index < comments.length - 1) {
-            html += `<hr/>`;
+            html += `<hr class="my-2 border-gray-200 dark:border-gray-700"/>`;
           }
         });
       }
-      
+
       this.contentTarget.innerHTML = html;
     }
 
-    if (this.hasModalTarget) {
-      let modalInstance = Modal.getInstance(this.modalTarget);
-      if (!modalInstance) {
-        modalInstance = new Modal(this.modalTarget);
-      }
-      modalInstance.show();
+    if (this.hasModalTarget && typeof this.modalTarget.showModal === 'function') {
+      this.modalTarget.showModal();
     }
   }
 }

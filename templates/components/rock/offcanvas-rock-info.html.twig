@@ -1,63 +1,29 @@
 {% if rocks is not empty %}
 	{% set rock = rocks|first %}
-	<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-		<div class="offcanvas-header">
-			<h5 class="offcanvas-title fw-bold" id="offcanvasRightLabel">{{ rock.rockName }}</h5>
-			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-		</div>
-		<div class="offcanvas-body">
-			<div class="accordion" id="accordionExample">
-				<div class="accordion-item">
-					<h2 class="accordion-header">
-						<button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAllgemein" aria-expanded="true" aria-controls="collapseAllgemein">
-							<div class="rock-general-info text-black me-2"></div>
-							{{"general.information"|trans}}
-						</button>
-					</h2>
-					<div id="collapseAllgemein" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-						<div class="accordion-body p-0">
-							<table class="table table-striped table-sm fw-medium border-0">
-								{# <tr>
-									<td colspan="2">
-										<div class="d-flex me-2">
-											<div class="d-flex flex-column me-2">
-												<div class="text-center bg-warning px-2 py-1 text-white" style="font-size: 14px;">{{"amount"|trans}}</div>
-												<div class="text-center text-white bg-warning mt-1">
-													<div class="px-2 py-1" style="font-size: 14px;">
-														{{ rock.amountRoutes }}
-													</div>
-												</div>
-											</div>
-											<div class="d-flex flex-column me-2">
-												<div style="font-size: 14px;" class="text-center px-2 py-1 text-white bg-green">1 - 5</div>
-												<div class="text-center text-white bg-gray-400 mt-1">
-													<div style="font-size: 14px;" class="px-2 py-1 bg-green">{{ rock.amountEasy }}</div>
-												</div>
-											</div>
-											<div class="d-flex flex-column me-2">
-												<div style="font-size: 14px;" class="text-center px-2 py-1 text-white bg-amber">6 - 7</div>
-												<div class="text-center text-white bg-gray-400 mt-1">
-													<div style="font-size: 14px;" class="px-2 py-1 bg-amber">{{ rock.amountMiddle }}</div>
-												</div>
-											</div>
-											<div class="d-flex flex-column me-2">
-												<div style="font-size: 14px;" class="text-center px-2 py-1 text-white bg-red">8 - 11</div>
-												<div class="text-center text-white bg-gray-400 mt-1">
-													<div style="font-size: 14px;" class="px-2 py-1 bg-red">{{ rock.amountHard }}</div>
-												</div>
-											</div>
-											<div class="d-flex flex-column me-2">
-												<div style="background-color:black; font-size: 14px;" class="text-center px-2 py-1 text-white">{{"projects"|trans}}</div>
-												<div class="text-center text-white bg-gray-400 mt-1">
-													<div style="background-color:black; font-size: 14px;" class=" px-2 py-1">{{ rock.amountProjects }}</div>
-												</div>
-											</div>
-										</div>
-									</td>
-								</tr> #}
+	<dialog id="offcanvasRight" class="rock-info-dialog z-[1055]" aria-labelledby="offcanvasRightLabel" aria-modal="true">
+		<div class="flex h-full min-h-0 w-full flex-row-reverse">
+			<div class="flex h-full min-h-0 w-[min(100vw,24rem)] max-w-full flex-col overflow-y-auto bg-[var(--theme-bg)] text-[var(--theme-text)] shadow-xl" onclick="event.stopPropagation()">
+				<div class="flex shrink-0 items-center justify-between border-b border-[var(--theme-border)] px-3 py-2">
+					<h2 class="m-0 text-lg font-bold text-[var(--theme-text)]" id="offcanvasRightLabel">{{ rock.rockName }}</h2>
+					<button type="button" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--theme-text)] opacity-70 hover:bg-[var(--theme-bg-lighter)] hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" onclick="document.getElementById('offcanvasRight').close()" aria-label="{{ 'close'|trans({}, 'messages') }}">
+						<span class="sr-only">{{ 'close'|trans({}, 'messages') }}</span>
+						<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+						</svg>
+					</button>
+				</div>
+				<div class="min-h-0 flex-1 overflow-y-auto" data-controller="exclusive-details">
+					<details class="group border-b border-[var(--theme-border)]" open>
+						<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+							<div class="rock-general-info text-black me-2 dark:text-gray-100"></div>
+							<span class="min-w-0 flex-1">{{ 'general.information'|trans }}</span>
+							<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+						</summary>
+						<div class="border-t border-[var(--theme-border)] px-0 pb-3 pt-0">
+							<table class="w-full border-collapse text-sm font-medium text-[var(--theme-text)] [&>tbody>tr:last-child]:border-b-0">
 								{% if rock.amountRoutes is defined and rock.amountRoutes > 0 %}
 									<tr>
-										<td colspan="2" class="border-0 pt-2">
+										<td colspan="2" class="border-0 px-3 pt-2 align-top">
 											{{ include('components/grade-distribution-chart.html.twig', {
 												grade_chart_source: rock,
 												route_count: rock.amountRoutes,
@@ -69,287 +35,266 @@
 										</td>
 									</tr>
 								{% endif %}
-								<tr>
-									<td>{{"height"|trans}}:</td>
-									<td>{{ rock.rockHeight }}
-										m</td>
+								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+									<td class="px-3 py-1.5 align-top">{{ 'height'|trans }}:</td>
+									<td class="px-3 py-1.5 align-top">{{ rock.rockHeight }} m</td>
 								</tr>
-								<tr>
-									<td>{{"orientation"|trans}}:</td>
-									<td>{{ rock.rockOrientation }}</td>
+								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+									<td class="px-3 py-1.5 align-top">{{ 'orientation'|trans }}:</td>
+									<td class="px-3 py-1.5 align-top">{{ rock.rockOrientation }}</td>
 								</tr>
-								<tr>
-									<td>{{"sunny"|trans}}:</td>
-									<td>
+								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+									<td class="px-3 py-1.5 align-top">{{ 'sunny'|trans }}:</td>
+									<td class="px-3 py-1.5 align-top">
 										{% if rock.rockSunny is same as(true) %}
-											{{"sunny.property.sunny"|trans}}
+											{{ 'sunny.property.sunny'|trans }}
 										{% elseif rock.rockSunny is same as(false) %}
-											{{"sunny.property.sun"|trans}}
+											{{ 'sunny.property.sun'|trans }}
 										{% else %}
 											-
 										{% endif %}
 									</td>
 								</tr>
-								<tr>
-									<td>{{"child.friendly"|trans}}:</td>
-									<td>
+								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+									<td class="px-3 py-1.5 align-top">{{ 'child.friendly'|trans }}:</td>
+									<td class="px-3 py-1.5 align-top">
 										{% if rock.rockChild == 1 %}
-											{{"child.friendly.good"|trans}}
+											{{ 'child.friendly.good'|trans }}
 										{% else %}
-											{{"child.friendly.bad"|trans}}
+											{{ 'child.friendly.bad'|trans }}
 										{% endif %}
 									</td>
 								</tr>
-								<tr>
-									<td>{{"rain.proof"|trans}}:</td>
-									<td>
+								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+									<td class="px-3 py-1.5 align-top">{{ 'rain.proof'|trans }}:</td>
+									<td class="px-3 py-1.5 align-top">
 										{% if rock.rockRain is same as(true) %}
-											{{"rain.proof.good"|trans}}
+											{{ 'rain.proof.good'|trans }}
 										{% elseif rock.rockRain is same as(false) %}
-											{{"rain.proof.not"|trans}}
+											{{ 'rain.proof.not'|trans }}
 										{% else %}
 											&mdash;
 										{% endif %}
 									</td>
 								</tr>
-								<tr>
-									<td>{{"gps"|trans}}:</td>
-									<td>
-										{{ rock.rockLat }}, {{ rock.rockLng }}
+								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+									<td class="px-3 py-1.5 align-top">{{ 'gps'|trans }}:</td>
+									<td class="px-3 py-1.5 align-top">{{ rock.rockLat }}, {{ rock.rockLng }}</td>
+								</tr>
+								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+									<td class="px-3 py-1.5 align-top">{{ 'show.on.map'|trans }}:</td>
+									<td class="px-3 py-1.5 align-top">
+										<a href="https://www.google.com/maps?q={{ rock.rockLat }},{{ rock.rockLng }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline decoration-dotted underline-offset-2 hover:text-sky-900 dark:text-sky-400 dark:hover:text-sky-300" aria-label="Open location in Google Maps (opens in new window)"><span class="inline-block -rotate-45" aria-hidden="true">→</span> Google Maps</a>,<br>
+										<a href="https://www.openstreetmap.org/?mlat={{ rock.rockLat }}&mlon={{ rock.rockLng }}&zoom=15" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline decoration-dotted underline-offset-2 hover:text-sky-900 dark:text-sky-400 dark:hover:text-sky-300" aria-label="Open location in OpenStreetMap (opens in new window)"><span class="inline-block -rotate-45" aria-hidden="true">→</span> OpenStreetMap</a>
 									</td>
 								</tr>
-								<tr>
-									<td>{{"show.on.map"|trans}}:</td>
-									<td>
-										<a href="https://www.google.com/maps?q={{ rock.rockLat }},{{ rock.rockLng }}" target="_blank" rel="noopener noreferrer" aria-label="Open location in Google Maps (opens in new window)" style="text-decoration: underline; text-decoration-style: dotted;"><span style="display: inline-block; transform: rotate(-45deg);">→</span> Google Maps</a>,<br />
-										<a href="https://www.openstreetmap.org/?mlat={{ rock.rockLat }}&mlon={{ rock.rockLng }}&zoom=15" target="_blank" rel="noopener noreferrer" aria-label="Open location in OpenStreetMap (opens in new window)" style="text-decoration: underline; text-decoration-style: dotted;"><span style="display: inline-block; transform: rotate(-45deg);">→</span> OpenStreetMap</a>
-									</td>
-								</tr>
-								<tr>
-									<td>{{"season"|trans}}:</td>
-									<td>{{ rock.rockSeason}}</td>
+								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+									<td class="px-3 py-1.5 align-top">{{ 'season'|trans }}:</td>
+									<td class="px-3 py-1.5 align-top">{{ rock.rockSeason }}</td>
 								</tr>
 								{% if rock.rockZone %}
-									<tr>
-										<td>{{"zone"|trans}}:</td>
-										<td>{{ rock.rockZone }}</td>
+									<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+										<td class="px-3 py-1.5 align-top">{{ 'zone'|trans }}:</td>
+										<td class="px-3 py-1.5 align-top">{{ rock.rockZone }}</td>
 									</tr>
 								{% endif %}
 							</table>
 						</div>
-					</div>
-				</div>
-				{% set hasDescription = (description is defined and description is not null and description|striptags|trim != '') or (rock.rockDescription is defined and rock.rockDescription is not null and rock.rockDescription|striptags|trim != '') %}
-				{% if hasDescription %}
-					<div class="accordion-item">
-						<h2 class="accordion-header">
-							<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBeschreibung" aria-expanded="false" aria-controls="collapseBeschreibung">
-								<div class="rock-general-description text-black me-2"></div>
-								{{ 'description'|trans }}
-							</button>
-						</h2>
-						<div id="collapseBeschreibung" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-							<div class="accordion-body">
+					</details>
+					{% set hasDescription = (description is defined and description is not null and description|striptags|trim != '') or (rock.rockDescription is defined and rock.rockDescription is not null and rock.rockDescription|striptags|trim != '') %}
+					{% if hasDescription %}
+						<details class="group border-b border-[var(--theme-border)]">
+							<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+								<div class="rock-general-description text-black me-2 dark:text-gray-100"></div>
+								<span class="min-w-0 flex-1">{{ 'description'|trans }}</span>
+								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+							</summary>
+							<div class="border-t border-[var(--theme-border)] px-3 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
 								{% if description is defined and description is not null and description|striptags|trim != '' %}
 									{{ description|raw }}
 								{% else %}
 									{{ rock.rockDescription|raw }}
 								{% endif %}
 							</div>
-						</div>
-					</div>
-				{% endif %}
-				{% set hasAccess = (access is defined and access is not null and access|striptags|trim != '') or (rock.rockAccess is defined and rock.rockAccess is not null and rock.rockAccess|striptags|trim != '') %}
-				{% if hasAccess %}
-					<div class="accordion-item">
-						<h2 class="accordion-header" id="headingZustieg">
-							<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseZustieg" aria-expanded="false" aria-controls="collapseZustieg">
-								<div class="rock-general-access text-black me-2"></div>
-								{{ 'arrival.and.access'|trans }}
-							</button>
-						</h2>
-						<div id="collapseZustieg" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-							<div class="accordion-body">
+						</details>
+					{% endif %}
+					{% set hasAccess = (access is defined and access is not null and access|striptags|trim != '') or (rock.rockAccess is defined and rock.rockAccess is not null and rock.rockAccess|striptags|trim != '') %}
+					{% if hasAccess %}
+						<details class="group border-b border-[var(--theme-border)]">
+							<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+								<div class="rock-general-access text-black me-2 dark:text-gray-100"></div>
+								<span class="min-w-0 flex-1">{{ 'arrival.and.access'|trans }}</span>
+								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+							</summary>
+							<div class="border-t border-[var(--theme-border)] px-3 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
 								{% if access is defined and access is not null and access|striptags|trim != '' %}
 									{{ access|raw }}
 								{% else %}
 									{{ rock.rockAccess|raw }}
 								{% endif %}
 							</div>
-						</div>
-					</div>
-				{% endif %}
-				<div class="accordion-item">
-					<h2 class="accordion-header">
-						<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRockMap" aria-expanded="false" aria-controls="collapseRockMap">
-							<div class="rock-general-map text-black me-2"></div>
-							{{ 'map'|trans }}
-						</button>
-					</h2>
-					<div id="collapseRockMap" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-						<div class="accordion-body p-0">
-							<div id="rockMap" class="z-10 mb-3" style="width: 100%; aspect-ratio: 16/16;">
+						</details>
+					{% endif %}
+					<details id="rockMapDetails" class="group border-b border-[var(--theme-border)]">
+						<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+							<div class="rock-general-map text-black me-2 dark:text-gray-100"></div>
+							<span class="min-w-0 flex-1">{{ 'map'|trans }}</span>
+							<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+						</summary>
+						<div class="border-t border-[var(--theme-border)] p-0">
+							<div id="rockMap" class="z-10 mb-3 w-full" style="aspect-ratio: 16/16;">
 								{{ include('components/map/rock-map.html.twig') }}
 							</div>
 						</div>
-					</div>
-				</div>
-				{% set hasNature = (nature is defined and nature is not null and nature|striptags|trim != '') or (rock.rockNature is defined and rock.rockNature is not null and rock.rockNature|striptags|trim != '') %}
-				{% if hasNature %}
-					<div class="accordion-item">
-						<h2 class="accordion-header" id="headingNaturschutz">
-							<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNaturschutz" aria-expanded="false" aria-controls="collapseNaturschutz">
-								<div class="rock-general-alert text-black me-2"></div>
-								{{"climbing.regulations"|trans}}
-							</button>
-						</h2>
-						<div id="collapseNaturschutz" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-							<div class="accordion-body">
+					</details>
+					{% set hasNature = (nature is defined and nature is not null and nature|striptags|trim != '') or (rock.rockNature is defined and rock.rockNature is not null and rock.rockNature|striptags|trim != '') %}
+					{% if hasNature %}
+						<details class="group border-b border-[var(--theme-border)]">
+							<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+								<div class="rock-general-alert text-black me-2 dark:text-gray-100"></div>
+								<span class="min-w-0 flex-1">{{ 'climbing.regulations'|trans }}</span>
+								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+							</summary>
+							<div class="border-t border-[var(--theme-border)] px-3 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
 								{% if nature is defined and nature is not null and nature|striptags|trim != '' %}
 									{{ nature|raw }}
 								{% else %}
 									{{ rock.rockNature|raw }}
 								{% endif %}
 							</div>
-						</div>
-					</div>
-				{% endif %}
-				{% if flowers is defined and flowers is not null %}
-					<div class="accordion-item">
-						<h2 class="accordion-header" id="headingFlowers">
-							<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFlowers" aria-expanded="false" aria-controls="collapseFlowers">
-								<div class="rock-general-flowers text-black me-2"></div>
-								{{"plants"|trans}}
-							</button>
-						</h2>
-						<div id="collapseFlowers" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-							<div class="accordion-body">
-								{{flowers|raw}}
+						</details>
+					{% endif %}
+					{% if flowers is defined and flowers is not null %}
+						<details class="group border-b border-[var(--theme-border)]">
+							<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+								<div class="rock-general-flowers text-black me-2 dark:text-gray-100"></div>
+								<span class="min-w-0 flex-1">{{ 'plants'|trans }}</span>
+								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+							</summary>
+							<div class="border-t border-[var(--theme-border)] px-3 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
+								{{ flowers|raw }}
+							</div>
+						</details>
+					{% endif %}
+					{% if jsonData %}
+						<details class="group border-b border-[var(--theme-border)]">
+							<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+								<div class="rock-general-images text-black me-2 dark:text-gray-100"></div>
+								<span class="min-w-0 flex-1">{{ 'images'|trans }}</span>
+								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+							</summary>
+							<div class="border-t border-[var(--theme-border)] px-2 pb-3 pt-2">
+								<div class="mx-0 grid grid-cols-3 gap-1 md:grid-cols-4" data-controller="off-canvas-gallery">
+									{% for data in jsonData %}
+										<div class="mb-1">
+											<a class="lg-item block" data-target="lg-item" data-src="{{ data.src }}" href="{{ data.src }}" role="button">
+												<img src="{{ data.thumb }}" class="mb-1 w-full shadow-md" alt="{{ data.subHtml }}" loading="lazy">
+											</a>
+										</div>
+									{% endfor %}
+								</div>
+							</div>
+						</details>
+					{% endif %}
+					<details class="group border-b border-[var(--theme-border)]">
+						<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+							<div class="rock-general-signs text-black me-2 dark:text-gray-100"></div>
+							<span class="min-w-0 flex-1">{{ 'explanation.symbols'|trans }}</span>
+							<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+						</summary>
+						<div class="border-t border-[var(--theme-border)] px-2 pb-3 pt-2">
+							<div class="mx-0">
+								<table class="w-full border-collapse text-sm font-medium text-[var(--theme-text)] [&>tbody>tr:last-child]:border-b-0">
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="star d-inline-block"></div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'nice.route'|trans }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="flex">
+												<div class="star d-inline-block"></div>
+												<div class="star d-inline-block"></div>
+											</div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'very.nice.route'|trans }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="flex">
+												<div class="star"></div>
+												<div class="star"></div>
+												<div class="star"></div>
+											</div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'dream.route'|trans }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="trash"></div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'shit.route'|trans }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="exclamation d-inline-block"></div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'bad.routeprotection'|trans }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="skull d-inline-block"></div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'dangerous.routeprotection'|trans }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="loose-rock d-inline-block"></div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'rock.quality'|trans }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="multi-pitch d-inline-block"></div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'multi.pitch'|trans }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="crack-climbing d-inline-block"></div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'crack.climbing'|trans }}</td>
+									</tr>
+								</table>
 							</div>
 						</div>
-					</div>
-				{% endif %}
-				{% if jsonData %}
-					<div class="accordion-item">
-						<h2 class="accordion-header" id="headingBilder">
-							<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBilder" aria-expanded="false" aria-controls="collapseBilder">
-								<div class="rock-general-images text-black me-2"></div>
-								{{"images"|trans}}
-							</button>
-						</h2>
-						<div id="collapseBilder" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-							<div class="accordion-body row mx-0" data-controller="off-canvas-gallery">
-								{% for data in jsonData %}
-									<div class="col-3 col-md-4 mb-1">
-										<a class="lg-item" data-target="lg-item" data-src="{{ data.src }}">
-											<img src="{{ data.thumb }}" class="w-100 shadow-1-strong mb-3" alt="{{ data.subHtml }}">
-										</a>
-									</div>
-								{% endfor %}
-						</div>
-					</div>
-				</div>
-			{% endif %}
-			<div class="accordion-item">
-				<h2 class="accordion-header" id="headingLegend">
-					<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLegend" aria-expanded="false" aria-controls="collapseLegend">
-						<div class="rock-general-signs text-black me-2"></div>
-						{{"explanation.symbols"|trans}}
-					</button>
-				</h2>
-				<div id="collapseLegend" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-					<div class="accordion-body row mx-0" data-controller="off-canvas-gallery">
-						<table class="table table-sm fw-medium">
-							<tr>
-								<td>
-									<div class="star d-inline-block"></div>
-								</td>
-								<td>{{"nice.route"|trans}}</td>
-							</tr>
-							<tr>
-								<td>
-									<div class="d-flex">
-										<div class="star d-inline-block"></div>
-										<div class="star d-inline-block"></div>
-									</div>
-								</td>
-								<td>{{"very.nice.route"|trans}}</td>
-							</tr>
-							<tr>
-								<td>
-									<div class="d-flex">
-										<div class="star"></div>
-										<div class="star"></div>
-										<div class="star"></div>
-									</div>
-								</td>
-								<td>{{"dream.route"|trans}}</td>
-							</tr>
-							<tr>
-								<td>
-									<div class="trash"></div>
-								</td>
-								<td>{{"shit.route"|trans}}</td>
-							</tr>
-							<tr>
-								<td>
-									<div class="exclamation d-inline-block"></div>
-								</td>
-								<td>{{"bad.routeprotection"|trans}}</td>
-							</tr>
-							<tr>
-								<td>
-									<div class="skull d-inline-block"></div>
-								</td>
-								<td>{{"dangerous.routeprotection"|trans}}</td>
-							</tr>
-							<tr>
-								<td>
-									<div class="loose-rock d-inline-block"></div>
-								</td>
-								<td>{{"rock.quality"|trans}}</td>
-							</tr>
-							<tr>
-								<td>
-									<div class="multi-pitch d-inline-block"></div>
-								</td>
-								<td>{{"multi.pitch"|trans}}</td>
-							</tr>
-							<tr>
-								<td>
-									<div class="crack-climbing d-inline-block"></div>
-								</td>
-								<td>{{"crack.climbing"|trans}}</td>
-							</tr>
-						</table>
-			</div>
-		</div>
-	</div>
-				<div class="accordion-item">
-					<h2 class="accordion-header" id="headingImprovement">
-						<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseImprovement" aria-expanded="false" aria-controls="collapseImprovement">
-							<div class="rock-general-improvement text-black me-2"></div>
-							{{ "rock_improvement.title"|trans }}
-						</button>
-					</h2>
-					<div id="collapseImprovement" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-						<div class="accordion-body">
+					</details>
+					<details class="group border-b border-[var(--theme-border)] last:border-b-0">
+						<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+							<div class="rock-general-improvement text-black me-2 dark:text-gray-100"></div>
+							<span class="min-w-0 flex-1">{{ 'rock_improvement.title'|trans }}</span>
+							<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+						</summary>
+						<div class="border-t border-[var(--theme-border)] px-3 pb-4 pt-2">
 							{% if improvementForm is defined and improvementForm is not null %}
-								<p class="small text-muted mb-3">{{ "rock_improvement.intro"|trans({"%rock_name%": rock.rockName}) }}</p>
-								{{ form_start(improvementForm, { 'action': path('show_rock', { areaSlug: areaSlug, slug: slug }), 'attr': { 'class': 'small' } }) }}
+								{% form_theme improvementForm 'form/tailwind_form_layout.html.twig' %}
+								<p class="mb-3 text-sm text-gray-600 dark:text-gray-400">{{ 'rock_improvement.intro'|trans({ '%rock_name%': rock.rockName }) }}</p>
+								{{ form_start(improvementForm, { action: path(app.request.attributes.get('_route'), { areaSlug: areaSlug, slug: slug }), attr: { class: 'max-w-full text-sm', novalidate: 'novalidate' } }) }}
 								{{ form_row(improvementForm.rockName) }}
 								{{ form_row(improvementForm.name) }}
 								{{ form_row(improvementForm.routeName) }}
 								{{ form_row(improvementForm.grade) }}
 								{{ form_row(improvementForm.firstAscent) }}
 								{{ form_row(improvementForm.comment) }}
-								<button type="submit" class="btn btn-success text-green btn-sm mt-2">{{ "rock_improvement.submit"|trans }}</button>
+								<button type="submit" class="mt-2 inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium shadow-sm hover:bg-emerald-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900">{{ 'rock_improvement.submit'|trans }}</button>
 								{{ form_end(improvementForm) }}
 							{% endif %}
 						</div>
-					</div>
+					</details>
 				</div>
 			</div>
+			<button type="button" class="min-h-0 min-w-0 flex-1 cursor-default border-0 bg-black/40 p-0" aria-label="{{ 'close'|trans({}, 'messages') }}" onclick="document.getElementById('offcanvasRight').close()"></button>
 		</div>
-	</div>
+	</dialog>
 {% endif %}

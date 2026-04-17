@@ -282,7 +282,9 @@ class FrontendController extends AbstractController
                 ]);
             $mailer->send($email);
             $this->addFlash('success', $translator->trans('rock_improvement.success'));
-            return $this->redirectToRoute('show_rock', ['areaSlug' => $areaSlug, 'slug' => $slug]);
+            $rockRoute = $request->getLocale() === 'en' ? 'show_rock_en' : 'show_rock';
+
+            return $this->redirectToRoute($rockRoute, ['areaSlug' => $areaSlug, 'slug' => $slug]);
         }
 
         return $this->render('frontend/rock.html.twig', [

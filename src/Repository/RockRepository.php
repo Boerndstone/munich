@@ -57,6 +57,18 @@ class RockRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findOneByAreaSlugAndRockSlug(string $areaSlug, string $rockSlug): ?Rock
+    {
+        return $this->createQueryBuilder('rock')
+            ->innerJoin('rock.area', 'area')
+            ->andWhere('area.slug = :areaSlug')
+            ->andWhere('rock.slug = :rockSlug')
+            ->setParameter('areaSlug', $areaSlug)
+            ->setParameter('rockSlug', $rockSlug)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     /**
      * @return Rocks[] Returns an array of Rocks objects
      */

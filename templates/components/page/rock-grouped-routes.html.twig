@@ -1,87 +1,82 @@
 {# Expects: groupedRoutes, rocks (for topo image alt) #}
-<div class="mx-auto max-w-[1024px] px-2" {{ stimulus_controller('modal-route-information') }}>
-	<div class="row">
-		<div class="col-md-9 p-0 p-md-2">
-			{% for topoName, topoData in groupedRoutes %}
-				<div class="card mt-3 overflow-hidden border-0 rounded-0" id="{{ topoName|custom_replace|lower }}">
-					<div class="card-body p-0">
-						<section data-controller="route-information-tooltip">
-							{% if topoData.topoImage is not empty and topoData.topoPathCollection is not empty %}
-								{% set srcsetData = topoData.topoImage|topo_image_srcset %}
-								{% set viewBoxValue = '0 0 1024 820' %}
-								{% set aspectRatio = viewBoxValue|viewbox_to_aspect_ratio %}
-								{% set pathsSvg = topo_paths_overlay(topoData.topoPathCollection, null) %}
-								{% if pathsSvg is not empty %}
-								<div class="topo-two-layer"{% if aspectRatio %} style="aspect-ratio: {{ aspectRatio }};"{% endif %}>
-									<img class="topo-two-layer__bg" src="{{ srcsetData.src|default(topoData.topoImage) }}"{% if srcsetData.srcset %} srcset="{{ srcsetData.srcset }}" sizes="{{ srcsetData.sizes }}"{% endif %} alt="{{ 'topo.image_alt'|trans({ '%topo_name%': topoName, '%rock_name%': (rocks|first).rockName|default(''), '%area_name%': (rocks|first).areaName|default('') }) }}" loading="lazy" decoding="async">
-									<div class="topo-two-layer__overlay" aria-hidden="true">
-										<svg height="100%" width="100%" viewBox="{{ viewBoxValue }}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="img-fluid preserve-aspect-ratio">
-											{{ pathsSvg|raw }}
-										</svg>
-									</div>
-								</div>
-								{% endif %}
-							{% endif %}
-							<table class="table mb-0 small fw-medium">
-								<tbody>
-									{% for route in topoData.routes %}
-										<tr id="{{ route.routeName|replace({' ': ''})|lower }}" data-route-id="{{loop.index}}" data-route-information="{{ route.routeName }} {{ route.routeGrade }}">
-											<td class="py-2">
-												<span>{{loop.index}}</span>
-											</td>
-											<td class="py-2">
-												<div class="d-flex align-items-center">
-													<span class="me-1 ">{{ route.routeName }}</span>
-													<span style="line-height: 0;" data-controller="routeparams" data-routeparams-rating="{{ route.routeRating }}" data-routeparams-protection="{{ route.routeProtection }}" data-routeparams-route-rock-quality="{{ route.rockQuality }}">
-														<span data-routeparams-target="rating"></span>
-														<span data-routeparams-target="protection"></span>
-														<span data-routeparams-target="route-rock-quality"></span>
-													</span>
-													{% if route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'multi-pitch' in (route.routeClimbingStyle|default('[]')) %}
-														<span class="d-inline-block ms-1 multi-pitch" title="Mehrseillängen Tour" role="img" aria-label="Mehrseillängen Tour"></span>
-													{% elseif route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'crack' in (route.routeClimbingStyle|default('[]')) %}
-														<span class="d-inline-block ms-1 crack-climbing" title="Riss" role="img" aria-label="Riss"></span>
-													{% endif %}
-													{% if route.videoLink is not empty %}
-														<a href="{{ route.videoLink }}" title="Video von Route {{ route.routeName }} " target="_blank">
-															<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 24 24" class="text-black"><path fill="currentColor" d="M15 8v8H5V8h10m1-2H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4V7c0-.55-.45-1-1-1z"/></svg>
-														</a>
-													{% endif %}
-												</div>
-											</td>
-											<td class="py-2">
-												<span>{{ route.routeGrade }}</span>
-											</td>
-											<td class="d-none d-lg-table-cell py-2" style="white-space: nowrap;">
-												<span>{{ route.routefirstAscent }}
-													{% if route.routeyearFirstAscent %}
-														{{ route.routeyearFirstAscent }}
-													{% endif %}
-												</span>
-											</td>
-											<td class="py-2">
-												{% if route.routeComment is not empty %}
-													<button class="btn btn-sm m-0 p-0 border-0 shadow-none rounded-circle"
-														data-action="modal-route-information#openModal"
-														data-modal-route-information-name-value="{{ route.routeName }}"
-														data-modal-route-information-grade-value="{{ route.routeGrade }}"
-														data-modal-route-information-first-ascent-value="{{ route.routefirstAscent }}"
-														data-modal-route-information-year-first-ascent-value="{{ route.routeyearFirstAscent }}"
-														data-modal-route-information-comments-value="{{ route.routeComment|json_encode|e('html_attr') }}">
-														<div class="modal-info"></div>
-													</button>
-												{% endif %}
-											</td>
-										</tr>
-									{% endfor %}
-								</tbody>
-							</table>
-						</section>
+<div class="mx-auto w-full max-w-[1024px] px-2 sm:px-4" {{ stimulus_controller('modal-route-information') }}>
+	<div class="w-full md:w-3/4">
+	{% for topoName, topoData in groupedRoutes %}
+		<div class="mt-3 overflow-hidden rounded-none border-0 bg-[var(--theme-bg-lighter)] text-[var(--theme-text)]" id="{{ topoName|custom_replace|lower }}">
+			<section class="p-0" data-controller="route-information-tooltip">
+				{% if topoData.topoImage is not empty and topoData.topoPathCollection is not empty %}
+					{% set srcsetData = topoData.topoImage|topo_image_srcset %}
+					{% set viewBoxValue = '0 0 1024 820' %}
+					{% set aspectRatio = viewBoxValue|viewbox_to_aspect_ratio %}
+					{% set pathsSvg = topo_paths_overlay(topoData.topoPathCollection, null) %}
+					{% if pathsSvg is not empty %}
+					<div class="topo-two-layer"{% if aspectRatio %} style="aspect-ratio: {{ aspectRatio }};"{% endif %}>
+						<img class="topo-two-layer__bg" src="{{ srcsetData.src|default(topoData.topoImage) }}"{% if srcsetData.srcset %} srcset="{{ srcsetData.srcset }}" sizes="{{ srcsetData.sizes }}"{% endif %} alt="{{ 'topo.image_alt'|trans({ '%topo_name%': topoName, '%rock_name%': (rocks|first).rockName|default(''), '%area_name%': (rocks|first).areaName|default('') }) }}" loading="lazy" decoding="async">
+						<div class="topo-two-layer__overlay" aria-hidden="true">
+							<svg height="100%" width="100%" viewBox="{{ viewBoxValue }}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="h-auto max-w-full preserve-aspect-ratio">
+								{{ pathsSvg|raw }}
+							</svg>
+						</div>
 					</div>
-				</div>
-			{% endfor %}
+					{% endif %}
+				{% endif %}
+				<table class="table mb-0 w-full text-sm font-medium">
+					<tbody>
+						{% for route in topoData.routes %}
+							<tr id="{{ route.routeName|replace({' ': ''})|lower }}" data-route-id="{{loop.index}}" data-route-information="{{ route.routeName }} {{ route.routeGrade }}">
+								<td class="py-2">
+									<span>{{loop.index}}</span>
+								</td>
+								<td class="py-2">
+									<div class="flex items-center">
+										<span class="me-1">{{ route.routeName }}</span>
+										<span style="line-height: 0;" data-controller="routeparams" data-routeparams-rating="{{ route.routeRating }}" data-routeparams-protection="{{ route.routeProtection }}" data-routeparams-route-rock-quality="{{ route.rockQuality }}">
+											<span data-routeparams-target="rating"></span>
+											<span data-routeparams-target="protection"></span>
+											<span data-routeparams-target="route-rock-quality"></span>
+										</span>
+										{% if route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'multi-pitch' in (route.routeClimbingStyle|default('[]')) %}
+											<span class="ms-1 inline-block multi-pitch" title="Mehrseillängen Tour" role="img" aria-label="Mehrseillängen Tour"></span>
+										{% elseif route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'crack' in (route.routeClimbingStyle|default('[]')) %}
+											<span class="ms-1 inline-block crack-climbing" title="Riss" role="img" aria-label="Riss"></span>
+										{% endif %}
+										{% if route.videoLink is not empty %}
+											<a href="{{ route.videoLink }}" title="Video von Route {{ route.routeName }} " target="_blank">
+												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 24 24" class="text-black"><path fill="currentColor" d="M15 8v8H5V8h10m1-2H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4V7c0-.55-.45-1-1-1z"/></svg>
+											</a>
+										{% endif %}
+									</div>
+								</td>
+								<td class="py-2">
+									<span>{{ route.routeGrade }}</span>
+								</td>
+								<td class="hidden py-2 whitespace-nowrap lg:table-cell">
+									<span>{{ route.routefirstAscent }}
+										{% if route.routeyearFirstAscent %}
+											{{ route.routeyearFirstAscent }}
+										{% endif %}
+									</span>
+								</td>
+								<td class="py-2">
+									{% if route.routeComment is not empty %}
+										<button type="button" class="m-0 inline-flex items-center justify-center rounded-full border-0 bg-transparent p-0 shadow-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]"
+											data-action="modal-route-information#openModal"
+											data-modal-route-information-name-value="{{ route.routeName }}"
+											data-modal-route-information-grade-value="{{ route.routeGrade }}"
+											data-modal-route-information-first-ascent-value="{{ route.routefirstAscent }}"
+											data-modal-route-information-year-first-ascent-value="{{ route.routeyearFirstAscent }}"
+											data-modal-route-information-comments-value="{{ route.routeComment|json_encode|e('html_attr') }}">
+											<div class="modal-info"></div>
+										</button>
+									{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</section>
 		</div>
+	{% endfor %}
 	</div>
-
 	{{ include('components/page/rock-shared-route-modal.html.twig') }}
 </div>

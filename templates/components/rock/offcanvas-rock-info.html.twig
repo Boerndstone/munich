@@ -1,285 +1,300 @@
 {% if rocks is not empty %}
 	{% set rock = rocks|first %}
-	<dialog
-		id="offcanvasRight"
-		class="rock-info-dialog z-[1045] overflow-hidden bg-white text-gray-900 shadow-xl dark:bg-gray-900 dark:text-gray-100"
-		aria-labelledby="offcanvasRightLabel"
-		aria-modal="true"
-		onclick="if (event.target === this) this.close()"
-	>
-		<div class="flex h-full min-h-0 flex-col" onclick="event.stopPropagation()">
-			<div class="flex shrink-0 items-center justify-between border-b border-gray-200 px-3 py-2 dark:border-gray-700">
-				<h2 class="text-base font-bold text-gray-900 dark:text-gray-100" id="offcanvasRightLabel">{{ rock.rockName }}</h2>
-				<button type="button" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200" onclick="this.closest('dialog').close()" aria-label="Schließen">
-					<span class="sr-only">Schließen</span>
-					<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-						<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-					</svg>
-				</button>
-			</div>
-			<div class="min-h-0 flex-1 overflow-y-auto">
-				<details class="rock-drawer-details border-b border-gray-200 dark:border-gray-700" open>
-					<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-bold marker:hidden [&::-webkit-details-marker]:hidden">
-						<span class="rock-general-info me-2 text-gray-900 dark:text-gray-100" aria-hidden="true"></span>
-						{{ "general.information"|trans }}
-					</summary>
-					<div class="border-t border-gray-100 px-0 pb-3 pt-0 text-sm dark:border-gray-800">
-						<table class="w-full border-collapse text-sm font-medium">
-							{% if rock.amountRoutes is defined and rock.amountRoutes > 0 %}
-								<tr>
-									<td colspan="2" class="border-0 pt-2">
-										{{ include('components/grade-distribution-chart.html.twig', {
-											grade_chart_source: rock,
-											route_count: rock.amountRoutes,
-											aria_label_prefix: rock.rockName ~ '. ',
-											wrapper_class: 'max-w-full justify-start',
-											include_projects_column: true,
-											project_count: rock.amountProjects|default(0)
-										}) }}
+	<dialog id="offcanvasRight" class="rock-info-dialog z-[1055]" aria-labelledby="offcanvasRightLabel" aria-modal="true">
+		<div class="flex h-full min-h-0 w-full flex-row-reverse">
+			<div class="flex h-full min-h-0 w-[min(100vw,24rem)] max-w-full flex-col overflow-y-auto bg-[var(--theme-bg)] text-[var(--theme-text)] shadow-xl" onclick="event.stopPropagation()">
+				<div class="flex shrink-0 items-center justify-between border-b border-[var(--theme-border)] px-3 py-2">
+					<h2 class="m-0 text-lg font-bold text-[var(--theme-text)]" id="offcanvasRightLabel">{{ rock.rockName }}</h2>
+					<button type="button" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--theme-text)] opacity-70 hover:bg-[var(--theme-bg-lighter)] hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" onclick="document.getElementById('offcanvasRight').close()" aria-label="{{ 'close'|trans({}, 'messages') }}">
+						<span class="sr-only">{{ 'close'|trans({}, 'messages') }}</span>
+						<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+						</svg>
+					</button>
+				</div>
+				<div class="min-h-0 flex-1 overflow-y-auto" data-controller="exclusive-details">
+					<details class="group border-b border-[var(--theme-border)]" open>
+						<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+							<div class="rock-general-info text-black me-2 dark:text-gray-100"></div>
+							<span class="min-w-0 flex-1">{{ 'general.information'|trans }}</span>
+							<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+						</summary>
+						<div class="border-t border-[var(--theme-border)] px-0 pb-3 pt-0">
+							<table class="w-full border-collapse text-sm font-medium text-[var(--theme-text)] [&>tbody>tr:last-child]:border-b-0">
+								{% if rock.amountRoutes is defined and rock.amountRoutes > 0 %}
+									<tr>
+										<td colspan="2" class="border-0 px-3 pt-2 align-top">
+											{{ include('components/grade-distribution-chart.html.twig', {
+												grade_chart_source: rock,
+												route_count: rock.amountRoutes,
+												aria_label_prefix: rock.rockName ~ '. ',
+												wrapper_class: 'max-w-full justify-start',
+												include_projects_column: true,
+												project_count: rock.amountProjects|default(0)
+											}) }}
+										</td>
+									</tr>
+								{% endif %}
+								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+									<td class="px-3 py-2 align-top">{{ 'height'|trans }}:</td>
+									<td class="px-3 py-2 align-top">{{ rock.rockHeight }} m</td>
+								</tr>
+								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+									<td class="px-3 py-2 align-top">{{ 'orientation'|trans }}:</td>
+									<td class="px-3 py-2 align-top">{{ rock.rockOrientation }}</td>
+								</tr>
+								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+									<td class="px-3 py-2 align-top">{{ 'sunny'|trans }}:</td>
+									<td class="px-3 py-2 align-top">
+										{% if rock.rockSunny is same as(true) %}
+											{{ 'sunny.property.sunny'|trans }}
+										{% elseif rock.rockSunny is same as(false) %}
+											{{ 'sunny.property.sun'|trans }}
+										{% else %}
+											-
+										{% endif %}
 									</td>
 								</tr>
-							{% endif %}
-							<tr>
-								<td class="py-1 pe-2 align-top text-gray-600 dark:text-gray-400">{{ "height"|trans }}:</td>
-								<td class="py-1">{{ rock.rockHeight }} m</td>
-							</tr>
-							<tr>
-								<td class="py-1 pe-2 align-top text-gray-600 dark:text-gray-400">{{ "orientation"|trans }}:</td>
-								<td class="py-1">{{ rock.rockOrientation }}</td>
-							</tr>
-							<tr>
-								<td class="py-1 pe-2 align-top text-gray-600 dark:text-gray-400">{{ "sunny"|trans }}:</td>
-								<td class="py-1">
-									{% if rock.rockSunny is same as(true) %}
-										{{ "sunny.property.sunny"|trans }}
-									{% elseif rock.rockSunny is same as(false) %}
-										{{ "sunny.property.sun"|trans }}
-									{% else %}
-										-
-									{% endif %}
-								</td>
-							</tr>
-							<tr>
-								<td class="py-1 pe-2 align-top text-gray-600 dark:text-gray-400">{{ "child.friendly"|trans }}:</td>
-								<td class="py-1">
-									{% if rock.rockChild == 1 %}
-										{{ "child.friendly.good"|trans }}
-									{% else %}
-										{{ "child.friendly.bad"|trans }}
-									{% endif %}
-								</td>
-							</tr>
-							<tr>
-								<td class="py-1 pe-2 align-top text-gray-600 dark:text-gray-400">{{ "rain.proof"|trans }}:</td>
-								<td class="py-1">
-									{% if rock.rockRain is same as(true) %}
-										{{ "rain.proof.good"|trans }}
-									{% elseif rock.rockRain is same as(false) %}
-										{{ "rain.proof.not"|trans }}
-									{% else %}
-										&mdash;
-									{% endif %}
-								</td>
-							</tr>
-							<tr>
-								<td class="py-1 pe-2 align-top text-gray-600 dark:text-gray-400">{{ "gps"|trans }}:</td>
-								<td class="py-1">{{ rock.rockLat }}, {{ rock.rockLng }}</td>
-							</tr>
-							<tr>
-								<td class="py-1 pe-2 align-top text-gray-600 dark:text-gray-400">{{ "show.on.map"|trans }}:</td>
-								<td class="py-1">
-									<a href="https://www.google.com/maps?q={{ rock.rockLat }},{{ rock.rockLng }}" target="_blank" rel="noopener noreferrer" class="underline decoration-dotted" aria-label="Open location in Google Maps (opens in new window)"><span class="inline-block -rotate-45">→</span> Google Maps</a>,<br />
-									<a href="https://www.openstreetmap.org/?mlat={{ rock.rockLat }}&mlon={{ rock.rockLng }}&zoom=15" target="_blank" rel="noopener noreferrer" class="underline decoration-dotted" aria-label="Open location in OpenStreetMap (opens in new window)"><span class="inline-block -rotate-45">→</span> OpenStreetMap</a>
-								</td>
-							</tr>
-							<tr>
-								<td class="py-1 pe-2 align-top text-gray-600 dark:text-gray-400">{{ "season"|trans }}:</td>
-								<td class="py-1">{{ rock.rockSeason }}</td>
-							</tr>
-							{% if rock.rockZone %}
-								<tr>
-									<td class="py-1 pe-2 align-top text-gray-600 dark:text-gray-400">{{ "zone"|trans }}:</td>
-									<td class="py-1">{{ rock.rockZone }}</td>
+								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+									<td class="px-3 py-2 align-top">{{ 'child.friendly'|trans }}:</td>
+									<td class="px-3 py-2 align-top">
+										{% if rock.rockChild == 1 %}
+											{{ 'child.friendly.good'|trans }}
+										{% else %}
+											{{ 'child.friendly.bad'|trans }}
+										{% endif %}
+									</td>
 								</tr>
-							{% endif %}
-						</table>
-					</div>
-				</details>
-
-				{% set hasDescription = (description is defined and description is not null and description|striptags|trim != '') or (rock.rockDescription is defined and rock.rockDescription is not null and rock.rockDescription|striptags|trim != '') %}
-				{% if hasDescription %}
-					<details class="rock-drawer-details border-b border-gray-200 dark:border-gray-700">
-						<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-bold marker:hidden [&::-webkit-details-marker]:hidden">
-							<span class="rock-general-description me-2 text-gray-900 dark:text-gray-100" aria-hidden="true"></span>
-							{{ 'description'|trans }}
-						</summary>
-						<div class="border-t border-gray-100 px-3 pb-3 pt-2 text-sm dark:border-gray-800">
-							{% if description is defined and description is not null and description|striptags|trim != '' %}
-								{{ description|raw }}
-							{% else %}
-								{{ rock.rockDescription|raw }}
-							{% endif %}
+								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+									<td class="px-3 py-2 align-top">{{ 'rain.proof'|trans }}:</td>
+									<td class="px-3 py-2 align-top">
+										{% if rock.rockRain is same as(true) %}
+											{{ 'rain.proof.good'|trans }}
+										{% elseif rock.rockRain is same as(false) %}
+											{{ 'rain.proof.not'|trans }}
+										{% else %}
+											&mdash;
+										{% endif %}
+									</td>
+								</tr>
+								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+									<td class="px-3 py-2 align-top">{{ 'gps'|trans }}:</td>
+									<td class="px-3 py-2 align-top">{{ rock.rockLat }}, {{ rock.rockLng }}</td>
+								</tr>
+								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+									<td class="px-3 py-2 align-top">{{ 'show.on.map'|trans }}:</td>
+									<td class="px-3 py-2 align-top">
+										<a href="https://www.google.com/maps?q={{ rock.rockLat }},{{ rock.rockLng }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline decoration-dotted underline-offset-2 hover:text-sky-900 dark:text-sky-400 dark:hover:text-sky-300" aria-label="Open location in Google Maps (opens in new window)"><span class="inline-block -rotate-45" aria-hidden="true">→</span> Google Maps</a>,<br>
+										<a href="https://www.openstreetmap.org/?mlat={{ rock.rockLat }}&mlon={{ rock.rockLng }}&zoom=15" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline decoration-dotted underline-offset-2 hover:text-sky-900 dark:text-sky-400 dark:hover:text-sky-300" aria-label="Open location in OpenStreetMap (opens in new window)"><span class="inline-block -rotate-45" aria-hidden="true">→</span> OpenStreetMap</a>
+									</td>
+								</tr>
+								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+									<td class="px-3 py-2 align-top">{{ 'season'|trans }}:</td>
+									<td class="px-3 py-2 align-top">{{ rock.rockSeason }}</td>
+								</tr>
+								{% if rock.rockZone %}
+									<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+										<td class="px-3 py-2 align-top">{{ 'zone'|trans }}:</td>
+										<td class="px-3 py-2 align-top">{{ rock.rockZone }}</td>
+									</tr>
+								{% endif %}
+							</table>
 						</div>
 					</details>
-				{% endif %}
-
-				{% set hasAccess = (access is defined and access is not null and access|striptags|trim != '') or (rock.rockAccess is defined and rock.rockAccess is not null and rock.rockAccess|striptags|trim != '') %}
-				{% if hasAccess %}
-					<details class="rock-drawer-details border-b border-gray-200 dark:border-gray-700">
-						<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-bold marker:hidden [&::-webkit-details-marker]:hidden">
-							<span class="rock-general-access me-2 text-gray-900 dark:text-gray-100" aria-hidden="true"></span>
-							{{ 'arrival.and.access'|trans }}
+					{% set hasDescription = (description is defined and description is not null and description|striptags|trim != '') or (rock.rockDescription is defined and rock.rockDescription is not null and rock.rockDescription|striptags|trim != '') %}
+					{% if hasDescription %}
+						<details class="group border-b border-[var(--theme-border)]">
+							<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+								<div class="rock-general-description text-black me-2 dark:text-gray-100"></div>
+								<span class="min-w-0 flex-1">{{ 'description'|trans }}</span>
+								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+							</summary>
+							<div class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
+								{% if description is defined and description is not null and description|striptags|trim != '' %}
+									{{ description|raw }}
+								{% else %}
+									{{ rock.rockDescription|raw }}
+								{% endif %}
+							</div>
+						</details>
+					{% endif %}
+					{% set hasAccess = (access is defined and access is not null and access|striptags|trim != '') or (rock.rockAccess is defined and rock.rockAccess is not null and rock.rockAccess|striptags|trim != '') %}
+					{% if hasAccess %}
+						<details class="group border-b border-[var(--theme-border)]">
+							<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+								<div class="rock-general-access text-black me-2 dark:text-gray-100"></div>
+								<span class="min-w-0 flex-1">{{ 'arrival.and.access'|trans }}</span>
+								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+							</summary>
+							<div class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
+								{% if access is defined and access is not null and access|striptags|trim != '' %}
+									{{ access|raw }}
+								{% else %}
+									{{ rock.rockAccess|raw }}
+								{% endif %}
+							</div>
+						</details>
+					{% endif %}
+					<details id="rockMapDetails" class="group border-b border-[var(--theme-border)]">
+						<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+							<div class="rock-general-map text-black me-2 dark:text-gray-100"></div>
+							<span class="min-w-0 flex-1">{{ 'map'|trans }}</span>
+							<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
 						</summary>
-						<div class="border-t border-gray-100 px-3 pb-3 pt-2 text-sm dark:border-gray-800">
-							{% if access is defined and access is not null and access|striptags|trim != '' %}
-								{{ access|raw }}
-							{% else %}
-								{{ rock.rockAccess|raw }}
-							{% endif %}
-						</div>
-					</details>
-				{% endif %}
-
-				<details id="rockMapDetails" class="rock-drawer-details border-b border-gray-200 dark:border-gray-700">
-					<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-bold marker:hidden [&::-webkit-details-marker]:hidden">
-						<span class="rock-general-map me-2 text-gray-900 dark:text-gray-100" aria-hidden="true"></span>
-						{{ 'map'|trans }}
-					</summary>
-					<div class="border-t border-gray-100 p-0 dark:border-gray-800">
-						<div id="rockMap" class="z-10 mb-3 w-full" style="aspect-ratio: 16/16;">
-							{{ include('components/map/rock-map.html.twig') }}
-						</div>
-					</div>
-				</details>
-
-				{% set hasNature = (nature is defined and nature is not null and nature|striptags|trim != '') or (rock.rockNature is defined and rock.rockNature is not null and rock.rockNature|striptags|trim != '') %}
-				{% if hasNature %}
-					<details class="rock-drawer-details border-b border-gray-200 dark:border-gray-700">
-						<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-bold marker:hidden [&::-webkit-details-marker]:hidden">
-							<span class="rock-general-alert me-2 text-gray-900 dark:text-gray-100" aria-hidden="true"></span>
-							{{ "climbing.regulations"|trans }}
-						</summary>
-						<div class="border-t border-gray-100 px-3 pb-3 pt-2 text-sm dark:border-gray-800">
-							{% if nature is defined and nature is not null and nature|striptags|trim != '' %}
-								{{ nature|raw }}
-							{% else %}
-								{{ rock.rockNature|raw }}
-							{% endif %}
-						</div>
-					</details>
-				{% endif %}
-
-				{% if flowers is defined and flowers is not null %}
-					<details class="rock-drawer-details border-b border-gray-200 dark:border-gray-700">
-						<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-bold marker:hidden [&::-webkit-details-marker]:hidden">
-							<span class="rock-general-flowers me-2 text-gray-900 dark:text-gray-100" aria-hidden="true"></span>
-							{{ "plants"|trans }}
-						</summary>
-						<div class="border-t border-gray-100 px-3 pb-3 pt-2 text-sm dark:border-gray-800">
-							{{ flowers|raw }}
-						</div>
-					</details>
-				{% endif %}
-
-				{% if jsonData %}
-					<details class="rock-drawer-details border-b border-gray-200 dark:border-gray-700">
-						<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-bold marker:hidden [&::-webkit-details-marker]:hidden">
-							<span class="rock-general-images me-2 text-gray-900 dark:text-gray-100" aria-hidden="true"></span>
-							{{ "images"|trans }}
-						</summary>
-						<div class="border-t border-gray-100 px-2 pb-3 pt-2 dark:border-gray-800" data-controller="off-canvas-gallery">
-							<div class="mx-0 grid grid-cols-3 gap-1 md:grid-cols-4">
-								{% for data in jsonData %}
-									<div class="mb-1">
-										<a class="lg-item block" data-target="lg-item" data-src="{{ data.src }}">
-											<img src="{{ data.thumb }}" class="mb-1 w-full shadow-md" alt="{{ data.subHtml }}">
-										</a>
-									</div>
-								{% endfor %}
+						<div class="border-t border-[var(--theme-border)] p-0">
+							<div id="rockMap" class="z-10 mb-3 w-full" style="aspect-ratio: 16/16;">
+								{{ include('components/map/rock-map.html.twig') }}
 							</div>
 						</div>
 					</details>
-				{% endif %}
-
-				<details class="rock-drawer-details border-b border-gray-200 dark:border-gray-700">
-					<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-bold marker:hidden [&::-webkit-details-marker]:hidden">
-						<span class="rock-general-signs me-2 text-gray-900 dark:text-gray-100" aria-hidden="true"></span>
-						{{ "explanation.symbols"|trans }}
-					</summary>
-					<div class="border-t border-gray-100 px-3 pb-3 pt-2 dark:border-gray-800" data-controller="off-canvas-gallery">
-						<table class="w-full border-collapse text-sm font-medium">
-							<tr>
-								<td class="py-1 pe-2"><div class="star inline-block" aria-hidden="true"></div></td>
-								<td class="py-1">{{ "nice.route"|trans }}</td>
-							</tr>
-							<tr>
-								<td class="py-1 pe-2">
-									<div class="flex gap-0">
-										<div class="star inline-block" aria-hidden="true"></div>
-										<div class="star inline-block" aria-hidden="true"></div>
-									</div>
-								</td>
-								<td class="py-1">{{ "very.nice.route"|trans }}</td>
-							</tr>
-							<tr>
-								<td class="py-1 pe-2">
-									<div class="flex gap-0">
-										<div class="star" aria-hidden="true"></div>
-										<div class="star" aria-hidden="true"></div>
-										<div class="star" aria-hidden="true"></div>
-									</div>
-								</td>
-								<td class="py-1">{{ "dream.route"|trans }}</td>
-							</tr>
-							<tr>
-								<td class="py-1 pe-2"><div class="trash" aria-hidden="true"></div></td>
-								<td class="py-1">{{ "shit.route"|trans }}</td>
-							</tr>
-							<tr>
-								<td class="py-1 pe-2"><div class="exclamation inline-block" aria-hidden="true"></div></td>
-								<td class="py-1">{{ "bad.routeprotection"|trans }}</td>
-							</tr>
-							<tr>
-								<td class="py-1 pe-2"><div class="skull inline-block" aria-hidden="true"></div></td>
-								<td class="py-1">{{ "dangerous.routeprotection"|trans }}</td>
-							</tr>
-							<tr>
-								<td class="py-1 pe-2"><div class="loose-rock inline-block" aria-hidden="true"></div></td>
-								<td class="py-1">{{ "rock.quality"|trans }}</td>
-							</tr>
-							<tr>
-								<td class="py-1 pe-2"><div class="multi-pitch inline-block" aria-hidden="true"></div></td>
-								<td class="py-1">{{ "multi.pitch"|trans }}</td>
-							</tr>
-							<tr>
-								<td class="py-1 pe-2"><div class="crack-climbing inline-block" aria-hidden="true"></div></td>
-								<td class="py-1">{{ "crack.climbing"|trans }}</td>
-							</tr>
-						</table>
-					</div>
-				</details>
-
-				<details class="rock-drawer-details border-b border-gray-200 dark:border-gray-700">
-					<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-bold marker:hidden [&::-webkit-details-marker]:hidden">
-						<span class="rock-general-improvement me-2 text-gray-900 dark:text-gray-100" aria-hidden="true"></span>
-						{{ "rock_improvement.title"|trans }}
-					</summary>
-					<div class="border-t border-gray-100 px-3 pb-4 pt-2 text-sm dark:border-gray-800">
-						{% if improvementForm is defined and improvementForm is not null %}
-							<p class="mb-3 text-sm text-gray-600 dark:text-gray-400">{{ "rock_improvement.intro"|trans({ "%rock_name%": rock.rockName }) }}</p>
-							{{ form_start(improvementForm, { 'action': path('show_rock', { areaSlug: areaSlug, slug: slug }), 'attr': { 'class': 'space-y-2 text-sm' } }) }}
-							{{ form_row(improvementForm.rockName) }}
-							{{ form_row(improvementForm.name) }}
-							{{ form_row(improvementForm.routeName) }}
-							{{ form_row(improvementForm.grade) }}
-							{{ form_row(improvementForm.firstAscent) }}
-							{{ form_row(improvementForm.comment) }}
-							<button type="submit" class="mt-2 inline-flex rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-green-500">{{ "rock_improvement.submit"|trans }}</button>
-							{{ form_end(improvementForm) }}
-						{% endif %}
-					</div>
-				</details>
+					{% set hasNature = (nature is defined and nature is not null and nature|striptags|trim != '') or (rock.rockNature is defined and rock.rockNature is not null and rock.rockNature|striptags|trim != '') %}
+					{% if hasNature %}
+						<details class="group border-b border-[var(--theme-border)]">
+							<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+								<div class="rock-general-alert text-black me-2 dark:text-gray-100"></div>
+								<span class="min-w-0 flex-1">{{ 'climbing.regulations'|trans }}</span>
+								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+							</summary>
+							<div class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
+								{% if nature is defined and nature is not null and nature|striptags|trim != '' %}
+									{{ nature|raw }}
+								{% else %}
+									{{ rock.rockNature|raw }}
+								{% endif %}
+							</div>
+						</details>
+					{% endif %}
+					{% if flowers is defined and flowers is not null %}
+						<details class="group border-b border-[var(--theme-border)]">
+							<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+								<div class="rock-general-flowers text-black me-2 dark:text-gray-100"></div>
+								<span class="min-w-0 flex-1">{{ 'plants'|trans }}</span>
+								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+							</summary>
+							<div class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
+								{{ flowers|raw }}
+							</div>
+						</details>
+					{% endif %}
+					{% if jsonData %}
+						<details class="group border-b border-[var(--theme-border)]">
+							<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+								<div class="rock-general-images text-black me-2 dark:text-gray-100"></div>
+								<span class="min-w-0 flex-1">{{ 'images'|trans }}</span>
+								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+							</summary>
+							<div class="border-t border-[var(--theme-border)] px-2 pb-3 pt-2">
+								<div class="mx-0 grid grid-cols-3 gap-1 md:grid-cols-4" data-controller="off-canvas-gallery">
+									{% for data in jsonData %}
+										<div class="mb-1">
+											<a class="lg-item block" data-target="lg-item" data-src="{{ data.src }}" href="{{ data.src }}" role="button">
+												<img src="{{ data.thumb }}" class="mb-1 w-full shadow-md" alt="{{ data.subHtml }}" loading="lazy">
+											</a>
+										</div>
+									{% endfor %}
+								</div>
+							</div>
+						</details>
+					{% endif %}
+					<details class="group border-b border-[var(--theme-border)]">
+						<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+							<div class="rock-general-signs text-black me-2 dark:text-gray-100"></div>
+							<span class="min-w-0 flex-1">{{ 'explanation.symbols'|trans }}</span>
+							<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+						</summary>
+						<div class="border-t border-[var(--theme-border)] px-2 pb-3 pt-2">
+							<div class="mx-0">
+								<table class="w-full border-collapse text-sm font-medium text-[var(--theme-text)] [&>tbody>tr:last-child]:border-b-0">
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="star d-inline-block"></div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'nice.route'|trans }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="flex">
+												<div class="star d-inline-block"></div>
+												<div class="star d-inline-block"></div>
+											</div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'very.nice.route'|trans }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="flex">
+												<div class="star"></div>
+												<div class="star"></div>
+												<div class="star"></div>
+											</div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'dream.route'|trans }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="trash"></div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'shit.route'|trans }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="exclamation d-inline-block"></div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'bad.routeprotection'|trans }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="skull d-inline-block"></div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'dangerous.routeprotection'|trans }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="loose-rock d-inline-block"></div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'rock.quality'|trans }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="multi-pitch d-inline-block"></div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'multi.pitch'|trans }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)]">
+										<td class="px-2 py-1 align-middle">
+											<div class="crack-climbing d-inline-block"></div>
+										</td>
+										<td class="px-2 py-1 align-middle">{{ 'crack.climbing'|trans }}</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</details>
+					<details class="group border-b border-[var(--theme-border)] last:border-b-0">
+						<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+							<div class="rock-general-improvement text-black me-2 dark:text-gray-100"></div>
+							<span class="min-w-0 flex-1">{{ 'rock_improvement.title'|trans }}</span>
+							<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+						</summary>
+						<div class="border-t border-[var(--theme-border)] px-3 pb-4 pt-2">
+							{% if improvementForm is defined and improvementForm is not null %}
+								{% form_theme improvementForm 'form/tailwind_form_layout.html.twig' %}
+								<p class="mb-3 text-sm text-gray-600 dark:text-gray-400">{{ 'rock_improvement.intro'|trans({ '%rock_name%': rock.rockName }) }}</p>
+								{{ form_start(improvementForm, { action: path(app.request.attributes.get('_route'), { areaSlug: areaSlug, slug: slug }), attr: { class: 'max-w-full text-sm', novalidate: 'novalidate' } }) }}
+								{{ form_row(improvementForm.rockName) }}
+								{{ form_row(improvementForm.name) }}
+								{{ form_row(improvementForm.routeName) }}
+								{{ form_row(improvementForm.grade) }}
+								{{ form_row(improvementForm.firstAscent) }}
+								{{ form_row(improvementForm.comment) }}
+								<button type="submit" class="mt-2 inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium shadow-sm hover:bg-emerald-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900">{{ 'rock_improvement.submit'|trans }}</button>
+								{{ form_end(improvementForm) }}
+							{% endif %}
+						</div>
+					</details>
+				</div>
 			</div>
+			<button type="button" class="min-h-0 min-w-0 flex-1 cursor-default border-0 bg-black/40 p-0" aria-label="{{ 'close'|trans({}, 'messages') }}" onclick="document.getElementById('offcanvasRight').close()"></button>
 		</div>
 	</dialog>
 {% endif %}

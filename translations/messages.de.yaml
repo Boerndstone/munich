@@ -67,7 +67,7 @@ rock_improvement.placeholder.grade: "z. B. 6a"
 rock_improvement.placeholder.first_ascent: "Name Erstbegeher (optional)"
 rock_improvement.placeholder.comment: "Weitere Anmerkungen (z. B. Korrekturen) …"
 rock_improvement.submit: "Abschicken"
-rock_improvement.success: "Vielen Dank! Deine Meldung wurde gesendet."
+rock_improvement.success: "Vielen Dank für Dein mitwirken! Deine Nachricht haben wir erhalten."
 rock_improvement.validation_error: "Bitte versuch es erneut."
 
 # Grade distribution chart

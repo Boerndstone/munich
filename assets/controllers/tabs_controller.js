@@ -4,30 +4,14 @@ export default class extends Controller {
   connect() {
     const tabs = document.querySelectorAll(".scrollable-tabs-container a");
     const tabsList = document.querySelector(".scrollable-tabs-container ul");
-    const navbar = document.querySelector(".navbar");
-    
-    // Early exit if required elements don't exist
-    if (!tabsList || !navbar) {
+    const header =
+      document.querySelector("body > header") || document.querySelector(".navbar");
+
+    if (!tabsList) {
       return;
     }
-    
-    const navigationHeight = navbar.offsetHeight + 41;
 
-    let totalWidth = 0;
-    tabsList.querySelectorAll("li").forEach((li) => {
-      totalWidth += li.offsetWidth;
-    });
-
-    const leftArrowContainer = document.querySelector(
-      ".scrollable-tabs-container .left-arrow"
-    );
-    const rightArrowContainer = document.querySelector(
-      ".scrollable-tabs-container .right-arrow"
-    );
-
-    if (rightArrowContainer && totalWidth < tabsList.clientWidth) {
-      rightArrowContainer.classList.remove("active");
-    }
+    const navigationHeight = (header?.offsetHeight ?? 50) + 41;
 
     const removeAllActiveClasses = () => {
       tabs.forEach((tab) => {

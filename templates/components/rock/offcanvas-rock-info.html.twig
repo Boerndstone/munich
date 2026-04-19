@@ -14,7 +14,7 @@
 				</div>
 				<div class="min-h-0 flex-1 overflow-y-auto" data-controller="exclusive-details">
 					<details class="group border-b border-[var(--theme-border)]" open>
-						<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+						<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
 							<div class="rock-general-info text-black me-2 dark:text-gray-100"></div>
 							<span class="min-w-0 flex-1">{{ 'general.information'|trans }}</span>
 							<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
@@ -36,16 +36,16 @@
 									</tr>
 								{% endif %}
 								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-									<td class="px-3 py-1.5 align-top">{{ 'height'|trans }}:</td>
-									<td class="px-3 py-1.5 align-top">{{ rock.rockHeight }} m</td>
+									<td class="px-3 py-2 align-top">{{ 'height'|trans }}:</td>
+									<td class="px-3 py-2 align-top">{{ rock.rockHeight }} m</td>
 								</tr>
 								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-									<td class="px-3 py-1.5 align-top">{{ 'orientation'|trans }}:</td>
-									<td class="px-3 py-1.5 align-top">{{ rock.rockOrientation }}</td>
+									<td class="px-3 py-2 align-top">{{ 'orientation'|trans }}:</td>
+									<td class="px-3 py-2 align-top">{{ rock.rockOrientation }}</td>
 								</tr>
 								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-									<td class="px-3 py-1.5 align-top">{{ 'sunny'|trans }}:</td>
-									<td class="px-3 py-1.5 align-top">
+									<td class="px-3 py-2 align-top">{{ 'sunny'|trans }}:</td>
+									<td class="px-3 py-2 align-top">
 										{% if rock.rockSunny is same as(true) %}
 											{{ 'sunny.property.sunny'|trans }}
 										{% elseif rock.rockSunny is same as(false) %}
@@ -56,8 +56,8 @@
 									</td>
 								</tr>
 								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-									<td class="px-3 py-1.5 align-top">{{ 'child.friendly'|trans }}:</td>
-									<td class="px-3 py-1.5 align-top">
+									<td class="px-3 py-2 align-top">{{ 'child.friendly'|trans }}:</td>
+									<td class="px-3 py-2 align-top">
 										{% if rock.rockChild == 1 %}
 											{{ 'child.friendly.good'|trans }}
 										{% else %}
@@ -66,8 +66,8 @@
 									</td>
 								</tr>
 								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-									<td class="px-3 py-1.5 align-top">{{ 'rain.proof'|trans }}:</td>
-									<td class="px-3 py-1.5 align-top">
+									<td class="px-3 py-2 align-top">{{ 'rain.proof'|trans }}:</td>
+									<td class="px-3 py-2 align-top">
 										{% if rock.rockRain is same as(true) %}
 											{{ 'rain.proof.good'|trans }}
 										{% elseif rock.rockRain is same as(false) %}
@@ -78,24 +78,24 @@
 									</td>
 								</tr>
 								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-									<td class="px-3 py-1.5 align-top">{{ 'gps'|trans }}:</td>
-									<td class="px-3 py-1.5 align-top">{{ rock.rockLat }}, {{ rock.rockLng }}</td>
+									<td class="px-3 py-2 align-top">{{ 'gps'|trans }}:</td>
+									<td class="px-3 py-2 align-top">{{ rock.rockLat }}, {{ rock.rockLng }}</td>
 								</tr>
 								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-									<td class="px-3 py-1.5 align-top">{{ 'show.on.map'|trans }}:</td>
-									<td class="px-3 py-1.5 align-top">
+									<td class="px-3 py-2 align-top">{{ 'show.on.map'|trans }}:</td>
+									<td class="px-3 py-2 align-top">
 										<a href="https://www.google.com/maps?q={{ rock.rockLat }},{{ rock.rockLng }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline decoration-dotted underline-offset-2 hover:text-sky-900 dark:text-sky-400 dark:hover:text-sky-300" aria-label="Open location in Google Maps (opens in new window)"><span class="inline-block -rotate-45" aria-hidden="true">→</span> Google Maps</a>,<br>
 										<a href="https://www.openstreetmap.org/?mlat={{ rock.rockLat }}&mlon={{ rock.rockLng }}&zoom=15" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline decoration-dotted underline-offset-2 hover:text-sky-900 dark:text-sky-400 dark:hover:text-sky-300" aria-label="Open location in OpenStreetMap (opens in new window)"><span class="inline-block -rotate-45" aria-hidden="true">→</span> OpenStreetMap</a>
 									</td>
 								</tr>
 								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-									<td class="px-3 py-1.5 align-top">{{ 'season'|trans }}:</td>
-									<td class="px-3 py-1.5 align-top">{{ rock.rockSeason }}</td>
+									<td class="px-3 py-2 align-top">{{ 'season'|trans }}:</td>
+									<td class="px-3 py-2 align-top">{{ rock.rockSeason }}</td>
 								</tr>
 								{% if rock.rockZone %}
 									<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-										<td class="px-3 py-1.5 align-top">{{ 'zone'|trans }}:</td>
-										<td class="px-3 py-1.5 align-top">{{ rock.rockZone }}</td>
+										<td class="px-3 py-2 align-top">{{ 'zone'|trans }}:</td>
+										<td class="px-3 py-2 align-top">{{ rock.rockZone }}</td>
 									</tr>
 								{% endif %}
 							</table>
@@ -104,12 +104,12 @@
 					{% set hasDescription = (description is defined and description is not null and description|striptags|trim != '') or (rock.rockDescription is defined and rock.rockDescription is not null and rock.rockDescription|striptags|trim != '') %}
 					{% if hasDescription %}
 						<details class="group border-b border-[var(--theme-border)]">
-							<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+							<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
 								<div class="rock-general-description text-black me-2 dark:text-gray-100"></div>
 								<span class="min-w-0 flex-1">{{ 'description'|trans }}</span>
 								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
 							</summary>
-							<div class="border-t border-[var(--theme-border)] px-3 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
+							<div class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
 								{% if description is defined and description is not null and description|striptags|trim != '' %}
 									{{ description|raw }}
 								{% else %}
@@ -121,12 +121,12 @@
 					{% set hasAccess = (access is defined and access is not null and access|striptags|trim != '') or (rock.rockAccess is defined and rock.rockAccess is not null and rock.rockAccess|striptags|trim != '') %}
 					{% if hasAccess %}
 						<details class="group border-b border-[var(--theme-border)]">
-							<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+							<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
 								<div class="rock-general-access text-black me-2 dark:text-gray-100"></div>
 								<span class="min-w-0 flex-1">{{ 'arrival.and.access'|trans }}</span>
 								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
 							</summary>
-							<div class="border-t border-[var(--theme-border)] px-3 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
+							<div class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
 								{% if access is defined and access is not null and access|striptags|trim != '' %}
 									{{ access|raw }}
 								{% else %}
@@ -136,7 +136,7 @@
 						</details>
 					{% endif %}
 					<details id="rockMapDetails" class="group border-b border-[var(--theme-border)]">
-						<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+						<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
 							<div class="rock-general-map text-black me-2 dark:text-gray-100"></div>
 							<span class="min-w-0 flex-1">{{ 'map'|trans }}</span>
 							<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
@@ -150,12 +150,12 @@
 					{% set hasNature = (nature is defined and nature is not null and nature|striptags|trim != '') or (rock.rockNature is defined and rock.rockNature is not null and rock.rockNature|striptags|trim != '') %}
 					{% if hasNature %}
 						<details class="group border-b border-[var(--theme-border)]">
-							<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+							<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
 								<div class="rock-general-alert text-black me-2 dark:text-gray-100"></div>
 								<span class="min-w-0 flex-1">{{ 'climbing.regulations'|trans }}</span>
 								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
 							</summary>
-							<div class="border-t border-[var(--theme-border)] px-3 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
+							<div class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
 								{% if nature is defined and nature is not null and nature|striptags|trim != '' %}
 									{{ nature|raw }}
 								{% else %}
@@ -166,19 +166,19 @@
 					{% endif %}
 					{% if flowers is defined and flowers is not null %}
 						<details class="group border-b border-[var(--theme-border)]">
-							<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+							<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
 								<div class="rock-general-flowers text-black me-2 dark:text-gray-100"></div>
 								<span class="min-w-0 flex-1">{{ 'plants'|trans }}</span>
 								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
 							</summary>
-							<div class="border-t border-[var(--theme-border)] px-3 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
+							<div class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
 								{{ flowers|raw }}
 							</div>
 						</details>
 					{% endif %}
 					{% if jsonData %}
 						<details class="group border-b border-[var(--theme-border)]">
-							<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+							<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
 								<div class="rock-general-images text-black me-2 dark:text-gray-100"></div>
 								<span class="min-w-0 flex-1">{{ 'images'|trans }}</span>
 								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
@@ -197,7 +197,7 @@
 						</details>
 					{% endif %}
 					<details class="group border-b border-[var(--theme-border)]">
-						<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+						<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
 							<div class="rock-general-signs text-black me-2 dark:text-gray-100"></div>
 							<span class="min-w-0 flex-1">{{ 'explanation.symbols'|trans }}</span>
 							<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
@@ -271,7 +271,7 @@
 						</div>
 					</details>
 					<details class="group border-b border-[var(--theme-border)] last:border-b-0">
-						<summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
+						<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
 							<div class="rock-general-improvement text-black me-2 dark:text-gray-100"></div>
 							<span class="min-w-0 flex-1">{{ 'rock_improvement.title'|trans }}</span>
 							<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>

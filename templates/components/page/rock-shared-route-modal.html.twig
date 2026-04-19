@@ -1,22 +1,28 @@
-{# Shared dialog for route information — used with stimulus modal-route-information #}
+{# Shared modal for route information — used with stimulus modal-route-information #}
 <dialog
 	id="sharedRouteModal"
-	class="search-modal-dialog z-[10560] max-w-lg overflow-hidden rounded-lg bg-white text-gray-900 shadow-xl dark:bg-gray-900 dark:text-gray-100"
+	class="shared-route-dialog z-[1060]"
+	tabindex="-1"
 	aria-labelledby="sharedRouteModalTitle"
 	aria-modal="true"
 	data-modal-route-information-target="modal"
 	onclick="if (event.target === this) this.close()"
 >
-	<div class="flex max-h-[min(85vh,560px)] flex-col" onclick="event.stopPropagation()">
-		<div class="flex shrink-0 items-center justify-between border-b border-gray-200 px-3 py-2 dark:border-gray-700">
-			<h2 class="text-base font-semibold text-gray-900 dark:text-gray-100" id="sharedRouteModalTitle" data-modal-route-information-target="title"></h2>
-			<button type="button" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-gray-600 hover:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-gray-400 dark:hover:bg-gray-800" onclick="this.closest('dialog').close()" aria-label="Schließen">
-				<span class="sr-only">Schließen</span>
+	<div class="relative w-full max-w-lg rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] text-[var(--theme-text)] shadow-xl" onclick="event.stopPropagation()">
+		<div class="flex items-start justify-between gap-3 border-b border-[var(--theme-border)] px-4 py-3">
+			<h2 id="sharedRouteModalTitle" class="stay-black m-0 min-w-0 flex-1 text-base font-semibold leading-tight text-[var(--theme-text)]" data-modal-route-information-target="title"></h2>
+			<button
+				type="button"
+				class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--theme-text)] opacity-70 hover:bg-[var(--theme-bg-lighter)] hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]"
+				data-action="click->modal-route-information#closeModal"
+				aria-label="{{ 'close'|trans({}, 'messages') }}"
+			>
+				<span class="sr-only">{{ 'close'|trans({}, 'messages') }}</span>
 				<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
 				</svg>
 			</button>
 		</div>
-		<div class="min-h-0 flex-1 overflow-y-auto p-3 text-sm" data-modal-route-information-target="content"></div>
+		<div class="max-h-[min(70vh,28rem)] overflow-y-auto px-4 py-3 text-sm text-[var(--theme-text)]" data-modal-route-information-target="content"></div>
 	</div>
 </dialog>

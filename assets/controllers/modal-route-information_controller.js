@@ -1,4 +1,4 @@
-import { Controller } from "@hotwired/stimulus";
+import { Controller } from "stimulus";
 
 export default class extends Controller {
   static targets = ["modal", "title", "content"];
@@ -6,12 +6,12 @@ export default class extends Controller {
   parseDate(dateValue) {
     if (!dateValue) return null;
 
-    if (typeof dateValue === 'object' && dateValue.date) {
-      return new Date(dateValue.date.replace(' ', 'T'));
+    if (typeof dateValue === "object" && dateValue.date) {
+      return new Date(dateValue.date.replace(" ", "T"));
     }
 
-    if (typeof dateValue === 'string') {
-      const isoString = dateValue.replace(' ', 'T');
+    if (typeof dateValue === "string") {
+      const isoString = dateValue.replace(" ", "T");
       const parsed = new Date(isoString);
       if (!isNaN(parsed.getTime())) {
         return parsed;
@@ -24,18 +24,19 @@ export default class extends Controller {
 
   formatDate(dateValue) {
     const date = this.parseDate(dateValue);
-    if (!date) return '';
-    return date.toLocaleDateString('de-DE');
+    if (!date) return "";
+    return date.toLocaleDateString("de-DE");
   }
 
   openModal(event) {
     const button = event.currentTarget;
 
-    const name = button.dataset.modalRouteInformationNameValue || '';
-    const grade = button.dataset.modalRouteInformationGradeValue || '';
-    const firstAscent = button.dataset.modalRouteInformationFirstAscentValue || '';
+    const name = button.dataset.modalRouteInformationNameValue || "";
+    const grade = button.dataset.modalRouteInformationGradeValue || "";
+    const firstAscent = button.dataset.modalRouteInformationFirstAscentValue || "";
     const yearFirstAscentRaw = button.dataset.modalRouteInformationYearFirstAscentValue;
-    const yearFirstAscent = (yearFirstAscentRaw && yearFirstAscentRaw !== '0') ? yearFirstAscentRaw : '';
+    const yearFirstAscent =
+      yearFirstAscentRaw && yearFirstAscentRaw !== "0" ? yearFirstAscentRaw : "";
 
     let comments = [];
     try {
@@ -44,7 +45,7 @@ export default class extends Controller {
         comments = JSON.parse(commentsData);
       }
     } catch (e) {
-      console.error('Error parsing comments:', e);
+      console.error("Error parsing comments:", e);
     }
 
     if (this.hasTitleTarget) {
@@ -52,10 +53,10 @@ export default class extends Controller {
     }
 
     if (this.hasContentTarget) {
-      let html = '';
+      let html = "";
 
       if (firstAscent || yearFirstAscent) {
-        html += `<p class="mb-0 text-sm font-medium text-gray-900 lg:hidden dark:text-gray-100">`;
+        html += `<p class="mb-0 text-sm font-medium lg:hidden">`;
         if (firstAscent) {
           html += `Erstbegeher: ${firstAscent} `;
         }
@@ -67,7 +68,7 @@ export default class extends Controller {
 
       if (comments && comments.length > 0) {
         comments.forEach((commentData, index) => {
-          html += `<p class="mt-2 text-sm font-normal text-gray-800 dark:text-gray-200">${commentData.comment || ''}</p>`;
+          html += `<p class="mt-2 text-sm font-normal text-[var(--theme-text)]">${commentData.comment || ""}</p>`;
           if (commentData.username) {
             html += `<p class="mt-2 text-sm font-normal italic text-gray-600 dark:text-gray-400">`;
             html += commentData.username;
@@ -80,7 +81,7 @@ export default class extends Controller {
             html += `</p>`;
           }
           if (index < comments.length - 1) {
-            html += `<hr class="my-2 border-gray-200 dark:border-gray-700"/>`;
+            html += `<hr class="my-3 border-0 border-t border-[var(--theme-border)]" />`;
           }
         });
       }
@@ -88,8 +89,20 @@ export default class extends Controller {
       this.contentTarget.innerHTML = html;
     }
 
-    if (this.hasModalTarget && typeof this.modalTarget.showModal === 'function') {
-      this.modalTarget.showModal();
+    if (this.hasModalTarget) {
+      const el = this.modalTarget;
+      if (el instanceof HTMLDialogElement) {
+        el.showModal();
+      }
+    }
+  }
+
+  closeModal() {
+    if (this.hasModalTarget) {
+      const el = this.modalTarget;
+      if (el instanceof HTMLDialogElement) {
+        el.close();
+      }
     }
   }
 }

@@ -33,10 +33,11 @@
 		{# Leaflet - CSS and JS loaded in head (required because map init scripts run inline in body) #}
 		{% block leaflet %}{% endblock %}
 	</head>
-	<body id="body" {% block body_attributes %} {% endblock %} class="{% block bodyclass %}{% endblock %}" data-controller="search-modal" data-search-modal-search-url-value="{{ path('search_autocomplete') }}">
+	{# pt-[50px]: reserve space for fixed navigation (50px); nav stays position:fixed above this region #}
+	<body id="body" {% block body_attributes %} {% endblock %} class="{% block bodyclass %}{% endblock %} pt-[50px]" data-controller="search-modal" data-search-modal-search-url-value="{{ path('search_autocomplete') }}">
 		<div data-controller="scroll-progress" class="bg-theme fixed start-0 end-0 top-0" style="height: 3px; z-index: 10000;"></div>
 
-		<a href="#main-content" class="sr-only left-4 top-4 z-[1080] rounded-md bg-sky-700 px-3 py-2 text-sm font-medium text-white shadow focus:fixed focus:not-sr-only focus:outline-hidden focus-visible:ring-2 focus-visible:ring-sky-300">{{ 'skip_to_content'|trans({}, 'messages') }}</a>
+		<a href="#main-content" class="sr-only start-4 top-4 z-[1060] rounded-md bg-sky-700 px-3 py-2 text-sm font-medium text-white shadow focus:fixed focus:not-sr-only focus:outline-hidden focus-visible:ring-2 focus-visible:ring-sky-300">{{ 'skip_to_content'|trans({}, 'messages') }}</a>
 
 		<a id="main-content" tabindex="-1"></a>
 		{% block body %}{% endblock %}
@@ -47,17 +48,7 @@
 
 		<div {{ stimulus_controller('cookie-consent') }}></div>
 
-		<twig:Button
-			variant="outline"
-			size="icon"
-			as="a"
-			href="#body"
-			data-controller="scrolltop"
-			data-action="scroll@window->scrolltop#scrollFunction"
-			data-scrolltop-target="top"
-			class="btn-to-top hidden !fixed bottom-4 end-4 z-[1070] !size-10 !rounded-full border-gray-400 bg-white text-gray-800 shadow-md hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
-			aria-label="{{ 'scroll_to_top'|trans({}, 'messages') }}"
-		>
+		<a href="#body" data-controller="scrolltop" data-action="scroll@window->scrolltop#scrollFunction" data-scrolltop-target="top" class="btn-to-top hidden fixed bottom-5 end-5 z-[1070] h-10 w-10 items-center justify-center rounded-full border border-gray-400 bg-white text-gray-800 shadow-md hover:bg-gray-50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-gray-400 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800" aria-label="{{ 'scroll_to_top'|trans({}, 'messages') }}">
 			<div class="chevron-up" aria-hidden="true"></div>
 		</twig:Button>
 	</body>

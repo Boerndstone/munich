@@ -1,5 +1,7 @@
 framework:
   secret: "%env(APP_SECRET)%"
+  # Renders templates/error404.html.twig (and error.html.twig) instead of the generic HTML error renderer.
+  error_controller: App\Controller\ErrorController::showError
   # csrf_protection: true
   http_method_override: false
   handle_all_throwables: true

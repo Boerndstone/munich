@@ -156,22 +156,21 @@
     background-color: rgb(0 0 0 / 0.45);
 }
 
-/* Mobile navigation drawer */
+/* Mobile nav drawer: split panel + dimmer (no Bootstrap offcanvas). */
 .nav-offcanvas-dialog:not([open]) {
     display: none !important;
 }
 
 .nav-offcanvas-dialog[open] {
     display: flex !important;
-    flex-direction: row;
-    align-items: stretch;
     box-sizing: border-box;
+    position: fixed;
+    inset: 0;
     width: 100vw;
     max-width: none;
     height: 100vh;
     height: 100dvh;
-    max-height: 100dvh;
-    min-height: 0;
+    max-height: none;
     margin: 0;
     padding: 0;
     border: none;
@@ -179,65 +178,67 @@
 }
 
 .nav-offcanvas-dialog::backdrop {
-    background-color: rgb(0 0 0 / 0.35);
+    background: transparent;
 }
 
-/* Rock info panel (right) */
+.nav-offcanvas-dialog details[open] .nav-area-chevron {
+    transform: rotate(90deg);
+}
+
+/* Rock page info drawer (right panel); same fullscreen flex shell as nav dialog. */
 .rock-info-dialog:not([open]) {
     display: none !important;
 }
 
 .rock-info-dialog[open] {
     display: flex !important;
-    flex-direction: column;
     box-sizing: border-box;
     position: fixed;
-    inset: 0 0 0 auto;
-    margin: 0;
-    width: min(100vw, 28rem);
-    max-width: 100%;
+    inset: 0;
+    width: 100vw;
+    max-width: none;
     height: 100vh;
     height: 100dvh;
-    max-height: 100dvh;
-    min-height: 0;
-    border: none;
+    max-height: none;
+    margin: 0;
     padding: 0;
-    translate: 0 0;
+    border: none;
+    background: transparent;
 }
 
 .rock-info-dialog::backdrop {
-    background-color: rgb(0 0 0 / 0.35);
+    background: transparent;
 }
 
-/* Search dialog (large centered) */
-.search-modal-dialog:not([open]) {
+.rock-info-dialog details[open] .rock-accordion-chevron {
+    transform: rotate(90deg);
+}
+
+/* Rock route info: centered <dialog> (do not put flex on <dialog> without [open] — same rule as map dialog). */
+.shared-route-dialog:not([open]) {
     display: none !important;
 }
 
-.search-modal-dialog[open] {
+.shared-route-dialog[open] {
     display: flex !important;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     box-sizing: border-box;
-    width: min(100vw, 48rem);
+    position: fixed;
+    inset: 0;
+    width: 100vw;
     max-width: none;
-    max-height: min(100vh, 100dvh);
-    height: auto;
-    margin: auto;
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 1rem;
     border: none;
-    padding: 0;
-    translate: 0 0;
+    background: transparent;
 }
 
-.search-modal-dialog::backdrop {
+.shared-route-dialog::backdrop {
     background-color: rgb(0 0 0 / 0.45);
-}
-
-.rock-drawer-details > summary {
-    list-style: none;
-}
-
-.rock-drawer-details > summary::-webkit-details-marker {
-    display: none;
 }
 
 @media (max-width: 575.98px) {

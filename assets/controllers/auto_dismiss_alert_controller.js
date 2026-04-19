@@ -16,10 +16,6 @@ export default class extends Controller {
   }
 
   dismiss() {
-    if (this.timeoutId) {
-      window.clearTimeout(this.timeoutId);
-      this.timeoutId = null;
-    }
     this.element.remove();
   }
 }

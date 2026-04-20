@@ -16,11 +16,6 @@ export default class extends Controller {
   }
 
   dismiss() {
-    const btn = this.element.querySelector(".btn-close");
-    if (btn) {
-      btn.click();
-    } else {
-      this.element.remove();
-    }
+    this.element.remove();
   }
 }

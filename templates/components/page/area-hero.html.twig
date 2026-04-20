@@ -11,35 +11,35 @@
 			<div class="h-[100px]"></div>
 		{% endif %}
 	</div>
-	<div class="container absolute inset-x-0 top-0 z-[1] mx-auto my-3">
-		<div class="rounded pb-3">
-			<div class="flex items-center justify-between rounded bg-white/60 p-3 shadow-lg ring-1 ring-black/5 dark:bg-white/50 dark:ring-white/10">
-				<div class="flex items-center">
-					<h1 class="stay-black mb-0 mr-2 text-2xl font-medium sm:text-3xl">
+	<div class="absolute inset-x-0 top-0 z-[1] mx-auto my-3 w-full max-w-[1024px] px-2 sm:px-4">
+		<div class="rounded pb-3 sm:pb-4">
+			<div class="flex min-w-0 items-center justify-between gap-3 rounded-md bg-white/60 p-3 shadow-md ring-1 ring-black/5 dark:bg-white/50 dark:ring-white/10">
+				<div class="flex min-w-0 flex-1 items-center">
+					<h1 class="stay-black mb-0 min-w-0 text-2xl font-medium sm:text-3xl">
 						{{ areaName }}
 					</h1>
 				</div>
-				<div class="flex items-center">
+				<div class="flex shrink-0 items-center">
 					<div class="dropdown relative">
-						<button class="dropdown-toggle inline-flex items-center rounded-md border border-gray-400 bg-white px-2.5 py-1 text-sm font-medium text-gray-800 shadow-xs hover:bg-gray-100 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-gray-400 dark:border-gray-500 dark:text-gray-100 dark:hover:bg-gray-800" type="button" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}' data-bs-auto-close="true" aria-expanded="false" aria-haspopup="true" aria-label="Weitere Informationen">
-							<div class="modal-info"></div>
+						<button class="dropdown-toggle inline-flex shrink-0 cursor-pointer items-center rounded-md border border-gray-400 bg-white px-2.5 py-1 text-sm font-medium text-gray-800 shadow-xs hover:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-gray-400 dark:border-gray-500 dark:text-gray-100 dark:hover:bg-gray-800" type="button" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}' data-bs-auto-close="true" aria-expanded="false" aria-haspopup="true" aria-label="Weitere Informationen">
+							<div class="modal-info bg-center bg-no-repeat" style="width: 22px; height: 22px;" aria-hidden="true"></div>
 						</button>
-						<ul class="dropdown-menu dropdown-menu-end z-[1035] min-w-[12rem] rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-900">
+						<ul class="dropdown-menu dropdown-menu-end z-[1080] m-0 min-w-[12rem] list-none rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-900">
 							{% if areaKletterkonzeption %}
 								<li>
-									<button type="button" class="dropdown-item flex w-full items-center px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800" data-bs-toggle="modal" data-bs-target="#kletterkonzeptionModal"><span class="modal-info mr-2 shrink-0"></span> Kletterkonzeption - {{ areaName }}</button>
+									<button type="button" class="dropdown-item flex w-full cursor-pointer items-center border-0 bg-transparent px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100 focus-visible:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-400 dark:text-gray-100 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800" data-bs-dismiss="dropdown" onclick="document.getElementById('kletterkonzeptionModal').showModal()"><span class="modal-info me-2 shrink-0 bg-center bg-no-repeat" style="width: 22px; height: 22px;" aria-hidden="true"></span> Kletterkonzeption - {{ areaName }}</button>
 								</li>
 							{% endif %}
 							{% if top100Routes is not empty %}
 								<li>
-									<button type="button" class="dropdown-item flex w-full items-center px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800" data-bs-toggle="modal" data-bs-target="#top100RoutesModal"><span class="top-100 mr-2 shrink-0"></span> Top 100 - {{ areaName }}</button>
+									<button type="button" class="dropdown-item flex w-full cursor-pointer items-center border-0 bg-transparent px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100 focus-visible:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-400 dark:text-gray-100 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800" data-bs-dismiss="dropdown" onclick="document.getElementById('top100RoutesModal').showModal()"><span class="top-100 me-2 shrink-0" aria-hidden="true"></span> Top 100 - {{ areaName }}</button>
 								</li>
 							{% endif %}
 							<li>
-								<button type="button" class="dropdown-item flex w-full items-center px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800" data-bs-toggle="modal" data-bs-target="#modalWeather"><span class="weather mr-2 shrink-0"></span> Wetter</button>
+								<button type="button" class="dropdown-item flex w-full cursor-pointer items-center border-0 bg-transparent px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100 focus-visible:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-400 dark:text-gray-100 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800" data-bs-dismiss="dropdown" onclick="document.getElementById('modalWeather').showModal()"><span class="weather me-2 shrink-0" aria-hidden="true"></span> Wetter</button>
 							</li>
 							<li>
-								<button type="button" class="dropdown-item flex w-full items-center px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800" onclick="document.getElementById('modalAreaMap').showModal()"><span class="map mr-2 shrink-0"></span>Übersichtskarte {{ areaName }}</button>
+								<button type="button" class="dropdown-item flex w-full cursor-pointer items-center border-0 bg-transparent px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100 focus-visible:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-400 dark:text-gray-100 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800" data-bs-dismiss="dropdown" onclick="document.getElementById('modalAreaMap').showModal()"><span class="map me-2 shrink-0" aria-hidden="true"></span>Übersichtskarte {{ areaName }}</button>
 							</li>
 						</ul>
 					</div>

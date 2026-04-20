@@ -1,15 +1,31 @@
-<div id="kletterkonzeptionModal" class="modal fade" tabindex="-1" aria-hidden="true" aria-labelledby="kletterkonzeptionModalLabel" data-modal-route-information-target="modal">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="kletterkonzeptionModalLabel">Kletterkonzeption - {{ areaName }}</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<div class="kletterkonzeption-content small">
-					{{ areaKletterkonzeption|raw }}
-				</div>
+{# Expects: areaName, areaKletterkonzeption (HTML) — open via document.getElementById('kletterkonzeptionModal').showModal() #}
+<dialog
+	id="kletterkonzeptionModal"
+	class="shared-route-dialog z-[1060]"
+	tabindex="-1"
+	aria-labelledby="kletterkonzeptionModalLabel"
+	aria-modal="true"
+	onclick="if (event.target === this) this.close()"
+>
+	<div class="relative flex max-h-[min(90vh,48rem)] w-full max-w-4xl flex-col overflow-hidden rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] text-[var(--theme-text)] shadow-xl" onclick="event.stopPropagation()">
+		<header class="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--theme-border)] px-4 py-3">
+			<h2 id="kletterkonzeptionModalLabel" class="stay-black m-0 min-w-0 flex-1 text-base font-semibold leading-tight text-[var(--theme-text)] sm:text-lg">Kletterkonzeption - {{ areaName }}</h2>
+			<button
+				type="button"
+				class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--theme-text)] opacity-70 hover:bg-[var(--theme-bg-lighter)] hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]"
+				onclick="this.closest('dialog').close()"
+				aria-label="{{ 'close'|trans({}, 'messages') }}"
+			>
+				<span class="sr-only">{{ 'close'|trans({}, 'messages') }}</span>
+				<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+				</svg>
+			</button>
+		</header>
+		<div class="min-h-0 flex-1 overflow-y-auto px-4 py-3">
+			<div class="kletterkonzeption-content text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-[#075985] [&_a]:underline [&_img]:max-w-full [&_img]:h-auto [&_ul]:my-2 [&_ol]:my-2 [&_p]:my-2 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0">
+				{{ areaKletterkonzeption|raw }}
 			</div>
 		</div>
 	</div>
-</div>
+</dialog>

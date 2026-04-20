@@ -27,7 +27,7 @@
 						<ul class="dropdown-menu dropdown-menu-end z-[1080] m-0 min-w-[12rem] list-none rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-900">
 							{% if areaKletterkonzeption %}
 								<li>
-									<button type="button" class="dropdown-item flex w-full cursor-pointer items-center border-0 bg-transparent px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100 focus-visible:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-400 dark:text-gray-100 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800" data-bs-toggle="modal" data-bs-target="#kletterkonzeptionModal"><span class="modal-info me-2 shrink-0 bg-center bg-no-repeat" style="width: 22px; height: 22px;" aria-hidden="true"></span> Kletterkonzeption - {{ areaName }}</button>
+									<button type="button" class="dropdown-item flex w-full cursor-pointer items-center border-0 bg-transparent px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100 focus-visible:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-400 dark:text-gray-100 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800" data-bs-dismiss="dropdown" onclick="document.getElementById('kletterkonzeptionModal').showModal()"><span class="modal-info me-2 shrink-0 bg-center bg-no-repeat" style="width: 22px; height: 22px;" aria-hidden="true"></span> Kletterkonzeption - {{ areaName }}</button>
 								</li>
 							{% endif %}
 							{% if top100Routes is not empty %}

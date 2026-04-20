@@ -1,166 +1,169 @@
-{# Search modal - opened when clicking the search input or icon in the nav #}
-<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true" data-search-modal-target="modal">
-	<div class="modal-dialog modal-lg modal-dialog-scrollable">
-		<div class="modal-content">
-			<div class="modal-header py-2">
-				<h5 class="modal-title stay-black fs-6 mb-0" id="searchModalLabel">Suche</h5>
-				<button type="button" class="btn-close small text-black p-0" data-bs-dismiss="modal" aria-label="Close"></button>
+{# Search modal — native <dialog id="searchModal">; opened via search-modal#open (showModal) #}
+<dialog
+	id="searchModal"
+	class="shared-route-dialog z-[10550]"
+	tabindex="-1"
+	aria-labelledby="searchModalLabel"
+	aria-modal="true"
+	data-search-modal-target="modal"
+	onclick="if (event.target === this) this.close()"
+>
+	<div class="relative flex max-h-[min(92vh,52rem)] w-full max-w-3xl flex-col overflow-hidden rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] text-[var(--theme-text)] shadow-xl" onclick="event.stopPropagation()">
+		<header class="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--theme-border)] px-4 py-2">
+			<h2 id="searchModalLabel" class="stay-black m-0 min-w-0 flex-1 text-base font-semibold leading-tight text-[var(--theme-text)]">Suche</h2>
+			<button
+				type="button"
+				class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--theme-text)] opacity-70 hover:bg-[var(--theme-bg-lighter)] hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]"
+				onclick="this.closest('dialog').close()"
+				aria-label="{{ 'close'|trans({}, 'messages') }}"
+			>
+				<span class="sr-only">{{ 'close'|trans({}, 'messages') }}</span>
+				<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+				</svg>
+			</button>
+		</header>
+		<div class="min-h-0 flex-1 overflow-y-auto px-4 py-3">
+			{# Tabs #}
+			<div class="mb-3 flex gap-1 overflow-x-auto overflow-y-hidden rounded-lg bg-gray-100 p-1 [-ms-overflow-style:none] [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1" id="searchTabs" role="tablist" aria-label="Suchmodus">
+				<button type="button" class="shrink-0 rounded-md border-0 bg-white px-3 py-2 text-sm font-semibold text-[var(--theme-text)] shadow-sm transition-opacity hover:opacity-100" id="tab-name" role="tab" aria-selected="true" data-search-modal-sheet-param="name" data-action="click->search-modal#showTab">Route/Fels</button>
+				<button type="button" class="shrink-0 rounded-md border-0 bg-transparent px-3 py-2 text-sm font-medium text-[var(--theme-text)] opacity-60 transition-opacity hover:opacity-100" id="tab-firstascent" role="tab" aria-selected="false" data-search-modal-sheet-param="firstascent" data-action="click->search-modal#showTab">Erstbegeher</button>
+				<button type="button" class="shrink-0 rounded-md border-0 bg-transparent px-3 py-2 text-sm font-medium text-[var(--theme-text)] opacity-60 transition-opacity hover:opacity-100" id="tab-grade" role="tab" aria-selected="false" data-search-modal-sheet-param="grade" data-action="click->search-modal#showTab">Grad</button>
+				<button type="button" class="shrink-0 rounded-md border-0 bg-transparent px-3 py-2 text-sm font-medium text-[var(--theme-text)] opacity-60 transition-opacity hover:opacity-100" id="tab-attributes" role="tab" aria-selected="false" data-search-modal-sheet-param="attributes" data-action="click->search-modal#showTab">Eigenschaften</button>
 			</div>
-			<div class="modal-body">
-			
-				{# Tabs: Route/Fels | Erstbegeher | Schwierigkeitsgrade | Eigenschaften #}
-				<ul class="nav nav-tabs mb-3 p-1 rounded-3" id="searchTabs" role="tablist">
-					<li class="nav-item" role="presentation">
-						<button class="nav-link active px-2 py-1" id="tab-name" data-bs-toggle="tab" data-bs-target="#pane-name" type="button" role="tab">Route/Fels</button>
-					</li>
-					<li class="nav-item" role="presentation">
-						<button class="nav-link px-2 py-1" id="tab-firstascent" data-bs-toggle="tab" data-bs-target="#pane-firstascent" type="button" role="tab">Erstbegeher</button>
-					</li>
-					<li class="nav-item" role="presentation">
-						<button class="nav-link px-2 py-1" id="tab-grade" data-bs-toggle="tab" data-bs-target="#pane-grade" type="button" role="tab">Grad</button>
-					</li>
-					<li class="nav-item" role="presentation">
-						<button class="nav-link px-2 py-1" id="tab-attributes" data-bs-toggle="tab" data-bs-target="#pane-attributes" type="button" role="tab">Eigenschaften</button>
-					</li>
-				</ul>
 
-				<div class="tab-content mb-4">
-					<div class="tab-pane fade show active" id="pane-name" role="tabpanel">
-						<label for="searchModalNameInput" class="visually-hidden">Suche nach Felsen oder Routen</label>
-						<div class="d-flex align-items-center form-control form-control-sm border-black text-black">
-							<i class="fas fa-search magnifier me-2" style="color: #6c757d;" aria-hidden="true"></i>
-							<input type="search" id="searchModalNameInput" class="form-control border-0 p-0 small" name="searchName" data-search-modal-target="nameInput" placeholder="Suche nach Felsen oder Routen..." data-action="input->search-modal#searchNameDebounced keydown.enter->search-modal#searchName" minlength="2">
-						</div>
-					</div>
-					<div class="tab-pane fade" id="pane-firstascent" role="tabpanel">
-						<label for="searchModalFirstAscentInput" class="visually-hidden">Name des Erstbegehers</label>
-						<div class="d-flex align-items-center form-control form-control-sm border-black text-black">
-							<i class="fas fa-search magnifier me-2" style="color: #6c757d;" aria-hidden="true"></i>
-							<input type="search" id="searchModalFirstAscentInput" class="form-control border-0 p-0" data-search-modal-target="firstAscentInput" placeholder="Name des Erstbegehers..." data-action="input->search-modal#searchFirstAscentDebounced keydown.enter->search-modal#searchFirstAscent" minlength="2">
-						</div>
-					</div>
-					<div class="tab-pane fade" id="pane-grade" role="tabpanel">
-						<div class="row mb-3">
-							<div class="col-12 col-md-6 mb-2">
-								<label class="form-label small fw-medium" for="searchModalGradeAreaSelect">Gebiet</label>
-								<select id="searchModalGradeAreaSelect" class="form-select form-select-sm" data-search-modal-target="areaSelect">
-									<option value="">Alle Gebiete</option>
-									{% for area in getSidebarAreas() %}
-										<option value="{{ area.slug }}">{{ area.name }}</option>
-									{% endfor %}
-								</select>
-							</div>
-							<div class="col-12 mb-2">
-								<fieldset class="border-0 m-0 p-0">
-									<legend class="form-label small fw-medium float-none w-auto p-0 mb-2">Schwierigkeitsgrade</legend>
-									<div class="d-flex flex-wrap gap-2">
-										{% for i in 1..11 %}
-											<div class="form-check form-check-inline">
-												<input class="form-check-input" type="checkbox" data-search-modal-target="gradeCheck" value="{{ i }}" id="searchGrade{{ i }}">
-												<label class="form-check-label small" for="searchGrade{{ i }}">{{ i }}</label>
-											</div>
-										{% endfor %}
-									</div>
-								</fieldset>
-							</div>
-							<div class="col-12">
-								<button class="btn btn-outline-secondary btn-sm" type="button" data-action="click->search-modal#searchByGrade">
-									<i class="fas fa-search me-1"></i>Nach Schwierigkeit suchen
-								</button>
-							</div>
-						</div>
-					</div>
-					<div class="tab-pane fade" id="pane-attributes" role="tabpanel">
-						<div class="row mb-3">
-							<div class="col-12 col-md-6 mb-2">
-								<label class="form-label small fw-medium" for="searchModalAttributesAreaSelect">Gebiet</label>
-								<select id="searchModalAttributesAreaSelect" class="form-select form-select-sm" data-search-modal-target="areaSelectAttributes">
-									<option value="">Alle Gebiete</option>
-									{% for area in getSidebarAreas() %}
-										<option value="{{ area.slug }}">{{ area.name }}</option>
-									{% endfor %}
-								</select>
-							</div>
-							<div class="col-12 mb-2">
-								<fieldset class="border-0 m-0 p-0">
-									<legend class="form-label small fw-medium float-none w-auto p-0 mb-2">Eigenschaften</legend>
-									<div class="d-flex flex-wrap gap-3">
-									<div class="form-check d-flex align-items-center gap-2">
-										<input class="form-check-input" type="checkbox" data-search-modal-target="attrChildFriendly" value="1" id="searchAttrChildFriendly">
-										<label class="form-check-label small d-flex align-items-center gap-1 mb-0" for="searchAttrChildFriendly">
-											<span class="child-friendly"></span>
-											{{ "child.friendly"|trans }}
-										</label>
-									</div>
-									<div class="form-check d-flex align-items-center gap-2">
-										<input class="form-check-input" type="checkbox" data-search-modal-target="attrSunny" value="1" id="searchAttrSunny">
-										<label class="form-check-label small d-flex align-items-center gap-1 mb-0" for="searchAttrSunny">
-											<span class="sun"></span>
-											{{ "sunny"|trans }}
-										</label>
-									</div>
-									<div class="form-check d-flex align-items-center gap-2">
-										<input class="form-check-input" type="checkbox" data-search-modal-target="attrRainProtected" value="1" id="searchAttrRainProtected">
-										<label class="form-check-label small d-flex align-items-center gap-1 mb-0" for="searchAttrRainProtected">
-											<span class="umbrella"></span>
-											{{ "rain.proof"|trans }}
-										</label>
-									</div>
-									<div class="form-check d-flex align-items-center gap-2">
-										<input class="form-check-input" type="checkbox" data-search-modal-target="attrTrain" value="1" id="searchAttrTrain">
-										<label class="form-check-label small d-flex align-items-center gap-1 mb-0" for="searchAttrTrain">
-											<span class="train" aria-hidden="true"></span>
-											{{ "train.reachable"|trans }}
-										</label>
-									</div>
-									<div class="form-check d-flex align-items-center gap-2">
-										<input class="form-check-input" type="checkbox" data-search-modal-target="attrBike" value="1" id="searchAttrBike">
-										<label class="form-check-label small d-flex align-items-center gap-1 mb-0" for="searchAttrBike">
-											<span class="bike" aria-hidden="true"></span>
-											{{ "bike.reachable"|trans }}
-										</label>
-									</div>
-									</div>
-								</fieldset>
-							</div>
-							<div class="col-12">
-								<button class="btn btn-outline-secondary btn-sm" type="button" data-action="click->search-modal#searchByAttributes">
-									<i class="fas fa-search me-1"></i>Nach Eigenschaften suchen
-								</button>
-							</div>
-						</div>
+			<div class="mb-4">
+				<div id="pane-name" role="tabpanel" aria-labelledby="tab-name">
+					<label for="searchModalNameInput" class="sr-only">Suche nach Felsen oder Routen</label>
+					<div class="flex items-center gap-2 rounded-md border border-black/20 bg-[var(--theme-bg-lighter)] px-2 py-1.5 text-sm text-[var(--theme-text)] dark:border-white/20">
+						<i class="fas fa-search magnifier shrink-0 text-gray-500 opacity-80 dark:text-gray-400" aria-hidden="true"></i>
+						<input type="search" id="searchModalNameInput" class="min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-[var(--theme-text)] placeholder:text-gray-500 focus:outline-hidden focus:ring-0" name="searchName" data-search-modal-target="nameInput" placeholder="Suche nach Felsen oder Routen..." data-action="input->search-modal#searchNameDebounced keydown.enter->search-modal#searchName" minlength="2">
 					</div>
 				</div>
-				{# Results section - separate, below the search forms #}
-				<div data-search-modal-target="resultsContainer" class="d-none">
-					<h3 class="h6 fw-medium mb-2"><span data-search-modal-target="resultsCount">0</span> Ergebnisse</h3>
-					<div data-search-modal-target="rocksSection" class="mb-3 d-none">
-						<div class="fw-bold mb-1">Felsen</div>
-						<ul class="list-group list-group-flush small" data-search-modal-target="rocksList"></ul>
+				<div class="hidden" id="pane-firstascent" role="tabpanel" aria-labelledby="tab-firstascent">
+					<label for="searchModalFirstAscentInput" class="sr-only">Name des Erstbegehers</label>
+					<div class="flex items-center gap-2 rounded-md border border-black/20 bg-[var(--theme-bg-lighter)] px-2 py-1.5 text-sm text-[var(--theme-text)] dark:border-white/20">
+						<i class="fas fa-search magnifier shrink-0 text-gray-500 opacity-80 dark:text-gray-400" aria-hidden="true"></i>
+						<input type="search" id="searchModalFirstAscentInput" class="min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-[var(--theme-text)] placeholder:text-gray-500 focus:outline-hidden focus:ring-0" data-search-modal-target="firstAscentInput" placeholder="Name des Erstbegehers..." data-action="input->search-modal#searchFirstAscentDebounced keydown.enter->search-modal#searchFirstAscent" minlength="2">
 					</div>
-					<hr />
-					<div data-search-modal-target="routesSection" class="d-none">
-						<div class="fw-bold mb-2">Touren</div>
-						<div class="row mb-2 p-1">
-							<div class="col-5 fw-bold small">Route</div>
-							<div class="col-1 fw-bold small">Grad</div>
-							<div class="col-3 fw-bold small">Fels</div>
-							<div class="col-3 fw-bold small">Gebiet</div>
+				</div>
+				<div class="hidden" id="pane-grade" role="tabpanel" aria-labelledby="tab-grade">
+					<div class="mb-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+						<div class="md:col-span-1">
+							<label class="mb-1 block text-xs font-medium text-[var(--theme-text)]" for="searchModalGradeAreaSelect">Gebiet</label>
+							<select id="searchModalGradeAreaSelect" class="block w-full rounded-md border border-[var(--theme-border)] bg-[var(--theme-bg)] px-2 py-1.5 text-sm text-[var(--theme-text)] focus:border-[var(--theme-border)] focus:outline-hidden focus:ring-2 focus:ring-[var(--theme-border)]" data-search-modal-target="areaSelect">
+								<option value="">Alle Gebiete</option>
+								{% for area in getSidebarAreas() %}
+									<option value="{{ area.slug }}">{{ area.name }}</option>
+								{% endfor %}
+							</select>
 						</div>
-						<ul class="ps-0" data-search-modal-target="routesTable"></ul>
-						<div data-search-modal-target="pagerContainer" class="d-none mt-2 d-flex align-items-center justify-content-between flex-wrap gap-2">
-							<button type="button" class="btn btn-outline-secondary btn-sm" data-search-modal-target="pagerPrev" data-action="click->search-modal#gradePagePrev" aria-label="Vorherige Seite">
-								<i class="fas fa-chevron-left me-1"></i>Zurück
-							</button>
-							<span class="small text-muted" data-search-modal-target="pagerInfo">Seite 1 von 1</span>
-							<button type="button" class="btn btn-outline-secondary btn-sm" data-search-modal-target="pagerNext" data-action="click->search-modal#gradePageNext" aria-label="Nächste Seite">
-								Weiter<i class="fas fa-chevron-right ms-1"></i>
+						<div class="md:col-span-2">
+							<fieldset class="m-0 border-0 p-0">
+								<legend class="mb-2 block w-auto p-0 text-xs font-medium text-[var(--theme-text)]">Schwierigkeitsgrade</legend>
+								<div class="flex flex-wrap gap-3">
+									{% for i in 1..11 %}
+										<label class="inline-flex cursor-pointer items-center gap-2 text-sm text-[var(--theme-text)]" for="searchGrade{{ i }}">
+											<input class="h-4 w-4 shrink-0 rounded border-[var(--theme-border)] text-[#075985] focus:ring-[var(--theme-border)]" type="checkbox" data-search-modal-target="gradeCheck" value="{{ i }}" id="searchGrade{{ i }}">
+											<span>{{ i }}</span>
+										</label>
+									{% endfor %}
+								</div>
+							</fieldset>
+						</div>
+						<div class="md:col-span-2">
+							<button class="inline-flex items-center gap-2 rounded-md border border-[var(--theme-border)] bg-transparent px-3 py-1.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" type="button" data-action="click->search-modal#searchByGrade">
+								<i class="fas fa-search text-xs opacity-80" aria-hidden="true"></i>
+								Nach Schwierigkeit suchen
 							</button>
 						</div>
 					</div>
-					<div data-search-modal-target="emptyState" class="text-muted small d-none">Keine Ergebnisse gefunden.</div>
 				</div>
+				<div class="hidden" id="pane-attributes" role="tabpanel" aria-labelledby="tab-attributes">
+					<div class="mb-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+						<div class="md:col-span-1">
+							<label class="mb-1 block text-xs font-medium text-[var(--theme-text)]" for="searchModalAttributesAreaSelect">Gebiet</label>
+							<select id="searchModalAttributesAreaSelect" class="block w-full rounded-md border border-[var(--theme-border)] bg-[var(--theme-bg)] px-2 py-1.5 text-sm text-[var(--theme-text)] focus:border-[var(--theme-border)] focus:outline-hidden focus:ring-2 focus:ring-[var(--theme-border)]" data-search-modal-target="areaSelectAttributes">
+								<option value="">Alle Gebiete</option>
+								{% for area in getSidebarAreas() %}
+									<option value="{{ area.slug }}">{{ area.name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+						<div class="md:col-span-2">
+							<fieldset class="m-0 border-0 p-0">
+								<legend class="mb-2 block w-auto p-0 text-xs font-medium text-[var(--theme-text)]">Eigenschaften</legend>
+								<div class="flex flex-wrap gap-x-4 gap-y-3">
+									<label class="inline-flex cursor-pointer items-center gap-2 text-sm text-[var(--theme-text)]" for="searchAttrChildFriendly">
+										<input class="h-4 w-4 shrink-0 rounded border-[var(--theme-border)] text-[#075985] focus:ring-[var(--theme-border)]" type="checkbox" data-search-modal-target="attrChildFriendly" value="1" id="searchAttrChildFriendly">
+										<span class="child-friendly shrink-0"></span>
+										{{ "child.friendly"|trans }}
+									</label>
+									<label class="inline-flex cursor-pointer items-center gap-2 text-sm text-[var(--theme-text)]" for="searchAttrSunny">
+										<input class="h-4 w-4 shrink-0 rounded border-[var(--theme-border)] text-[#075985] focus:ring-[var(--theme-border)]" type="checkbox" data-search-modal-target="attrSunny" value="1" id="searchAttrSunny">
+										<span class="sun shrink-0"></span>
+										{{ "sunny"|trans }}
+									</label>
+									<label class="inline-flex cursor-pointer items-center gap-2 text-sm text-[var(--theme-text)]" for="searchAttrRainProtected">
+										<input class="h-4 w-4 shrink-0 rounded border-[var(--theme-border)] text-[#075985] focus:ring-[var(--theme-border)]" type="checkbox" data-search-modal-target="attrRainProtected" value="1" id="searchAttrRainProtected">
+										<span class="umbrella shrink-0"></span>
+										{{ "rain.proof"|trans }}
+									</label>
+									<label class="inline-flex cursor-pointer items-center gap-2 text-sm text-[var(--theme-text)]" for="searchAttrTrain">
+										<input class="h-4 w-4 shrink-0 rounded border-[var(--theme-border)] text-[#075985] focus:ring-[var(--theme-border)]" type="checkbox" data-search-modal-target="attrTrain" value="1" id="searchAttrTrain">
+										<span class="train shrink-0" aria-hidden="true"></span>
+										{{ "train.reachable"|trans }}
+									</label>
+									<label class="inline-flex cursor-pointer items-center gap-2 text-sm text-[var(--theme-text)]" for="searchAttrBike">
+										<input class="h-4 w-4 shrink-0 rounded border-[var(--theme-border)] text-[#075985] focus:ring-[var(--theme-border)]" type="checkbox" data-search-modal-target="attrBike" value="1" id="searchAttrBike">
+										<span class="bike shrink-0" aria-hidden="true"></span>
+										{{ "bike.reachable"|trans }}
+									</label>
+								</div>
+							</fieldset>
+						</div>
+						<div class="md:col-span-2">
+							<button class="inline-flex items-center gap-2 rounded-md border border-[var(--theme-border)] bg-transparent px-3 py-1.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" type="button" data-action="click->search-modal#searchByAttributes">
+								<i class="fas fa-search text-xs opacity-80" aria-hidden="true"></i>
+								Nach Eigenschaften suchen
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div data-search-modal-target="resultsContainer" class="hidden">
+				<h3 class="mb-2 text-sm font-semibold text-[var(--theme-text)]"><span data-search-modal-target="resultsCount">0</span> Ergebnisse</h3>
+				<div data-search-modal-target="rocksSection" class="mb-3 hidden">
+					<div class="mb-1 text-xs font-bold uppercase tracking-wide text-[var(--theme-text)]">Felsen</div>
+					<ul class="m-0 list-none divide-y divide-[var(--theme-border)] text-sm" data-search-modal-target="rocksList"></ul>
+				</div>
+				<hr class="my-3 border-[var(--theme-border)]" />
+				<div data-search-modal-target="routesSection" class="hidden">
+					<div class="mb-2 text-xs font-bold uppercase tracking-wide text-[var(--theme-text)]">Touren</div>
+					<div class="mb-2 hidden gap-2 px-1 text-xs font-bold text-[var(--theme-text)] sm:grid sm:grid-cols-12" aria-hidden="true">
+						<div class="col-span-5">Route</div>
+						<div class="col-span-1">Grad</div>
+						<div class="col-span-3">Fels</div>
+						<div class="col-span-3">Gebiet</div>
+					</div>
+					<ul class="m-0 list-none p-0" data-search-modal-target="routesTable"></ul>
+					<div data-search-modal-target="pagerContainer" class="mt-2 hidden">
+						<div class="flex flex-wrap items-center justify-between gap-2">
+							<button type="button" class="inline-flex items-center gap-1 rounded-md border border-[var(--theme-border)] bg-transparent px-3 py-1.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)] disabled:cursor-not-allowed disabled:opacity-50" data-search-modal-target="pagerPrev" data-action="click->search-modal#gradePagePrev" aria-label="Vorherige Seite">
+								<i class="fas fa-chevron-left text-xs" aria-hidden="true"></i>
+								Zurück
+							</button>
+							<span class="text-xs text-gray-500 dark:text-gray-400" data-search-modal-target="pagerInfo">Seite 1 von 1</span>
+							<button type="button" class="inline-flex items-center gap-1 rounded-md border border-[var(--theme-border)] bg-transparent px-3 py-1.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)] disabled:cursor-not-allowed disabled:opacity-50" data-search-modal-target="pagerNext" data-action="click->search-modal#gradePageNext" aria-label="Nächste Seite">
+								Weiter
+								<i class="fas fa-chevron-right text-xs" aria-hidden="true"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+				<div data-search-modal-target="emptyState" class="hidden text-sm text-gray-500 dark:text-gray-400">Keine Ergebnisse gefunden.</div>
 			</div>
 		</div>
 	</div>
-</div>
+</dialog>

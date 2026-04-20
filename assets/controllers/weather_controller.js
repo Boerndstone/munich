@@ -36,16 +36,19 @@ export default class extends Controller {
       }
 
       const celsius = Math.round(currentWeatherData.main.temp);
-      document.querySelector(
-        "#temperature"
-      ).textContent = `${formattedDate} Temperatur: ${celsius}°C`;
+      const temperatureEl = this.element.querySelector("#temperature");
+      if (temperatureEl) {
+        temperatureEl.textContent = `${formattedDate} Temperatur: ${celsius}°C`;
+      }
 
       const currentIconCode = currentWeatherData.weather[0].icon;
       const currentIconUrl = `https://openweathermap.org/img/wn/${currentIconCode}@2x.png`;
-      document.querySelector(
+      const currentIconWrap = this.element.querySelector(
         ".current-weather .icon"
-      ).innerHTML = `<img src="${currentIconUrl}" alt="weather icon">`;
-      document.querySelector(".forecast-text").innerHTML = `hallo`;
+      );
+      if (currentIconWrap) {
+        currentIconWrap.innerHTML = `<img src="${currentIconUrl}" alt="weather icon">`;
+      }
 
       // Fetch forecast weather data
       const forecastResponse = await fetch(forecastWeatherUrl);
@@ -54,7 +57,7 @@ export default class extends Controller {
       }
       const forecastData = await forecastResponse.json();
 
-      const forecastDays = document.querySelectorAll(".day");
+      const forecastDays = this.element.querySelectorAll(".day");
       for (let i = 0; i < forecastDays.length; i++) {
         const forecastIndex = (i + 1) * 8; // Get data for every 24 hours (3-hour intervals * 8 = 1 day)
         const forecastDay = forecastData.list[forecastIndex];

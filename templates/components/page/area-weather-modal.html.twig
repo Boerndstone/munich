@@ -1,39 +1,54 @@
-{# Expects: areaLat, areaLng #}
-<div class="modal fade" id="modalWeather" tabindex="-1" aria-labelledby="modalWeatherLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-		<div class="modal-content">
-			<div class="modal-header py-2">
-				<h2 class="modal-title h6 mb-0" id="modalWeatherLabel">Wetter</h2>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
-			</div>
-			<div class="modal-body">
-				<div class="card py-2 card-body border-0 shadow-none">
-					<div {{ stimulus_controller('weather') }} data-weather-area-lat="{{ areaLat }}" data-weather-area-lng="{{ areaLng }}">
-						<div class="current-weather d-flex align-items-center">
-							<div class="icon icon-weather"></div>
-							<div id="temperature"></div>
+{# Expects: areaLat, areaLng — native <dialog>; open via document.getElementById('modalWeather').showModal() #}
+<dialog
+	id="modalWeather"
+	class="shared-route-dialog z-[1060]"
+	tabindex="-1"
+	aria-labelledby="modalWeatherLabel"
+	aria-modal="true"
+	onclick="if (event.target === this) this.close()"
+>
+	<div class="relative flex max-h-[min(90vh,44rem)] w-full max-w-4xl flex-col overflow-hidden rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] text-[var(--theme-text)] shadow-xl" onclick="event.stopPropagation()">
+		<header class="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--theme-border)] px-4 py-2">
+			<h2 id="modalWeatherLabel" class="stay-black m-0 min-w-0 flex-1 text-base font-semibold leading-tight text-[var(--theme-text)]">Wetter</h2>
+			<button
+				type="button"
+				class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--theme-text)] opacity-70 hover:bg-[var(--theme-bg-lighter)] hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]"
+				onclick="this.closest('dialog').close()"
+				aria-label="Schließen"
+			>
+				<span class="sr-only">Schließen</span>
+				<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+				</svg>
+			</button>
+		</header>
+		<div class="min-h-0 flex-1 overflow-y-auto px-4 py-3">
+			<div class="rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg-lighter)] px-3 py-3 sm:px-4">
+				<div {{ stimulus_controller('weather') }} data-weather-area-lat="{{ areaLat }}" data-weather-area-lng="{{ areaLng }}">
+					<div class="current-weather flex items-center gap-2">
+						<div class="icon icon-weather shrink-0"></div>
+						<div id="temperature" class="min-w-0 text-sm text-[var(--theme-text)] sm:text-base"></div>
+					</div>
+					<div class="forecast mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+						<div class="day rounded-md border border-[var(--theme-border)] bg-[var(--theme-bg)] p-3">
+							<div class="forecast-text text-sm font-medium text-[var(--theme-text)]"></div>
+							<div class="mt-2 flex items-center gap-2">
+								<div class="icon icon-weather shrink-0"></div>
+								<div class="temp text-sm text-[var(--theme-text)]"></div>
+							</div>
 						</div>
-						<div class="forecast row">
-							<div class="day col-3 card card-body m-2">
-								<div class="forecast-text"></div>
-								<div class="d-flex align-items-center">
-									<div class="icon icon-weather"></div>
-									<div class="temp"></div>
-								</div>
+						<div class="day rounded-md border border-[var(--theme-border)] bg-[var(--theme-bg)] p-3">
+							<div class="forecast-text text-sm font-medium text-[var(--theme-text)]"></div>
+							<div class="mt-2 flex items-center gap-2">
+								<div class="icon icon-weather shrink-0"></div>
+								<div class="temp text-sm text-[var(--theme-text)]"></div>
 							</div>
-							<div class="day col-3 card card-body m-2">
-								<div class="forecast-text"></div>
-								<div class="d-flex align-items-center">
-									<div class="icon icon-weather"></div>
-									<div class="temp"></div>
-								</div>
-							</div>
-							<div class="day col-3 card card-body m-2">
-								<div class="forecast-text"></div>
-								<div class="d-flex align-items-center">
-									<div class="icon icon-weather"></div>
-									<div class="temp"></div>
-								</div>
+						</div>
+						<div class="day rounded-md border border-[var(--theme-border)] bg-[var(--theme-bg)] p-3">
+							<div class="forecast-text text-sm font-medium text-[var(--theme-text)]"></div>
+							<div class="mt-2 flex items-center gap-2">
+								<div class="icon icon-weather shrink-0"></div>
+								<div class="temp text-sm text-[var(--theme-text)]"></div>
 							</div>
 						</div>
 					</div>
@@ -41,4 +56,4 @@
 			</div>
 		</div>
 	</div>
-</div>
+</dialog>

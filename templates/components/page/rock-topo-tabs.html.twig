@@ -1,11 +1,11 @@
 {# Expects: topos #}
 {% if topos is not empty %}
-	<div class="sticky-top border-bottom" style="top: 50px;">
-		<div class="scrollable-tabs-container container position-relative" {{ stimulus_controller('tabs') }}>
-			<ul class="p-0">
+	<div class="sticky top-[50px] z-[1000] border-b border-[var(--theme-border)] bg-[var(--theme-bg)]">
+		<div class="scrollable-tabs-container relative mx-auto max-w-[1024px] overflow-x-hidden bg-[var(--theme-bg)] px-2" {{ stimulus_controller('tabs') }}>
+			<ul class="m-0 flex list-none gap-6 overflow-x-auto overflow-y-hidden p-0 [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth [&::-webkit-scrollbar]:hidden">
 				{% for topo in topos %}
-					<li>
-						<a class="d-inline-block py-2 text-black fw-medium" href="#{{ topo.topoName|custom_replace|lower }}">{{ topo.topoName }}</a>
+					<li class="shrink-0">
+						<a class="inline-block select-none whitespace-nowrap border-b-2 border-b-transparent py-2 text-sm font-medium text-[var(--theme-text)] no-underline transition-opacity hover:opacity-80 [&.active]:border-b-[var(--theme-text)]" href="#{{ topo.topoName|custom_replace|lower }}">{{ topo.topoName }}</a>
 					</li>
 				{% endfor %}
 			</ul>

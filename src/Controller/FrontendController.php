@@ -101,7 +101,11 @@ class FrontendController extends AbstractController
     #[Route('/{slug}', name: 'show_rocks')]
     public function showRocksArea(
         FrontendCacheService $frontendCacheService,
-        #[MapEntity] Area $area,
+        #[MapEntity(
+            mapping: ['slug' => 'slug'],
+            message: 'Die Seite konnte nicht gefunden werden.',
+        )]
+        Area $area,
         string $slug
     ): Response {
 
@@ -176,7 +180,11 @@ class FrontendController extends AbstractController
         TopoRepository $topoRepository,
         PhotosRepository $photosRepository,
         RouteGroupingService $routeGroupingService,
-        #[MapEntity] Rock $rock,
+        #[MapEntity(
+            expr: 'repository.findOneByAreaSlugAndRockSlug(areaSlug, slug)',
+            message: 'Die Seite konnte nicht gefunden werden.',
+        )]
+        Rock $rock,
         $areaSlug,
         $slug,
         Packages $assetPackages,
@@ -274,7 +282,9 @@ class FrontendController extends AbstractController
                 ]);
             $mailer->send($email);
             $this->addFlash('success', $translator->trans('rock_improvement.success'));
-            return $this->redirectToRoute('show_rock', ['areaSlug' => $areaSlug, 'slug' => $slug]);
+            $rockRoute = $request->getLocale() === 'en' ? 'show_rock_en' : 'show_rock';
+
+            return $this->redirectToRoute($rockRoute, ['areaSlug' => $areaSlug, 'slug' => $slug]);
         }
 
         return $this->render('frontend/rock.html.twig', [

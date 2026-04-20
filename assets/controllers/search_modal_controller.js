@@ -1,5 +1,4 @@
-import { Controller } from "@hotwired/stimulus";
-import { Modal } from "bootstrap";
+import { Controller } from "stimulus";
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -13,45 +12,74 @@ export default class extends Controller {
   ];
 
   connect() {
-    this.bootstrapModal = null;
     this._debounceTimers = {};
     this._gradePagination = null; // { grades, area, totalCount, page, perPage }
-    const tabsEl = document.getElementById('searchTabs');
-    if (tabsEl) {
-      tabsEl.addEventListener('shown.bs.tab', (e) => {
-        this.clearResults();
-        this.scrollActiveTabToCenter(e.target);
-      });
+    this._onToggle = () => {
+      if (!this.hasModalTarget || !this.modalTarget.open) return;
+      const activeBtn = this.modalTarget.querySelector('[role="tab"][aria-selected="true"]');
+      if (activeBtn) this.scrollActiveTabToCenter(activeBtn);
+    };
+    if (this.hasModalTarget) {
+      this.modalTarget.addEventListener("toggle", this._onToggle);
     }
   }
 
   disconnect() {
-    if (this.bootstrapModal) {
-      this.bootstrapModal.dispose();
+    if (this.hasModalTarget && this._onToggle) {
+      this.modalTarget.removeEventListener("toggle", this._onToggle);
     }
   }
 
   scrollActiveTabToCenter(activeButton) {
-    const tabsEl = document.getElementById('searchTabs');
+    const tabsEl = document.getElementById("searchTabs");
     if (!tabsEl || !activeButton) return;
     const container = tabsEl;
     const btn = activeButton;
     const scrollLeft = btn.offsetLeft - (container.offsetWidth / 2) + (btn.offsetWidth / 2);
-    container.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
+    container.scrollTo({ left: Math.max(0, scrollLeft), behavior: "smooth" });
+  }
+
+  showTab(event) {
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const sheet = btn.getAttribute("data-search-modal-sheet-param");
+    if (!sheet || !this.hasModalTarget) return;
+
+    this.modalTarget.querySelectorAll('[role="tab"]').forEach((tab) => {
+      const active = tab === btn;
+      tab.setAttribute("aria-selected", active ? "true" : "false");
+      tab.classList.toggle("font-semibold", active);
+      tab.classList.toggle("font-medium", !active);
+      tab.classList.toggle("opacity-100", active);
+      tab.classList.toggle("opacity-60", !active);
+      tab.classList.toggle("bg-white", active);
+      tab.classList.toggle("shadow-sm", active);
+      tab.classList.toggle("bg-transparent", !active);
+    });
+
+    const paneMap = {
+      name: "pane-name",
+      firstascent: "pane-firstascent",
+      grade: "pane-grade",
+      attributes: "pane-attributes",
+    };
+    Object.entries(paneMap).forEach(([key, paneId]) => {
+      const pane = this.modalTarget.querySelector(`#${paneId}`);
+      if (pane) pane.classList.toggle("hidden", key !== sheet);
+    });
+
+    this.clearResults();
+    this.scrollActiveTabToCenter(btn);
   }
 
   open(event) {
     event?.preventDefault();
     if (!this.hasModalTarget) return;
-    if (!this.bootstrapModal) {
-      this.bootstrapModal = new Modal(this.modalTarget);
-      this.modalTarget.addEventListener('shown.bs.modal', () => {
-        const activeBtn = document.querySelector('#searchTabs .nav-link.active');
-        if (activeBtn) this.scrollActiveTabToCenter(activeBtn);
-      });
-    }
-    this.bootstrapModal.show();
-    setTimeout(() => this.modalTarget.querySelector('input[type="search"]')?.focus(), 300);
+    this.modalTarget.showModal();
+    requestAnimationFrame(() => {
+      const input = this.modalTarget.querySelector('[role="tabpanel"]:not(.hidden) input[type="search"]');
+      input?.focus();
+    });
   }
 
   searchNameDebounced() {
@@ -90,17 +118,17 @@ export default class extends Controller {
 
   clearResults() {
     this._gradePagination = null;
-    if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.add('d-none');
-    if (this.hasIdleStateTarget) this.idleStateTarget.classList.remove('d-none');
-    if (this.hasResultsCountTarget) this.resultsCountTarget.textContent = '0';
-    if (this.hasRocksListTarget) this.rocksListTarget.innerHTML = '';
-    if (this.hasRoutesTableTarget) this.routesTableTarget.innerHTML = '';
-    if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add('d-none');
-    if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add('d-none');
-    if (this.hasPagerContainerTarget) this.pagerContainerTarget.classList.add('d-none');
+    if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.add("hidden");
+    if (this.hasIdleStateTarget) this.idleStateTarget.classList.remove("hidden");
+    if (this.hasResultsCountTarget) this.resultsCountTarget.textContent = "0";
+    if (this.hasRocksListTarget) this.rocksListTarget.innerHTML = "";
+    if (this.hasRoutesTableTarget) this.routesTableTarget.innerHTML = "";
+    if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add("hidden");
+    if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add("hidden");
+    if (this.hasPagerContainerTarget) this.pagerContainerTarget.classList.add("hidden");
     if (this.hasEmptyStateTarget) {
-      this.emptyStateTarget.classList.add('d-none');
-      this.emptyStateTarget.textContent = 'Keine Ergebnisse gefunden.';
+      this.emptyStateTarget.classList.add("hidden");
+      this.emptyStateTarget.textContent = "Keine Ergebnisse gefunden.";
     }
   }
 
@@ -178,91 +206,90 @@ export default class extends Controller {
   }
 
   showLoading() {
-    if (this.hasIdleStateTarget) this.idleStateTarget.classList.add('d-none');
-    if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.remove('d-none');
-    if (this.hasEmptyStateTarget) this.emptyStateTarget.classList.add('d-none');
-    if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add('d-none');
-    if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add('d-none');
-    if (this.hasRoutesTableTarget) this.routesTableTarget.innerHTML = '<div class="text-center py-3">Lade...</div>';
+    if (this.hasIdleStateTarget) this.idleStateTarget.classList.add("hidden");
+    if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.remove("hidden");
+    if (this.hasEmptyStateTarget) this.emptyStateTarget.classList.add("hidden");
+    if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add("hidden");
+    if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add("hidden");
+    if (this.hasRoutesTableTarget) {
+      this.routesTableTarget.innerHTML = '<li class="py-3 text-center text-sm text-[var(--theme-text)]">Lade...</li>';
+    }
   }
 
   renderResults(data) {
     const { rocks = [], routes = [], searchMode, totalCount, page, perPage } = data;
     const total = searchMode === 'grade' && totalCount != null ? totalCount : (rocks.length + routes.length);
 
-    if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.remove('d-none');
-    if (this.hasIdleStateTarget) this.idleStateTarget.classList.add('d-none');
+    if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.remove("hidden");
+    if (this.hasIdleStateTarget) this.idleStateTarget.classList.add("hidden");
     if (this.hasResultsCountTarget) this.resultsCountTarget.textContent = total;
 
-    // Grade pagination state and pager UI
     if (searchMode === 'grade' && totalCount != null && page != null && perPage != null) {
       const grades = this.gradeCheckTargets.filter(cb => cb.checked).map(cb => cb.value);
       const area = this.areaSelectTarget?.value || '';
       this._gradePagination = { grades, area, totalCount, page, perPage };
       const totalPages = Math.ceil(totalCount / perPage);
       if (this.hasPagerContainerTarget) {
-        this.pagerContainerTarget.classList.remove('d-none');
+        this.pagerContainerTarget.classList.remove("hidden");
         if (this.hasPagerInfoTarget) this.pagerInfoTarget.textContent = `Seite ${page} von ${totalPages}`;
         if (this.hasPagerPrevTarget) this.pagerPrevTarget.disabled = page <= 1;
         if (this.hasPagerNextTarget) this.pagerNextTarget.disabled = page >= totalPages;
       }
     } else {
       this._gradePagination = null;
-      if (this.hasPagerContainerTarget) this.pagerContainerTarget.classList.add('d-none');
+      if (this.hasPagerContainerTarget) this.pagerContainerTarget.classList.add("hidden");
     }
 
     if (total === 0) {
-      if (this.hasEmptyStateTarget) this.emptyStateTarget.classList.remove('d-none');
-      if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add('d-none');
-      if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add('d-none');
+      if (this.hasEmptyStateTarget) this.emptyStateTarget.classList.remove("hidden");
+      if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add("hidden");
+      if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add("hidden");
       return;
     }
 
-    if (this.hasEmptyStateTarget) this.emptyStateTarget.classList.add('d-none');
+    if (this.hasEmptyStateTarget) this.emptyStateTarget.classList.add("hidden");
 
-    // Rocks (for name search and attributes search)
     if ((searchMode === 'name' || searchMode === 'attributes') && rocks.length > 0 && this.hasRocksSectionTarget && this.hasRocksListTarget) {
-      this.rocksSectionTarget.classList.remove('d-none');
+      this.rocksSectionTarget.classList.remove("hidden");
       this.rocksListTarget.innerHTML = rocks.map(r => `
-        <li class="list-group-item list-group-item-action p-1">
-          <a href="${r.url}" class="text-decoration-none">${this.escapeHtml(r.name)}</a>
+        <li class="border-b border-[var(--theme-border)] py-2 last:border-b-0">
+          <a href="${r.url}" class="text-sm text-[#075985] no-underline hover:underline">${this.escapeHtml(r.name)}</a>
         </li>
       `).join('');
     } else if (this.hasRocksSectionTarget) {
-      this.rocksSectionTarget.classList.add('d-none');
+      this.rocksSectionTarget.classList.add("hidden");
     }
 
-    // Routes table
     if (routes.length > 0 && this.hasRoutesSectionTarget && this.hasRoutesTableTarget) {
-      this.routesSectionTarget.classList.remove('d-none');
+      this.routesSectionTarget.classList.remove("hidden");
       this.routesTableTarget.innerHTML = routes.map(r => {
         const routeAnchor = r.name ? `#${String(r.name).replace(/\s+/g, '').toLowerCase()}` : '';
         const fullUrl = r.url + routeAnchor;
         return `
-        <li class="list-group-item list-group-item-action px-0 w-full" style="border-bottom: 1px solid #dee2e6;">
-          <a href="${fullUrl}" class="text-decoration-none d-flex align-items-center justify-content-between row p-1">
-            <div class="col-5 small d-flex align-items-center text-truncate">${this.escapeHtml(r.name)}</div>
-            <div class="col-1 small ">${r.grade ? `${this.escapeHtml(r.grade)}` : ''}</div>
-            <div class="col-3 small text-truncate">${this.escapeHtml(r.rock)}</div>
-            <div class="col-3 small text-truncate">${this.escapeHtml(r.area)}</div>
+        <li class="border-b border-[var(--theme-border)]">
+          <a href="${fullUrl}" class="grid grid-cols-12 gap-x-2 gap-y-1 p-2 text-sm text-[var(--theme-text)] no-underline hover:bg-[var(--theme-bg-lighter)] sm:items-center">
+            <span class="col-span-12 min-w-0 truncate font-normal sm:col-span-5">${this.escapeHtml(r.name)}</span>
+            <span class="col-span-4 sm:col-span-1">${r.grade ? `${this.escapeHtml(r.grade)}` : ''}</span>
+            <span class="col-span-8 min-w-0 truncate sm:col-span-3">${this.escapeHtml(r.rock)}</span>
+            <span class="col-span-12 min-w-0 truncate text-gray-600 sm:col-span-3">${this.escapeHtml(r.area)}</span>
           </a>
         </li>
         `;
       }).join('');
     } else if (this.hasRoutesSectionTarget) {
-      this.routesSectionTarget.classList.add('d-none');
+      this.routesSectionTarget.classList.add("hidden");
     }
   }
 
   renderError(msg) {
-    if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.remove('d-none');
-    if (this.hasResultsCountTarget) this.resultsCountTarget.textContent = '0';
+    if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.remove("hidden");
+    if (this.hasResultsCountTarget) this.resultsCountTarget.textContent = "0";
     if (this.hasEmptyStateTarget) {
-      this.emptyStateTarget.classList.remove('d-none');
+      this.emptyStateTarget.classList.remove("hidden");
       this.emptyStateTarget.textContent = `Fehler: ${msg}`;
     }
-    if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add('d-none');
-    if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add('d-none');
+    if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add("hidden");
+    if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add("hidden");
   }
 
   escapeHtml(text) {

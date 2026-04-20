@@ -1,14 +1,24 @@
-<div class="container">
+<div class="mx-auto w-full max-w-[1024px] py-4 px-2 sm:px-4">
 	{% for message in app.flashes('success') %}
-		<div class="alert alert-success alert-dismissible fade show mt-3" role="alert" data-controller="auto-dismiss-alert" data-auto-dismiss-alert-dismiss-after-value="2">
-			{{ message }}
-			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		<div class="mt-3 flex items-start justify-between gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-950 shadow-sm sm:mt-4 sm:text-base" role="alert" data-controller="auto-dismiss-alert flash-dismiss" data-auto-dismiss-alert-dismiss-after-value="2">
+			<span class="min-w-0 flex-1 leading-snug">{{ message }}</span>
+			<button type="button" class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-emerald-900/70 hover:bg-emerald-100 hover:text-emerald-950 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-400" data-action="click->flash-dismiss#close" aria-label="{{ 'close'|trans({}, 'messages') }}">
+				<span class="sr-only">{{ 'close'|trans({}, 'messages') }}</span>
+				<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+				</svg>
+			</button>
 		</div>
 	{% endfor %}
 	{% for message in app.flashes('error') %}
-		<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-			{{ message }}
-			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		<div class="mt-3 flex items-start justify-between gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-950 shadow-sm sm:mt-4 sm:text-base" role="alert" data-controller="flash-dismiss">
+			<span class="min-w-0 flex-1 leading-snug">{{ message }}</span>
+			<button type="button" class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-red-900/70 hover:bg-red-100 hover:text-red-950 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-red-400" data-action="click->flash-dismiss#close" aria-label="{{ 'close'|trans({}, 'messages') }}">
+				<span class="sr-only">{{ 'close'|trans({}, 'messages') }}</span>
+				<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+				</svg>
+			</button>
 		</div>
 	{% endfor %}
 </div>

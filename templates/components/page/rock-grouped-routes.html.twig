@@ -59,14 +59,18 @@
 								</td>
 								<td class="py-2">
 									{% if route.routeComment is not empty %}
-										<button type="button" class="m-0 inline-flex items-center justify-center rounded-full border-0 bg-transparent p-0 shadow-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]"
+										<button
+											type="button"
+											class="m-0 inline-flex size-8 shrink-0 items-center justify-center rounded-full border-0 bg-transparent p-0 text-[var(--theme-text)] shadow-none hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]"
+											aria-label="{{ 'route.info_dialog_label'|trans({ '%name%': route.routeName }, 'messages') }}"
 											data-action="modal-route-information#openModal"
 											data-modal-route-information-name-value="{{ route.routeName }}"
 											data-modal-route-information-grade-value="{{ route.routeGrade }}"
 											data-modal-route-information-first-ascent-value="{{ route.routefirstAscent }}"
 											data-modal-route-information-year-first-ascent-value="{{ route.routeyearFirstAscent }}"
-											data-modal-route-information-comments-value="{{ route.routeComment|json_encode|e('html_attr') }}">
-											<div class="modal-info"></div>
+											data-modal-route-information-comments-value="{{ route.routeComment|json_encode|e('html_attr') }}"
+										>
+											<div class="modal-info" aria-hidden="true"></div>
 										</button>
 									{% endif %}
 								</td>

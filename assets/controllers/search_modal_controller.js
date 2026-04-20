@@ -1,4 +1,4 @@
-import { Controller } from "@hotwired/stimulus";
+import { Controller } from "stimulus";
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -13,68 +13,72 @@ export default class extends Controller {
 
   connect() {
     this._debounceTimers = {};
-    this._gradePagination = null;
-    this._onTabClick = (e) => {
-      const btn = e.target.closest("[data-search-tab]");
-      if (!btn || !this.element.contains(btn)) return;
-      e.preventDefault();
-      this.activateTab(btn.getAttribute("data-search-tab"));
-      this.clearResults();
-      this.scrollActiveTabToCenter(btn);
+    this._gradePagination = null; // { grades, area, totalCount, page, perPage }
+    this._onToggle = () => {
+      if (!this.hasModalTarget || !this.modalTarget.open) return;
+      const activeBtn = this.modalTarget.querySelector('[role="tab"][aria-selected="true"]');
+      if (activeBtn) this.scrollActiveTabToCenter(activeBtn);
     };
-    const tabsEl = document.getElementById("searchTabs");
-    tabsEl?.addEventListener("click", this._onTabClick);
+    if (this.hasModalTarget) {
+      this.modalTarget.addEventListener("toggle", this._onToggle);
+    }
   }
 
   disconnect() {
-    const tabsEl = document.getElementById("searchTabs");
-    tabsEl?.removeEventListener("click", this._onTabClick);
-  }
-
-  activateTab(tabId) {
-    const tabs = this.element.querySelectorAll("#searchTabs [role='tab']");
-    const panes = this.element.querySelectorAll(".search-tab-panel");
-    tabs.forEach((t) => {
-      const active = t.getAttribute("data-search-tab") === tabId;
-      t.setAttribute("aria-selected", active ? "true" : "false");
-      t.classList.toggle("border-black", active);
-      t.classList.toggle("bg-white", active);
-      t.classList.toggle("text-black", active);
-      t.classList.toggle("border-transparent", !active);
-      t.classList.toggle("bg-transparent", !active);
-      t.classList.toggle("text-gray-600", !active);
-    });
-    panes.forEach((p) => {
-      const show = p.id === `pane-${tabId}`;
-      p.classList.toggle("hidden", !show);
-    });
+    if (this.hasModalTarget && this._onToggle) {
+      this.modalTarget.removeEventListener("toggle", this._onToggle);
+    }
   }
 
   scrollActiveTabToCenter(activeButton) {
     const tabsEl = document.getElementById("searchTabs");
     if (!tabsEl || !activeButton) return;
     const btn = activeButton;
-    const scrollLeft = btn.offsetLeft - (tabsEl.offsetWidth / 2) + (btn.offsetWidth / 2);
-    tabsEl.scrollTo({ left: Math.max(0, scrollLeft), behavior: "smooth" });
+    const scrollLeft = btn.offsetLeft - (container.offsetWidth / 2) + (btn.offsetWidth / 2);
+    container.scrollTo({ left: Math.max(0, scrollLeft), behavior: "smooth" });
+  }
+
+  showTab(event) {
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const sheet = btn.getAttribute("data-search-modal-sheet-param");
+    if (!sheet || !this.hasModalTarget) return;
+
+    this.modalTarget.querySelectorAll('[role="tab"]').forEach((tab) => {
+      const active = tab === btn;
+      tab.setAttribute("aria-selected", active ? "true" : "false");
+      tab.classList.toggle("font-semibold", active);
+      tab.classList.toggle("font-medium", !active);
+      tab.classList.toggle("opacity-100", active);
+      tab.classList.toggle("opacity-60", !active);
+      tab.classList.toggle("bg-white", active);
+      tab.classList.toggle("shadow-sm", active);
+      tab.classList.toggle("bg-transparent", !active);
+    });
+
+    const paneMap = {
+      name: "pane-name",
+      firstascent: "pane-firstascent",
+      grade: "pane-grade",
+      attributes: "pane-attributes",
+    };
+    Object.entries(paneMap).forEach(([key, paneId]) => {
+      const pane = this.modalTarget.querySelector(`#${paneId}`);
+      if (pane) pane.classList.toggle("hidden", key !== sheet);
+    });
+
+    this.clearResults();
+    this.scrollActiveTabToCenter(btn);
   }
 
   open(event) {
     event?.preventDefault();
     if (!this.hasModalTarget) return;
-    if (typeof this.modalTarget.showModal === "function") {
-      this.modalTarget.showModal();
-    }
+    this.modalTarget.showModal();
     requestAnimationFrame(() => {
-      const activeBtn = this.element.querySelector("#searchTabs [aria-selected='true']");
-      if (activeBtn) this.scrollActiveTabToCenter(activeBtn);
-      this.modalTarget.querySelector("input[type='search']")?.focus();
+      const input = this.modalTarget.querySelector('[role="tabpanel"]:not(.hidden) input[type="search"]');
+      input?.focus();
     });
-  }
-
-  close() {
-    if (this.hasModalTarget && typeof this.modalTarget.close === "function") {
-      this.modalTarget.close();
-    }
   }
 
   searchNameDebounced() {
@@ -115,18 +119,15 @@ export default class extends Controller {
     this._gradePagination = null;
     if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.add("hidden");
     if (this.hasIdleStateTarget) this.idleStateTarget.classList.remove("hidden");
-    if (this.hasResultsCountTarget) this.resultsCountTarget.textContent = '0';
-    if (this.hasRocksListTarget) this.rocksListTarget.innerHTML = '';
-    if (this.hasRoutesTableTarget) this.routesTableTarget.innerHTML = '';
+    if (this.hasResultsCountTarget) this.resultsCountTarget.textContent = "0";
+    if (this.hasRocksListTarget) this.rocksListTarget.innerHTML = "";
+    if (this.hasRoutesTableTarget) this.routesTableTarget.innerHTML = "";
     if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add("hidden");
     if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add("hidden");
-    if (this.hasPagerContainerTarget) {
-      this.pagerContainerTarget.classList.add("hidden");
-      this.pagerContainerTarget.classList.remove("flex");
-    }
+    if (this.hasPagerContainerTarget) this.pagerContainerTarget.classList.add("hidden");
     if (this.hasEmptyStateTarget) {
       this.emptyStateTarget.classList.add("hidden");
-      this.emptyStateTarget.textContent = 'Keine Ergebnisse gefunden.';
+      this.emptyStateTarget.textContent = "Keine Ergebnisse gefunden.";
     }
   }
 
@@ -209,7 +210,9 @@ export default class extends Controller {
     if (this.hasEmptyStateTarget) this.emptyStateTarget.classList.add("hidden");
     if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add("hidden");
     if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add("hidden");
-    if (this.hasRoutesTableTarget) this.routesTableTarget.innerHTML = '<div class="py-3 text-center text-sm text-gray-600">Lade...</div>';
+    if (this.hasRoutesTableTarget) {
+      this.routesTableTarget.innerHTML = '<li class="py-3 text-center text-sm text-[var(--theme-text)]">Lade...</li>';
+    }
   }
 
   renderResults(data) {
@@ -227,17 +230,13 @@ export default class extends Controller {
       const totalPages = Math.ceil(totalCount / perPage);
       if (this.hasPagerContainerTarget) {
         this.pagerContainerTarget.classList.remove("hidden");
-        this.pagerContainerTarget.classList.add("flex");
         if (this.hasPagerInfoTarget) this.pagerInfoTarget.textContent = `Seite ${page} von ${totalPages}`;
         if (this.hasPagerPrevTarget) this.pagerPrevTarget.disabled = page <= 1;
         if (this.hasPagerNextTarget) this.pagerNextTarget.disabled = page >= totalPages;
       }
     } else {
       this._gradePagination = null;
-      if (this.hasPagerContainerTarget) {
-        this.pagerContainerTarget.classList.add("hidden");
-        this.pagerContainerTarget.classList.remove("flex");
-      }
+      if (this.hasPagerContainerTarget) this.pagerContainerTarget.classList.add("hidden");
     }
 
     if (total === 0) {
@@ -252,8 +251,8 @@ export default class extends Controller {
     if ((searchMode === 'name' || searchMode === 'attributes') && rocks.length > 0 && this.hasRocksSectionTarget && this.hasRocksListTarget) {
       this.rocksSectionTarget.classList.remove("hidden");
       this.rocksListTarget.innerHTML = rocks.map(r => `
-        <li class="border-b border-gray-200 px-2 py-2 text-sm last:border-0 dark:border-gray-700">
-          <a href="${r.url}" class="text-gray-900 no-underline hover:underline dark:text-gray-100">${this.escapeHtml(r.name)}</a>
+        <li class="border-b border-[var(--theme-border)] py-2 last:border-b-0">
+          <a href="${r.url}" class="text-sm text-[#075985] no-underline hover:underline">${this.escapeHtml(r.name)}</a>
         </li>
       `).join('');
     } else if (this.hasRocksSectionTarget) {
@@ -266,12 +265,12 @@ export default class extends Controller {
         const routeAnchor = r.name ? `#${String(r.name).replace(/\s+/g, '').toLowerCase()}` : '';
         const fullUrl = r.url + routeAnchor;
         return `
-        <li class="w-full border-b border-gray-200 px-0 py-1 last:border-0 dark:border-gray-700">
-          <a href="${fullUrl}" class="flex flex-wrap items-center gap-1 p-1 text-sm text-gray-900 no-underline hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800">
-            <span class="w-[40%] min-w-0 truncate sm:w-2/5">${this.escapeHtml(r.name)}</span>
-            <span class="w-8 shrink-0 sm:w-12">${r.grade ? `${this.escapeHtml(r.grade)}` : ''}</span>
-            <span class="min-w-0 flex-1 truncate">${this.escapeHtml(r.rock)}</span>
-            <span class="hidden w-1/4 truncate sm:inline-block">${this.escapeHtml(r.area)}</span>
+        <li class="border-b border-[var(--theme-border)]">
+          <a href="${fullUrl}" class="grid grid-cols-12 gap-x-2 gap-y-1 p-2 text-sm text-[var(--theme-text)] no-underline hover:bg-[var(--theme-bg-lighter)] sm:items-center">
+            <span class="col-span-12 min-w-0 truncate font-normal sm:col-span-5">${this.escapeHtml(r.name)}</span>
+            <span class="col-span-4 sm:col-span-1">${r.grade ? `${this.escapeHtml(r.grade)}` : ''}</span>
+            <span class="col-span-8 min-w-0 truncate sm:col-span-3">${this.escapeHtml(r.rock)}</span>
+            <span class="col-span-12 min-w-0 truncate text-gray-600 sm:col-span-3">${this.escapeHtml(r.area)}</span>
           </a>
         </li>
         `;
@@ -283,7 +282,7 @@ export default class extends Controller {
 
   renderError(msg) {
     if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.remove("hidden");
-    if (this.hasResultsCountTarget) this.resultsCountTarget.textContent = '0';
+    if (this.hasResultsCountTarget) this.resultsCountTarget.textContent = "0";
     if (this.hasEmptyStateTarget) {
       this.emptyStateTarget.classList.remove("hidden");
       this.emptyStateTarget.textContent = `Fehler: ${msg}`;

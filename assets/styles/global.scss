@@ -1206,7 +1206,7 @@ input[data-autocomplete-target="input"]:focus {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
 
-  .nav-item {
+  [role="tab"] {
     flex-shrink: 0;
   }
 }

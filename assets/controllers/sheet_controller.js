@@ -43,9 +43,13 @@ export default class extends Controller {
 
         if (this.hasTriggerTarget) {
             if (this.dialogTarget.getAnimations().length > 0) {
-                this.dialogTarget.addEventListener('transitionend', () => {
-                    this.triggerTarget.setAttribute('aria-expanded', 'false');
-                });
+                this.dialogTarget.addEventListener(
+                    'transitionend',
+                    () => {
+                        this.triggerTarget.setAttribute('aria-expanded', 'false');
+                    },
+                    { once: true }
+                );
             } else {
                 this.triggerTarget.setAttribute('aria-expanded', 'false');
             }

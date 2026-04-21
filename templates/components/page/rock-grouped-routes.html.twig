@@ -20,64 +20,70 @@
 					</div>
 					{% endif %}
 				{% endif %}
-				<table class="table mb-0 w-full text-sm font-medium">
-					<tbody>
-						{% for route in topoData.routes %}
-							<tr id="{{ route.routeName|replace({' ': ''})|lower }}" data-route-id="{{loop.index}}" data-route-information="{{ route.routeName }} {{ route.routeGrade }}">
-								<td class="py-2">
-									<span>{{loop.index}}</span>
-								</td>
-								<td class="py-2">
-									<div class="flex items-center">
-										<span class="me-1">{{ route.routeName }}</span>
-										<span style="line-height: 0;" data-controller="routeparams" data-routeparams-rating="{{ route.routeRating }}" data-routeparams-protection="{{ route.routeProtection }}" data-routeparams-route-rock-quality="{{ route.rockQuality }}">
-											<span data-routeparams-target="rating"></span>
-											<span data-routeparams-target="protection"></span>
-											<span data-routeparams-target="route-rock-quality"></span>
+				<div class="relative w-full overflow-x-auto">
+					<table class="w-full caption-bottom border-collapse border-b border-[var(--theme-border)] text-sm font-medium leading-tight text-[var(--theme-text)]">
+						<tbody>
+							{% for route in topoData.routes %}
+								<tr id="{{ route.routeName|replace({' ': ''})|lower }}" class="border-b border-[var(--theme-border)] transition-colors hover:bg-[var(--theme-bg)]/50" data-route-id="{{ loop.index }}" data-route-information="{{ route.routeName }} {{ route.routeGrade }}">
+									<td class="px-2 py-1 align-middle lg:px-2.5">
+										<span>{{ loop.index }}</span>
+									</td>
+									<td class="px-2 py-1 align-middle lg:min-w-0 lg:whitespace-nowrap lg:px-2.5">
+										<div class="flex min-w-0 flex-wrap items-center gap-x-1 lg:flex-nowrap lg:gap-y-0">
+											<span class="min-w-0 max-w-full shrink font-medium lg:truncate" title="{{ route.routeName }}">{{ route.routeName }}</span>
+											<span class="inline-flex shrink-0 flex-nowrap items-center gap-x-px leading-none" data-controller="routeparams" data-routeparams-rating="{{ route.routeRating }}" data-routeparams-protection="{{ route.routeProtection }}" data-routeparams-route-rock-quality="{{ route.rockQuality }}">
+												<span data-routeparams-target="rating"></span>
+												<span data-routeparams-target="protection"></span>
+												<span data-routeparams-target="route-rock-quality"></span>
+											</span>
+											{% if route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'multi-pitch' in (route.routeClimbingStyle|default('[]')) %}
+												<span class="ms-1 inline-block shrink-0 multi-pitch" title="Mehrseillängen Tour" role="img" aria-label="Mehrseillängen Tour"></span>
+											{% elseif route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'crack' in (route.routeClimbingStyle|default('[]')) %}
+												<span class="ms-1 inline-block shrink-0 crack-climbing" title="Riss" role="img" aria-label="Riss"></span>
+											{% endif %}
+											{% if route.videoLink is not empty %}
+												<a href="{{ route.videoLink }}" class="ms-0.5 inline-flex shrink-0 text-[var(--theme-text)] hover:opacity-80" title="Video von Route {{ route.routeName }} " target="_blank" rel="noopener noreferrer">
+													<svg xmlns="http://www.w3.org/2000/svg" class="size-[18px]" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15 8v8H5V8h10m1-2H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4V7c0-.55-.45-1-1-1z"/></svg>
+												</a>
+											{% endif %}
+										</div>
+									</td>
+									<td class="px-2 py-1 align-middle lg:px-2.5">
+										<span>{{ route.routeGrade }}</span>
+									</td>
+									<td class="hidden whitespace-nowrap px-2 py-1 align-middle lg:table-cell lg:px-2.5">
+										<span>{{ route.routefirstAscent }}
+											{% if route.routeyearFirstAscent %}
+												{{ route.routeyearFirstAscent }}
+											{% endif %}
 										</span>
-										{% if route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'multi-pitch' in (route.routeClimbingStyle|default('[]')) %}
-											<span class="ms-1 inline-block multi-pitch" title="Mehrseillängen Tour" role="img" aria-label="Mehrseillängen Tour"></span>
-										{% elseif route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'crack' in (route.routeClimbingStyle|default('[]')) %}
-											<span class="ms-1 inline-block crack-climbing" title="Riss" role="img" aria-label="Riss"></span>
-										{% endif %}
-										{% if route.videoLink is not empty %}
-											<a href="{{ route.videoLink }}" title="Video von Route {{ route.routeName }} " target="_blank">
-												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 24 24" class="text-black"><path fill="currentColor" d="M15 8v8H5V8h10m1-2H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4V7c0-.55-.45-1-1-1z"/></svg>
-											</a>
-										{% endif %}
-									</div>
-								</td>
-								<td class="py-2">
-									<span>{{ route.routeGrade }}</span>
-								</td>
-								<td class="hidden py-2 whitespace-nowrap lg:table-cell">
-									<span>{{ route.routefirstAscent }}
-										{% if route.routeyearFirstAscent %}
-											{{ route.routeyearFirstAscent }}
-										{% endif %}
-									</span>
-								</td>
-								<td class="py-2">
-									{% if route.routeComment is not empty %}
-										<button
-											type="button"
-											class="m-0 inline-flex size-8 shrink-0 items-center justify-center rounded-full border-0 bg-transparent p-0 text-[var(--theme-text)] shadow-none hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]"
-											aria-label="{{ 'route.info_dialog_label'|trans({ '%name%': route.routeName }, 'messages') }}"
-											data-action="modal-route-information#openModal"
-											data-modal-route-information-name-value="{{ route.routeName }}"
-											data-modal-route-information-grade-value="{{ route.routeGrade }}"
-											data-modal-route-information-first-ascent-value="{{ route.routefirstAscent }}"
-											data-modal-route-information-year-first-ascent-value="{{ route.routeyearFirstAscent }}"
-											data-modal-route-information-comments-value="{{ route.routeComment|json_encode|e('html_attr') }}"
-										>
-											<div class="modal-info" aria-hidden="true"></div>
-										</button>
-									{% endif %}
-								</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
+									</td>
+									{# Fixed width + slot height so rows with/without comment button share the same column box #}
+									<td class="box-border w-11 min-w-11 max-w-11 shrink-0 px-2 py-1 align-middle lg:w-12 lg:min-w-12 lg:max-w-12">
+										<div class="flex h-7 items-center justify-end">
+											{% if route.routeComment is not empty %}
+												{# Native <button>: long JSON in data-* works; twig:Button was stripping it. Tailwind ≈ shadcn ghost icon-sm (no Bootstrap). #}
+												<button
+													type="button"
+													class="m-0 inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-[var(--theme-text)] shadow-none hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)] focus-visible:ring-offset-0"
+													aria-label="{{ 'route.info_dialog_label'|trans({ '%name%': route.routeName }, 'messages') }}"
+													data-action="modal-route-information#openModal"
+													data-modal-route-information-name-value="{{ route.routeName }}"
+													data-modal-route-information-grade-value="{{ route.routeGrade }}"
+													data-modal-route-information-first-ascent-value="{{ route.routefirstAscent }}"
+													data-modal-route-information-year-first-ascent-value="{{ route.routeyearFirstAscent }}"
+													data-modal-route-information-comments-value="{{ route.routeComment|json_encode|e('html_attr') }}"
+												>
+													<div class="modal-info" aria-hidden="true"></div>
+												</button>
+											{% endif %}
+										</div>
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
 			</section>
 		</div>
 	{% endfor %}

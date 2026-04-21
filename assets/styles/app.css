@@ -210,10 +210,6 @@
     background: transparent;
 }
 
-.rock-info-dialog details[open] .rock-accordion-chevron {
-    transform: rotate(90deg);
-}
-
 /* Rock route info: centered <dialog> (do not put flex on <dialog> without [open] — same rule as map dialog). */
 .shared-route-dialog:not([open]) {
     display: none !important;

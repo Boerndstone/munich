@@ -619,12 +619,16 @@ $success: var(--green-base);
     }
 }
 .icon-content-size {
+    display: inline-block;
     width: 20px;
     height: 20px;
+    vertical-align: middle;
 }
 .icon-content-extra-size {
+    display: inline-block;
     width: 22px;
     height: 22px;
+    vertical-align: middle;
 }
 @keyframes grow-shrink {
     0%, 100% {

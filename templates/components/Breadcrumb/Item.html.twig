@@ -1,0 +1,9 @@
+{# @block content Typically a `Breadcrumb:Link` or `Breadcrumb:Page` #}
+<li
+    class="{{ ('inline-flex items-center ' ~ attributes.render('class'))|tailwind_merge }}"
+    {{ attributes.defaults({
+        'data-slot': 'breadcrumb-item',
+    }).without('class') }}
+>
+    {%- block content %}{% endblock -%}
+</li>

@@ -9,7 +9,7 @@
 	{{ attributes.defaults({
 		'aria-modal': 'true',
 		'data-sheet-target': 'dialog',
-		'data-action': 'keydown.esc->sheet#close:prevent',
+		'data-action': 'click->sheet#closeOnClickOutside keydown.esc->sheet#close:prevent',
 		'data-side': side,
 	}).without('class', 'id') }}
 >

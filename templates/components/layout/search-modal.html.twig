@@ -8,7 +8,7 @@
 	data-search-modal-target="modal"
 	onclick="if (event.target === this) this.close()"
 >
-	<div class="relative flex max-h-[min(92vh,52rem)] w-full max-w-3xl flex-col overflow-hidden rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] text-[var(--theme-text)] shadow-xl" onclick="event.stopPropagation()">
+	<div class="relative flex max-h-[min(92vh,52rem)] w-full min-w-0 max-w-3xl flex-col self-center overflow-hidden overflow-x-hidden rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] text-[var(--theme-text)] shadow-xl" onclick="event.stopPropagation()">
 		<header class="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--theme-border)] px-4 py-2">
 			<h2 id="searchModalLabel" class="stay-black m-0 min-w-0 flex-1 text-base font-semibold leading-tight text-[var(--theme-text)]">Suche</h2>
 			<button
@@ -24,34 +24,50 @@
 			</button>
 		</header>
 		<div class="min-h-0 flex-1 overflow-y-auto px-4 py-3">
-			{# Tabs #}
-			<div class="mb-3 flex gap-1 overflow-x-auto overflow-y-hidden rounded-lg bg-gray-100 p-1 [-ms-overflow-style:none] [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1" id="searchTabs" role="tablist" aria-label="Suchmodus">
-				<button type="button" class="shrink-0 rounded-md border-0 bg-white px-3 py-2 text-sm font-semibold text-[var(--theme-text)] shadow-sm transition-opacity hover:opacity-100" id="tab-name" role="tab" aria-selected="true" data-search-modal-sheet-param="name" data-action="click->search-modal#showTab">Route/Fels</button>
-				<button type="button" class="shrink-0 rounded-md border-0 bg-transparent px-3 py-2 text-sm font-medium text-[var(--theme-text)] opacity-60 transition-opacity hover:opacity-100" id="tab-firstascent" role="tab" aria-selected="false" data-search-modal-sheet-param="firstascent" data-action="click->search-modal#showTab">Erstbegeher</button>
-				<button type="button" class="shrink-0 rounded-md border-0 bg-transparent px-3 py-2 text-sm font-medium text-[var(--theme-text)] opacity-60 transition-opacity hover:opacity-100" id="tab-grade" role="tab" aria-selected="false" data-search-modal-sheet-param="grade" data-action="click->search-modal#showTab">Grad</button>
-				<button type="button" class="shrink-0 rounded-md border-0 bg-transparent px-3 py-2 text-sm font-medium text-[var(--theme-text)] opacity-60 transition-opacity hover:opacity-100" id="tab-attributes" role="tab" aria-selected="false" data-search-modal-sheet-param="attributes" data-action="click->search-modal#showTab">Eigenschaften</button>
-			</div>
+			<twig:Tabs defaultValue="name" class="mb-4">
+				<twig:Tabs:List variant="default" id="searchTabs" aria-label="Suchmodus" class="mb-3">
+					<twig:Tabs:Trigger value="name">Route/Fels</twig:Tabs:Trigger>
+					<twig:Tabs:Trigger value="firstascent">Erstbegeher</twig:Tabs:Trigger>
+					<twig:Tabs:Trigger value="grade">Grad</twig:Tabs:Trigger>
+					<twig:Tabs:Trigger value="attributes">Eigenschaften</twig:Tabs:Trigger>
+				</twig:Tabs:List>
 
-			<div class="mb-4">
-				<div id="pane-name" role="tabpanel" aria-labelledby="tab-name">
+				<twig:Tabs:Content value="name">
 					<label for="searchModalNameInput" class="sr-only">Suche nach Felsen oder Routen</label>
-					<div class="flex items-center gap-2 rounded-md border border-black/20 bg-[var(--theme-bg-lighter)] px-2 py-1.5 text-sm text-[var(--theme-text)] dark:border-white/20">
-						<i class="fas fa-search magnifier shrink-0 text-gray-500 opacity-80 dark:text-gray-400" aria-hidden="true"></i>
-						<input type="search" id="searchModalNameInput" class="min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-[var(--theme-text)] placeholder:text-gray-500 focus:outline-hidden focus:ring-0" name="searchName" data-search-modal-target="nameInput" placeholder="Suche nach Felsen oder Routen..." data-action="input->search-modal#searchNameDebounced keydown.enter->search-modal#searchName" minlength="2">
+					<div class="flex min-w-0 items-center gap-2 rounded-md border border-black/20 bg-[var(--theme-bg-lighter)] px-2 py-1.5 text-[var(--theme-text)] dark:border-white/20">
+						<i class="fas fa-search magnifier shrink-0 text-base text-gray-500 opacity-80 dark:text-gray-400" aria-hidden="true"></i>
+						<twig:Input
+							type="search"
+							id="searchModalNameInput"
+							name="searchName"
+							placeholder="Suche nach Felsen oder Routen..."
+							minlength="2"
+							data-search-modal-target="nameInput"
+							data-action="input->search-modal#searchNameDebounced keydown.enter->search-modal#searchName"
+							class="min-w-0 flex-1 border-0 bg-transparent px-1 py-0 text-base text-[var(--theme-text)] shadow-none placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 h-9 md:h-10"
+						/>
 					</div>
-				</div>
-				<div class="hidden" id="pane-firstascent" role="tabpanel" aria-labelledby="tab-firstascent">
+				</twig:Tabs:Content>
+				<twig:Tabs:Content value="firstascent">
 					<label for="searchModalFirstAscentInput" class="sr-only">Name des Erstbegehers</label>
-					<div class="flex items-center gap-2 rounded-md border border-black/20 bg-[var(--theme-bg-lighter)] px-2 py-1.5 text-sm text-[var(--theme-text)] dark:border-white/20">
-						<i class="fas fa-search magnifier shrink-0 text-gray-500 opacity-80 dark:text-gray-400" aria-hidden="true"></i>
-						<input type="search" id="searchModalFirstAscentInput" class="min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-[var(--theme-text)] placeholder:text-gray-500 focus:outline-hidden focus:ring-0" data-search-modal-target="firstAscentInput" placeholder="Name des Erstbegehers..." data-action="input->search-modal#searchFirstAscentDebounced keydown.enter->search-modal#searchFirstAscent" minlength="2">
+					<div class="flex min-w-0 items-center gap-2 rounded-md border border-black/20 bg-[var(--theme-bg-lighter)] px-2 py-1.5 text-[var(--theme-text)] dark:border-white/20">
+						<i class="fas fa-search magnifier shrink-0 text-base text-gray-500 opacity-80 dark:text-gray-400" aria-hidden="true"></i>
+						<twig:Input
+							type="search"
+							id="searchModalFirstAscentInput"
+							placeholder="Name des Erstbegehers..."
+							minlength="2"
+							data-search-modal-target="firstAscentInput"
+							data-action="input->search-modal#searchFirstAscentDebounced keydown.enter->search-modal#searchFirstAscent"
+							class="min-w-0 flex-1 border-0 bg-transparent px-1 py-0 text-base text-[var(--theme-text)] shadow-none placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 h-9 md:h-10"
+						/>
 					</div>
-				</div>
-				<div class="hidden" id="pane-grade" role="tabpanel" aria-labelledby="tab-grade">
+				</twig:Tabs:Content>
+				<twig:Tabs:Content value="grade">
 					<div class="mb-3 grid grid-cols-1 gap-3 md:grid-cols-2">
 						<div class="md:col-span-1">
 							<label class="mb-1 block text-xs font-medium text-[var(--theme-text)]" for="searchModalGradeAreaSelect">Gebiet</label>
-							<select id="searchModalGradeAreaSelect" class="block w-full rounded-md border border-[var(--theme-border)] bg-[var(--theme-bg)] px-2 py-1.5 text-sm text-[var(--theme-text)] focus:border-[var(--theme-border)] focus:outline-hidden focus:ring-2 focus:ring-[var(--theme-border)]" data-search-modal-target="areaSelect">
+							<select id="searchModalGradeAreaSelect" class="block w-full rounded-md border border-[var(--theme-border)] bg-[var(--theme-bg)] px-2 py-1.5 text-base text-[var(--theme-text)] focus:border-[var(--theme-border)] focus:outline-hidden focus:ring-2 focus:ring-[var(--theme-border)]" data-search-modal-target="areaSelect">
 								<option value="">Alle Gebiete</option>
 								{% for area in getSidebarAreas() %}
 									<option value="{{ area.slug }}">{{ area.name }}</option>
@@ -78,12 +94,12 @@
 							</button>
 						</div>
 					</div>
-				</div>
-				<div class="hidden" id="pane-attributes" role="tabpanel" aria-labelledby="tab-attributes">
+				</twig:Tabs:Content>
+				<twig:Tabs:Content value="attributes">
 					<div class="mb-3 grid grid-cols-1 gap-3 md:grid-cols-2">
 						<div class="md:col-span-1">
 							<label class="mb-1 block text-xs font-medium text-[var(--theme-text)]" for="searchModalAttributesAreaSelect">Gebiet</label>
-							<select id="searchModalAttributesAreaSelect" class="block w-full rounded-md border border-[var(--theme-border)] bg-[var(--theme-bg)] px-2 py-1.5 text-sm text-[var(--theme-text)] focus:border-[var(--theme-border)] focus:outline-hidden focus:ring-2 focus:ring-[var(--theme-border)]" data-search-modal-target="areaSelectAttributes">
+							<select id="searchModalAttributesAreaSelect" class="block w-full rounded-md border border-[var(--theme-border)] bg-[var(--theme-bg)] px-2 py-1.5 text-base text-[var(--theme-text)] focus:border-[var(--theme-border)] focus:outline-hidden focus:ring-2 focus:ring-[var(--theme-border)]" data-search-modal-target="areaSelectAttributes">
 								<option value="">Alle Gebiete</option>
 								{% for area in getSidebarAreas() %}
 									<option value="{{ area.slug }}">{{ area.name }}</option>
@@ -129,8 +145,8 @@
 							</button>
 						</div>
 					</div>
-				</div>
-			</div>
+				</twig:Tabs:Content>
+			</twig:Tabs>
 
 			<div data-search-modal-target="resultsContainer" class="hidden">
 				<h3 class="mb-2 text-sm font-semibold text-[var(--theme-text)]"><span data-search-modal-target="resultsCount">0</span> Ergebnisse</h3>
@@ -160,35 +176,6 @@
 								<i class="fas fa-chevron-right text-xs" aria-hidden="true"></i>
 							</button>
 						</div>
-					</div>
-				</div>
-				<div data-search-modal-target="emptyState" class="hidden text-sm text-gray-500 dark:text-gray-400">Keine Ergebnisse gefunden.</div>
-			</div>
-
-			<div data-search-modal-target="resultsContainer" class="hidden border-t border-gray-200 pt-3 dark:border-gray-700">
-				<h3 class="mb-2 text-sm font-semibold text-gray-900 dark:text-gray-100"><span data-search-modal-target="resultsCount">0</span> Ergebnisse</h3>
-				<div data-search-modal-target="rocksSection" class="mb-3 hidden">
-					<div class="mb-1 text-sm font-bold text-gray-800 dark:text-gray-200">Felsen</div>
-					<ul class="m-0 list-none rounded-md border border-gray-200 p-0 dark:border-gray-700" data-search-modal-target="rocksList"></ul>
-				</div>
-				<hr class="my-2 border-gray-200 dark:border-gray-700" />
-				<div data-search-modal-target="routesSection" class="hidden">
-					<div class="mb-2 text-sm font-bold text-gray-800 dark:text-gray-200">Touren</div>
-					<div class="mb-2 flex flex-wrap gap-2 px-1 text-xs font-bold text-gray-700 dark:text-gray-300">
-						<span class="w-[40%] min-w-0 sm:w-2/5">Route</span>
-						<span class="w-8 shrink-0 sm:w-12">Grad</span>
-						<span class="min-w-0 flex-1">Fels</span>
-						<span class="hidden w-1/4 sm:inline-block">Gebiet</span>
-					</div>
-					<ul class="m-0 list-none p-0" data-search-modal-target="routesTable"></ul>
-					<div data-search-modal-target="pagerContainer" class="mt-2 hidden flex-wrap items-center justify-between gap-2">
-						<button type="button" class="inline-flex items-center gap-1 rounded-md border border-gray-600 bg-white px-2 py-1 text-sm dark:border-gray-500 dark:bg-gray-900 dark:text-gray-100" data-search-modal-target="pagerPrev" data-action="click->search-modal#gradePagePrev" aria-label="Vorherige Seite">
-							<i class="fas fa-chevron-left" aria-hidden="true"></i>Zurück
-						</button>
-						<span class="text-xs text-gray-600 dark:text-gray-400" data-search-modal-target="pagerInfo">Seite 1 von 1</span>
-						<button type="button" class="inline-flex items-center gap-1 rounded-md border border-gray-600 bg-white px-2 py-1 text-sm dark:border-gray-500 dark:bg-gray-900 dark:text-gray-100" data-search-modal-target="pagerNext" data-action="click->search-modal#gradePageNext" aria-label="Nächste Seite">
-							Weiter<i class="fas fa-chevron-right ms-1" aria-hidden="true"></i>
-						</button>
 					</div>
 				</div>
 				<div data-search-modal-target="emptyState" class="hidden text-sm text-gray-500 dark:text-gray-400">Keine Ergebnisse gefunden.</div>

@@ -1,0 +1,23 @@
+{# @prop value string Unique suffix identifier for generating Tabs internal IDs #}
+{# @block content The default block #}
+{%- props value -%}
+
+{%- set _tab_id = 'tab-' ~ value -%}
+{%- set _tab_content_id = _tab_id ~ '-description' -%}
+{%- set open = defaultValue is same as(value) -%}
+<button
+	id="{{ _tab_id }}"
+	type="button"
+	data-slot="tabs-trigger"
+	data-action="click->tabs#open"
+	data-tabs-target="trigger"
+	data-tab-id="{{ value }}"
+	role="tab"
+	aria-controls="{{ _tab_content_id }}"
+	aria-selected="{{ open ? 'true' : 'false' }}"
+	data-state="{{ open ? 'active' : 'inactive' }}"
+	class="{{ ('relative inline-flex h-[calc(100%-1px)] shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-transparent px-3 py-2 text-sm font-medium text-[var(--theme-text)] transition-all focus-visible:border-ring focus-visible:outline-1 focus-visible:outline-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\'size-\'])]:size-4 group-data-[orientation=vertical]/tabs:w-full group-data-[orientation=vertical]/tabs:justify-start group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-[state=active]:bg-transparent group-data-[variant=line]/tabs-list:data-[state=active]:shadow-none data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-[var(--theme-text)] data-[state=active]:shadow-sm data-[state=inactive]:bg-transparent data-[state=inactive]:opacity-60 dark:data-[state=active]:bg-neutral-800 ' ~ attributes.render('class'))|tailwind_merge }}"
+	{{ attributes }}
+>
+	{%- block content -%}{%- endblock -%}
+</button>

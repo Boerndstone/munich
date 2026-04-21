@@ -1,4 +1,4 @@
-<picture>
+<picture class="area-lazy-picture">
 	{% if suffixes is defined and suffixes is not empty %}
 		{% for mediaQuery, suffix in suffixes %}
 			<source media="{{ mediaQuery }}" srcset="{{ asset(url ~ area.image ~ '-' ~ suffix ~ '-@1x.webp') }}, {{ asset(url ~ area.image ~ '-' ~ suffix ~ '-@2x.webp') }} 2x, {{ asset(url ~ area.image ~ '-' ~ suffix ~ '-@3x.webp') }} 3x">
@@ -6,8 +6,8 @@
 	{% else %}
 		<source srcset="{{ asset(url ~ area.image ~ '@1x.webp') }}, {{ asset(url ~ area.image ~ '@2x.webp') }} 2x, {{ asset(url ~ area.image ~ '@3x.webp') }} 3x">
 	{% endif %}
-	<img class="position-relative img-fluid" src="{{ asset('https://www.munichclimbs.de/uploads/areas/' ~ area.image ~ '.webp') }}" alt="Klettergebiet {{ area.name }}" loading="lazy" decoding="async">
-	<span class="badge-opacity position-absolute px-2 py-1 rounded-end md:hidden" style="top: 20px; left: 0;">
-		<h2 class="h5 card-title mb-0 fw-normal">{{ area.name }}</h2>
+	<img class="area-lazy-picture__img" src="{{ asset('https://www.munichclimbs.de/uploads/areas/' ~ area.image ~ '.webp') }}" alt="Klettergebiet {{ area.name }}" loading="lazy" decoding="async">
+	<span class="badge-opacity area-lazy-picture__badge">
+		<h2 class="area-lazy-picture__badge-title">{{ area.name }}</h2>
 	</span>
 </picture>

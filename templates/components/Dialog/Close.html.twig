@@ -1,5 +1,10 @@
-{# @block content The close trigger element (e.g., a `Button`) that closes the dialog when clicked #}
-{%- set dialog_close_attrs = {
-    'data-action': 'click->dialog#close'|html_attr_type('sst'),
-} -%}
-{%- block content %}{% endblock -%}
+{# @block content Typically a `Button` or `button` — click wiring is on this wrapper; do not duplicate `data-action` on the child. #}
+<span
+    class="{{ ('inline-flex ' ~ attributes.render('class'))|tailwind_merge }}"
+    {{ attributes.defaults({
+        'data-action': 'click->dialog#close'|html_attr_type('sst'),
+        'role': 'presentation',
+    }).without('class') }}
+>
+    {%- block content %}{% endblock -%}
+</span>

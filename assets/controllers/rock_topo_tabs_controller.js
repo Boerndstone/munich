@@ -3,8 +3,8 @@ import { Controller } from "@hotwired/stimulus";
 /** Rock page topo anchor tabs (scroll + highlight). Not the Shadcn `tabs` controller. */
 export default class extends Controller {
   connect() {
-    const tabs = document.querySelectorAll(".scrollable-tabs-container a");
-    const tabsList = document.querySelector(".scrollable-tabs-container ul");
+    const tabs = this.element.querySelectorAll("a");
+    const tabsList = this.element.querySelector("ul");
     const header =
       document.querySelector("body > header") || document.querySelector(".navbar");
 

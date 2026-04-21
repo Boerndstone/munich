@@ -1,0 +1,13 @@
+{# @block content Separator between items; defaults to “/” like the legacy breadcrumb #}
+<li
+    role="presentation"
+    aria-hidden="true"
+    class="{{ attributes.render('class')|tailwind_merge }}"
+    {{ attributes.defaults({
+        'data-slot': 'breadcrumb-separator',
+    }).without('class') }}
+>
+    {%- block content -%}
+        <span class="text-gray-600">/</span>
+    {%- endblock -%}
+</li>

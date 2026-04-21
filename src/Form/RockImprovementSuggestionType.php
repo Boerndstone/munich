@@ -21,15 +21,18 @@ class RockImprovementSuggestionType extends AbstractType
     {
         $builder
             ->add('website', TextType::class, [
-                'label' => 'Website',
+                'label' => false,
                 'required' => false,
                 'attr' => [
-                    'class' => 'form-control form-control-sm',
                     'tabindex' => '-1',
                     'autocomplete' => 'off',
+                    'aria-hidden' => 'true',
                 ],
-                'label_attr' => ['class' => 'visually-hidden'],
-                'row_attr' => ['class' => 'visually-hidden position-absolute'],
+                // Honeypot: must stay empty. Bootstrap visually-hidden is not in Tailwind — use off-screen + zero box.
+                'row_attr' => [
+                    'class' => 'pointer-events-none absolute -left-[9999px] m-0 block h-px w-px overflow-hidden border-0 p-0 opacity-0',
+                    'aria-hidden' => 'true',
+                ],
             ])
             ->add('name', TextType::class, [
                 'label' => 'rock_improvement.name',

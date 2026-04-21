@@ -17,7 +17,7 @@
 							</svg>
 						</button>
 					</div>
-					<div class="min-h-0 flex-1 overflow-y-auto pe-2 ps-1">
+					<div class="min-h-0 flex-1 overflow-y-auto pe-2 ps-1 mt-2">
 						{% set _route = app.request.attributes.get('_route') %}
 						{% set currentAreaSlug = _route == 'show_rock' or _route == 'show_rock_en' ? app.request.attributes.get('areaSlug') : (_route == 'show_rocks' ? app.request.attributes.get('slug') : null) %}
 						{% set currentRockSlug = (_route == 'show_rock' or _route == 'show_rock_en') ? app.request.attributes.get('slug') : null %}

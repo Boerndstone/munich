@@ -4,7 +4,7 @@ import { Controller } from "stimulus";
 export default class extends Controller {
   static values = { searchUrl: { type: String, default: '/search' } };
   static targets = [
-    "trigger", "modal", "nameInput", "firstAscentInput", "areaSelect",
+    "modal", "nameInput", "firstAscentInput", "areaSelect",
     "areaSelectAttributes", "gradeCheck", "attrChildFriendly", "attrSunny", "attrRainProtected", "attrTrain", "attrBike",
     "resultsContainer", "resultsCount", "rocksSection", "rocksList",
     "routesSection", "routesTable", "emptyState", "idleState",
@@ -33,7 +33,6 @@ export default class extends Controller {
   scrollActiveTabToCenter(activeButton) {
     const tabsEl = document.getElementById("searchTabs");
     if (!tabsEl || !activeButton) return;
-    const container = tabsEl;
     const btn = activeButton;
     const scrollLeft = btn.offsetLeft - (container.offsetWidth / 2) + (btn.offsetWidth / 2);
     container.scrollTo({ left: Math.max(0, scrollLeft), behavior: "smooth" });

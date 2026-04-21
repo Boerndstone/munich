@@ -1,9 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
-import { Tooltip } from "bootstrap";
 
 export default class extends Controller {
   connect() {
-    // Legacy topo SVG: coloured path has id svg_N but no data-path-id
     this.element.querySelectorAll('.stroke-behavior[id^="svg_"]').forEach((el) => {
       if (el.getAttribute("data-path-id")) {
         return;
@@ -19,8 +17,6 @@ export default class extends Controller {
 
     const interactive = this.element.querySelectorAll("[data-path-id]");
 
-    // De-duplicate by pathId and prefer .route-path-hit elements when multiple
-    // elements share the same data-path-id (e.g. hit-path + circle + text).
     const pathIdMap = new Map();
     interactive.forEach((element) => {
       const pathId = element.getAttribute("data-path-id");
@@ -36,7 +32,6 @@ export default class extends Controller {
       const isPreferred = element.classList.contains("route-path-hit");
       const existingIsPreferred = existingElement.classList.contains("route-path-hit");
 
-      // Only replace if the new element is preferred and the existing one is not.
       if (isPreferred && !existingIsPreferred) {
         pathIdMap.set(pathId, element);
       }
@@ -59,8 +54,37 @@ export default class extends Controller {
       info: element.getAttribute("data-route-information"),
     }));
 
-    let activeTooltip = null;
+    this._tooltipEl = null;
     let activeStrokeElement = null;
+
+    const hideTooltip = () => {
+      if (this._tooltipEl) {
+        this._tooltipEl.remove();
+        this._tooltipEl = null;
+      }
+    };
+
+    const showTooltip = (anchorEl, text) => {
+      hideTooltip();
+      if (!text) return;
+      const tip = document.createElement("div");
+      tip.className = "route-path-tooltip fixed z-[10600] max-w-xs rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-900 shadow-lg dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100";
+      tip.setAttribute("role", "tooltip");
+      tip.textContent = text;
+      document.body.appendChild(tip);
+      const rect = anchorEl.getBoundingClientRect();
+      const tw = tip.offsetWidth;
+      const th = tip.offsetHeight;
+      let left = rect.left + rect.width / 2 - tw / 2;
+      left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
+      let top = rect.top - th - 8;
+      if (top < 8) {
+        top = rect.bottom + 8;
+      }
+      tip.style.left = `${left}px`;
+      tip.style.top = `${top}px`;
+      this._tooltipEl = tip;
+    };
 
     pathIds.forEach((path) => {
       const route = routeInfo.find((r) => r.routeId === path.pathId);
@@ -68,24 +92,15 @@ export default class extends Controller {
         return;
       }
       path.element.setAttribute("data-info", route.info);
-      const tooltip = new Tooltip(path.element, {
-        title: route.info,
-        trigger: "manual",
-        placement: "top",
-      });
 
       path.element.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
-        if (activeTooltip && activeTooltip !== tooltip) {
-          activeTooltip.hide();
-        }
-        if (path.element.getAttribute("aria-describedby")) {
-          tooltip.hide();
-          activeTooltip = null;
+        const isOpen = this._tooltipEl && this._tooltipEl.isConnected;
+        if (isOpen) {
+          hideTooltip();
         } else {
-          tooltip.show();
-          activeTooltip = tooltip;
+          showTooltip(path.element, route.info);
         }
 
         const strokeEl = strokeElements.find(
@@ -108,15 +123,21 @@ export default class extends Controller {
       });
     });
 
-    document.addEventListener("click", () => {
-      if (activeTooltip) {
-        activeTooltip.hide();
-        activeTooltip = null;
-      }
+    this._docClick = () => {
+      hideTooltip();
       if (activeStrokeElement) {
         activeStrokeElement.style.stroke = "";
         activeStrokeElement = null;
       }
-    });
+    };
+    document.addEventListener("click", this._docClick);
+  }
+
+  disconnect() {
+    document.removeEventListener("click", this._docClick);
+    if (this._tooltipEl) {
+      this._tooltipEl.remove();
+      this._tooltipEl = null;
+    }
   }
 }

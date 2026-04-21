@@ -1,0 +1,9 @@
+{# @block content Breadcrumb items and `Breadcrumb:Separator` components #}
+<ol
+    class="{{ ('mb-0 flex list-none flex-wrap items-center gap-x-2 gap-y-1 p-0 text-[12px] font-normal text-black ' ~ attributes.render('class'))|tailwind_merge }}"
+    {{ attributes.defaults({
+        'data-slot': 'breadcrumb-list',
+    }).without('class') }}
+>
+    {%- block content %}{% endblock -%}
+</ol>

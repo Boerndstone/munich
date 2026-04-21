@@ -1,0 +1,9 @@
+{# @block content The breadcrumb structure, typically a `Breadcrumb:List` #}
+<nav
+    class="{{ attributes.render('class')|tailwind_merge }}"
+    {{ attributes.defaults({
+        'aria-label': 'breadcrumb',
+    }).without('class') }}
+>
+    {%- block content %}{% endblock -%}
+</nav>

@@ -24,24 +24,24 @@
 							<span class="ms-1 hidden md:inline">{{ "rock"|trans }}</span>
 						</button>
 					</div>
-					<nav class="mt-1" aria-label="breadcrumb">
-						<ol class="mb-0 flex list-none flex-wrap items-center gap-x-2 gap-y-1 p-0 text-[12px] font-normal text-black">
-							<li class="inline-flex items-center">
-								<a class="text-[#075985] hover:underline" href="{{ path('index') }}">
-									<span class="home inline-block shrink-0" aria-hidden="true"></span>
+					<twig:Breadcrumb class="mt-1">
+						<twig:Breadcrumb:List>
+							<twig:Breadcrumb:Item>
+								<twig:Breadcrumb:Link class="inline-flex shrink-0 items-center text-black hover:underline" href="{{ path('index') }}">
+									<twig:ux:icon name="lucide:house" class="size-4 shrink-0" aria-hidden="true" />
 									<span class="sr-only">Start</span>
-								</a>
-							</li>
-							<li class="inline-flex items-center gap-x-2">
-								<span class="text-gray-600" aria-hidden="true">/</span>
-								<a class="stay-black text-black hover:underline" href="{{ path('show_rocks', { slug: rock.areaSlug }) }}">{{ rock.areaName }}</a>
-							</li>
-							<li class="stay-black inline-flex items-center gap-x-2 text-black" aria-current="page">
-								<span class="text-gray-600" aria-hidden="true">/</span>
-								<span>{{ rock.rockName }}</span>
-							</li>
-						</ol>
-					</nav>
+								</twig:Breadcrumb:Link>
+							</twig:Breadcrumb:Item>
+							<twig:Breadcrumb:Separator />
+							<twig:Breadcrumb:Item>
+								<twig:Breadcrumb:Link class="stay-black text-black hover:underline" href="{{ path('show_rocks', { slug: rock.areaSlug }) }}">{{ rock.areaName }}</twig:Breadcrumb:Link>
+							</twig:Breadcrumb:Item>
+							<twig:Breadcrumb:Separator />
+							<twig:Breadcrumb:Item>
+								<twig:Breadcrumb:Page class="stay-black text-black">{{ rock.rockName }}</twig:Breadcrumb:Page>
+							</twig:Breadcrumb:Item>
+						</twig:Breadcrumb:List>
+					</twig:Breadcrumb>
 				</div>
 			</div>
 		</div>

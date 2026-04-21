@@ -60,7 +60,7 @@ export default class extends Controller {
                   const fullUrl = route.url + routeAnchor;
                   return `
               <li class="list-group-item" data-action="click->autocomplete#goToResult" data-url="${route.url}" data-route-name="${route.name || ''}">
-                <a class="d-block" style="font-size: 14px; cursor: pointer;" href="${fullUrl}">${this.highlightText(route.name, query)} (${this.highlightText(route.firstAscent, query)}) - ${this.highlightText(route.area, query)} | ${this.highlightText(route.rock, query)}</a>
+                <a class="block" style="font-size: 14px; cursor: pointer;" href="${fullUrl}">${this.highlightText(route.name, query)} (${this.highlightText(route.firstAscent, query)}) - ${this.highlightText(route.area, query)} | ${this.highlightText(route.rock, query)}</a>
               </li>
             `;
                 }
@@ -75,7 +75,7 @@ export default class extends Controller {
               .map(
                 (rock) => `
               <li class="list-group-item" data-action="click->autocomplete#goToResult" data-url="${rock.url}">
-                <a class="d-block" style="font-size: 14px; cursor: pointer;">${this.highlightText(rock.name, query)}</a>
+                <a class="block" style="font-size: 14px; cursor: pointer;">${this.highlightText(rock.name, query)}</a>
               </li>
             `
               )
@@ -91,7 +91,7 @@ export default class extends Controller {
                   const fullUrl = route.url + routeAnchor;
                   return `
               <li class="list-group-item" data-action="click->autocomplete#goToResult" data-url="${route.url}" data-route-name="${route.name || ''}">
-                <a class="d-block" style="font-size: 14px; cursor: pointer;" href="${fullUrl}">${this.highlightText(route.area, query)} | ${this.highlightText(route.rock, query)} | Route: ${this.highlightText(route.name, query)}</a>
+                <a class="block" style="font-size: 14px; cursor: pointer;" href="${fullUrl}">${this.highlightText(route.area, query)} | ${this.highlightText(route.rock, query)} | Route: ${this.highlightText(route.name, query)}</a>
               </li>
             `;
                 }

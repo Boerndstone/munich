@@ -8,24 +8,22 @@ export default class extends Controller {
     const ratingValue = parseInt(this.data.get("rating"), 10);
     const rockQuality = this.data.get("route-rock-quality");
     const protectionValue = this.data.get("protection");
+    const icon = (cls) =>
+      `<span class="${cls} inline-block align-middle" aria-hidden="true"></span>`;
     if (ratingValue === -1) {
-      this.ratingTarget.innerHTML = '<div class="trash d-inline-block"></div>';
+      this.ratingTarget.innerHTML = icon("trash");
     } else if (ratingValue > 0) {
-      this.ratingTarget.innerHTML =
-        '<div class="star d-inline-block"></div>'.repeat(ratingValue);
+      this.ratingTarget.innerHTML = icon("star").repeat(ratingValue);
     } else {
       this.ratingTarget.innerHTML = "";
     }
     if (protectionValue == 2) {
-      this.protectionTarget.innerHTML =
-        '<div class="exclamation d-inline-block"></div>';
+      this.protectionTarget.innerHTML = icon("exclamation");
     } else if (protectionValue == 3) {
-      this.protectionTarget.innerHTML =
-        '<div class="skull d-inline-block"></div>';
+      this.protectionTarget.innerHTML = icon("skull");
     }
     if (rockQuality == 1) {
-      this.protectionTarget.innerHTML =
-        '<div class="loose-rock d-inline-block"></div>';
+      this.routeRockQualityTarget.innerHTML = icon("loose-rock");
     }
   }
 }

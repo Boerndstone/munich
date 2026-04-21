@@ -1,10 +1,4 @@
-// Configuration
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/variables-dark";
-@import "~bootstrap/scss/maps";
-@import "~bootstrap/scss/mixins";
-@import "~bootstrap/scss/utilities";
+// Bootstrap SCSS removed from the public `app` bundle (Tailwind in app.css). Admin uses a separate Encore entry.
 
 // Theme variables
 :root {
@@ -81,45 +75,6 @@
   --purple-text: #3730A3;
 }
 
-// Layout & components
-@import "~bootstrap/scss/root";
-@import "~bootstrap/scss/reboot";
-@import "~bootstrap/scss/type";
-@import "~bootstrap/scss/images";
-@import "~bootstrap/scss/containers";
-@import "~bootstrap/scss/grid";
-@import "~bootstrap/scss/tables";
-@import "~bootstrap/scss/forms";
-@import "~bootstrap/scss/buttons";
-@import "~bootstrap/scss/transitions";
-@import "~bootstrap/scss/dropdown";
-@import "~bootstrap/scss/button-group";
-@import "~bootstrap/scss/nav";
-@import "~bootstrap/scss/navbar";
-@import "~bootstrap/scss/card";
-@import "~bootstrap/scss/accordion";
-@import "~bootstrap/scss/breadcrumb";
-@import "~bootstrap/scss/pagination";
-@import "~bootstrap/scss/badge";
-@import "~bootstrap/scss/alert";
-// @import "~bootstrap/scss/progress";
-@import "~bootstrap/scss/list-group";
-@import "~bootstrap/scss/close";
-// @import "~bootstrap/scss/toasts";
-@import "~bootstrap/scss/modal";
-@import "~bootstrap/scss/tooltip";
-// @import "~bootstrap/scss/popover";
-// @import "~bootstrap/scss/carousel";
-// @import "~bootstrap/scss/spinners";
-@import "~bootstrap/scss/offcanvas";
-// @import "~bootstrap/scss/placeholders";
-
-// Helpers
-@import "~bootstrap/scss/helpers";
-
-// Utilities
-@import "~bootstrap/scss/utilities/api";
-
 @import "~lightgallery/scss/lightgallery.scss";
 @import "~lightgallery/scss/lg-thumbnail.scss";
 @import "~vanilla-cookieconsent/dist/cookieconsent.css";
@@ -167,16 +122,13 @@
 }
 
 // Apply theme variables
-body, .navbar {
+body {
   background-color: var(--theme-bg);
   color: var(--theme-text);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 .container {
     max-width: 1024px;
-}
-.navbar {
-  border-bottom: 1px solid var(--theme-border);
 }
 .nav-link {
     font-size: 14px;
@@ -667,12 +619,16 @@ $success: var(--green-base);
     }
 }
 .icon-content-size {
+    display: inline-block;
     width: 20px;
     height: 20px;
+    vertical-align: middle;
 }
 .icon-content-extra-size {
+    display: inline-block;
     width: 22px;
     height: 22px;
+    vertical-align: middle;
 }
 @keyframes grow-shrink {
     0%, 100% {
@@ -789,13 +745,6 @@ $success: var(--green-base);
     @extend .icon-content-size;
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000000" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z" /></svg>');
 }
-.form-switch .form-check-input {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 8 8"><circle r="3" fill="%23000000"/></svg>');
-}
-.form-switch .form-check-input:checked {
-    background-color: black!important;
-    background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-4 -4 8 8%27%3e%3ccircle r=%273%27 fill=%27%23fff%27/%3e%3c/svg%3e');
-}
 .magnifier {
     @extend .icon-content-size;
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5l-1.5 1.5l-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16A6.5 6.5 0 0 1 3 9.5A6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14S14 12 14 9.5S12 5 9.5 5"/></svg>');
@@ -880,19 +829,9 @@ footer {
     .chart {
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="M17.45 15.18L22 7.31V21H2V3h2v12.54L9.5 6L16 9.78l4.24-7.33l1.73 1l-5.23 9.05l-6.51-3.75L4.31 19h2.26l4.39-7.56z" /></svg>');
     }
-    .form-switch .form-check-input {
-        background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-4 -4 8 8%27%3e%3ccircle r=%273%27 fill=%27%23ffffff%27/%3e%3c/svg%3e');
-    }
-    .form-switch .form-check-input:checked {
-        background-color: white!important;
-        background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-4 -4 8 8%27%3e%3ccircle r=%273%27 fill=%27%23000%27/%3e%3c/svg%3e');
-    }    
     // Dark theme close button - white
     .btn-close {
         filter: invert(1) grayscale(100%) brightness(200%);
-    }
-    .form-switch .form-check-input:checked::before {
-        color: black!important;
     }
     .border-bottom {
         border-bottom: var(--bs-border-width) var(--bs-border-style) white !important;
@@ -1118,7 +1057,7 @@ input[data-autocomplete-target="input"]:focus {
         outline: none;
     }
 }
-@include media-breakpoint-up(lg) {
+@media (min-width: 992px) {
     .lg-img-wrap {
         .lg-object {
             max-width: 750px;
@@ -1137,7 +1076,7 @@ input[data-autocomplete-target="input"]:focus {
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
 }
-@include media-breakpoint-up(lg) {
+@media (min-width: 992px) {
     .text-truncate-rock-name {
         max-width: 100%;
     }
@@ -1152,87 +1091,9 @@ input[data-autocomplete-target="input"]:focus {
     -webkit-overflow-scrolling: touch;
     scrollbar-gutter: stable;
 
-    @include media-breakpoint-up(md) {
+    @media (min-width: 768px) {
         flex-wrap: wrap;
         overflow-x: visible;
-    }
-}
-
-// @tailwindcss/forms sizes all [type=checkbox] as 1rem × 1rem and checked as background-size 100% 100%.
-// That breaks Bootstrap 5 switches (track should be 2em wide; knob must not fill the whole track).
-// Exclude #languageSwitch so Tailwind utilities (e.g. h-2.5) on the navbar language switch are not overridden.
-.form-switch .form-check-input:not(#languageSwitch) {
-    width: 2em !important;
-    height: 1em !important;
-    background-size: contain !important;
-}
-
-// Navbar rock page: DE/EN label inside the switch track (no adjacent icon)
-#form-check-language.form-switch {
-    padding-left: 0;
-    margin-bottom: 0;
-
-    .language-switch-inner {
-        position: relative;
-        display: inline-block;
-        vertical-align: middle;
-        line-height: 0;
-    }
-
-    .form-check-input {
-        float: none;
-        margin-left: 0 !important;
-        width: 2.85em !important;
-        background-size: contain !important;
-        position: relative;
-        z-index: 1;
-    }
-
-    .language-switch-caption {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        z-index: 2;
-    }
-
-    .language-switch-lang {
-        position: absolute;
-        // top: 50%;
-        transform: translateY(-50%);
-        font-size: 0.5rem;
-        font-weight: 700;
-        line-height: 1;
-        letter-spacing: 0.02em;
-    }
-
-    .language-switch-lang--de {
-        top: 15px;
-        right: 5px;
-        color: #212529;
-    }
-
-    .language-switch-lang--en {
-        top: 15px;
-        left: 5px;
-        color: #fff;
-    }
-
-    .form-check-input:not(:checked) ~ .language-switch-caption .language-switch-lang--en {
-        display: none;
-    }
-
-    .form-check-input:checked ~ .language-switch-caption .language-switch-lang--de {
-        display: none;
-    }
-}
-
-[data-theme="dark"] #form-check-language.form-switch {
-    .language-switch-lang--de {
-        color: rgba(255, 255, 255, 0.92);
-    }
-
-    .form-check-input:checked ~ .language-switch-caption .language-switch-lang--en {
-        color: #000;
     }
 }
 
@@ -1243,19 +1104,7 @@ input[data-autocomplete-target="input"]:focus {
     /* Adjust this value to move the legend vertically */
 }
 
-// Modals: ensure modal content appears above backdrop (all modals need higher z-index than backdrop)
-.modal.fade,
-.modal.show {
-  --bs-modal-zindex: 10550;
-  z-index: 10550 !important;
-}
-.modal-backdrop.fade,
-.modal-backdrop.show {
-  --bs-backdrop-zindex: 10545;
-  z-index: 10545 !important;
-}
-
-#searchModal input.form-control::placeholder {
+#searchModal input::placeholder {
   font-size: 0.875rem !important;
 }
 
@@ -1346,7 +1195,7 @@ input[data-autocomplete-target="input"]:focus {
     stroke-width: 6;
 }
 
-@include media-breakpoint-up(lg) {
+@media (min-width: 992px) {
     .number-circle {
         r: 17px;
     }
@@ -1362,9 +1211,6 @@ input[data-autocomplete-target="input"]:focus {
     .end-dot {
         r: 8px;
     }
-}
-.dropdown-toggle::after {
-    display: none;
 }
 
 .banned {

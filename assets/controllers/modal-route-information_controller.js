@@ -40,9 +40,10 @@ export default class extends Controller {
 
     let comments = [];
     try {
-      const commentsData = button.dataset.modalRouteInformationCommentsValue;
-      if (commentsData) {
-        comments = JSON.parse(commentsData);
+      const commentsJson =
+        button.getAttribute("data-modal-route-information-comments-value") || "";
+      if (commentsJson) {
+        comments = JSON.parse(commentsJson);
       }
     } catch (e) {
       console.error("Error parsing comments:", e);
@@ -56,7 +57,8 @@ export default class extends Controller {
       let html = "";
 
       if (firstAscent || yearFirstAscent) {
-        html += `<p class="mb-0 text-sm font-medium lg:hidden">`;
+        // Modal body: show on all breakpoints (table already hides this column on small screens).
+        html += `<p class="mb-0 text-sm font-medium">`;
         if (firstAscent) {
           html += `Erstbegeher: ${firstAscent} `;
         }

@@ -23,26 +23,26 @@
 			</section>
 			<section class="mb-6">
 				<div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm dark:border-gray-700">
-					<table class="min-w-full border-collapse text-left text-sm text-gray-900 dark:text-gray-100">
-						<thead class="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700 dark:border-gray-700 dark:bg-gray-800/90 dark:text-gray-300">
-							<tr>
-								<th scope="col" class="whitespace-nowrap px-3 py-2.5 sm:px-4">{{ 'grade_comparison_free_climbing.col_uiaa'|trans }}</th>
-								<th scope="col" class="whitespace-nowrap px-3 py-2.5 sm:px-4">{{ 'grade_comparison_free_climbing.col_french'|trans }}</th>
-								<th scope="col" class="whitespace-nowrap px-3 py-2.5 sm:px-4">{{ 'grade_comparison_free_climbing.col_fb'|trans }}</th>
-								<th scope="col" class="whitespace-nowrap px-3 py-2.5 sm:px-4">{{ 'grade_comparison_free_climbing.col_v'|trans }}</th>
-							</tr>
-						</thead>
-						<tbody class="divide-y divide-gray-200 font-mono text-xs sm:text-sm dark:divide-gray-700">
+					<twig:Table class="min-w-full border-collapse text-left text-gray-900 dark:text-gray-100">
+						<twig:Table:Header class="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/90">
+							<twig:Table:Row class="border-0 hover:bg-transparent">
+								<twig:Table:Head scope="col" class="h-auto px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-gray-700 sm:px-4 dark:text-gray-300">{{ 'grade_comparison_free_climbing.col_uiaa'|trans }}</twig:Table:Head>
+								<twig:Table:Head scope="col" class="h-auto px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-gray-700 sm:px-4 dark:text-gray-300">{{ 'grade_comparison_free_climbing.col_french'|trans }}</twig:Table:Head>
+								<twig:Table:Head scope="col" class="h-auto px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-gray-700 sm:px-4 dark:text-gray-300">{{ 'grade_comparison_free_climbing.col_fb'|trans }}</twig:Table:Head>
+								<twig:Table:Head scope="col" class="h-auto px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-gray-700 sm:px-4 dark:text-gray-300">{{ 'grade_comparison_free_climbing.col_v'|trans }}</twig:Table:Head>
+							</twig:Table:Row>
+						</twig:Table:Header>
+						<twig:Table:Body class="divide-y divide-gray-200 font-mono text-xs sm:text-sm dark:divide-gray-700">
 							{% for row in comparisonRows %}
-								<tr class="odd:bg-white even:bg-gray-50/90 dark:odd:bg-gray-900 dark:even:bg-gray-950/60">
-									<td class="whitespace-nowrap px-3 py-2 align-middle sm:px-4">{{ row.uiaa }}</td>
-									<td class="whitespace-nowrap px-3 py-2 align-middle sm:px-4">{{ row.french }}</td>
-									<td class="whitespace-nowrap px-3 py-2 align-middle sm:px-4">{{ row.fb }}</td>
-									<td class="whitespace-nowrap px-3 py-2 align-middle sm:px-4">{{ row.v }}</td>
-								</tr>
+								<twig:Table:Row class="odd:bg-white even:bg-gray-50/90 hover:bg-gray-100/80 dark:odd:bg-gray-900 dark:even:bg-gray-950/60 dark:hover:bg-gray-800/50">
+									<twig:Table:Cell class="px-3 py-2 sm:px-4">{{ row.uiaa }}</twig:Table:Cell>
+									<twig:Table:Cell class="px-3 py-2 sm:px-4">{{ row.french }}</twig:Table:Cell>
+									<twig:Table:Cell class="px-3 py-2 sm:px-4">{{ row.fb }}</twig:Table:Cell>
+									<twig:Table:Cell class="px-3 py-2 sm:px-4">{{ row.v }}</twig:Table:Cell>
+								</twig:Table:Row>
 							{% endfor %}
-						</tbody>
-					</table>
+						</twig:Table:Body>
+					</twig:Table>
 				</div>
 			</section>
 		</div>

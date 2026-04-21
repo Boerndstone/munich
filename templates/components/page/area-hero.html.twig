@@ -20,29 +20,43 @@
 					</h1>
 				</div>
 				<div class="flex shrink-0 items-center">
-					<div class="dropdown relative">
-						<button class="dropdown-toggle inline-flex shrink-0 cursor-pointer items-center rounded-md border border-gray-400 bg-white px-2.5 py-1 text-sm font-medium text-gray-800 shadow-xs hover:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-gray-400 dark:border-gray-500 dark:text-gray-100 dark:hover:bg-gray-800" type="button" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}' data-bs-auto-close="true" aria-expanded="false" aria-haspopup="true" aria-label="Weitere Informationen">
-							<div class="modal-info bg-center bg-no-repeat" style="width: 22px; height: 22px;" aria-hidden="true"></div>
-						</button>
-						<ul class="dropdown-menu dropdown-menu-end z-[1080] m-0 min-w-[12rem] list-none rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-900">
-							{% if areaKletterkonzeption %}
-								<li>
-									<button type="button" class="dropdown-item flex w-full cursor-pointer items-center border-0 bg-transparent px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100 focus-visible:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-400 dark:text-gray-100 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800" data-bs-dismiss="dropdown" onclick="document.getElementById('kletterkonzeptionModal').showModal()"><span class="modal-info me-2 shrink-0 bg-center bg-no-repeat" style="width: 22px; height: 22px;" aria-hidden="true"></span> Kletterkonzeption - {{ areaName }}</button>
+					<details id="areaHeroMoreMenu" class="group relative">
+						<summary class="inline-flex list-none cursor-pointer items-center rounded-md border border-border bg-background px-2.5 py-1 text-sm font-medium text-foreground shadow-xs outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden" aria-label="Weitere Informationen">
+							<div class="modal-info shrink-0 bg-center bg-no-repeat" style="width: 22px; height: 22px;" aria-hidden="true"></div>
+						</summary>
+						<div class="absolute end-0 z-[1080] mt-1 min-w-[12rem] rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none" role="menu" aria-orientation="vertical">
+							<ul class="m-0 list-none p-0">
+								{% if areaKletterkonzeption %}
+									<li role="none">
+										<button type="button" class="flex w-full cursor-pointer items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1.5 text-left text-sm text-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground" role="menuitem" onclick="document.getElementById('areaHeroMoreMenu').removeAttribute('open'); document.getElementById('kletterkonzeptionModal').showModal()">
+											<span class="modal-info shrink-0 bg-center bg-no-repeat" style="width: 22px; height: 22px;" aria-hidden="true"></span>
+											Kletterkonzeption - {{ areaName }}
+										</button>
+									</li>
+								{% endif %}
+								{% if top100Routes is not empty %}
+									<li role="none">
+										<button type="button" class="flex w-full cursor-pointer items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1.5 text-left text-sm text-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground" role="menuitem" onclick="document.getElementById('areaHeroMoreMenu').removeAttribute('open'); document.getElementById('top100RoutesModal').showModal()">
+											<span class="top-100 shrink-0" aria-hidden="true"></span>
+											Top 100 - {{ areaName }}
+										</button>
+									</li>
+								{% endif %}
+								<li role="none">
+									<button type="button" class="flex w-full cursor-pointer items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1.5 text-left text-sm text-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground" role="menuitem" onclick="document.getElementById('areaHeroMoreMenu').removeAttribute('open'); document.getElementById('modalWeather').showModal()">
+										<span class="weather shrink-0" aria-hidden="true"></span>
+										Wetter
+									</button>
 								</li>
-							{% endif %}
-							{% if top100Routes is not empty %}
-								<li>
-									<button type="button" class="dropdown-item flex w-full cursor-pointer items-center border-0 bg-transparent px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100 focus-visible:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-400 dark:text-gray-100 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800" data-bs-dismiss="dropdown" onclick="document.getElementById('top100RoutesModal').showModal()"><span class="top-100 me-2 shrink-0" aria-hidden="true"></span> Top 100 - {{ areaName }}</button>
+								<li role="none">
+									<button type="button" class="flex w-full cursor-pointer items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1.5 text-left text-sm text-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground" role="menuitem" onclick="document.getElementById('areaHeroMoreMenu').removeAttribute('open'); document.getElementById('modalAreaMap').showModal()">
+										<span class="map shrink-0" aria-hidden="true"></span>
+										Übersichtskarte {{ areaName }}
+									</button>
 								</li>
-							{% endif %}
-							<li>
-								<button type="button" class="dropdown-item flex w-full cursor-pointer items-center border-0 bg-transparent px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100 focus-visible:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-400 dark:text-gray-100 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800" data-bs-dismiss="dropdown" onclick="document.getElementById('modalWeather').showModal()"><span class="weather me-2 shrink-0" aria-hidden="true"></span> Wetter</button>
-							</li>
-							<li>
-								<button type="button" class="dropdown-item flex w-full cursor-pointer items-center border-0 bg-transparent px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100 focus-visible:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-400 dark:text-gray-100 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800" data-bs-dismiss="dropdown" onclick="document.getElementById('modalAreaMap').showModal()"><span class="map me-2 shrink-0" aria-hidden="true"></span>Übersichtskarte {{ areaName }}</button>
-							</li>
-						</ul>
-					</div>
+							</ul>
+						</div>
+					</details>
 				</div>
 			</div>
 		</div>

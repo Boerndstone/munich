@@ -164,6 +164,35 @@
 				</div>
 				<div data-search-modal-target="emptyState" class="hidden text-sm text-gray-500 dark:text-gray-400">Keine Ergebnisse gefunden.</div>
 			</div>
+
+			<div data-search-modal-target="resultsContainer" class="hidden border-t border-gray-200 pt-3 dark:border-gray-700">
+				<h3 class="mb-2 text-sm font-semibold text-gray-900 dark:text-gray-100"><span data-search-modal-target="resultsCount">0</span> Ergebnisse</h3>
+				<div data-search-modal-target="rocksSection" class="mb-3 hidden">
+					<div class="mb-1 text-sm font-bold text-gray-800 dark:text-gray-200">Felsen</div>
+					<ul class="m-0 list-none rounded-md border border-gray-200 p-0 dark:border-gray-700" data-search-modal-target="rocksList"></ul>
+				</div>
+				<hr class="my-2 border-gray-200 dark:border-gray-700" />
+				<div data-search-modal-target="routesSection" class="hidden">
+					<div class="mb-2 text-sm font-bold text-gray-800 dark:text-gray-200">Touren</div>
+					<div class="mb-2 flex flex-wrap gap-2 px-1 text-xs font-bold text-gray-700 dark:text-gray-300">
+						<span class="w-[40%] min-w-0 sm:w-2/5">Route</span>
+						<span class="w-8 shrink-0 sm:w-12">Grad</span>
+						<span class="min-w-0 flex-1">Fels</span>
+						<span class="hidden w-1/4 sm:inline-block">Gebiet</span>
+					</div>
+					<ul class="m-0 list-none p-0" data-search-modal-target="routesTable"></ul>
+					<div data-search-modal-target="pagerContainer" class="mt-2 hidden flex-wrap items-center justify-between gap-2">
+						<button type="button" class="inline-flex items-center gap-1 rounded-md border border-gray-600 bg-white px-2 py-1 text-sm dark:border-gray-500 dark:bg-gray-900 dark:text-gray-100" data-search-modal-target="pagerPrev" data-action="click->search-modal#gradePagePrev" aria-label="Vorherige Seite">
+							<i class="fas fa-chevron-left" aria-hidden="true"></i>Zurück
+						</button>
+						<span class="text-xs text-gray-600 dark:text-gray-400" data-search-modal-target="pagerInfo">Seite 1 von 1</span>
+						<button type="button" class="inline-flex items-center gap-1 rounded-md border border-gray-600 bg-white px-2 py-1 text-sm dark:border-gray-500 dark:bg-gray-900 dark:text-gray-100" data-search-modal-target="pagerNext" data-action="click->search-modal#gradePageNext" aria-label="Nächste Seite">
+							Weiter<i class="fas fa-chevron-right ms-1" aria-hidden="true"></i>
+						</button>
+					</div>
+				</div>
+				<div data-search-modal-target="emptyState" class="hidden text-sm text-gray-500 dark:text-gray-400">Keine Ergebnisse gefunden.</div>
+			</div>
 		</div>
 	</div>
 </dialog>

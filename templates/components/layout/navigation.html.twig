@@ -1,16 +1,12 @@
 <header class="fixed top-0 z-[1045] h-[50px] w-full border-b border-[var(--theme-border)] bg-[var(--theme-bg)] text-[var(--theme-text)] transition-colors">
 	<nav class="mx-auto flex h-full max-w-[1024px] items-stretch px-2" aria-label="Hauptnavigation">
-		<dialog
-			id="navOffcanvas"
-			class="nav-offcanvas-dialog z-[1055]"
-			aria-labelledby="navOffcanvasTitle"
-			aria-modal="true"
-		>
+		<twig:Sheet id="navOffcanvas" class="contents">
+		<twig:Sheet:Content id="navOffcanvas" side="left" aria-labelledby="navOffcanvasTitle">
 			<div class="flex h-full min-h-0 w-full">
 				<div class="flex h-full min-h-0 w-[min(100vw,20rem)] max-w-full flex-col overflow-y-auto bg-[var(--theme-bg)] shadow-xl" onclick="event.stopPropagation()">
 					<div class="flex shrink-0 items-center justify-between border-b border-[var(--theme-border)] px-3 py-2">
 						<a class="chelsea-market-regular text-lg text-[var(--theme-text)] no-underline" id="navOffcanvasTitle" href="{{ path('index') }}">munichclimbs</a>
-						<button type="button" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--theme-text)] opacity-70 hover:bg-[var(--theme-bg-lighter)] hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" onclick="document.getElementById('navOffcanvas').close()" aria-label="{{ 'close_navigation'|trans({}, 'messages') }}">
+						<button type="button" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--theme-text)] opacity-70 hover:bg-[var(--theme-bg-lighter)] hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" data-action="click->sheet#close" aria-label="{{ 'close_navigation'|trans({}, 'messages') }}">
 							<span class="sr-only">{{ 'close_navigation'|trans({}, 'messages') }}</span>
 							<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
 								<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -77,14 +73,16 @@
 						</ul>
 					</div>
 				</div>
-				<button type="button" class="min-h-0 min-w-0 flex-1 cursor-default border-0 bg-black/40 p-0" aria-label="{{ 'close_navigation'|trans({}, 'messages') }}" onclick="document.getElementById('navOffcanvas').close()"></button>
+				<button type="button" class="min-h-0 min-w-0 flex-1 cursor-default border-0 bg-black/40 p-0" aria-label="{{ 'close_navigation'|trans({}, 'messages') }}" data-action="click->sheet#close"></button>
 			</div>
-		</dialog>
+		</twig:Sheet:Content>
 		<div class="flex w-full max-w-[1024px] flex-1 items-center gap-2 px-0">
 			<div class="flex shrink-0 items-center gap-1 ps-0 md:w-1/4 md:gap-2 md:ps-1">
-				<button class="inline-flex shrink-0 border-0 bg-transparent p-0 shadow-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" type="button" onclick="document.getElementById('navOffcanvas').showModal()" aria-controls="navOffcanvas" aria-label="Toggle navigation">
+				<twig:Sheet:Trigger>
+				<button class="inline-flex shrink-0 border-0 bg-transparent p-0 shadow-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" type="button" aria-controls="navOffcanvas" aria-label="Toggle navigation">
 					<div class="menu" aria-hidden="true"></div>
 				</button>
+				</twig:Sheet:Trigger>
 				<a href="{{ path('index') }}" aria-label="Startseite munichclimbs" class="munich chelsea-market-regular ms-2 pb-1 text-xl leading-tight no-underline">
 					<span class="max-md:hidden md:inline-block">munichclimbs</span>
 				</a>
@@ -119,5 +117,6 @@
 				</button>
 			</div>
 		</div>
+		</twig:Sheet>
 	</nav>
 </header>

@@ -1,0 +1,12 @@
+{# @block content Typically a `button` — do not duplicate `data-action` / `data-sheet-target` on the child. #}
+<span
+	class="{{ ('inline-flex ' ~ attributes.render('class'))|tailwind_merge }}"
+	{{ attributes.defaults({
+		'data-action': 'click->sheet#open'|html_attr_type('sst'),
+		'data-sheet-target': 'trigger',
+		'aria-haspopup': 'dialog',
+		'aria-expanded': 'false',
+	}).without('class') }}
+>
+	{%- block content %}{% endblock -%}
+</span>

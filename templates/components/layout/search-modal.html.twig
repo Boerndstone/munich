@@ -157,13 +157,7 @@
 				<hr class="my-3 border-[var(--theme-border)]" />
 				<div data-search-modal-target="routesSection" class="hidden">
 					<div class="mb-2 text-xs font-bold uppercase tracking-wide text-[var(--theme-text)]">Touren</div>
-					<div class="mb-2 hidden gap-2 px-1 text-xs font-bold text-[var(--theme-text)] sm:grid sm:grid-cols-12" aria-hidden="true">
-						<div class="col-span-5">Route</div>
-						<div class="col-span-1">Grad</div>
-						<div class="col-span-3">Fels</div>
-						<div class="col-span-3">Gebiet</div>
-					</div>
-					<ul class="m-0 list-none p-0" data-search-modal-target="routesTable"></ul>
+					<div class="relative min-w-0 w-full overflow-x-auto" data-search-modal-target="routesTable"></div>
 					<div data-search-modal-target="pagerContainer" class="mt-2 hidden">
 						<div class="flex flex-wrap items-center justify-between gap-2">
 							<button type="button" class="inline-flex items-center gap-1 rounded-md border border-[var(--theme-border)] bg-transparent px-3 py-1.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)] disabled:cursor-not-allowed disabled:opacity-50" data-search-modal-target="pagerPrev" data-action="click->search-modal#gradePagePrev" aria-label="Vorherige Seite">

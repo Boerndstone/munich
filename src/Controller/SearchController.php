@@ -20,7 +20,7 @@ class SearchController extends AbstractController
             $message = $this->getParameter('kernel.environment') === 'dev'
                 ? $e->getMessage()
                 : 'Ein Fehler ist aufgetreten.';
-            return $this->json(['rocks' => [], 'routes' => [], 'searchMode' => 'name', '_error' => $message], 500);
+            return $this->json(['rocks' => [], 'routes' => [], 'routesHtml' => '', 'searchMode' => 'name', '_error' => $message], 500);
         }
     }
 
@@ -46,7 +46,7 @@ class SearchController extends AbstractController
                 'bike' => $bike,
             ]);
             if (empty($filters)) {
-                return $this->json(['rocks' => [], 'routes' => [], 'searchMode' => $mode]);
+                return $this->json(['rocks' => [], 'routes' => [], 'routesHtml' => '', 'searchMode' => $mode]);
             }
             $rocks = $rockRepository->findByAttributes($filters, $selectedArea ?: null);
             $rockResults = [];
@@ -62,13 +62,13 @@ class SearchController extends AbstractController
                     ];
                 }
             }
-            return $this->json(['rocks' => $rockResults, 'routes' => [], 'searchMode' => $mode]);
+            return $this->json(['rocks' => $rockResults, 'routes' => [], 'routesHtml' => '', 'searchMode' => $mode]);
         }
 
         // Grade search – paginated
         if ($mode === 'grade') {
             if (empty($selectedGrades)) {
-                return $this->json(['rocks' => [], 'routes' => [], 'searchMode' => $mode]);
+                return $this->json(['rocks' => [], 'routes' => [], 'routesHtml' => '', 'searchMode' => $mode]);
             }
             $perPage = max(1, min(50, (int) $request->query->get('perPage', 20)));
             $page = max(1, (int) $request->query->get('page', 1));
@@ -81,6 +81,7 @@ class SearchController extends AbstractController
             return $this->json([
                 'rocks' => [],
                 'routes' => $routeResults,
+                'routesHtml' => $this->buildRoutesTableHtml($routeResults),
                 'searchMode' => $mode,
                 'totalCount' => $totalCount,
                 'page' => $page,
@@ -90,7 +91,7 @@ class SearchController extends AbstractController
 
         // Name and firstascent need at least 2 characters
         if (empty($query) || strlen($query) < 2) {
-            return $this->json(['rocks' => [], 'routes' => [], 'searchMode' => $mode]);
+            return $this->json(['rocks' => [], 'routes' => [], 'routesHtml' => '', 'searchMode' => $mode]);
         }
 
         $rockResults = [];
@@ -121,7 +122,22 @@ class SearchController extends AbstractController
         return $this->json([
             'rocks' => $rockResults,
             'routes' => $routeResults,
-            'searchMode' => $mode
+            'routesHtml' => $this->buildRoutesTableHtml($routeResults),
+            'searchMode' => $mode,
+        ]);
+    }
+
+    /**
+     * @param list<array<string, mixed>> $routes Same shape as formatRoutesForJson()
+     */
+    private function buildRoutesTableHtml(array $routes): string
+    {
+        if ($routes === []) {
+            return '';
+        }
+
+        return $this->renderView('components/search/routes_table_fragment.html.twig', [
+            'routes' => $routes,
         ]);
     }
 

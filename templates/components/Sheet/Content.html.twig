@@ -1,0 +1,17 @@
+{# @prop id string HTML id on the native `<dialog>` (pair with `aria-controls` on the trigger). #}
+{# @prop side 'left'|'right'|'top'|'bottom' Reserved for layout tokens (nav uses left panel). Defaults to `left` #}
+{# @block content Sheet body (e.g. panel + dimmer) #}
+{%- props id, side = 'left' -%}
+
+<dialog
+	id="{{ id }}"
+	class="{{ ('nav-offcanvas-dialog z-[1055] ' ~ attributes.render('class'))|tailwind_merge }}"
+	{{ attributes.defaults({
+		'aria-modal': 'true',
+		'data-sheet-target': 'dialog',
+		'data-action': 'click->sheet#closeOnClickOutside keydown.esc->sheet#close:prevent',
+		'data-side': side,
+	}).without('class', 'id') }}
+>
+	{%- block content %}{% endblock -%}
+</dialog>

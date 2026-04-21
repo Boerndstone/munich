@@ -1,0 +1,105 @@
+{# Shadcn-style twig:Table for route rows. #}
+{# @prop routes iterable #}
+{# @prop variant 'top100' — area top-100 (arrays from findTop100ByAreaCached). 'search' — JSON rows from SearchController (name, grade, rock, area, url, …). #}
+{%- props routes, variant = 'top100' -%}
+
+{% if variant == 'search' %}
+	<twig:Table class="mb-0 min-w-[36rem] text-sm font-medium">
+		<twig:Table:Header class="[&_tr]:border-[var(--theme-border)]">
+			<twig:Table:Row class="border-0 hover:bg-transparent">
+				<twig:Table:Head scope="col" class="w-[38%] py-2 text-left text-xs font-semibold uppercase tracking-wide text-[var(--theme-text)] sm:px-3">Route</twig:Table:Head>
+				<twig:Table:Head scope="col" class="w-[8%] py-2 text-left text-xs font-semibold uppercase tracking-wide text-[var(--theme-text)] sm:px-3">Grad</twig:Table:Head>
+				<twig:Table:Head scope="col" class="w-[22%] py-2 text-left text-xs font-semibold uppercase tracking-wide text-[var(--theme-text)] sm:px-3">Fels</twig:Table:Head>
+				<twig:Table:Head scope="col" class="w-[32%] py-2 text-left text-xs font-semibold uppercase tracking-wide text-[var(--theme-text)] sm:px-3">Gebiet</twig:Table:Head>
+			</twig:Table:Row>
+		</twig:Table:Header>
+		<twig:Table:Body class="[&_tr:last-child]:border-b [&_tr:last-child]:border-[var(--theme-border)]">
+			{% for route in routes %}
+				<twig:Table:Row class="border-[var(--theme-border)] transition-colors hover:bg-[var(--theme-bg-lighter)]">
+					<twig:Table:Cell class="max-w-0 py-2 align-top sm:px-3">
+						<a href="{{ route.url }}#{{ route.name|replace({' ': ''})|lower }}" class="block min-w-0 truncate font-medium text-[#075985] no-underline hover:underline">
+							{{ route.name }}
+						</a>
+					</twig:Table:Cell>
+					<twig:Table:Cell class="py-2 align-top sm:px-3">
+						{% if route.grade %}
+							{{ route.grade }}
+						{% else %}
+							<span class="opacity-60">-</span>
+						{% endif %}
+					</twig:Table:Cell>
+					<twig:Table:Cell class="max-w-0 py-2 align-top sm:px-3">
+						<span class="block truncate text-[var(--theme-text)]">{{ route.rock }}</span>
+					</twig:Table:Cell>
+					<twig:Table:Cell class="max-w-0 py-2 align-top sm:px-3">
+						<span class="block truncate text-gray-600 dark:text-gray-400">{{ route.area }}</span>
+					</twig:Table:Cell>
+				</twig:Table:Row>
+			{% endfor %}
+		</twig:Table:Body>
+	</twig:Table>
+{% else %}
+	<twig:Table class="mb-0 min-w-[36rem] font-medium">
+		<twig:Table:Header class="[&_tr]:border-[var(--theme-border)]">
+			<twig:Table:Row class="border-0 hover:bg-transparent">
+				<twig:Table:Head scope="col" class="w-[5%] py-2 text-left text-xs font-semibold uppercase tracking-wide text-[var(--theme-text)] sm:px-3">#</twig:Table:Head>
+				<twig:Table:Head scope="col" class="py-2 text-left text-xs font-semibold uppercase tracking-wide text-[var(--theme-text)] sm:px-3">Route</twig:Table:Head>
+				<twig:Table:Head scope="col" class="py-2 text-left text-xs font-semibold uppercase tracking-wide text-[var(--theme-text)] sm:px-3">Grad</twig:Table:Head>
+				<twig:Table:Head scope="col" class="py-2 text-left text-xs font-semibold uppercase tracking-wide text-[var(--theme-text)] sm:px-3">Fels</twig:Table:Head>
+				<twig:Table:Head scope="col" class="py-2 text-left text-xs font-semibold uppercase tracking-wide text-[var(--theme-text)] sm:px-3">Erstbegeher</twig:Table:Head>
+			</twig:Table:Row>
+		</twig:Table:Header>
+		<twig:Table:Body class="[&_tr:last-child]:border-b [&_tr:last-child]:border-[var(--theme-border)]">
+			{% for route in routes %}
+				{% set routes_table_row_index = loop.index %}
+				<twig:Table:Row class="border-[var(--theme-border)]">
+					<twig:Table:Cell class="py-2 align-top sm:px-3">{{ routes_table_row_index }}</twig:Table:Cell>
+					<twig:Table:Cell class="py-2 align-top sm:px-3">
+						<div class="flex flex-nowrap items-center gap-x-1">
+							{% if route.areaSlug and route.rockSlug %}
+								<a href="{{ path('show_rock', {'areaSlug': route.areaSlug, 'slug': route.rockSlug}) }}#{{ route.name|replace({' ': ''})|lower }}" class="font-medium text-[#075985] no-underline hover:underline">
+									{{ route.name|raw }}
+								</a>
+							{% else %}
+								<span class="font-medium text-[var(--theme-text)]">{{ route.name }}</span>
+							{% endif %}
+							<span class="inline-flex shrink-0 leading-none" style="line-height: 0;" data-controller="routeparams" data-routeparams-rating="{{ route.rating }}" data-routeparams-protection="{{ route.protection }}" data-routeparams-route-rock-quality="{{ route.rockQuality }}">
+								<span data-routeparams-target="rating"></span>
+								<span data-routeparams-target="protection"></span>
+								<span data-routeparams-target="route-rock-quality"></span>
+							</span>
+						</div>
+					</twig:Table:Cell>
+					<twig:Table:Cell class="py-2 align-top sm:px-3">
+						{% if route.grade %}
+							{{ route.grade }}
+						{% else %}
+							<span class="opacity-60">-</span>
+						{% endif %}
+					</twig:Table:Cell>
+					<twig:Table:Cell class="py-2 align-top sm:px-3">
+						{% if route.areaSlug and route.rockSlug %}
+							<a href="{{ path('show_rock', {'areaSlug': route.areaSlug, 'slug': route.rockSlug}) }}" class="text-[#075985] no-underline hover:underline">
+								{{ route.rockName }}
+							</a>
+						{% elseif route.rockName %}
+							<span class="opacity-60">{{ route.rockName }}</span>
+						{% else %}
+							<span class="opacity-60">-</span>
+						{% endif %}
+					</twig:Table:Cell>
+					<twig:Table:Cell class="py-2 align-top sm:px-3">
+						{% if route.firstAscent %}
+							{{ route.firstAscent }}
+							{% if route.yearFirstAscent %}
+								({{ route.yearFirstAscent }})
+							{% endif %}
+						{% else %}
+							<span class="opacity-60">-</span>
+						{% endif %}
+					</twig:Table:Cell>
+				</twig:Table:Row>
+			{% endfor %}
+		</twig:Table:Body>
+	</twig:Table>
+{% endif %}

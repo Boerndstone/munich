@@ -4,7 +4,7 @@
 	<div class="sticky top-[50px] z-[1000] border-b border-[var(--theme-border)] bg-[var(--theme-bg)]">
 		<div class="scrollable-tabs-container relative mx-auto max-w-[1024px] overflow-x-hidden bg-[var(--theme-bg)] px-2" {{ stimulus_controller('rock-topo-tabs') }}>
 			<twig:Tabs defaultValue="{{ first_topo_id }}" class="w-full gap-0 data-[orientation=horizontal]:flex-col">
-				<twig:Tabs:List variant="line" class="mb-0 min-h-0 border-0 bg-transparent p-0">
+				<twig:Tabs:List variant="line" aria-label="Topo navigation" class="mb-0 min-h-0 border-0 bg-transparent p-0">
 					{% for topo in topos %}
 						{% set topo_id = topo.topoName|custom_replace|lower %}
 						<twig:Tabs:Trigger value="{{ topo_id }}" class="cursor-pointer data-[state=active]:underline data-[state=active]:decoration-2 data-[state=active]:underline-offset-4">{{ topo.topoName }}</twig:Tabs:Trigger>

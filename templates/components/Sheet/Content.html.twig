@@ -1,4 +1,4 @@
-{# @prop id string HTML id for the dialog (must match parent <twig:Sheet id="…">) #}
+{# @prop id string HTML id on the native `<dialog>` (pair with `aria-controls` on the trigger). #}
 {# @prop side 'left'|'right'|'top'|'bottom' Reserved for layout tokens (nav uses left panel). Defaults to `left` #}
 {# @block content Sheet body (e.g. panel + dimmer) #}
 {%- props id, side = 'left' -%}

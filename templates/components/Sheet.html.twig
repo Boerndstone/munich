@@ -1,8 +1,8 @@
 {# Local Shadcn-style Sheet (Symfony UX Shadcn kit has Dialog but no Sheet yet: https://ux.symfony.com/toolkit/kits/shadcn ). #}
-{# @prop id string HTML id for the `<dialog>` (e.g. `navOffcanvas`) #}
+{# Dialog `id` and `aria-controls` live on `Sheet:Content` / trigger — not on this wrapper. #}
 {# @prop open boolean Whether the sheet is open on first paint. Defaults to `false` #}
 {# @block content Typically `Sheet:Content` plus toolbar with `Sheet:Trigger` #}
-{%- props id, open = false -%}
+{%- props open = false -%}
 
 <div
 	class="{{ ('contents ' ~ attributes.render('class'))|tailwind_merge }}"

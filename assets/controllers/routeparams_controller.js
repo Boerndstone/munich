@@ -23,7 +23,7 @@ export default class extends Controller {
       this.protectionTarget.innerHTML = icon("skull");
     }
     if (rockQuality == 1) {
-      this.protectionTarget.innerHTML = icon("loose-rock");
+      this.routeRockQualityTarget.innerHTML = icon("loose-rock");
     }
   }
 }

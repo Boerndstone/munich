@@ -1,7 +1,7 @@
 {# Expects: topos #}
 {% if topos is not empty %}
 	<div class="sticky top-[50px] z-[1000] border-b border-[var(--theme-border)] bg-[var(--theme-bg)]">
-		<div class="scrollable-tabs-container relative mx-auto max-w-[1024px] overflow-x-hidden bg-[var(--theme-bg)] px-2" {{ stimulus_controller('tabs') }}>
+		<div class="scrollable-tabs-container relative mx-auto max-w-[1024px] overflow-x-hidden bg-[var(--theme-bg)] px-2" {{ stimulus_controller('rock-topo-tabs') }}>
 			<ul class="m-0 flex list-none gap-6 overflow-x-auto overflow-y-hidden p-0 [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth [&::-webkit-scrollbar]:hidden">
 				{% for topo in topos %}
 					<li class="shrink-0">

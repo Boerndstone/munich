@@ -1,0 +1,22 @@
+{# @prop variant 'default'|'line' The visual style variant. Defaults to `default` #}
+{# @block content The default block #}
+{%- props variant = 'default' -%}
+{%- set style = html_cva(
+    base: 'rounded-lg p-[3px] group-data-[orientation=horizontal]/tabs:h-8 data-[variant=line]:rounded-none group/tabs-list inline-flex min-w-0 w-full max-w-full flex-nowrap items-center justify-start gap-1 overflow-x-auto overflow-y-hidden [-ms-overflow-style:none] [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1 group-data-[orientation=vertical]/tabs:h-fit group-data-[orientation=vertical]/tabs:flex-col',
+    variants: {
+        variant: {
+            default: 'bg-gray-100 dark:bg-neutral-900',
+            line: 'gap-1 bg-transparent',
+        },
+    },
+) -%}
+
+<nav
+	data-slot="tabs-list"
+	role="tablist"
+	data-variant="{{ variant }}"
+	class="{{ style.apply({variant: variant}, attributes.render('class'))|tailwind_merge }}"
+	{{ attributes }}
+>
+	{%- block content %}{% endblock -%}
+</nav>

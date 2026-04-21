@@ -19,12 +19,20 @@ export default class extends Controller {
       const activeBtn = this.modalTarget.querySelector('[role="tab"][aria-selected="true"]');
       if (activeBtn) this.scrollActiveTabToCenter(activeBtn);
     };
+    this._onSearchModalTabChanged = () => {
+      this.clearResults();
+      if (!this.hasModalTarget) return;
+      const activeBtn = this.modalTarget.querySelector('[role="tab"][aria-selected="true"]');
+      if (activeBtn) this.scrollActiveTabToCenter(activeBtn);
+    };
     if (this.hasModalTarget) {
       this.modalTarget.addEventListener("toggle", this._onToggle);
     }
+    document.addEventListener("search-modal:tab-changed", this._onSearchModalTabChanged);
   }
 
   disconnect() {
+    document.removeEventListener("search-modal:tab-changed", this._onSearchModalTabChanged);
     if (this.hasModalTarget && this._onToggle) {
       this.modalTarget.removeEventListener("toggle", this._onToggle);
     }
@@ -34,41 +42,8 @@ export default class extends Controller {
     const tabsEl = document.getElementById("searchTabs");
     if (!tabsEl || !activeButton) return;
     const btn = activeButton;
-    const scrollLeft = btn.offsetLeft - (container.offsetWidth / 2) + (btn.offsetWidth / 2);
-    container.scrollTo({ left: Math.max(0, scrollLeft), behavior: "smooth" });
-  }
-
-  showTab(event) {
-    event.preventDefault();
-    const btn = event.currentTarget;
-    const sheet = btn.getAttribute("data-search-modal-sheet-param");
-    if (!sheet || !this.hasModalTarget) return;
-
-    this.modalTarget.querySelectorAll('[role="tab"]').forEach((tab) => {
-      const active = tab === btn;
-      tab.setAttribute("aria-selected", active ? "true" : "false");
-      tab.classList.toggle("font-semibold", active);
-      tab.classList.toggle("font-medium", !active);
-      tab.classList.toggle("opacity-100", active);
-      tab.classList.toggle("opacity-60", !active);
-      tab.classList.toggle("bg-white", active);
-      tab.classList.toggle("shadow-sm", active);
-      tab.classList.toggle("bg-transparent", !active);
-    });
-
-    const paneMap = {
-      name: "pane-name",
-      firstascent: "pane-firstascent",
-      grade: "pane-grade",
-      attributes: "pane-attributes",
-    };
-    Object.entries(paneMap).forEach(([key, paneId]) => {
-      const pane = this.modalTarget.querySelector(`#${paneId}`);
-      if (pane) pane.classList.toggle("hidden", key !== sheet);
-    });
-
-    this.clearResults();
-    this.scrollActiveTabToCenter(btn);
+    const scrollLeft = btn.offsetLeft - (tabsEl.offsetWidth / 2) + (btn.offsetWidth / 2);
+    tabsEl.scrollTo({ left: Math.max(0, scrollLeft), behavior: "smooth" });
   }
 
   open(event) {
@@ -76,7 +51,9 @@ export default class extends Controller {
     if (!this.hasModalTarget) return;
     this.modalTarget.showModal();
     requestAnimationFrame(() => {
-      const input = this.modalTarget.querySelector('[role="tabpanel"]:not(.hidden) input[type="search"]');
+      const input = this.modalTarget.querySelector(
+        '[role="tabpanel"][data-state="active"] input[type="search"]'
+      );
       input?.focus();
     });
   }

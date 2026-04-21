@@ -10,6 +10,12 @@
 						<twig:Tabs:Trigger value="{{ topo_id }}" class="cursor-pointer data-[state=active]:underline data-[state=active]:decoration-2 data-[state=active]:underline-offset-4">{{ topo.topoName }}</twig:Tabs:Trigger>
 					{% endfor %}
 				</twig:Tabs:List>
+				{% for topo in topos %}
+					{% set topo_id = topo.topoName|custom_replace|lower %}
+					<twig:Tabs:Content value="{{ topo_id }}" class="sr-only">
+						{{ topo.topoName }}
+					</twig:Tabs:Content>
+				{% endfor %}
 			</twig:Tabs>
 		</div>
 	</div>

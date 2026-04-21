@@ -1,14 +1,17 @@
 import { Controller } from "@hotwired/stimulus";
 
-/** Rock page topo anchor tabs (scroll + highlight). Not the Shadcn `tabs` controller. */
+/** Rock page topo tabs: smooth scroll to topo cards + sync Shadcn `tabs` active state (line triggers). */
 export default class extends Controller {
   connect() {
-    this._tabsList = this.element.querySelector("ul");
+    this._tabsList =
+      this.element.querySelector('[data-slot="tabs-list"]') ||
+      this.element.querySelector("ul");
     if (!this._tabsList) {
       return;
     }
 
-    this._tabs = this._tabsList.querySelectorAll("a");
+    this._tabsRoot = this.element.querySelector('[data-slot="tabs"]');
+    this._tabs = this._tabsList.querySelectorAll('[data-tabs-target="trigger"]');
     const header =
       document.querySelector("body > header") || document.querySelector(".navbar");
     this._navigationHeight = (header?.offsetHeight ?? 50) + 41;
@@ -18,6 +21,7 @@ export default class extends Controller {
 
     this._tabsList.addEventListener("click", this._onTabClick);
     window.addEventListener("scroll", this._onWindowScroll, { passive: true });
+    this._onWindowScroll();
   }
 
   disconnect() {
@@ -28,15 +32,21 @@ export default class extends Controller {
       window.removeEventListener("scroll", this._onWindowScroll);
     }
     this._tabsList = null;
+    this._tabsRoot = null;
     this._tabs = null;
     this._onTabClick = null;
     this._onWindowScroll = null;
   }
 
-  _removeAllActiveClasses() {
-    this._tabs?.forEach((tab) => {
-      tab.classList.remove("active");
-    });
+  _syncTabsActive(value) {
+    if (!this._tabsRoot || !this.application) return;
+    const tabs = this.application.getControllerForElementAndIdentifier(
+      this._tabsRoot,
+      "tabs"
+    );
+    if (tabs && tabs.activeTabValue !== value) {
+      tabs.activeTabValue = value;
+    }
   }
 
   _centerTab(tab) {
@@ -56,22 +66,30 @@ export default class extends Controller {
   }
 
   _onTabClick(event) {
-    const tab = event.target.closest("a");
+    const tab =
+      event.target.closest('[data-tabs-target="trigger"]') ||
+      event.target.closest("a");
     if (!tab || !this._tabsList.contains(tab)) {
       return;
     }
 
-    event.preventDefault();
-    this._removeAllActiveClasses();
-    tab.classList.add("active");
+    if (tab.tagName === "A") {
+      event.preventDefault();
+    }
+
     this._centerTab(tab);
 
-    const targetId = tab.getAttribute("href")?.slice(1);
+    const targetId =
+      tab.dataset?.tabId ||
+      tab.getAttribute("href")?.slice(1);
     if (!targetId) return;
     const targetCard = document.getElementById(targetId);
     if (targetCard) {
       const cardOffset = targetCard.offsetTop - this._navigationHeight;
       window.scrollTo({ top: cardOffset, behavior: "smooth" });
+      if (typeof history !== "undefined" && history.replaceState) {
+        history.replaceState(null, "", `#${targetId}`);
+      }
     }
   }
 
@@ -79,7 +97,8 @@ export default class extends Controller {
     const scrollPos = window.scrollY;
 
     this._tabs?.forEach((tab) => {
-      const targetId = tab.getAttribute("href")?.slice(1);
+      const targetId =
+        tab.dataset?.tabId || tab.getAttribute("href")?.slice(1);
       if (!targetId) return;
       const targetElement = document.getElementById(targetId);
       if (!targetElement) return;
@@ -87,8 +106,7 @@ export default class extends Controller {
       const top = targetElement.offsetTop - this._navigationHeight - 200;
       const height = targetElement.offsetHeight;
       if (scrollPos >= top && scrollPos < top + height) {
-        this._removeAllActiveClasses();
-        tab.classList.add("active");
+        this._syncTabsActive(targetId);
         this._centerTab(tab);
       }
     });

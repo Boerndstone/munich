@@ -2,7 +2,7 @@
 	{% set rock = rocks|first %}
 	<dialog id="offcanvasRight" class="rock-info-dialog z-[1055]" aria-labelledby="offcanvasRightLabel" aria-modal="true">
 		<div class="flex h-full min-h-0 w-full flex-row-reverse">
-			<div class="flex h-full min-h-0 w-[min(100vw,24rem)] max-w-full flex-col overflow-y-auto bg-[var(--theme-bg)] text-[var(--theme-text)] shadow-xl" onclick="event.stopPropagation()">
+			<div class="flex h-full min-h-0 w-full max-w-full shrink-0 flex-col overflow-y-auto bg-[var(--theme-bg)] text-[var(--theme-text)] shadow-xl sm:w-[min(100vw,24rem)]" onclick="event.stopPropagation()">
 				<div class="flex shrink-0 items-center justify-between border-b border-[var(--theme-border)] px-3 py-2">
 					<h2 class="m-0 text-lg font-bold text-[var(--theme-text)]" id="offcanvasRightLabel">{{ rock.rockName }}</h2>
 					<button type="button" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--theme-text)] opacity-70 hover:bg-[var(--theme-bg-lighter)] hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" onclick="document.getElementById('offcanvasRight').close()" aria-label="{{ 'close'|trans({}, 'messages') }}">

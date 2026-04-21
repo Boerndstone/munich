@@ -1,14 +1,22 @@
-{# Expects: topos #}
+{# Expects: topos — Shadcn line tabs (Symfony UX); scroll/hash behaviour: rock-topo-tabs controller #}
 {% if topos is not empty %}
+	{% set first_topo_id = (topos|first).topoName|custom_replace|lower %}
 	<div class="sticky top-[50px] z-[1000] border-b border-[var(--theme-border)] bg-[var(--theme-bg)]">
 		<div class="scrollable-tabs-container relative mx-auto max-w-[1024px] overflow-x-hidden bg-[var(--theme-bg)] px-2" {{ stimulus_controller('rock-topo-tabs') }}>
-			<ul class="m-0 flex list-none gap-6 overflow-x-auto overflow-y-hidden p-0 [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth [&::-webkit-scrollbar]:hidden">
+			<twig:Tabs defaultValue="{{ first_topo_id }}" class="w-full gap-0 data-[orientation=horizontal]:flex-col">
+				<twig:Tabs:List variant="line" aria-label="Topo navigation" class="mb-0 min-h-0 border-0 bg-transparent p-0">
+					{% for topo in topos %}
+						{% set topo_id = topo.topoName|custom_replace|lower %}
+						<twig:Tabs:Trigger value="{{ topo_id }}" class="cursor-pointer data-[state=active]:underline data-[state=active]:decoration-2 data-[state=active]:underline-offset-4">{{ topo.topoName }}</twig:Tabs:Trigger>
+					{% endfor %}
+				</twig:Tabs:List>
 				{% for topo in topos %}
-					<li class="shrink-0">
-						<a class="inline-block select-none whitespace-nowrap border-b-2 border-b-transparent py-2 text-sm font-medium text-[var(--theme-text)] no-underline transition-opacity hover:opacity-80 [&.active]:border-b-[var(--theme-text)]" href="#{{ topo.topoName|custom_replace|lower }}">{{ topo.topoName }}</a>
-					</li>
+					{% set topo_id = topo.topoName|custom_replace|lower %}
+					<twig:Tabs:Content value="{{ topo_id }}" class="sr-only">
+						{{ topo.topoName }}
+					</twig:Tabs:Content>
 				{% endfor %}
-			</ul>
+			</twig:Tabs>
 		</div>
 	</div>
 {% endif %}

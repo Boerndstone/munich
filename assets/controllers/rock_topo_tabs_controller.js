@@ -87,9 +87,9 @@ export default class extends Controller {
     if (targetCard) {
       const cardOffset = targetCard.offsetTop - this._navigationHeight;
       window.scrollTo({ top: cardOffset, behavior: "smooth" });
-    }
-    if (typeof history !== "undefined" && history.replaceState) {
-      history.replaceState(null, "", `#${targetId}`);
+      if (typeof history !== "undefined" && history.replaceState) {
+        history.replaceState(null, "", `#${targetId}`);
+      }
     }
   }
 

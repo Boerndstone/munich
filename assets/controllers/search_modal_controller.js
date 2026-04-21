@@ -14,10 +14,14 @@ export default class extends Controller {
   connect() {
     this._debounceTimers = {};
     this._gradePagination = null; // { grades, area, totalCount, page, perPage }
+    this._scrollLockActive = false;
     this._onToggle = () => {
       if (!this.hasModalTarget || !this.modalTarget.open) return;
       const activeBtn = this.modalTarget.querySelector('[role="tab"][aria-selected="true"]');
       if (activeBtn) this.scrollActiveTabToCenter(activeBtn);
+    };
+    this._onModalClose = () => {
+      this.unlockBodyScroll();
     };
     this._onSearchModalTabChanged = () => {
       this.clearResults();
@@ -27,6 +31,7 @@ export default class extends Controller {
     };
     if (this.hasModalTarget) {
       this.modalTarget.addEventListener("toggle", this._onToggle);
+      this.modalTarget.addEventListener("close", this._onModalClose);
     }
     document.addEventListener("search-modal:tab-changed", this._onSearchModalTabChanged);
   }
@@ -36,6 +41,10 @@ export default class extends Controller {
     if (this.hasModalTarget && this._onToggle) {
       this.modalTarget.removeEventListener("toggle", this._onToggle);
     }
+    if (this.hasModalTarget && this._onModalClose) {
+      this.modalTarget.removeEventListener("close", this._onModalClose);
+    }
+    this.unlockBodyScroll();
   }
 
   scrollActiveTabToCenter(activeButton) {
@@ -50,12 +59,33 @@ export default class extends Controller {
     event?.preventDefault();
     if (!this.hasModalTarget) return;
     this.modalTarget.showModal();
+    this.lockBodyScroll();
     requestAnimationFrame(() => {
       const input = this.modalTarget.querySelector(
         '[role="tabpanel"][data-state="active"] input[type="search"]'
       );
       input?.focus();
     });
+  }
+
+  /** Prevent scrolling the page behind the top-layer dialog (backdrop does not block wheel on all engines). */
+  lockBodyScroll() {
+    if (this._scrollLockActive) return;
+    this._scrollLockActive = true;
+    const gutter = window.innerWidth - document.documentElement.clientWidth;
+    if (gutter > 0) {
+      document.body.style.paddingRight = `${gutter}px`;
+    }
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+  }
+
+  unlockBodyScroll() {
+    if (!this._scrollLockActive) return;
+    this._scrollLockActive = false;
+    document.documentElement.style.overflow = "";
+    document.body.style.overflow = "";
+    document.body.style.paddingRight = "";
   }
 
   searchNameDebounced() {
@@ -188,12 +218,12 @@ export default class extends Controller {
     if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add("hidden");
     if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add("hidden");
     if (this.hasRoutesTableTarget) {
-      this.routesTableTarget.innerHTML = '<li class="py-3 text-center text-sm text-[var(--theme-text)]">Lade...</li>';
+      this.routesTableTarget.innerHTML = '<div class="py-3 text-center text-sm text-[var(--theme-text)]">Lade…</div>';
     }
   }
 
   renderResults(data) {
-    const { rocks = [], routes = [], searchMode, totalCount, page, perPage } = data;
+    const { rocks = [], routes = [], routesHtml = '', searchMode, totalCount, page, perPage } = data;
     const total = searchMode === 'grade' && totalCount != null ? totalCount : (rocks.length + routes.length);
 
     if (this.hasResultsContainerTarget) this.resultsContainerTarget.classList.remove("hidden");
@@ -238,22 +268,10 @@ export default class extends Controller {
 
     if (routes.length > 0 && this.hasRoutesSectionTarget && this.hasRoutesTableTarget) {
       this.routesSectionTarget.classList.remove("hidden");
-      this.routesTableTarget.innerHTML = routes.map(r => {
-        const routeAnchor = r.name ? `#${String(r.name).replace(/\s+/g, '').toLowerCase()}` : '';
-        const fullUrl = r.url + routeAnchor;
-        return `
-        <li class="border-b border-[var(--theme-border)]">
-          <a href="${fullUrl}" class="grid grid-cols-12 gap-x-2 gap-y-1 p-2 text-sm text-[var(--theme-text)] no-underline hover:bg-[var(--theme-bg-lighter)] sm:items-center">
-            <span class="col-span-12 min-w-0 truncate font-normal sm:col-span-5">${this.escapeHtml(r.name)}</span>
-            <span class="col-span-4 sm:col-span-1">${r.grade ? `${this.escapeHtml(r.grade)}` : ''}</span>
-            <span class="col-span-8 min-w-0 truncate sm:col-span-3">${this.escapeHtml(r.rock)}</span>
-            <span class="col-span-12 min-w-0 truncate text-gray-600 sm:col-span-3">${this.escapeHtml(r.area)}</span>
-          </a>
-        </li>
-        `;
-      }).join('');
+      this.routesTableTarget.innerHTML = routesHtml || "";
     } else if (this.hasRoutesSectionTarget) {
       this.routesSectionTarget.classList.add("hidden");
+      if (this.hasRoutesTableTarget) this.routesTableTarget.innerHTML = "";
     }
   }
 
@@ -266,6 +284,7 @@ export default class extends Controller {
     }
     if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add("hidden");
     if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add("hidden");
+    if (this.hasRoutesTableTarget) this.routesTableTarget.innerHTML = "";
   }
 
   escapeHtml(text) {

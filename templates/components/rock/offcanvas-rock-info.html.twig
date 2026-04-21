@@ -12,286 +12,297 @@
 						</svg>
 					</button>
 				</div>
-				<div class="min-h-0 flex-1 overflow-y-auto" data-controller="exclusive-details">
-					<details class="group border-b border-[var(--theme-border)]" open>
-						<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
-							<div class="rock-general-info text-black me-2 dark:text-gray-100"></div>
-							<span class="min-w-0 flex-1">{{ 'general.information'|trans }}</span>
-							<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
-						</summary>
-						<div class="border-t border-[var(--theme-border)] px-0 pb-3 pt-0">
-							<table class="w-full border-collapse text-sm font-medium text-[var(--theme-text)] [&>tbody>tr:last-child]:border-b-0">
-								{% if rock.amountRoutes is defined and rock.amountRoutes > 0 %}
-									<tr>
-										<td colspan="2" class="border-0 px-3 pt-2 align-top">
-											{{ include('components/grade-distribution-chart.html.twig', {
-												grade_chart_source: rock,
-												route_count: rock.amountRoutes,
-												aria_label_prefix: rock.rockName ~ '. ',
-												wrapper_class: 'max-w-full justify-start',
-												include_projects_column: true,
-												project_count: rock.amountProjects|default(0)
-											}) }}
-										</td>
-									</tr>
-								{% endif %}
-								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-									<td class="px-3 py-2 align-top">{{ 'height'|trans }}:</td>
-									<td class="px-3 py-2 align-top">{{ rock.rockHeight }} m</td>
-								</tr>
-								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-									<td class="px-3 py-2 align-top">{{ 'orientation'|trans }}:</td>
-									<td class="px-3 py-2 align-top">{{ rock.rockOrientation }}</td>
-								</tr>
-								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-									<td class="px-3 py-2 align-top">{{ 'sunny'|trans }}:</td>
-									<td class="px-3 py-2 align-top">
-										{% if rock.rockSunny is same as(true) %}
-											{{ 'sunny.property.sunny'|trans }}
-										{% elseif rock.rockSunny is same as(false) %}
-											{{ 'sunny.property.sun'|trans }}
-										{% else %}
-											-
-										{% endif %}
-									</td>
-								</tr>
-								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-									<td class="px-3 py-2 align-top">{{ 'child.friendly'|trans }}:</td>
-									<td class="px-3 py-2 align-top">
-										{% if rock.rockChild == 1 %}
-											{{ 'child.friendly.good'|trans }}
-										{% else %}
-											{{ 'child.friendly.bad'|trans }}
-										{% endif %}
-									</td>
-								</tr>
-								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-									<td class="px-3 py-2 align-top">{{ 'rain.proof'|trans }}:</td>
-									<td class="px-3 py-2 align-top">
-										{% if rock.rockRain is same as(true) %}
-											{{ 'rain.proof.good'|trans }}
-										{% elseif rock.rockRain is same as(false) %}
-											{{ 'rain.proof.not'|trans }}
-										{% else %}
-											&mdash;
-										{% endif %}
-									</td>
-								</tr>
-								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-									<td class="px-3 py-2 align-top">{{ 'gps'|trans }}:</td>
-									<td class="px-3 py-2 align-top">{{ rock.rockLat }}, {{ rock.rockLng }}</td>
-								</tr>
-								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-									<td class="px-3 py-2 align-top">{{ 'show.on.map'|trans }}:</td>
-									<td class="px-3 py-2 align-top">
-										<a href="https://www.google.com/maps?q={{ rock.rockLat }},{{ rock.rockLng }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline decoration-dotted underline-offset-2 hover:text-sky-900 dark:text-sky-400 dark:hover:text-sky-300" aria-label="Open location in Google Maps (opens in new window)"><span class="inline-block -rotate-45" aria-hidden="true">→</span> Google Maps</a>,<br>
-										<a href="https://www.openstreetmap.org/?mlat={{ rock.rockLat }}&mlon={{ rock.rockLng }}&zoom=15" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline decoration-dotted underline-offset-2 hover:text-sky-900 dark:text-sky-400 dark:hover:text-sky-300" aria-label="Open location in OpenStreetMap (opens in new window)"><span class="inline-block -rotate-45" aria-hidden="true">→</span> OpenStreetMap</a>
-									</td>
-								</tr>
-								<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-									<td class="px-3 py-2 align-top">{{ 'season'|trans }}:</td>
-									<td class="px-3 py-2 align-top">{{ rock.rockSeason }}</td>
-								</tr>
-								{% if rock.rockZone %}
-									<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
-										<td class="px-3 py-2 align-top">{{ 'zone'|trans }}:</td>
-										<td class="px-3 py-2 align-top">{{ rock.rockZone }}</td>
-									</tr>
-								{% endif %}
-							</table>
-						</div>
-					</details>
+				<div class="min-h-0 flex-1 overflow-y-auto">
 					{% set hasDescription = (description is defined and description is not null and description|striptags|trim != '') or (rock.rockDescription is defined and rock.rockDescription is not null and rock.rockDescription|striptags|trim != '') %}
-					{% if hasDescription %}
-						<details class="group border-b border-[var(--theme-border)]">
-							<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
-								<div class="rock-general-description text-black me-2 dark:text-gray-100"></div>
-								<span class="min-w-0 flex-1">{{ 'description'|trans }}</span>
-								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
-							</summary>
-							<div class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
-								{% if description is defined and description is not null and description|striptags|trim != '' %}
-									{{ description|raw }}
-								{% else %}
-									{{ rock.rockDescription|raw }}
-								{% endif %}
-							</div>
-						</details>
-					{% endif %}
 					{% set hasAccess = (access is defined and access is not null and access|striptags|trim != '') or (rock.rockAccess is defined and rock.rockAccess is not null and rock.rockAccess|striptags|trim != '') %}
-					{% if hasAccess %}
-						<details class="group border-b border-[var(--theme-border)]">
-							<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
-								<div class="rock-general-access text-black me-2 dark:text-gray-100"></div>
-								<span class="min-w-0 flex-1">{{ 'arrival.and.access'|trans }}</span>
-								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
-							</summary>
-							<div class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
-								{% if access is defined and access is not null and access|striptags|trim != '' %}
-									{{ access|raw }}
-								{% else %}
-									{{ rock.rockAccess|raw }}
-								{% endif %}
-							</div>
-						</details>
-					{% endif %}
-					<details id="rockMapDetails" class="group border-b border-[var(--theme-border)]">
-						<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
-							<div class="rock-general-map text-black me-2 dark:text-gray-100"></div>
-							<span class="min-w-0 flex-1">{{ 'map'|trans }}</span>
-							<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
-						</summary>
-						<div class="border-t border-[var(--theme-border)] p-0">
-							<div id="rockMap" class="z-10 mb-3 w-full" style="aspect-ratio: 16/16;">
-								{{ include('components/map/rock-map.html.twig') }}
-							</div>
-						</div>
-					</details>
 					{% set hasNature = (nature is defined and nature is not null and nature|striptags|trim != '') or (rock.rockNature is defined and rock.rockNature is not null and rock.rockNature|striptags|trim != '') %}
-					{% if hasNature %}
-						<details class="group border-b border-[var(--theme-border)]">
-							<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
-								<div class="rock-general-alert text-black me-2 dark:text-gray-100"></div>
-								<span class="min-w-0 flex-1">{{ 'climbing.regulations'|trans }}</span>
-								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
-							</summary>
-							<div class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
-								{% if nature is defined and nature is not null and nature|striptags|trim != '' %}
-									{{ nature|raw }}
-								{% else %}
-									{{ rock.rockNature|raw }}
-								{% endif %}
-							</div>
-						</details>
-					{% endif %}
-					{% if flowers is defined and flowers is not null %}
-						<details class="group border-b border-[var(--theme-border)]">
-							<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
-								<div class="rock-general-flowers text-black me-2 dark:text-gray-100"></div>
-								<span class="min-w-0 flex-1">{{ 'plants'|trans }}</span>
-								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
-							</summary>
-							<div class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
-								{{ flowers|raw }}
-							</div>
-						</details>
-					{% endif %}
-					{% if jsonData %}
-						<details class="group border-b border-[var(--theme-border)]">
-							<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
-								<div class="rock-general-images text-black me-2 dark:text-gray-100"></div>
-								<span class="min-w-0 flex-1">{{ 'images'|trans }}</span>
-								<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
-							</summary>
-							<div class="border-t border-[var(--theme-border)] px-2 pb-3 pt-2">
-								<div class="mx-0 grid grid-cols-3 gap-1 md:grid-cols-4" data-controller="off-canvas-gallery">
-									{% for data in jsonData %}
-										<div class="mb-1">
-											<a class="lg-item block" data-target="lg-item" data-src="{{ data.src }}" href="{{ data.src }}" role="button">
-												<img src="{{ data.thumb }}" class="mb-1 w-full shadow-md" alt="{{ data.subHtml }}" loading="lazy">
-											</a>
-										</div>
-									{% endfor %}
-								</div>
-							</div>
-						</details>
-					{% endif %}
-					<details class="group border-b border-[var(--theme-border)]">
-						<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
-							<div class="rock-general-signs text-black me-2 dark:text-gray-100"></div>
-							<span class="min-w-0 flex-1">{{ 'explanation.symbols'|trans }}</span>
-							<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
-						</summary>
-						<div class="border-t border-[var(--theme-border)] px-2 pb-3 pt-2">
-							<div class="mx-0">
+					<twig:Accordion id="rock-offcanvas-accordion" defaultValue="general">
+						<twig:Accordion:Item value="general">
+							<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
+								<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
+									<div class="rock-general-info text-black me-2 dark:text-gray-100"></div>
+									<span class="min-w-0 flex-1">{{ 'general.information'|trans }}</span>
+								</span>
+							</twig:Accordion:Trigger>
+							<twig:Accordion:Content class="border-t border-[var(--theme-border)] px-0 pb-3 pt-0">
 								<table class="w-full border-collapse text-sm font-medium text-[var(--theme-text)] [&>tbody>tr:last-child]:border-b-0">
-									<tr class="border-b border-[var(--theme-border)]">
-										<td class="px-3 py-2  align-middle">
-											<div class="star d-inline-block"></div>
-										</td>
-										<td class="px-3 py-2  align-middle">{{ 'nice.route'|trans }}</td>
+									{% if rock.amountRoutes is defined and rock.amountRoutes > 0 %}
+										<tr>
+											<td colspan="2" class="border-0 px-3 pt-2 align-top">
+												{{ include('components/grade-distribution-chart.html.twig', {
+													grade_chart_source: rock,
+													route_count: rock.amountRoutes,
+													aria_label_prefix: rock.rockName ~ '. ',
+													wrapper_class: 'max-w-full justify-start',
+													include_projects_column: true,
+													project_count: rock.amountProjects|default(0)
+												}) }}
+											</td>
+										</tr>
+									{% endif %}
+									<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+										<td class="px-3 py-2 align-top">{{ 'height'|trans }}:</td>
+										<td class="px-3 py-2 align-top">{{ rock.rockHeight }} m</td>
 									</tr>
-									<tr class="border-b border-[var(--theme-border)]">
-										<td class="px-3 py-2  align-middle">
-											<div class="flex">
-												<div class="star d-inline-block"></div>
-												<div class="star d-inline-block"></div>
-											</div>
-										</td>
-										<td class="px-3 py-2  align-middle">{{ 'very.nice.route'|trans }}</td>
+									<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+										<td class="px-3 py-2 align-top">{{ 'orientation'|trans }}:</td>
+										<td class="px-3 py-2 align-top">{{ rock.rockOrientation }}</td>
 									</tr>
-									<tr class="border-b border-[var(--theme-border)]">
-										<td class="px-3 py-2  align-middle">
-											<div class="flex">
-												<div class="star"></div>
-												<div class="star"></div>
-												<div class="star"></div>
-											</div>
+									<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+										<td class="px-3 py-2 align-top">{{ 'sunny'|trans }}:</td>
+										<td class="px-3 py-2 align-top">
+											{% if rock.rockSunny is same as(true) %}
+												{{ 'sunny.property.sunny'|trans }}
+											{% elseif rock.rockSunny is same as(false) %}
+												{{ 'sunny.property.sun'|trans }}
+											{% else %}
+												-
+											{% endif %}
 										</td>
-										<td class="px-3 py-2  align-middle">{{ 'dream.route'|trans }}</td>
 									</tr>
-									<tr class="border-b border-[var(--theme-border)]">
-										<td class="px-3 py-2  align-middle">
-											<div class="trash"></div>
+									<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+										<td class="px-3 py-2 align-top">{{ 'child.friendly'|trans }}:</td>
+										<td class="px-3 py-2 align-top">
+											{% if rock.rockChild == 1 %}
+												{{ 'child.friendly.good'|trans }}
+											{% else %}
+												{{ 'child.friendly.bad'|trans }}
+											{% endif %}
 										</td>
-										<td class="px-3 py-2  align-middle">{{ 'shit.route'|trans }}</td>
 									</tr>
-									<tr class="border-b border-[var(--theme-border)]">
-										<td class="px-3 py-2  align-middle">
-											<div class="exclamation d-inline-block"></div>
+									<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+										<td class="px-3 py-2 align-top">{{ 'rain.proof'|trans }}:</td>
+										<td class="px-3 py-2 align-top">
+											{% if rock.rockRain is same as(true) %}
+												{{ 'rain.proof.good'|trans }}
+											{% elseif rock.rockRain is same as(false) %}
+												{{ 'rain.proof.not'|trans }}
+											{% else %}
+												&mdash;
+											{% endif %}
 										</td>
-										<td class="px-3 py-2  align-middle">{{ 'bad.routeprotection'|trans }}</td>
 									</tr>
-									<tr class="border-b border-[var(--theme-border)]">
-										<td class="px-3 py-2  align-middle">
-											<div class="skull d-inline-block"></div>
+									<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+										<td class="px-3 py-2 align-top">{{ 'gps'|trans }}:</td>
+										<td class="px-3 py-2 align-top">{{ rock.rockLat }}, {{ rock.rockLng }}</td>
+									</tr>
+									<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+										<td class="px-3 py-2 align-top">{{ 'show.on.map'|trans }}:</td>
+										<td class="px-3 py-2 align-top">
+											<a href="https://www.google.com/maps?q={{ rock.rockLat }},{{ rock.rockLng }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline decoration-dotted underline-offset-2 hover:text-sky-900 dark:text-sky-400 dark:hover:text-sky-300" aria-label="Open location in Google Maps (opens in new window)"><span class="inline-block -rotate-45" aria-hidden="true">→</span> Google Maps</a>,<br>
+											<a href="https://www.openstreetmap.org/?mlat={{ rock.rockLat }}&mlon={{ rock.rockLng }}&zoom=15" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline decoration-dotted underline-offset-2 hover:text-sky-900 dark:text-sky-400 dark:hover:text-sky-300" aria-label="Open location in OpenStreetMap (opens in new window)"><span class="inline-block -rotate-45" aria-hidden="true">→</span> OpenStreetMap</a>
 										</td>
-										<td class="px-3 py-2  align-middle">{{ 'dangerous.routeprotection'|trans }}</td>
 									</tr>
-									<tr class="border-b border-[var(--theme-border)]">
-										<td class="px-3 py-2  align-middle">
-											<div class="loose-rock d-inline-block"></div>
-										</td>
-										<td class="px-3 py-2  align-middle">{{ 'rock.quality'|trans }}</td>
+									<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+										<td class="px-3 py-2 align-top">{{ 'season'|trans }}:</td>
+										<td class="px-3 py-2 align-top">{{ rock.rockSeason }}</td>
 									</tr>
-									<tr class="border-b border-[var(--theme-border)]">
-										<td class="px-3 py-2  align-middle">
-											<div class="multi-pitch d-inline-block"></div>
-										</td>
-										<td class="px-3 py-2  align-middle">{{ 'multi.pitch'|trans }}</td>
-									</tr>
-									<tr class="border-b border-[var(--theme-border)]">
-										<td class="px-3 py-2  align-middle">
-											<div class="crack-climbing d-inline-block"></div>
-										</td>
-										<td class="px-3 py-2  align-middle">{{ 'crack.climbing'|trans }}</td>
-									</tr>
+									{% if rock.rockZone %}
+										<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
+											<td class="px-3 py-2 align-top">{{ 'zone'|trans }}:</td>
+											<td class="px-3 py-2 align-top">{{ rock.rockZone }}</td>
+										</tr>
+									{% endif %}
 								</table>
-							</div>
-						</div>
-					</details>
-					<details class="group border-b border-[var(--theme-border)] last:border-b-0">
-						<summary class="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] marker:hidden [&::-webkit-details-marker]:hidden">
-							<div class="rock-general-improvement text-black me-2 dark:text-gray-100"></div>
-							<span class="min-w-0 flex-1">{{ 'rock_improvement.title'|trans }}</span>
-							<span class="rock-accordion-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
-						</summary>
-						<div class="border-t border-[var(--theme-border)] px-3 pb-4 pt-2">
-							{% if improvementForm is defined and improvementForm is not null %}
-								{% form_theme improvementForm 'form/tailwind_form_layout.html.twig' %}
-								<p class="mb-3 text-sm text-gray-600 dark:text-gray-400">{{ 'rock_improvement.intro'|trans({ '%rock_name%': rock.rockName }) }}</p>
-								{{ form_start(improvementForm, { action: path(app.request.attributes.get('_route'), { areaSlug: areaSlug, slug: slug }), attr: { class: 'max-w-full text-sm', novalidate: 'novalidate' } }) }}
-								{{ form_row(improvementForm.rockName) }}
-								{{ form_row(improvementForm.name) }}
-								{{ form_row(improvementForm.routeName) }}
-								{{ form_row(improvementForm.grade) }}
-								{{ form_row(improvementForm.firstAscent) }}
-								{{ form_row(improvementForm.comment) }}
-								<button type="submit" class="mt-2 inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium shadow-sm hover:bg-emerald-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900">{{ 'rock_improvement.submit'|trans }}</button>
-								{{ form_end(improvementForm) }}
-							{% endif %}
-						</div>
-					</details>
+							</twig:Accordion:Content>
+						</twig:Accordion:Item>
+						{% if hasDescription %}
+							<twig:Accordion:Item value="description">
+								<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
+									<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
+										<div class="rock-general-description text-black me-2 dark:text-gray-100"></div>
+										<span class="min-w-0 flex-1">{{ 'description'|trans }}</span>
+									</span>
+								</twig:Accordion:Trigger>
+								<twig:Accordion:Content class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
+									{% if description is defined and description is not null and description|striptags|trim != '' %}
+										{{ description|raw }}
+									{% else %}
+										{{ rock.rockDescription|raw }}
+									{% endif %}
+								</twig:Accordion:Content>
+							</twig:Accordion:Item>
+						{% endif %}
+						{% if hasAccess %}
+							<twig:Accordion:Item value="access">
+								<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
+									<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
+										<div class="rock-general-access text-black me-2 dark:text-gray-100"></div>
+										<span class="min-w-0 flex-1">{{ 'arrival.and.access'|trans }}</span>
+									</span>
+								</twig:Accordion:Trigger>
+								<twig:Accordion:Content class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
+									{% if access is defined and access is not null and access|striptags|trim != '' %}
+										{{ access|raw }}
+									{% else %}
+										{{ rock.rockAccess|raw }}
+									{% endif %}
+								</twig:Accordion:Content>
+							</twig:Accordion:Item>
+						{% endif %}
+						<twig:Accordion:Item value="map" id="rockMapDetails">
+							<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
+								<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
+									<div class="rock-general-map text-black me-2 dark:text-gray-100"></div>
+									<span class="min-w-0 flex-1">{{ 'map'|trans }}</span>
+								</span>
+							</twig:Accordion:Trigger>
+							<twig:Accordion:Content class="border-t border-[var(--theme-border)] p-0">
+								<div id="rockMap" class="z-10 mb-3 w-full" style="aspect-ratio: 16/16;">
+									{{ include('components/map/rock-map.html.twig') }}
+								</div>
+							</twig:Accordion:Content>
+						</twig:Accordion:Item>
+						{% if hasNature %}
+							<twig:Accordion:Item value="nature">
+								<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
+									<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
+										<div class="rock-general-alert text-black me-2 dark:text-gray-100"></div>
+										<span class="min-w-0 flex-1">{{ 'climbing.regulations'|trans }}</span>
+									</span>
+								</twig:Accordion:Trigger>
+								<twig:Accordion:Content class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
+									{% if nature is defined and nature is not null and nature|striptags|trim != '' %}
+										{{ nature|raw }}
+									{% else %}
+										{{ rock.rockNature|raw }}
+									{% endif %}
+								</twig:Accordion:Content>
+							</twig:Accordion:Item>
+						{% endif %}
+						{% if flowers is defined and flowers is not null %}
+							<twig:Accordion:Item value="flowers">
+								<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
+									<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
+										<div class="rock-general-flowers text-black me-2 dark:text-gray-100"></div>
+										<span class="min-w-0 flex-1">{{ 'plants'|trans }}</span>
+									</span>
+								</twig:Accordion:Trigger>
+								<twig:Accordion:Content class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
+									{{ flowers|raw }}
+								</twig:Accordion:Content>
+							</twig:Accordion:Item>
+						{% endif %}
+						{% if jsonData %}
+							<twig:Accordion:Item value="gallery">
+								<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
+									<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
+										<div class="rock-general-images text-black me-2 dark:text-gray-100"></div>
+										<span class="min-w-0 flex-1">{{ 'images'|trans }}</span>
+									</span>
+								</twig:Accordion:Trigger>
+								<twig:Accordion:Content class="border-t border-[var(--theme-border)] px-2 pb-3 pt-2">
+									<div class="mx-0 grid grid-cols-3 gap-1 md:grid-cols-4" data-controller="off-canvas-gallery">
+										{% for data in jsonData %}
+											<div class="mb-1">
+												<a class="lg-item block" data-target="lg-item" data-src="{{ data.src }}" href="{{ data.src }}" role="button">
+													<img src="{{ data.thumb }}" class="mb-1 w-full shadow-md" alt="{{ data.subHtml }}" loading="lazy">
+												</a>
+											</div>
+										{% endfor %}
+									</div>
+								</twig:Accordion:Content>
+							</twig:Accordion:Item>
+						{% endif %}
+						<twig:Accordion:Item value="symbols">
+							<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
+								<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
+									<div class="rock-general-signs text-black me-2 dark:text-gray-100"></div>
+									<span class="min-w-0 flex-1">{{ 'explanation.symbols'|trans }}</span>
+								</span>
+							</twig:Accordion:Trigger>
+							<twig:Accordion:Content class="border-t border-[var(--theme-border)] px-2 pb-3 pt-2">
+								<div class="mx-0">
+									<table class="w-full border-collapse text-sm font-medium text-[var(--theme-text)] [&>tbody>tr:last-child]:border-b-0">
+										<tr class="border-b border-[var(--theme-border)]">
+											<td class="px-3 py-2  align-middle">
+												<div class="star d-inline-block"></div>
+											</td>
+											<td class="px-3 py-2  align-middle">{{ 'nice.route'|trans }}</td>
+										</tr>
+										<tr class="border-b border-[var(--theme-border)]">
+											<td class="px-3 py-2  align-middle">
+												<div class="flex">
+													<div class="star d-inline-block"></div>
+													<div class="star d-inline-block"></div>
+												</div>
+											</td>
+											<td class="px-3 py-2  align-middle">{{ 'very.nice.route'|trans }}</td>
+										</tr>
+										<tr class="border-b border-[var(--theme-border)]">
+											<td class="px-3 py-2  align-middle">
+												<div class="flex">
+													<div class="star"></div>
+													<div class="star"></div>
+													<div class="star"></div>
+												</div>
+											</td>
+											<td class="px-3 py-2  align-middle">{{ 'dream.route'|trans }}</td>
+										</tr>
+										<tr class="border-b border-[var(--theme-border)]">
+											<td class="px-3 py-2  align-middle">
+												<div class="trash"></div>
+											</td>
+											<td class="px-3 py-2  align-middle">{{ 'shit.route'|trans }}</td>
+										</tr>
+										<tr class="border-b border-[var(--theme-border)]">
+											<td class="px-3 py-2  align-middle">
+												<div class="exclamation d-inline-block"></div>
+											</td>
+											<td class="px-3 py-2  align-middle">{{ 'bad.routeprotection'|trans }}</td>
+										</tr>
+										<tr class="border-b border-[var(--theme-border)]">
+											<td class="px-3 py-2  align-middle">
+												<div class="skull d-inline-block"></div>
+											</td>
+											<td class="px-3 py-2  align-middle">{{ 'dangerous.routeprotection'|trans }}</td>
+										</tr>
+										<tr class="border-b border-[var(--theme-border)]">
+											<td class="px-3 py-2  align-middle">
+												<div class="loose-rock d-inline-block"></div>
+											</td>
+											<td class="px-3 py-2  align-middle">{{ 'rock.quality'|trans }}</td>
+										</tr>
+										<tr class="border-b border-[var(--theme-border)]">
+											<td class="px-3 py-2  align-middle">
+												<div class="multi-pitch d-inline-block"></div>
+											</td>
+											<td class="px-3 py-2  align-middle">{{ 'multi.pitch'|trans }}</td>
+										</tr>
+										<tr class="border-b border-[var(--theme-border)]">
+											<td class="px-3 py-2  align-middle">
+												<div class="crack-climbing d-inline-block"></div>
+											</td>
+											<td class="px-3 py-2  align-middle">{{ 'crack.climbing'|trans }}</td>
+										</tr>
+									</table>
+								</div>
+							</twig:Accordion:Content>
+						</twig:Accordion:Item>
+						<twig:Accordion:Item value="improvement">
+							<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
+								<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
+									<div class="rock-general-improvement text-black me-2 dark:text-gray-100"></div>
+									<span class="min-w-0 flex-1">{{ 'rock_improvement.title'|trans }}</span>
+								</span>
+							</twig:Accordion:Trigger>
+							<twig:Accordion:Content class="border-t border-[var(--theme-border)] px-3 pb-4 pt-2">
+								{% if improvementForm is defined and improvementForm is not null %}
+									{% form_theme improvementForm 'form/tailwind_form_layout.html.twig' %}
+									<p class="mb-3 text-sm text-gray-600 dark:text-gray-400">{{ 'rock_improvement.intro'|trans({ '%rock_name%': rock.rockName }) }}</p>
+									{{ form_start(improvementForm, { action: path(app.request.attributes.get('_route'), { areaSlug: areaSlug, slug: slug }), attr: { class: 'max-w-full text-sm', novalidate: 'novalidate' } }) }}
+									{{ form_row(improvementForm.rockName) }}
+									{{ form_row(improvementForm.name) }}
+									{{ form_row(improvementForm.routeName) }}
+									{{ form_row(improvementForm.grade) }}
+									{{ form_row(improvementForm.firstAscent) }}
+									{{ form_row(improvementForm.comment) }}
+									<button type="submit" class="mt-2 inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium shadow-sm hover:bg-emerald-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900">{{ 'rock_improvement.submit'|trans }}</button>
+									{{ form_end(improvementForm) }}
+								{% endif %}
+							</twig:Accordion:Content>
+						</twig:Accordion:Item>
+					</twig:Accordion>
 				</div>
 			</div>
 			<button type="button" class="min-h-0 min-w-0 flex-1 cursor-default border-0 bg-black/40 p-0" aria-label="{{ 'close'|trans({}, 'messages') }}" onclick="document.getElementById('offcanvasRight').close()"></button>

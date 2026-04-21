@@ -6,7 +6,7 @@
 					<h4 class="mb-4 text-xs font-semibold uppercase tracking-wide text-gray-900 dark:text-gray-100">Gebiete um München</h4>
 					<div class="flex flex-wrap">
 						{% for area in areas %}
-							<p class="w-1/2 shrink-0">
+							<p class="w-1/2 shrink-0 py-1">
 								<a class="text-sm" href="{{ path('show_rocks', { slug: area.slug }) }}" title="Klettergebiet {{ area.name }}" data-area="{{ area.name }}">
 									{{ area.name }}
 								</a>
@@ -16,16 +16,16 @@
 				</div>
 				<div class="mb-4 md:mx-auto md:max-w-md lg:mx-0 lg:max-w-none">
 					<h4 class="mb-4 text-xs font-semibold uppercase tracking-wide text-gray-900 dark:text-gray-100">munichclimbs</h4>
-					<p>
+					<p class="py-1">
 						<a class="text-sm" href="{{ path('datenschutz') }}">Datenschutz</a>
 					</p>
-					<p>
+					<p class="py-1">
 						<a class="text-sm" href="{{ path('upload_photo') }}">Foto hochladen</a>
 					</p>
-					<p>
+					<p class="py-1">
 						<a class="text-sm" href="{{ path('impressum') }}">Impressum</a>
 					</p>
-					<p>
+					<p class="py-1">
 						<a class="text-sm" href="{{ path(app.request.locale == 'en' ? 'free_climbing_grade_comparison_en' : 'free_climbing_grade_comparison') }}">{{ 'grade_comparison_free_climbing.nav_link'|trans }}</a>
 					</p>
 					<a href="https://www.treedom.net/de/" target="_blank" rel="noopener noreferrer" class="mt-12 block">

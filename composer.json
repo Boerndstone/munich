@@ -26,6 +26,7 @@
         "symfony/flex": "^2.4",
         "symfony/form": "7.4.*",
         "symfony/framework-bundle": "7.4.*",
+        "symfony/http-client": "^7.4",
         "symfony/http-kernel": "7.4.*",
         "symfony/mailer": "7.4.*",
         "symfony/mime": "7.4.*",
@@ -56,6 +57,7 @@
         "twig/extra-bundle": "^2.12|^3.12",
         "twig/html-extra": "^3.24",
         "twig/inky-extra": "^3.23",
+        "twig/markdown-extra": "^3.24",
         "twig/twig": "^3.12"
     },
     "require-dev": {

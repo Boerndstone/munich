@@ -159,7 +159,13 @@ export default class extends Controller {
      * @returns {boolean}
      */
     #isDisabled(item) {
-        return item.hasAttribute('disabled');
+        const trigger = item.querySelector('[data-accordion-target="trigger"]');
+
+        return (
+            item.hasAttribute('disabled') ||
+            item.getAttribute('aria-disabled') === 'true' ||
+            (trigger instanceof HTMLButtonElement && trigger.disabled)
+        );
     }
 
     /**

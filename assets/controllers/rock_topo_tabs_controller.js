@@ -21,6 +21,7 @@ export default class extends Controller {
 
     this._tabsList.addEventListener("click", this._onTabClick);
     window.addEventListener("scroll", this._onWindowScroll, { passive: true });
+    this._onWindowScroll();
   }
 
   disconnect() {

@@ -1,81 +1,32 @@
-import { Controller } from "stimulus";
+import { Controller } from "@hotwired/stimulus";
 
+/** Shadcn-style tab panels (Symfony UX Toolkit). Used e.g. in the search modal. */
 export default class extends Controller {
-  connect() {
-    const tabs = document.querySelectorAll(".scrollable-tabs-container a");
-    const tabsList = document.querySelector(".scrollable-tabs-container ul");
-    const header =
-      document.querySelector("body > header") || document.querySelector(".navbar");
+  static targets = ["trigger", "tab"];
+  static values = { activeTab: String };
 
-    if (!tabsList) {
-      return;
-    }
+  open(e) {
+    this.activeTabValue = e.currentTarget.dataset.tabId;
+  }
 
-    const navigationHeight = (header?.offsetHeight ?? 50) + 41;
-
-    const removeAllActiveClasses = () => {
-      tabs.forEach((tab) => {
-        tab.classList.remove("active");
-      });
-    };
-
-    const centerTab = (tab) => {
-      const tabRect = tab.getBoundingClientRect();
-      const containerRect = tabsList.getBoundingClientRect();
-      const offset =
-        tabRect.left -
-        containerRect.left -
-        containerRect.width / 2 +
-        tabRect.width / 2;
-
-      tabsList.scrollBy({
-        left: offset,
-        behavior: "smooth",
-      });
-    };
-
-    tabs.forEach((tab) => {
-      tab.addEventListener("click", (event) => {
-        event.preventDefault(); // Prevent default anchor behavior
-        removeAllActiveClasses();
-        tab.classList.add("active");
-
-        // Center the clicked tab
-        centerTab(tab);
-
-        // Scroll to the corresponding content with offset
-        const targetId = tab.getAttribute("href").slice(1);
-        const targetCard = document.getElementById(targetId);
-        if (targetCard) {
-          const cardOffset = targetCard.offsetTop - navigationHeight; // Adjust for navigation height
-          window.scrollTo({ top: cardOffset, behavior: "smooth" });
-        }
-      });
+  activeTabValueChanged() {
+    this.triggerTargets.forEach((trigger) => {
+      const isActive = trigger.dataset.tabId === this.activeTabValue;
+      trigger.dataset.state = isActive ? "active" : "inactive";
+      trigger.ariaSelected = isActive;
     });
 
-    const onScroll = () => {
-      const scrollPos = window.scrollY;
+    this.tabTargets.forEach((tab) => {
+      tab.dataset.state = tab.dataset.tabId === this.activeTabValue ? "active" : "inactive";
+    });
 
-      tabs.forEach((tab) => {
-        const targetId = tab.getAttribute("href").slice(1);
-        const targetElement = document.getElementById(targetId);
-        if (targetElement) {
-          const top = targetElement.offsetTop - navigationHeight - 200; // Adjust for navigation height
-          const height = targetElement.offsetHeight;
-          if (scrollPos >= top && scrollPos < top + height) {
-            // Remove active class from all tabs
-            removeAllActiveClasses();
-
-            // Add active class to the current tab
-            tab.classList.add("active");
-
-            // Center the current tab
-            centerTab(tab);
-          }
-        }
-      });
-    };
-
-    window.addEventListener("scroll", onScroll);
+    if (this.element.closest("#searchModal")) {
+      document.dispatchEvent(
+        new CustomEvent("search-modal:tab-changed", {
+          bubbles: true,
+          detail: { value: this.activeTabValue },
+        })
+      );
+    }
   }
 }

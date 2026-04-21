@@ -1,7 +1,12 @@
-{# @block content The trigger element (e.g., a `Button`) that opens the dialog when clicked #}
-{%- set dialog_trigger_attrs = {
-    'data-action': 'click->dialog#open'|html_attr_type('sst'),
-    'data-dialog-target': 'trigger',
-    'aria-haspopup': 'dialog',
-} -%}
-{%- block content %}{% endblock -%}
+{# @block content Typically a `Button` or `button` — open wiring and trigger target are on this wrapper; do not duplicate `data-action` / `data-dialog-target` on the child. #}
+<span
+    class="{{ ('inline-flex ' ~ attributes.render('class'))|tailwind_merge }}"
+    {{ attributes.defaults({
+        'data-action': 'click->dialog#open'|html_attr_type('sst'),
+        'data-dialog-target': 'trigger',
+        'aria-haspopup': 'dialog',
+        'aria-expanded': 'false',
+    }).without('class') }}
+>
+    {%- block content %}{% endblock -%}
+</span>

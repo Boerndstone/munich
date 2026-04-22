@@ -1,4 +1,5 @@
 # Navigation
+theme.toggle_aria: "Switch between light and dark mode"
 skip_to_content: "Skip to main content"
 close: "Close"
 close_navigation: "Close navigation menu"

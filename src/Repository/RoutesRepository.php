@@ -181,9 +181,11 @@ class RoutesRepository extends ServiceEntityRepository
             ++$processed;
             if ($processed % 100 === 0) {
                 $em->flush();
+                $em->clear();
             }
         }
         $em->flush();
+        $em->clear();
 
         return $processed;
     }

@@ -1,8 +1,25 @@
-<button
-	type="button"
-	class="inline-flex items-center gap-1.5 rounded-md border border-gray-600 bg-white px-2 py-1 text-sm font-medium text-gray-800 shadow-xs hover:bg-gray-50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-gray-400 dark:border-gray-500 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
-	onclick="document.getElementById('{{ modalId }}').showModal()"
-	aria-label="{{ ariaLabel|default('Zeige Karte') }}"
->
-	<div class="map shrink-0" aria-hidden="true"></div>
-</button>
+{# Fullscreen map in Shadcn Dialog (https://ux.symfony.com/toolkit/kits/shadcn/components/dialog). Optional: ariaLabel, title, description #}
+{% set _aria = ariaLabel|default('index.map_open'|trans({}, 'messages')) %}
+{% set _title = title|default('Klettergebiete um München') %}
+{% set _desc = description|default('index.map_region'|trans({}, 'messages')) %}
+
+<twig:Dialog id="indexMap">
+	<twig:Dialog:Trigger>
+		<twig:Button type="button" variant="outline" size="sm" class="gap-1.5 border-border bg-background text-foreground hover:bg-muted hover:cursor-pointer" aria-label="{{ _aria }}">
+			<twig:ux:icon name="lucide:map-pin" class="size-4 shrink-0" aria-hidden="true" />
+		</twig:Button>
+	</twig:Dialog:Trigger>
+	<twig:Dialog:Content
+		class="map-fullscreen-dialog fixed inset-0 z-[1060] m-0 max-h-none max-w-none min-h-0 translate-x-0 translate-y-0 scale-100 overflow-hidden border-0 p-0 shadow-none sm:max-w-none gap-0 opacity-0 starting:open:opacity-100 open:opacity-100 open:backdrop:bg-black/50"
+	>
+		<div class="map-fullscreen-dialog__panel flex min-h-0 flex-1 flex-col">
+			<twig:Dialog:Header class="shrink-0 gap-2 border-b border-border px-4 py-3 pe-14 text-left sm:text-left">
+				<twig:Dialog:Title class="text-foreground">{{ _title }}</twig:Dialog:Title>
+				<twig:Dialog:Description class="sr-only">{{ _desc }}</twig:Dialog:Description>
+			</twig:Dialog:Header>
+			<div class="flex min-h-0 flex-1 flex-col overflow-hidden">
+				{{ include('components/map/main-map.html.twig') }}
+			</div>
+		</div>
+	</twig:Dialog:Content>
+</twig:Dialog>

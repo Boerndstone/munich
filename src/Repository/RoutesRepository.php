@@ -174,8 +174,6 @@ class RoutesRepository extends ServiceEntityRepository
     public function updateGrades(): int
     {
         $em = $this->getEntityManager();
-        $processed = 0;
-        foreach ($this->createQueryBuilder('r')->select('r')->getQuery()->toIterable() as $route) {
         $batchSize = 100;
         $processed = 0;
 
@@ -194,6 +192,7 @@ class RoutesRepository extends ServiceEntityRepository
             $em->flush();
             $em->clear();
         });
+
         return $processed;
     }
 

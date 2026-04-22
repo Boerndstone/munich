@@ -58,13 +58,9 @@
     "scripts": {
         "dev-server": "encore dev-server",
         "dev": "encore dev",
-        "dev:admin": "encore dev --config webpack.admin.config.js",
-        "dev:all": "npm run dev && npm run dev:admin",
         "watch": "encore dev --watch",
-        "watch:admin": "encore dev --watch --config webpack.admin.config.js",
         "build": "encore production --progress",
-        "build:admin": "encore production --progress --config webpack.admin.config.js",
-        "build:all": "npm run build && npm run build:admin",
+        "build:all": "npm run build",
         "start": "webpack serve"
     },
     "dependencies": {

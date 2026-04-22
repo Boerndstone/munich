@@ -457,15 +457,51 @@ class GradeTranslationService
     }
 
     /**
-     * Convert a grade string to its numeric equivalent
+     * Trim and normalize spaces around "/" in grade strings (e.g. "7b / b+" → "7b/b+").
      */
-    public function gradeToNumber(?string $grade): ?int
+    private static function normalizeGradeStringForLookup(string $grade): string
+    {
+        $g = trim($grade);
+        $g = preg_replace('/\s*\/\s*/', '/', $g) ?? $g;
+
+        return trim($g);
+    }
+
+    /**
+     * Map a stored grade string to {@link self::GRADE_MAPPING} numeric value (e.g. for route.grade_no).
+     *
+     * Unknown slash forms (e.g. "7b/b+" when only "7b" and "7b+" exist) fall back to the **first** slash segment,
+     * so they align with the easier bound of the range.
+     */
+    public static function gradeToMappedNumber(?string $grade): ?int
     {
         if ($grade === null || $grade === '') {
             return null;
         }
+        $g = self::normalizeGradeStringForLookup($grade);
+        if ($g === '') {
+            return null;
+        }
+        if (isset(self::GRADE_MAPPING[$g])) {
+            return self::GRADE_MAPPING[$g];
+        }
+        if (!str_contains($g, '/')) {
+            return null;
+        }
+        $first = self::normalizeGradeStringForLookup(explode('/', $g, 2)[0]);
+        if ($first === '' || $first === $g) {
+            return null;
+        }
 
-        return self::GRADE_MAPPING[$grade] ?? null;
+        return self::gradeToMappedNumber($first);
+    }
+
+    /**
+     * Convert a grade string to its numeric equivalent
+     */
+    public function gradeToNumber(?string $grade): ?int
+    {
+        return self::gradeToMappedNumber($grade);
     }
 
     /**
@@ -612,6 +648,6 @@ class GradeTranslationService
             return false;
         }
 
-        return array_key_exists($grade, self::GRADE_MAPPING);
+        return self::gradeToMappedNumber($grade) !== null;
     }
 }

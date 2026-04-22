@@ -176,17 +176,24 @@ class RoutesRepository extends ServiceEntityRepository
         $em = $this->getEntityManager();
         $processed = 0;
         foreach ($this->createQueryBuilder('r')->select('r')->getQuery()->toIterable() as $route) {
-            /** @var Routes $route */
-            $route->setGradeNoFromGrade($route->getGrade());
-            ++$processed;
-            if ($processed % 100 === 0) {
-                $em->flush();
-                $em->clear();
-            }
-        }
-        $em->flush();
-        $em->clear();
+        $batchSize = 100;
+        $processed = 0;
 
+        $em->wrapInTransaction(function () use ($em, $batchSize, &$processed): void {
+            foreach ($this->createQueryBuilder('r')->select('r')->getQuery()->toIterable() as $route) {
+                /** @var Routes $route */
+                $route->setGradeNoFromGrade($route->getGrade());
+                ++$processed;
+
+                if ($processed % $batchSize === 0) {
+                    $em->flush();
+                    $em->clear();
+                }
+            }
+
+            $em->flush();
+            $em->clear();
+        });
         return $processed;
     }
 

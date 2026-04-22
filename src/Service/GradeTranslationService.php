@@ -137,6 +137,10 @@ class GradeTranslationService
      * Maps each known grade string to a UIAA-style chart column (3–11) for rock list histograms.
      * null = excluded from these columns (projects, very easy, or unmapped).
      *
+     * UIAA numeral grades (6-, 7, 9+, …) are authoritative here. French sport (a/b/c) entries mirror
+     * {@link self::BERGFREUNDE_CLIMBING_GRADES_COMPARED} (same buckets as {@link self::uiaaChartBucketForGrade()});
+     * they are kept as fallbacks for grades not in that table and for slash-segment resolution.
+     *
      * @var array<string, int|null>
      */
     private const GRADE_TO_UIAA_CHART_BUCKET = [
@@ -162,7 +166,7 @@ class GradeTranslationService
         '5+/6-' => 6,
         '5a' => 5,
         '5a+' => 6,
-        '5b' => 6,
+        '5b' => 5,
         '5b+' => 6,
         '5c' => 6,
         '5c+' => 6,
@@ -173,56 +177,56 @@ class GradeTranslationService
         '6+' => 6,
         '6+/7-' => 7,
         '6a' => 6,
-        '6a/6a+' => 6,
-        '6a+' => 6,
-        '6a+/6b' => 6,
-        '6b' => 6,
+        '6a/6a+' => 7,
+        '6a+' => 7,
+        '6a+/6b' => 7,
+        '6b' => 7,
         '6b/6b+' => 7,
         '6b+' => 7,
-        '6c' => 7,
-        '6c+' => 7,
-        '6c+/7a' => 7,
+        '6c' => 8,
+        '6c+' => 8,
+        '6c+/7a' => 8,
         '7-' => 7,
         '7-/7' => 7,
         '7' => 7,
         '7/7+' => 7,
         '7+' => 7,
         '7+/8-' => 8,
-        '7a' => 7,
-        '7a/7a+' => 7,
-        '7a+' => 7,
-        '7b' => 7,
-        '7b+' => 7,
-        '7b+/7c' => 8,
-        '7c' => 8,
-        '7c/7c+' => 8,
-        '7c+' => 8,
+        '7a' => 8,
+        '7a/7a+' => 8,
+        '7a+' => 8,
+        '7b' => 9,
+        '7b+' => 9,
+        '7b+/7c' => 9,
+        '7c' => 9,
+        '7c/7c+' => 9,
+        '7c+' => 9,
         '8-' => 8,
         '8-/8' => 8,
         '8' => 8,
         '8/8+' => 8,
         '8+' => 8,
         '8+/9-' => 9,
-        '8a' => 8,
-        '8a/8a+' => 8,
-        '8a+' => 8,
-        '8a+/8b' => 8,
-        '8b' => 8,
-        '8b/8b+' => 9,
-        '8b+' => 9,
-        '8b+/8c' => 9,
-        '8c' => 9,
-        '8c+' => 9,
-        '8c+/9a' => 9,
+        '8a' => 10,
+        '8a/8a+' => 10,
+        '8a+' => 10,
+        '8a+/8b' => 10,
+        '8b' => 10,
+        '8b/8b+' => 10,
+        '8b+' => 10,
+        '8b+/8c' => 11,
+        '8c' => 11,
+        '8c+' => 11,
+        '8c+/9a' => 11,
         '9-' => 9,
         '9-/9' => 9,
         '9' => 9,
         '9/9+' => 9,
         '9+' => 9,
         '9+/10-' => 10,
-        '9a' => 9,
-        '9a/9a+' => 10,
-        '9a+' => 10,
+        '9a' => 11,
+        '9a/9a+' => 11,
+        '9a+' => 11,
         '10-' => 10,
         '10-/10' => 10,
         '10' => 10,
@@ -232,13 +236,18 @@ class GradeTranslationService
         '11-' => 11,
         '11-/11' => 11,
         '11' => 11,
+        '11+' => 11,
+        '11/11+' => 11,
+        '11+/12-' => 11,
+        '12-' => 11,
+        '12' => 11,
         '9b' => 10,
         '9b+' => 11,
-        '5a/5b+' => 5,
-        '6b+/6c' => 7,
-        '7a+/7b' => 7,
-        '7c+/8a' => 8,
-        // Fontainebleau: chart columns are UIAA 3–11; buckets follow “feel” vs UIAA, not the French-sport row (8a would sit in column 8).
+        '5a/5b+' => 6,
+        '6b+/6c' => 8,
+        '7a+/7b' => 9,
+        '7c+/8a' => 10,
+        // Fontainebleau: chart columns are UIAA 3–11; buckets follow “feel” vs UIAA (not the French column from Bergfreunde).
         'FB 3' => 5,
         'FB 4-' => 6,
         'FB 4' => 6,
@@ -344,6 +353,66 @@ class GradeTranslationService
         ['uiaa' => '12', 'french' => '9c', 'fb' => '8c+', 'v' => 'V16'],
     ];
 
+    /** @var array<string, int>|null */
+    private static ?array $bergfreundeFrenchNormToChartBucket = null;
+
+    /**
+     * @return array<string, int> Normalized French sport cell (from Bergfreunde) → chart bucket (3–11).
+     */
+    private static function bergfreundeFrenchNormToChartBucketMap(): array
+    {
+        if (self::$bergfreundeFrenchNormToChartBucket !== null) {
+            return self::$bergfreundeFrenchNormToChartBucket;
+        }
+        $out = [];
+        foreach (self::BERGFREUNDE_CLIMBING_GRADES_COMPARED as $row) {
+            $f = self::normalizeBergfreundeGradeCell($row['french']);
+            $u = self::normalizeBergfreundeGradeCell($row['uiaa']);
+            if ($f === '') {
+                continue;
+            }
+            $bucket = self::GRADE_TO_UIAA_CHART_BUCKET[$u] ?? null;
+            if ($bucket === null) {
+                continue;
+            }
+            $out[$f] = $bucket;
+        }
+        self::$bergfreundeFrenchNormToChartBucket = $out;
+
+        return self::$bergfreundeFrenchNormToChartBucket;
+    }
+
+    /**
+     * Chart bucket for French sport grades (and slash-combined French) from Bergfreunde “Climbing Grades Compared”.
+     */
+    private static function chartBucketForFrenchSportFromBergfreunde(string $grade): ?int
+    {
+        $g = self::normalizeBergfreundeGradeCell($grade);
+        if ($g === '') {
+            return null;
+        }
+        $map = self::bergfreundeFrenchNormToChartBucketMap();
+        if (isset($map[$g])) {
+            return $map[$g];
+        }
+        if (!str_contains($g, '/')) {
+            return null;
+        }
+        $max = null;
+        foreach (explode('/', $g) as $segment) {
+            $p = self::normalizeBergfreundeGradeCell($segment);
+            if ($p === '') {
+                continue;
+            }
+            $b = $map[$p] ?? self::GRADE_TO_UIAA_CHART_BUCKET[$p] ?? null;
+            if ($b !== null && ($max === null || $b > $max)) {
+                $max = $b;
+            }
+        }
+
+        return $max;
+    }
+
     /**
      * Grade strings per UIAA chart column (3–11) for SQL IN (...) clauses.
      *
@@ -352,7 +421,8 @@ class GradeTranslationService
     public static function gradesGroupedByUiaaChartBucket(): array
     {
         $grouped = [];
-        foreach (self::GRADE_TO_UIAA_CHART_BUCKET as $grade => $bucket) {
+        foreach (array_keys(self::GRADE_MAPPING) as $grade) {
+            $bucket = self::uiaaChartBucketForGrade($grade);
             if ($bucket !== null) {
                 $grouped[$bucket][] = $grade;
             }
@@ -369,6 +439,18 @@ class GradeTranslationService
     {
         if ($grade === null || $grade === '') {
             return null;
+        }
+        if (str_starts_with($grade, 'FB ')) {
+            return self::GRADE_TO_UIAA_CHART_BUCKET[$grade] ?? null;
+        }
+        // French sport (a/b/c): align with Bergfreunde French ↔ UIAA (e.g. 7c with UIAA 9, not column 8 from conflating with “8a”).
+        if (preg_match('/\d[abc]/i', $grade) === 1) {
+            $fromBerg = self::chartBucketForFrenchSportFromBergfreunde($grade);
+            if ($fromBerg !== null) {
+                return $fromBerg;
+            }
+
+            return self::GRADE_TO_UIAA_CHART_BUCKET[$grade] ?? null;
         }
 
         return self::GRADE_TO_UIAA_CHART_BUCKET[$grade] ?? null;

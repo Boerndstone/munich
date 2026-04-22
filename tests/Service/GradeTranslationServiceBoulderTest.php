@@ -24,4 +24,17 @@ final class GradeTranslationServiceBoulderTest extends TestCase
         self::assertSame($service->gradeToNumber('9b+'), $service->gradeToNumber('FB 9A'));
         self::assertSame(61, $service->gradeToNumber('FB 9A'));
     }
+
+    public function testSlashGradeFallsBackToFirstSegmentForGradeNo(): void
+    {
+        self::assertSame(36, GradeTranslationService::gradeToMappedNumber('7b/b+'));
+        self::assertSame(36, GradeTranslationService::gradeToMappedNumber('7b / b+'));
+        self::assertSame(39, GradeTranslationService::gradeToMappedNumber('7b+/7c'));
+    }
+
+    public function testIsValidGradeAcceptsSlashFormsMappableViaFirstSegment(): void
+    {
+        $service = new GradeTranslationService();
+        self::assertTrue($service->isValidGrade('7b/b+'));
+    }
 }

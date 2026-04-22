@@ -25,6 +25,8 @@ Encore
   .addEntry("rock", "./assets/rock.js")
   .addEntry("routeparams", "./assets/routeparams.js")
   .addEntry("filter", "./assets/filter.js")
+  // EasyAdmin / backend (was a separate Encore build; merged so one `npm run build` serves /admin)
+  .addEntry("admin", "./assets/admin.js")
 
   .copyFiles({
     from: "./assets/images",

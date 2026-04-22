@@ -103,19 +103,7 @@
 					}) }}
 				{% endif %}
 			</div>
-			<div class="flex shrink-0 justify-end ps-1" data-controller="theme">
-				<button type="button" class="theme-toggle-btn inline-flex shrink-0 rounded-md border-0 bg-transparent p-1 text-[var(--theme-text)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" data-action="click->theme#cycle" aria-label="Toggle theme" title="Theme wechseln (System → Hell → Dunkel)">
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-toggle-icon" aria-hidden="true">
-						<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-						<path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/>
-						<path d="M12 3l0 18"/>
-						<path d="M12 9l4.65 -4.65"/>
-						<path d="M12 14.3l7.37 -7.37"/>
-						<path d="M12 19.6l8.85 -8.85"/>
-					</svg>
-					<span class="sr-only">Toggle theme</span>
-				</button>
-			</div>
+			{{ include('components/layout/theme-switcher.html.twig') }}
 		</div>
 		</twig:Sheet>
 	</nav>

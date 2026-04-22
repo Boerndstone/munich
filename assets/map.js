@@ -1,16 +1,19 @@
 /**
  * Map entry point - only loaded on pages with maps
- * Contains Leaflet-based controllers and weather
+ * Symfony UX Map (Leaflet) + filter controllers + weather
  */
 import { Application } from "@hotwired/stimulus";
-import MapController from "./controllers/map_controller";
-import MainMapController from "./controllers/main_map_controller";
+import UxLeafletMapController from "../vendor/symfony/ux-leaflet-map/assets/dist/map_controller.js";
+import IndexAreasMapFiltersController from "./controllers/index_areas_map_filters_controller";
+import AreaOverviewMapFiltersController from "./controllers/area_overview_map_filters_controller";
 import WeatherController from "./controllers/weather_controller";
 
-// Get or create the Stimulus application
 const application = window.Stimulus || (window.Stimulus = Application.start());
 
-// Register map controllers
-application.register("map", MapController);
-application.register("main-map", MainMapController);
+application.register(
+  "symfony--ux-leaflet-map--map",
+  UxLeafletMapController.default ?? UxLeafletMapController
+);
+application.register("index-areas-map-filters", IndexAreasMapFiltersController);
+application.register("area-overview-map-filters", AreaOverviewMapFiltersController);
 application.register("weather", WeatherController);

@@ -44,6 +44,8 @@
         "symfony/ux-autocomplete": "^2.18",
         "symfony/ux-chartjs": "^2.18",
         "symfony/ux-icons": "^2.18",
+        "symfony/ux-leaflet-map": "^2.19",
+        "symfony/ux-map": "^3.0",
         "symfony/ux-toolkit": "^2",
         "symfony/ux-turbo": "^2.18",
         "symfony/ux-twig-component": "^2.25",

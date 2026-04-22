@@ -8,6 +8,7 @@ use App\Entity\Contact;
 use App\Dto\RockImprovementSuggestion;
 use App\Service\FooterAreas;
 use App\Service\FrontendCacheService;
+use App\Service\Map\PublicUxMapFactory;
 use App\Service\RouteGroupingService;
 use App\Form\ContactFormType;
 use App\Form\RockImprovementSuggestionType;
@@ -74,6 +75,7 @@ class FrontendController extends AbstractController
     )]
     public function index(
         FrontendCacheService $frontendCacheService,
+        PublicUxMapFactory $publicUxMapFactory,
         Request $request,
         TranslatorInterface $translator
     ): Response {
@@ -88,6 +90,7 @@ class FrontendController extends AbstractController
             'latestRoutes' => $latestRoutes,
             'latestComments' => $latestComments,
             'banned' => $banned,
+            'indexMap' => $publicUxMapFactory->createIndexOverviewMap(),
         ]);
 
         // Enable HTTP caching - page can be cached for 5 minutes (300 seconds),
@@ -101,6 +104,7 @@ class FrontendController extends AbstractController
     #[Route('/{slug}', name: 'show_rocks')]
     public function showRocksArea(
         FrontendCacheService $frontendCacheService,
+        PublicUxMapFactory $publicUxMapFactory,
         #[MapEntity(
             mapping: ['slug' => 'slug'],
             message: 'Die Seite konnte nicht gefunden werden.',
@@ -151,6 +155,14 @@ class FrontendController extends AbstractController
             'areaKletterkonzeption' => $areaKletterkonzeption,
             'rocks' => $rocks,
             'top100Routes' => $top100Routes,
+            'areaOverviewMap' => $publicUxMapFactory->createAreaOverviewMap(
+                $areaName,
+                (float) $areaLat,
+                (float) $areaLng,
+                $areaZoom,
+                $areaRailwayStation ?? [],
+                $rocks,
+            ),
         ]);
 
         // Enable HTTP caching - page can be cached for 5 minutes
@@ -177,6 +189,7 @@ class FrontendController extends AbstractController
     public function showRock(
         RoutesRepository $routesRepository,
         RockRepository $rockRepository,
+        PublicUxMapFactory $publicUxMapFactory,
         TopoRepository $topoRepository,
         PhotosRepository $photosRepository,
         RouteGroupingService $routeGroupingService,
@@ -287,11 +300,14 @@ class FrontendController extends AbstractController
             return $this->redirectToRoute($rockRoute, ['areaSlug' => $areaSlug, 'slug' => $slug]);
         }
 
+        $rockTopoMap = $publicUxMapFactory->createRockTopoMap($rocks[0] ?? []);
+
         return $this->render('frontend/rock.html.twig', [
             'areaName' => $areaName,
             'slug' => $slug,
             'areaSlug' => $areaSlug,
             'rocks' => $rocks,
+            'rockTopoMap' => $rockTopoMap,
             'rockLng' => $rockLng,
             'rockLat' => $rockLat,
             'rockPreviewImage' => $rockPreviewImage,

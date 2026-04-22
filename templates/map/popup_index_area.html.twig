@@ -1,0 +1,15 @@
+{% set url = 'https://www.munichclimbs.de/uploads/areas/' %}
+{% set popupBody = include('components/area/area-card-body.html.twig', { area: area, ulClass: 'mt-2', showTravelTime: true, chart_summary_include_rocks: true }) %}
+<div class="main-map-popup-card">
+	<div class="main-map-popup-image-wrap">
+		<picture>
+			<source srcset="{{ url }}{{ area.image }}@1x.webp 1x, {{ url }}{{ area.image }}@2x.webp 2x, {{ url }}{{ area.image }}@3x.webp 3x" type="image/webp">
+			<img class="main-map-popup-image" src="{{ url }}{{ area.image }}.webp" alt="Klettergebiet {{ area.name }}" loading="lazy" decoding="async">
+		</picture>
+		<div class="main-map-popup-header">
+			<a href="{{ areaUrl }}" class="main-map-popup-link fw-normal">{{ area.name }}</a>
+			<button type="button" class="main-map-popup-close" onclick="this.closest('.leaflet-popup').querySelector('.leaflet-popup-close-button').click()" aria-label="Schließen"><span>&times;</span></button>
+		</div>
+	</div>
+	<div class="main-map-popup-body">{{ popupBody|raw }}</div>
+</div>

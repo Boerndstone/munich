@@ -1,3 +1,4 @@
+const path = require("path");
 const Encore = require("@symfony/webpack-encore");
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
@@ -64,4 +65,15 @@ Encore
     config.corejs = "3.23";
   });
 
-module.exports = Encore.getWebpackConfig();
+// UX Leaflet bridge imports leaflet.min.css; Leaflet 1.9 ships leaflet.css only.
+const webpackConfig = Encore.getWebpackConfig();
+webpackConfig.resolve = webpackConfig.resolve || {};
+webpackConfig.resolve.alias = {
+  ...(webpackConfig.resolve.alias || {}),
+  "leaflet/dist/leaflet.min.css": path.resolve(
+    __dirname,
+    "node_modules/leaflet/dist/leaflet.css"
+  ),
+};
+
+module.exports = webpackConfig;

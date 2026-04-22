@@ -23,7 +23,7 @@
 		</header>
 		<div class="flex min-h-0 flex-1 flex-col overflow-hidden">
 			<div id="areaMap" class="z-10 flex min-h-0 flex-1 flex-col">
-				{{ include('components/map/area-map.html.twig') }}
+				{{ include('components/map/area-map.html.twig', { areaOverviewMap: areaOverviewMap }) }}
 			</div>
 		</div>
 	</div>

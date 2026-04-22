@@ -3,6 +3,8 @@
  * Contains route-related controllers
  */
 import { Application } from "@hotwired/stimulus";
+import UxLeafletMapController from "../vendor/symfony/ux-leaflet-map/assets/dist/map_controller.js";
+import RockAccordionMapController from "./controllers/rock_accordion_map_controller";
 import RouteInformationTooltipController from "./controllers/route-information-tooltip_controller";
 import RouteparamsController from "./controllers/routeparams_controller";
 import ModalRouteInformationController from "./controllers/modal-route-information_controller";
@@ -13,6 +15,12 @@ import AccordionController from "./controllers/accordion_controller";
 
 // Get or create the Stimulus application
 const application = window.Stimulus || (window.Stimulus = Application.start());
+
+application.register(
+  "symfony--ux-leaflet-map--map",
+  UxLeafletMapController.default ?? UxLeafletMapController
+);
+application.register("rock-accordion-map", RockAccordionMapController);
 
 // Register rock page controllers
 application.register("route-information-tooltip", RouteInformationTooltipController);

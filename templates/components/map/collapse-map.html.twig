@@ -1,6 +1,6 @@
 {# Fullscreen map in Shadcn Dialog (https://ux.symfony.com/toolkit/kits/shadcn/components/dialog). Optional: ariaLabel, title, description #}
 {% set _aria = ariaLabel|default('index.map_open'|trans({}, 'messages')) %}
-{% set _title = title|default('Klettergebiete um München') %}
+{% set _title = title|default('index.map_region'|trans({}, 'messages')) %}
 {% set _desc = description|default('index.map_region'|trans({}, 'messages')) %}
 
 <twig:Dialog id="indexMap">

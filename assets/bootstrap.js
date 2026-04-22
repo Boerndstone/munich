@@ -8,7 +8,7 @@ const app = startStimulusApp(
     "@symfony/stimulus-bridge/lazy-controller-loader!./controllers",
     true,
     // Only include core controllers needed on every page
-    /\/(cookie-consent|scroll[_-]progress|scrolltop|theme|autocomplete|search[_-]modal|sheet|tabs|rock[_-]grade[_-]chart|exclusive_details)_controller\.[jt]sx?$/
+    /\/(cookie-consent|scroll[_-]progress|scrolltop|theme|autocomplete|search[_-]modal|sheet|tabs|rock[_-]grade[_-]chart|exclusive_details|dialog)_controller\.[jt]sx?$/
   )
 );
 

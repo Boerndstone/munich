@@ -205,8 +205,8 @@ class FrontendController extends AbstractController
 
         // $rockDescription = $rock->getDescription();
 
-        $rocks = $rockRepository->getRockInformation($slug);
         $routes = $rockRepository->getRoutesTopo($slug);
+        $rocks = $rockRepository->getRockInformation($slug);
         $comments = $rockRepository->getCommentsForRoutes($slug);
 
         $locale = $request->getLocale();

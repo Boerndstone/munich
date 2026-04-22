@@ -1,96 +1,40 @@
 import { Controller } from "stimulus";
 
 export default class extends Controller {
-  static targets = ["system", "light", "dark"];
+  static targets = ["trigger", "sun", "moon"];
 
   connect() {
-    // Initialize theme from localStorage or default to system
-    const savedTheme = localStorage.getItem('theme') || 'system';
-    this.setTheme(savedTheme);
+    const raw = localStorage.getItem("theme");
+    const theme = raw === "dark" ? "dark" : "light";
+    this.applyTheme(theme);
   }
 
-  setSystem() {
-    this.setTheme('system');
+  /** Sun ↔ moon: flip light / dark */
+  toggle() {
+    const next = document.documentElement.classList.contains("dark") ? "light" : "dark";
+    this.applyTheme(next);
   }
 
-  setLight() {
-    this.setTheme('light');
+  applyTheme(theme) {
+    const t = theme === "dark" ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", t);
+    document.documentElement.classList.toggle("dark", t === "dark");
+    localStorage.setItem("theme", t);
+    this.updateIcons(t);
   }
 
-  setDark() {
-    this.setTheme('dark');
-  }
-
-  // Cycle theme for single-button toggle: system → light → dark → system
-  cycle() {
-    const current = localStorage.getItem('theme') || 'system';
-    const order = ['system', 'light', 'dark'];
-    const nextIndex = (order.indexOf(current) + 1) % order.length;
-    this.setTheme(order[nextIndex]);
-  }
-
-  setTheme(theme) {
-    // Handle system theme detection
-    let actualTheme = theme;
-    if (theme === 'system') {
-      actualTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  updateIcons(theme) {
+    if (this.hasSunTarget && this.hasMoonTarget) {
+      if (theme === "dark") {
+        this.sunTarget.classList.add("hidden");
+        this.moonTarget.classList.remove("hidden");
+      } else {
+        this.sunTarget.classList.remove("hidden");
+        this.moonTarget.classList.add("hidden");
+      }
     }
-    
-    // Update the HTML data attribute (SCSS) and .dark class (Tailwind dark:)
-    document.documentElement.setAttribute('data-theme', actualTheme);
-    document.documentElement.classList.toggle('dark', actualTheme === 'dark');
-    
-    // Save the user's preference to localStorage
-    localStorage.setItem('theme', theme);
-    
-    // Update segment UI
-    this.updateSegmentUI(theme);
-    
-    // Listen for system theme changes if in system mode
-    if (theme === 'system') {
-      this.setupSystemThemeListener();
-    } else {
-      this.removeSystemThemeListener();
+    if (this.hasTriggerTarget) {
+      this.triggerTarget.setAttribute("aria-checked", theme === "dark" ? "true" : "false");
     }
-  }
-
-  updateSegmentUI(theme) {
-    // Remove active class from all segments
-    if (this.hasSystemTarget) this.systemTarget.classList.remove('active');
-    if (this.hasLightTarget) this.lightTarget.classList.remove('active');
-    if (this.hasDarkTarget) this.darkTarget.classList.remove('active');
-    
-    // Add active class to current theme
-    if (theme === 'system' && this.hasSystemTarget) {
-      this.systemTarget.classList.add('active');
-    } else if (theme === 'light' && this.hasLightTarget) {
-      this.lightTarget.classList.add('active');
-    } else if (theme === 'dark' && this.hasDarkTarget) {
-      this.darkTarget.classList.add('active');
-    }
-  }
-
-  setupSystemThemeListener() {
-    if (!this.systemThemeListener) {
-      this.systemThemeListener = (e) => {
-        if (localStorage.getItem('theme') === 'system') {
-          const actualTheme = e.matches ? 'dark' : 'light';
-          document.documentElement.setAttribute('data-theme', actualTheme);
-          document.documentElement.classList.toggle('dark', actualTheme === 'dark');
-        }
-      };
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', this.systemThemeListener);
-    }
-  }
-
-  removeSystemThemeListener() {
-    if (this.systemThemeListener) {
-      window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', this.systemThemeListener);
-      this.systemThemeListener = null;
-    }
-  }
-
-  disconnect() {
-    this.removeSystemThemeListener();
   }
 }

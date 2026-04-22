@@ -1,4 +1,5 @@
 # Navigation
+theme.toggle_aria: "Zwischen hellem und dunklem Modus wechseln"
 skip_to_content: "Zum Inhalt springen"
 close: "Schließen"
 close_navigation: "Navigationsmenü schließen"

@@ -5,7 +5,12 @@ export default class extends Controller {
 
   connect() {
     const raw = localStorage.getItem("theme");
-    const theme = raw === "dark" ? "dark" : "light";
+    const theme =
+      raw === "dark" || raw === "light"
+        ? raw
+        : window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
     this.applyTheme(theme);
   }
 

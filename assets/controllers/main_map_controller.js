@@ -195,8 +195,6 @@ export default class extends Controller {
     const rockData = this.getFilteredRockMarkers();
     const hasRocks = rockData.length > 0;
 
-    const pinIcon = createMapPinIcon();
-
     if (!hasRocks) {
       this.areaSummaryLayer = null;
       this.rockClusterGroup = null;
@@ -212,7 +210,7 @@ export default class extends Controller {
         const lng = this._getCoord(m, 1);
         if (lat == null || lng == null || Number.isNaN(lat) || Number.isNaN(lng)) return;
         const popup = Array.isArray(m) ? (m[2] ?? "") : (m.popup ?? "");
-        this.areaClusterGroup.addLayer(L.marker([lat, lng], { icon: pinIcon }).bindPopup(popup));
+        this.areaClusterGroup.addLayer(L.marker([lat, lng], { icon: createMapPinIcon() }).bindPopup(popup));
       });
       this._hasRocksForLayer = false;
       this.syncClusterLayerVisibility();
@@ -240,7 +238,7 @@ export default class extends Controller {
       const lng = this._getCoord(m, 1);
       if (lat == null || lng == null || Number.isNaN(lat) || Number.isNaN(lng)) return;
       const popup = Array.isArray(m) ? (m[2] ?? "") : (m.popup ?? "");
-      const marker = L.marker([lat, lng], { icon: pinIcon }).bindPopup(popup);
+      const marker = L.marker([lat, lng], { icon: createMapPinIcon() }).bindPopup(popup);
       this.rockClusterGroup.addLayer(marker);
     });
 

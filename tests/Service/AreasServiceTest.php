@@ -172,8 +172,8 @@ class AreasServiceTest extends TestCase
             [
                 'lat' => '49.100000',
                 'lng' => '11.200000',
-                'name' => 'Konstein',
-                'slug' => 'konstein',
+                'rockName' => 'Konstein',
+                'rockSlug' => 'konstein',
                 'areaSlug' => 'frankenjura',
                 'areaName' => 'Frankenjura',
                 'travelTimeMinutes' => 90,
@@ -187,7 +187,7 @@ class AreasServiceTest extends TestCase
         $this->cache
             ->expects($this->once())
             ->method('get')
-            ->with('main_map_rocks_v1', $this->isType('callable'))
+            ->with('main_map_rocks_v2', $this->isType('callable'))
             ->willReturn($expectedRocks);
 
         $result = $this->service->getMainMapRocks();
@@ -201,8 +201,8 @@ class AreasServiceTest extends TestCase
             [
                 'lat' => '49.100000',
                 'lng' => '11.200000',
-                'name' => 'Konstein',
-                'slug' => 'konstein',
+                'rockName' => 'Konstein',
+                'rockSlug' => 'konstein',
                 'areaSlug' => 'frankenjura',
                 'areaName' => 'Frankenjura',
                 'travelTimeMinutes' => 90,
@@ -217,9 +217,9 @@ class AreasServiceTest extends TestCase
         $this->cache
             ->expects($this->once())
             ->method('get')
-            ->with('main_map_rocks_v1', $this->isType('callable'))
+            ->with('main_map_rocks_v2', $this->isType('callable'))
             ->willReturnCallback(function (string $key, callable $callback) {
-                $this->assertSame('main_map_rocks_v1', $key);
+                $this->assertSame('main_map_rocks_v2', $key);
                 $item = $this->createMock(ItemInterface::class);
                 $item->expects($this->once())
                     ->method('expiresAfter')
@@ -242,7 +242,7 @@ class AreasServiceTest extends TestCase
         $this->cache
             ->expects($this->once())
             ->method('get')
-            ->with('main_map_rocks_v1', $this->isType('callable'))
+            ->with('main_map_rocks_v2', $this->isType('callable'))
             ->willReturn([]);
 
         $result = $this->service->getMainMapRocks();
@@ -254,7 +254,7 @@ class AreasServiceTest extends TestCase
     public function testClearCacheDeletesAllCacheKeys(): void
     {
         $this->cache
-            ->expects($this->exactly(5))
+            ->expects($this->exactly(6))
             ->method('delete')
             ->willReturnCallback(function (string $key): bool {
                 $this->assertContains($key, [
@@ -262,6 +262,7 @@ class AreasServiceTest extends TestCase
                     'areas_information',
                     'areas_footer',
                     'areas_sidebar',
+                    'main_map_rocks_v2',
                     'main_map_rocks_v1',
                 ]);
                 return true;

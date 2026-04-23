@@ -138,32 +138,57 @@ class RockRepository extends ServiceEntityRepository
 
 
     /**
-     * Rocks with coordinates for the homepage map (clustered when zoomed in).
+     * Rocks with coordinates for the homepage map; same route/grade aggregates as {@see getRocksInformation}.
      *
      * @return array<int, array<string, mixed>>
      */
     public function findOnlineRocksWithCoordinatesForMap(): array
     {
-        return $this->createQueryBuilder('rock')
+        $qb = $this->createQueryBuilder('rock')
             ->select(
                 'rock.lat AS lat',
                 'rock.lng AS lng',
-                'rock.name AS name',
-                'rock.slug AS slug',
-                'area.slug AS areaSlug',
+                'rock.name AS rockName',
+                'rock.slug AS rockSlug',
+                'rock.childFriendly AS rockChild',
+                'rock.rain AS rockRain',
+                'rock.train AS rockTrain',
+                'rock.bike AS rockBike',
+                'rock.sunny AS rockSunny',
+                'rock.previewImage AS previewImage',
                 'area.name AS areaName',
-                'area.travelTimeMinutes AS travelTimeMinutes'
+                'area.slug AS areaSlug',
+                'area.travelTimeMinutes AS travelTimeMinutes',
+                'COUNT(DISTINCT route.id) AS amountRoutes',
+                'SUM(CASE WHEN route.gradeNo > 0 AND route.gradeNo <= 15 THEN 1 ELSE 0 END) AS amountEasy',
+                'SUM(CASE WHEN route.gradeNo > 15 AND route.gradeNo <= 29 THEN 1 ELSE 0 END) AS amountMiddle',
+                'SUM(CASE WHEN route.gradeNo > 29 AND route.gradeNo <= 65 THEN 1 ELSE 0 END) AS amountHard',
+                'SUM(CASE WHEN route.gradeNo = 0 OR route.gradeNo IS NULL THEN 1 ELSE 0 END) AS amountProjects'
             )
             ->innerJoin('rock.area', 'area')
+            ->leftJoin('rock.routes', 'route')
             ->where('rock.online = :online')
             ->andWhere('area.online = :online')
             ->andWhere('rock.lat IS NOT NULL')
             ->andWhere('rock.lng IS NOT NULL')
             ->setParameter('online', true)
+            ->groupBy('rock.id')
             ->orderBy('area.sequence', 'ASC')
-            ->addOrderBy('rock.nr', 'ASC')
-            ->getQuery()
-            ->getArrayResult();
+            ->addOrderBy('rock.nr', 'ASC');
+
+        $groupedGrades = GradeTranslationService::gradesGroupedByUiaaChartBucket();
+        foreach (range(3, 11) as $bucket) {
+            $grades = $groupedGrades[$bucket] ?? [];
+            $param = 'main_map_rock_grade_chart_'.$bucket;
+            if ($grades === []) {
+                $qb->addSelect('0 AS grade_chart_'.$bucket);
+            } else {
+                $qb->addSelect('SUM(CASE WHEN route.grade IN (:'.$param.') THEN 1 ELSE 0 END) AS grade_chart_'.$bucket)
+                    ->setParameter($param, $grades, ArrayParameterType::STRING);
+            }
+        }
+
+        return $qb->getQuery()->getArrayResult();
     }
 
     public function getRocksInformation($areaSlug)

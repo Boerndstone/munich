@@ -18,27 +18,110 @@ export default class extends Controller {
 
   disconnect() {
     this.element.removeEventListener("ux:map:connect", this._onUxMapConnect);
-    this._dialogOpenObserver?.disconnect();
+    this._teardownDialogMapResize();
   }
 
   onMapConnect(event) {
+    this._teardownDialogMapResize();
     this.map = event.detail.map;
     this.leafletMarkers = event.detail.markers ?? [];
     this.markerMeta = event.detail.extra?.markerMeta ?? [];
     this.applyRockVisibility();
+    this._setupDialogMapResize();
+  }
 
+  /** Load Leaflet CSS via `encore_entry_link_tags('map')` on rocks.html (see index map filters). */
+  _scheduleInvalidateSizes() {
+    const m = this.map;
+    if (!m || !m._loaded) return;
     const dialog = this.element.closest("dialog");
-    if (dialog) {
-      this._dialogOpenObserver = new MutationObserver(() => {
-        if (dialog.open) {
-          setTimeout(() => this.map?.invalidateSize(), 40);
-        }
-      });
-      this._dialogOpenObserver.observe(dialog, {
-        attributes: true,
-        attributeFilter: ["open"],
+    if (dialog && !dialog.open) return;
+
+    m._sizeChanged = true;
+    m.invalidateSize({ animate: false, pan: false });
+
+    const el = m.getContainer?.();
+    if (el && el.clientWidth >= 4 && el.clientHeight >= 4) {
+      try {
+        const c = m.getCenter();
+        const z = m.getZoom();
+        m.setView(c, z, { animate: false, reset: true });
+      } catch (_) {
+        /* keep invalidateSize */
+      }
+      m.eachLayer?.((layer) => {
+        if (layer && typeof layer.redraw === "function") layer.redraw();
       });
     }
+  }
+
+  _runInvalidateBurst() {
+    this._scheduleInvalidateSizes();
+    requestAnimationFrame(() => this._scheduleInvalidateSizes());
+    requestAnimationFrame(() => requestAnimationFrame(() => this._scheduleInvalidateSizes()));
+    setTimeout(() => this._scheduleInvalidateSizes(), 0);
+    setTimeout(() => this._scheduleInvalidateSizes(), 60);
+    setTimeout(() => this._scheduleInvalidateSizes(), 180);
+    setTimeout(() => this._scheduleInvalidateSizes(), 400);
+    setTimeout(() => this._scheduleInvalidateSizes(), 700);
+  }
+
+  _setupDialogMapResize() {
+    const dialog = this.element.closest("dialog");
+    if (!dialog || !this.map) return;
+
+    this._dialogForMap = dialog;
+    this._invalidateMapSize = () => this._runInvalidateBurst();
+
+    this._onDialogToggle = () => {
+      if (!dialog.open) return;
+      this._runInvalidateBurst();
+    };
+    dialog.addEventListener("toggle", this._onDialogToggle);
+
+    this._dialogOpenObserver = new MutationObserver(() => {
+      if (dialog.open) {
+        this._runInvalidateBurst();
+      }
+    });
+    this._dialogOpenObserver.observe(dialog, { attributes: true, attributeFilter: ["open"] });
+
+    this._onDialogTransitionEnd = (e) => {
+      if (e.target !== dialog || e.propertyName !== "opacity") return;
+      if (dialog.open) this._runInvalidateBurst();
+    };
+    dialog.addEventListener("transitionend", this._onDialogTransitionEnd);
+
+    if (dialog.open) {
+      this._runInvalidateBurst();
+    }
+
+    const container = this.map.getContainer?.();
+    if (container && typeof ResizeObserver !== "undefined") {
+      this._mapResizeObserver = new ResizeObserver(() => {
+        if (dialog.open && this.map) this._scheduleInvalidateSizes();
+      });
+      this._mapResizeObserver.observe(container);
+    }
+  }
+
+  _teardownDialogMapResize() {
+    if (this._dialogForMap) {
+      if (this._onDialogToggle) {
+        this._dialogForMap.removeEventListener("toggle", this._onDialogToggle);
+      }
+      if (this._onDialogTransitionEnd) {
+        this._dialogForMap.removeEventListener("transitionend", this._onDialogTransitionEnd);
+      }
+    }
+    this._dialogOpenObserver?.disconnect();
+    this._dialogOpenObserver = null;
+    this._dialogForMap = null;
+    this._onDialogToggle = null;
+    this._onDialogTransitionEnd = null;
+    this._invalidateMapSize = null;
+    this._mapResizeObserver?.disconnect();
+    this._mapResizeObserver = null;
   }
 
   toggleLayer(event) {

@@ -152,8 +152,16 @@
 
 /* Leaflet measures the map pane from .leaflet-container; keep it filling the flex slot */
 .map-fullscreen-dialog[open] .leaflet-container {
+    flex: 1 1 0%;
+    min-height: 0;
     height: 100%;
     width: 100%;
+}
+
+/* UX Map root is a flex item inside the dialog; let Leaflet fill it after invalidateSize */
+.map-fullscreen-dialog[open] .main-map-container .leaflet-container {
+    flex: 1 1 0%;
+    min-height: 0;
 }
 
 /* Native <dialog> fullscreen map modals — ::backdrop is not practical with @apply alone */
@@ -213,6 +221,15 @@
 
 .rock-info-dialog::backdrop {
     background: transparent;
+}
+
+/* Drawer + accordion: give Leaflet a definite box inside the offcanvas panel. */
+.rock-info-dialog[open] .rock-ux-map-wrap .leaflet-container {
+    box-sizing: border-box;
+    flex: 1 1 auto;
+    min-height: min(48vh, 420px);
+    height: min(52vh, 480px);
+    width: 100%;
 }
 
 /* Rock route info: centered <dialog> (do not put flex on <dialog> without [open] — same rule as map dialog). */

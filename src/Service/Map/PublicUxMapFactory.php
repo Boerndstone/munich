@@ -215,8 +215,9 @@ final class PublicUxMapFactory
         $markers = [];
         $polylines = [];
 
-        $parkingSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="32" viewBox="0 0 448 512"><path stroke="#fff" fill="#075985" d="M64 32C28.7 32 0 60.7 0 96v320c0 35.3 28.7 64 64 64h320c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64zm128 224h48c17.7 0 32-14.3 32-32s-14.3-32-32-32h-48zm48 64h-48v32c0 17.7-14.3 32-32 32s-32-14.3-32-32V168c0-22.1 17.9-40 40-40h72c53 0 96 43 96 96s-43 96-96 96"/></svg>';
-        $parkingIcon = Icon::url('data:image/svg+xml;base64,'.base64_encode($parkingSvg))->width(25)->height(41);
+        // divIcon via Icon::svg avoids L.icon + data: URLs (CSP / img quirks) inside the drawer map.
+        $parkingSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="32" viewBox="0 0 448 512" focusable="false" aria-hidden="true"><path stroke="#fff" stroke-width="12" fill="#075985" d="M64 32C28.7 32 0 60.7 0 96v320c0 35.3 28.7 64 64 64h320c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64zm128 224h48c17.7 0 32-14.3 32-32s-14.3-32-32-32h-48zm48 64h-48v32c0 17.7-14.3 32-32 32s-32-14.3-32-32V168c0-22.1 17.9-40 40-40h72c53 0 96 43 96 96s-43 96-96 96"/></svg>';
+        $parkingIcon = Icon::svg($parkingSvg);
 
         if ($geometries !== []) {
             $parsed = $this->parseRockGeometries($geometries);
@@ -237,6 +238,9 @@ final class PublicUxMapFactory
                         opened: true,
                     ),
                 );
+            }
+            if ($markers === [] && $polylines === []) {
+                $markers[] = new Marker(position: new Point($lat, $lng));
             }
         } else {
             $markers[] = new Marker(position: new Point($lat, $lng));
@@ -272,13 +276,48 @@ final class PublicUxMapFactory
         if (null === $raw || '' === $raw) {
             return [];
         }
+        $data = $raw;
         if (\is_string($raw)) {
             $decoded = json_decode($raw, true);
-
-            return \is_array($decoded) ? $decoded : [];
+            $data = \is_array($decoded) ? $decoded : [];
+        }
+        if (!\is_array($data)) {
+            return [];
         }
 
-        return \is_array($raw) ? $raw : [];
+        // Single GeoJSON Feature { type, geometry }
+        if (isset($data['type'], $data['geometry']) && 'Feature' === $data['type'] && \is_array($data['geometry'])) {
+            $g = $data['geometry'];
+            $type = (string) ($g['type'] ?? '');
+            if ('' !== $type && \array_key_exists('coordinates', $g)) {
+                return [['type' => $type, 'coordinates' => $g['coordinates']]];
+            }
+
+            return [];
+        }
+
+        // GeoJSON FeatureCollection
+        if (isset($data['type'], $data['features']) && 'FeatureCollection' === $data['type'] && \is_array($data['features'])) {
+            $out = [];
+            foreach ($data['features'] as $feature) {
+                if (!\is_array($feature) || !isset($feature['geometry']) || !\is_array($feature['geometry'])) {
+                    continue;
+                }
+                $g = $feature['geometry'];
+                $type = (string) ($g['type'] ?? '');
+                if ('' !== $type && \array_key_exists('coordinates', $g)) {
+                    $out[] = ['type' => $type, 'coordinates' => $g['coordinates']];
+                }
+            }
+
+            return $out;
+        }
+
+        // Admin draw format: list of { type, coordinates } — force plain arrays (ORM can yield nested objects).
+        $encoded = json_encode($data);
+        $normalized = \is_string($encoded) ? json_decode($encoded, true) : null;
+
+        return \is_array($normalized) ? $normalized : [];
     }
 
     /**
@@ -293,6 +332,9 @@ final class PublicUxMapFactory
         $points = [];
 
         foreach ($geometries as $item) {
+            if (\is_object($item)) {
+                $item = json_decode(json_encode($item), true);
+            }
             if (!\is_array($item) || !isset($item['type'], $item['coordinates'])) {
                 continue;
             }
@@ -311,6 +353,22 @@ final class PublicUxMapFactory
                     $pt = $this->geoJsonPairToPoint($pair);
                     if (null !== $pt) {
                         $linePoints[] = $pt;
+                    }
+                }
+            } elseif ('MultiLineString' === $type) {
+                $lines = $item['coordinates'];
+                if (!\is_array($lines)) {
+                    continue;
+                }
+                foreach ($lines as $coords) {
+                    if (!\is_array($coords)) {
+                        continue;
+                    }
+                    foreach ($coords as $pair) {
+                        $pt = $this->geoJsonPairToPoint($pair);
+                        if (null !== $pt) {
+                            $linePoints[] = $pt;
+                        }
                     }
                 }
             }
@@ -334,6 +392,9 @@ final class PublicUxMapFactory
      */
     private function geoJsonPointToPoint(mixed $coordinates): ?Point
     {
+        if (\is_object($coordinates)) {
+            $coordinates = json_decode(json_encode($coordinates), true);
+        }
         if (!\is_array($coordinates) || !isset($coordinates[0], $coordinates[1])) {
             return null;
         }
@@ -346,6 +407,9 @@ final class PublicUxMapFactory
      */
     private function geoJsonPairToPoint(mixed $pair): ?Point
     {
+        if (\is_object($pair)) {
+            $pair = json_decode(json_encode($pair), true);
+        }
         if (!\is_array($pair) || !isset($pair[0], $pair[1])) {
             return null;
         }

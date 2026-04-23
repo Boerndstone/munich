@@ -19,7 +19,7 @@
         },
         "@symfony/ux-leaflet-map": {
             "map": {
-                "enabled": true,
+                "enabled": false,
                 "fetch": "lazy"
             }
         },

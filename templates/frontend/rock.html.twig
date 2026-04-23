@@ -1,6 +1,11 @@
 {% extends 'base.html.twig' %}
 {% set setTitle = 'Munichclimbs | Klettergebiet ' ~ areaName ~	' | Fels ' ~ slug|custom_replace %}
 
+{% block stylesheets %}
+	{{ parent() }}
+	{{ encore_entry_link_tags('rock') }}
+{% endblock %}
+
 {% block page_javascripts %}
 	{{ encore_entry_script_tags('rock') }}
 	{{ encore_entry_script_tags('gallery') }}

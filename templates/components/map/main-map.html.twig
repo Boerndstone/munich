@@ -10,10 +10,10 @@
 			</ul>
 		</div>
 	</div>
-	<div class="min-h-0 flex-1" role="region" aria-label="{{ 'index.map_region'|trans({}, 'messages') }}">
+	<div class="flex min-h-0 flex-1 flex-col" role="region" aria-label="{{ 'index.map_region'|trans({}, 'messages') }}">
 		{{ ux_map(indexMap, {
-			class: 'z-10 h-full w-full min-h-[240px]',
-			style: 'min-height:240px',
+			class: 'z-10 flex h-full w-full min-h-[min(360px,52vh)] flex-1 flex-col',
+			style: 'min-height:min(360px,52vh)',
 		}) }}
 	</div>
 </div>

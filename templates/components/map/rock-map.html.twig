@@ -1,6 +1,13 @@
-<div id="rockMap" class="rock-ux-map-wrap z-10 mb-3 h-full w-full min-h-[200px]" data-controller="rock-accordion-map">
-	{{ ux_map(rockTopoMap, {
-		class: 'z-10 h-full w-full',
-		style: 'min-height:200px;aspect-ratio:16/16',
-	}) }}
+<div id="rockMap" class="rock-ux-map-wrap z-10 mb-3 flex w-full min-h-0 flex-col" style="min-height:min(48vh,420px)" data-controller="rock-map-accordion-mount rock-accordion-map">
+	<div
+		class="rock-ux-map-mount flex min-h-0 w-full min-w-0 flex-1 flex-col"
+		style="min-height:min(48vh,420px);height:min(52vh,480px)"
+		data-rock-map-accordion-mount-target="mount"
+	></div>
+	<template data-rock-map-accordion-mount-target="source">
+		{{ ux_map(rockTopoMap, {
+			class: 'z-10 flex h-full min-h-0 w-full min-w-0 flex-1 flex-col',
+			style: 'min-height:min(48vh,420px);height:100%',
+		}) }}
+	</template>
 </div>

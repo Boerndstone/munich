@@ -166,6 +166,91 @@ class AreasServiceTest extends TestCase
         $this->assertEquals($expectedAreas, $result);
     }
 
+    public function testGetMainMapRocksReturnsCachedData(): void
+    {
+        $expectedRocks = [
+            [
+                'lat' => '49.100000',
+                'lng' => '11.200000',
+                'name' => 'Konstein',
+                'slug' => 'konstein',
+                'areaSlug' => 'frankenjura',
+                'areaName' => 'Frankenjura',
+                'travelTimeMinutes' => 90,
+            ],
+        ];
+
+        $this->rockRepository
+            ->expects($this->never())
+            ->method('findOnlineRocksWithCoordinatesForMap');
+
+        $this->cache
+            ->expects($this->once())
+            ->method('get')
+            ->with('main_map_rocks_v1', $this->isType('callable'))
+            ->willReturn($expectedRocks);
+
+        $result = $this->service->getMainMapRocks();
+
+        $this->assertEquals($expectedRocks, $result);
+    }
+
+    public function testGetMainMapRocksCallsRepositoryOnCacheMiss(): void
+    {
+        $expectedRocks = [
+            [
+                'lat' => '49.100000',
+                'lng' => '11.200000',
+                'name' => 'Konstein',
+                'slug' => 'konstein',
+                'areaSlug' => 'frankenjura',
+                'areaName' => 'Frankenjura',
+                'travelTimeMinutes' => 90,
+            ],
+        ];
+
+        $this->rockRepository
+            ->expects($this->once())
+            ->method('findOnlineRocksWithCoordinatesForMap')
+            ->willReturn($expectedRocks);
+
+        $this->cache
+            ->expects($this->once())
+            ->method('get')
+            ->with('main_map_rocks_v1', $this->isType('callable'))
+            ->willReturnCallback(function (string $key, callable $callback) {
+                $this->assertSame('main_map_rocks_v1', $key);
+                $item = $this->createMock(ItemInterface::class);
+                $item->expects($this->once())
+                    ->method('expiresAfter')
+                    ->with(3600);
+
+                return $callback($item);
+            });
+
+        $result = $this->service->getMainMapRocks();
+
+        $this->assertEquals($expectedRocks, $result);
+    }
+
+    public function testGetMainMapRocksReturnsEmptyArrayWhenCachedEmpty(): void
+    {
+        $this->rockRepository
+            ->expects($this->never())
+            ->method('findOnlineRocksWithCoordinatesForMap');
+
+        $this->cache
+            ->expects($this->once())
+            ->method('get')
+            ->with('main_map_rocks_v1', $this->isType('callable'))
+            ->willReturn([]);
+
+        $result = $this->service->getMainMapRocks();
+
+        $this->assertIsArray($result);
+        $this->assertEmpty($result);
+    }
+
     public function testClearCacheDeletesAllCacheKeys(): void
     {
         $this->cache

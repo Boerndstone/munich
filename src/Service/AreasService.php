@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Repository\AreaRepository;
+use App\Repository\RockRepository;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -13,6 +14,7 @@ class AreasService
 
     public function __construct(
         private AreaRepository $areaRepository,
+        private RockRepository $rockRepository,
         private CacheInterface $cache,
     ) {
     }
@@ -27,6 +29,20 @@ class AreasService
             $item->expiresAfter(self::CACHE_TTL);
 
             return $this->areaRepository->getAreasInformation();
+        });
+    }
+
+    /**
+     * Online rocks with lat/lng for the main map (cached with areas data TTL).
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function getMainMapRocks(): array
+    {
+        return $this->cache->get('main_map_rocks_v1', function (ItemInterface $item): array {
+            $item->expiresAfter(self::CACHE_TTL);
+
+            return $this->rockRepository->findOnlineRocksWithCoordinatesForMap();
         });
     }
 
@@ -82,5 +98,6 @@ class AreasService
         $this->cache->delete('areas_information');
         $this->cache->delete('areas_footer');
         $this->cache->delete('areas_sidebar');
+        $this->cache->delete('main_map_rocks_v1');
     }
 } 

@@ -6,6 +6,9 @@
    Optional: aria_label_prefix, wrapper_class.
    Optional: chart_summary_include_rocks + chart_rocks_count — e.g. index cards show "Touren · Felsen" above the chart.
    Optional: hide_chart_summary_line — omit the route total line above the canvas (e.g. area rocks listing).
+   Optional: compact — shorter chart (map rock popups).
+   Optional: fill_panel — with compact + main-map grid bottom row: chart grows to fill panel (no dead zone).
+   Optional: hide_y_axis — main-map rock popup only: hide amount (Y) scale; counts stay on bars + aria.
 #}
 {% if grade_chart_counts is not defined %}
 	{% set grade_chart_counts = [
@@ -39,32 +42,41 @@
 	{% if hide_chart_summary_line|default(false) %}
 		{% set chart_aria_total_fragment = '' %}
 	{% endif %}
-	<div class="not-prose flex min-w-0 flex-col {{ hide_chart_summary_line|default(false) ? 'gap-0' : 'gap-0.5' }} {{ wrapper_class|default('') }}">
+	{% set _compact = compact|default(false) %}
+	{% set _fill = _compact and fill_panel|default(false) %}
+	{% set _chartH = _fill ? '' : (_compact ? 'h-9' : 'h-28') %}
+	{% set _chartMax = _fill ? '' : (_compact ? 'max-h-9' : 'max-h-28') %}
+	{% set _sumMb = _compact ? 'mb-0' : 'mb-2' %}
+	{% set _sumText = _compact ? 'text-[11px] leading-tight' : 'text-xs' %}
+	<div class="not-prose flex min-w-0 flex-col {{ hide_chart_summary_line|default(false) ? 'gap-0' : (_compact ? 'gap-0' : 'gap-0.5') }} {{ _fill ? 'h-full min-h-0 flex-1' : '' }} {{ wrapper_class|default('') }}">
 		{% if not hide_chart_summary_line|default(false) %}
-			<p class="mb-2 w-full text-left text-xs font-medium tabular-nums text-black dark:text-white pointer-events-none" aria-hidden="true">
+			<p class="{{ _sumMb }} w-full text-left {{ _sumText }} font-medium tabular-nums text-black dark:text-white pointer-events-none" aria-hidden="true">
 				{{ chart_summary_visible }}
 			</p>
 		{% endif %}
-		<div class="flex justify-content-between">
-			<p class="mb-0 w-full text-left text-[10px] font-normal leading-tight text-gray-500 dark:text-gray-400 pointer-events-none flex items-center gap-1" aria-hidden="true">
-				<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="currentColor" d="M4.08 11.92L12 4l7.92 7.92l-1.42 1.41l-5.5-5.5V22h-2V7.83l-5.5 5.5zM12 4h10V2H2v2z"/></svg><span>{{ 'grade_chart.legend_y'|trans }}</span>
-			</p>
-			<p class="mb-0 w-full text-right text-[10px] font-normal leading-tight text-gray-500 dark:text-gray-400 pointer-events-none flex items-center justify-end gap-1" aria-hidden="true">
-				<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="currentColor" d="M12.08 4.08L20 12l-7.92 7.92l-1.41-1.42l5.5-5.5H2v-2h14.17l-5.5-5.5zM20 12v10h2V2h-2z"/></svg>
-				<span>{{ 'grade_chart.legend_x'|trans }}</span>
-			</p>
-		</div>
+		{% if not _compact %}
+			<div class="flex justify-content-between">
+				<p class="mb-0 w-full text-left text-[10px] font-normal leading-tight text-gray-500 dark:text-gray-400 pointer-events-none flex items-center gap-1" aria-hidden="true">
+					<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="currentColor" d="M4.08 11.92L12 4l7.92 7.92l-1.42 1.41l-5.5-5.5V22h-2V7.83l-5.5 5.5zM12 4h10V2H2v2z"/></svg><span>{{ 'grade_chart.legend_y'|trans }}</span>
+				</p>
+				<p class="mb-0 w-full text-right text-[10px] font-normal leading-tight text-gray-500 dark:text-gray-400 pointer-events-none flex items-center justify-end gap-1" aria-hidden="true">
+					<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="currentColor" d="M12.08 4.08L20 12l-7.92 7.92l-1.41-1.42l5.5-5.5H2v-2h14.17l-5.5-5.5zM20 12v10h2V2h-2z"/></svg>
+					<span>{{ 'grade_chart.legend_x'|trans }}</span>
+				</p>
+			</div>
+		{% endif %}
 		<div
-			class="pointer-events-none flex w-full items-end gap-1"
+			class="pointer-events-none flex w-full gap-1 {{ _fill ? 'min-h-0 flex-1 flex-col' : 'items-end' }}"
 			data-controller="rock-grade-chart"
 			data-rock-grade-chart-counts-value="{{ grade_chart_counts|json_encode|e('html_attr') }}"
 			data-rock-grade-chart-aria-prefix-value="{{ aria_label_prefix|default('')|e('html_attr') }}"
 			data-rock-grade-chart-aria-total-prefix-value="{{ chart_aria_total_fragment|e('html_attr') }}"
+			{% if hide_y_axis|default(false) %}data-rock-grade-chart-hide-y-axis-value="true"{% endif %}
 			role="img"
 			aria-label="{{ aria_label_prefix|default('') }}{{ chart_aria_total_fragment }}Routen je Gradstufe."
 		>
-			<div class="relative h-28 min-w-0 flex-1">
-				<canvas class="max-h-28 h-full w-full" aria-hidden="true"></canvas>
+			<div class="relative min-w-0 flex-1 {{ _chartH }} {{ _fill ? 'min-h-0' : '' }}">
+				<canvas class="{{ _chartMax }} {{ _fill ? 'min-h-0' : '' }} h-full w-full" aria-hidden="true"></canvas>
 			</div>
 		</div>
 		

@@ -1,0 +1,55 @@
+{# Leaflet rock marker popup.
+   - map_compact true (rock detail map): name-only link; no image/chart.
+   - Maps (index + area): show_chart true — image strip + popupBody (grade chart).
+   Expects: rock (rockName; previewImage / rockImage when show_chart), areaName, rockLink; popupBody when show_chart. #}
+{% set _compact = map_compact|default(false) %}
+{% set _showChart = show_chart|default(true) %}
+{% set rockCardAria = ('Fels ' ~ rock.rockName ~ ', Klettergebiet ' ~ areaName ~ '. Zur Detailseite mit Tourenübersicht.')|e('html_attr') %}
+{% if _compact %}
+	<a href="{{ rockLink }}" class="block truncate text-xs font-medium leading-snug text-sky-800 no-underline hover:underline dark:text-sky-300" aria-label="{{ rockCardAria }}">{{ rock.rockName|e('html') }}</a>
+{% elseif _showChart %}
+{% set rockBuildBase = 'https://www.munichclimbs.de/build/images/rock/' %}
+{% set rockHeaderBase = 'https://www.munichclimbs.de/uploads/header/' %}
+{% set rockThumbPreview = (rock.previewImage is defined and rock.previewImage) ? rock.previewImage : '' %}
+{% set rockThumbHeader = (rock.rockImage is defined and rock.rockImage) ? rock.rockImage : '' %}
+<div class="relative grid h-[20rem] w-[200px] grid-rows-[minmax(0,2fr)_minmax(0,1fr)] overflow-hidden rounded-xl bg-[var(--theme-bg,white)]">
+	<a href="{{ rockLink }}" class="absolute inset-0 z-[1] rounded-xl focus-visible:z-[5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600" aria-label="{{ rockCardAria }}"></a>
+	{% if rockThumbPreview is not empty %}
+		{% set imgBase = rockBuildBase ~ rockThumbPreview %}
+		<div class="relative z-[2] min-h-0 overflow-hidden rounded-t-xl pointer-events-none">
+			<div class="absolute inset-0">
+				<picture>
+					<source type="image/webp" srcset="{{ imgBase }}.webp, {{ imgBase }}@2x.webp 2x, {{ imgBase }}@3x.webp 3x">
+					<img class="h-full w-full object-cover object-center" src="{{ imgBase }}.webp" alt="" loading="lazy" decoding="async">
+				</picture>
+			</div>
+			<div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-2 px-2.5 pb-1.5 pt-2">
+				<span class="inline-block max-w-[calc(100%-2.75rem)] truncate rounded border border-black/10 bg-white/95 px-2 py-1 text-base font-normal text-black shadow-sm">{{ rock.rockName|e('html') }}</span>
+				<button type="button" class="pointer-events-auto relative z-[3] flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-black/10 bg-white/95 text-xl leading-none text-black shadow-sm transition-colors hover:bg-black/10 focus:z-[6] focus:outline-none" onclick="this.closest('.leaflet-popup').querySelector('.leaflet-popup-close-button').click()" aria-label="Schließen"><span class="block leading-none" aria-hidden="true">&times;</span></button>
+			</div>
+		</div>
+	{% elseif rockThumbHeader is not empty %}
+		<div class="relative z-[2] min-h-0 overflow-hidden rounded-t-xl pointer-events-none">
+			<div class="absolute inset-0">
+				<picture>
+					<img class="h-full w-full object-cover object-center" src="{{ asset(rockHeaderBase ~ rockThumbHeader ~ '-small-@1x.webp') }}" srcset="{{ asset(rockHeaderBase ~ rockThumbHeader ~ '-small-@2x.webp') }} 2x, {{ asset(rockHeaderBase ~ rockThumbHeader ~ '-small-@3x.webp') }} 3x" alt="" loading="lazy" decoding="async">
+				</picture>
+			</div>
+			<div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-2 px-2.5 pb-1.5 pt-2">
+				<span class="inline-block max-w-[calc(100%-2.75rem)] truncate rounded border border-black/10 bg-white/95 px-2 py-1 text-base font-normal text-black shadow-sm">{{ rock.rockName|e('html') }}</span>
+				<button type="button" class="pointer-events-auto relative z-[3] flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-black/10 bg-white/95 text-xl leading-none text-black shadow-sm transition-colors hover:bg-black/10 focus:z-[6] focus:outline-none" onclick="this.closest('.leaflet-popup').querySelector('.leaflet-popup-close-button').click()" aria-label="Schließen"><span class="block leading-none" aria-hidden="true">&times;</span></button>
+			</div>
+		</div>
+	{% else %}
+		<div class="relative z-[2] flex min-h-0 flex-col overflow-hidden rounded-t-xl bg-gradient-to-br from-slate-500 to-slate-700 pointer-events-none">
+			<div class="relative z-10 flex shrink-0 items-center justify-between gap-2 px-2.5 pb-1.5 pt-2">
+				<span class="inline-block max-w-[calc(100%-2.75rem)] truncate rounded border border-white/25 bg-white/95 px-2 py-1 text-base font-normal text-black shadow-sm">{{ rock.rockName|e('html') }}</span>
+				<button type="button" class="pointer-events-auto relative z-[3] flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-white/95 text-xl leading-none text-black shadow-sm transition-colors hover:bg-black/10 focus:z-[6] focus:outline-none" onclick="this.closest('.leaflet-popup').querySelector('.leaflet-popup-close-button').click()" aria-label="Schließen"><span class="block leading-none" aria-hidden="true">&times;</span></button>
+			</div>
+		</div>
+	{% endif %}
+	<div class="relative z-[2] flex min-h-0 flex-col overflow-hidden rounded-b-[10px] border-t border-white/55 bg-white/80 px-2 py-2 shadow-[0_-4px_16px_rgba(15,23,42,0.08)] dark:border-white/15 dark:bg-slate-800/80 dark:shadow-[0_-4px_16px_rgba(0,0,0,0.2)] pointer-events-none">
+		{{ (popupBody|default(''))|raw }}
+	</div>
+</div>
+{% endif %}

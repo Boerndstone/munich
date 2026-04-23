@@ -6,7 +6,9 @@
 {% set _showChart = show_chart|default(true) %}
 {% set rockCardAria = ('Fels ' ~ rock.rockName ~ ', Klettergebiet ' ~ areaName ~ '. Zur Detailseite mit Tourenübersicht.')|e('html_attr') %}
 {% if _compact %}
+<div class="max-w-[11rem] h-[3rem] flex items-center justify-center">
 	<a href="{{ rockLink }}" class="block truncate text-xs font-medium leading-snug text-sky-800 no-underline hover:underline dark:text-sky-300" aria-label="{{ rockCardAria }}">{{ rock.rockName|e('html') }}</a>
+</div>
 {% elseif _showChart %}
 {% set rockBuildBase = 'https://www.munichclimbs.de/build/images/rock/' %}
 {% set rockHeaderBase = 'https://www.munichclimbs.de/uploads/header/' %}

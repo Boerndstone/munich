@@ -1,12 +1,37 @@
 import { Controller } from "stimulus";
 import L from "leaflet";
+import { createMapPinIcon } from "../map/icons.js";
 
-const PARKING_SVG =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="32" viewBox="0 0 448 512"><path stroke="#fff" fill="#075985" d="M64 32C28.7 32 0 60.7 0 96v320c0 35.3 28.7 64 64 64h320c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64zm128 224h48c17.7 0 32-14.3 32-32s-14.3-32-32-32h-48zm48 64h-48v32c0 17.7-14.3 32-32 32s-32-14.3-32-32V168c0-22.1 17.9-40 40-40h72c53 0 96 43 96 96s-43 96-96 96"/></svg>';
+function readParkingIconHtml() {
+  const el = document.getElementById("rock-map-parking-icon-json");
+  if (!el?.textContent) {
+    return "";
+  }
+  try {
+    return JSON.parse(el.textContent.trim());
+  } catch {
+    return "";
+  }
+}
+
+function createParkingMapIcon(innerHtml) {
+  if (!innerHtml) {
+    return createMapPinIcon();
+  }
+  return L.divIcon({
+    html: `<div class="rock-map-parking-marker">${innerHtml}</div>`,
+    className: "",
+    iconSize: [36, 36],
+    iconAnchor: [18, 36],
+    popupAnchor: [0, -34],
+  });
+}
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
   connect() {
+    const parkingIconHtml = readParkingIconHtml();
+
     const raw = this.element.dataset.rockMapPayload;
     if (!raw) {
       return;
@@ -42,23 +67,20 @@ export default class extends Controller {
       maxZoom: 18,
     }).addTo(this.map);
 
-    const iconUrl = "data:image/svg+xml;base64," + btoa(PARKING_SVG);
-    const greenIcon = new L.Icon({
-      iconUrl,
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowSize: [41, 41],
-    });
-
     const markerObject = markersRock[2];
     const popupHtml = markersRock[3];
 
     if (markerObject) {
-      L.marker(markerObject[0].coordinates.slice().reverse(), { icon: greenIcon }).addTo(this.map);
-      const nameMarker = L.marker(markerObject[2].coordinates.slice().reverse(), { icon: greenIcon }).addTo(this.map);
-      nameMarker.bindPopup(popupHtml).openPopup();
       L.geoJSON(markerObject).addTo(this.map);
+      L.marker(markerObject[0].coordinates.slice().reverse(), {
+        icon: createParkingMapIcon(parkingIconHtml),
+        zIndexOffset: 550,
+      }).addTo(this.map);
+      const nameMarker = L.marker(markerObject[2].coordinates.slice().reverse(), {
+        icon: createMapPinIcon(),
+        zIndexOffset: 600,
+      }).addTo(this.map);
+      nameMarker.bindPopup(popupHtml).openPopup();
     } else {
       const pointCoordinates = [lng, lat];
       L.geoJSON({

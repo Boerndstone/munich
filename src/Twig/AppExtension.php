@@ -32,6 +32,7 @@ class AppExtension extends AbstractExtension
         return [
             new TwigFunction('getAreas', [$this, 'getAreas']),
             new TwigFunction('getAreasInformation', [$this, 'getAreasInformation']),
+            new TwigFunction('getMainMapRocks', [$this, 'getMainMapRocks']),
             new TwigFunction('getSidebarAreas', [$this, 'getSidebarAreas']),
             new TwigFunction('getSocialMediaImageUrl', [$this, 'getSocialMediaImageUrl']),
             new TwigFunction('getImageAltText', [$this, 'getImageAltText']),
@@ -48,6 +49,14 @@ class AppExtension extends AbstractExtension
     public function getAreasInformation(): array
     {
         return $this->areasService->getAreasInformation();
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public function getMainMapRocks(): array
+    {
+        return $this->areasService->getMainMapRocks();
     }
 
     public function getSidebarAreas(): array

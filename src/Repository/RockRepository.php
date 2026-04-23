@@ -137,6 +137,35 @@ class RockRepository extends ServiceEntityRepository
     }
 
 
+    /**
+     * Rocks with coordinates for the homepage map (clustered when zoomed in).
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function findOnlineRocksWithCoordinatesForMap(): array
+    {
+        return $this->createQueryBuilder('rock')
+            ->select(
+                'rock.lat AS lat',
+                'rock.lng AS lng',
+                'rock.name AS name',
+                'rock.slug AS slug',
+                'area.slug AS areaSlug',
+                'area.name AS areaName',
+                'area.travelTimeMinutes AS travelTimeMinutes'
+            )
+            ->innerJoin('rock.area', 'area')
+            ->where('rock.online = :online')
+            ->andWhere('area.online = :online')
+            ->andWhere('rock.lat IS NOT NULL')
+            ->andWhere('rock.lng IS NOT NULL')
+            ->setParameter('online', true)
+            ->orderBy('area.sequence', 'ASC')
+            ->addOrderBy('rock.nr', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
     public function getRocksInformation($areaSlug)
     {
         $qb = $this->createQueryBuilder('rock')

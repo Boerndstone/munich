@@ -3,6 +3,7 @@
 namespace App\Tests\Service;
 
 use App\Repository\AreaRepository;
+use App\Repository\RockRepository;
 use App\Service\AreasService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -13,15 +14,18 @@ class AreasServiceTest extends TestCase
 {
     private AreasService $service;
     private MockObject&AreaRepository $areaRepository;
+    private MockObject&RockRepository $rockRepository;
     private MockObject&CacheInterface $cache;
 
     protected function setUp(): void
     {
         $this->areaRepository = $this->createMock(AreaRepository::class);
+        $this->rockRepository = $this->createMock(RockRepository::class);
         $this->cache = $this->createMock(CacheInterface::class);
 
         $this->service = new AreasService(
             $this->areaRepository,
+            $this->rockRepository,
             $this->cache
         );
     }
@@ -165,7 +169,7 @@ class AreasServiceTest extends TestCase
     public function testClearCacheDeletesAllCacheKeys(): void
     {
         $this->cache
-            ->expects($this->exactly(4))
+            ->expects($this->exactly(5))
             ->method('delete')
             ->willReturnCallback(function (string $key): bool {
                 $this->assertContains($key, [
@@ -173,6 +177,7 @@ class AreasServiceTest extends TestCase
                     'areas_information',
                     'areas_footer',
                     'areas_sidebar',
+                    'main_map_rocks_v1',
                 ]);
                 return true;
             });

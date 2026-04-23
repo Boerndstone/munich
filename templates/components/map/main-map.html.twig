@@ -2,7 +2,8 @@
 {% set rockMarkers = [] %}
 {% for rock in getMainMapRocks() %}
     {# Rock popup: shared template components/map/rock-map-popup.html.twig #}
-    {% set rockLink = path('show_rock', { areaSlug: rock.areaSlug, slug: rock.rockSlug }) %}
+    {% set rockRoute = app.request.locale == 'en' ? 'show_rock_en' : 'show_rock' %}
+    {% set rockLink = path(rockRoute, { areaSlug: rock.areaSlug, slug: rock.rockSlug }) %}
     {% set rockCardArea = {
         routes: rock.amountRoutes|default(0),
         amountEasy: rock.amountEasy|default(0),

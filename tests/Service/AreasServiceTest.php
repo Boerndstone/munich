@@ -3,6 +3,7 @@
 namespace App\Tests\Service;
 
 use App\Repository\AreaRepository;
+use App\Repository\RockRepository;
 use App\Service\AreasService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -13,15 +14,18 @@ class AreasServiceTest extends TestCase
 {
     private AreasService $service;
     private MockObject&AreaRepository $areaRepository;
+    private MockObject&RockRepository $rockRepository;
     private MockObject&CacheInterface $cache;
 
     protected function setUp(): void
     {
         $this->areaRepository = $this->createMock(AreaRepository::class);
+        $this->rockRepository = $this->createMock(RockRepository::class);
         $this->cache = $this->createMock(CacheInterface::class);
 
         $this->service = new AreasService(
             $this->areaRepository,
+            $this->rockRepository,
             $this->cache
         );
     }
@@ -162,10 +166,95 @@ class AreasServiceTest extends TestCase
         $this->assertEquals($expectedAreas, $result);
     }
 
+    public function testGetMainMapRocksReturnsCachedData(): void
+    {
+        $expectedRocks = [
+            [
+                'lat' => '49.100000',
+                'lng' => '11.200000',
+                'name' => 'Konstein',
+                'slug' => 'konstein',
+                'areaSlug' => 'frankenjura',
+                'areaName' => 'Frankenjura',
+                'travelTimeMinutes' => 90,
+            ],
+        ];
+
+        $this->rockRepository
+            ->expects($this->never())
+            ->method('findOnlineRocksWithCoordinatesForMap');
+
+        $this->cache
+            ->expects($this->once())
+            ->method('get')
+            ->with('main_map_rocks_v1', $this->isType('callable'))
+            ->willReturn($expectedRocks);
+
+        $result = $this->service->getMainMapRocks();
+
+        $this->assertEquals($expectedRocks, $result);
+    }
+
+    public function testGetMainMapRocksCallsRepositoryOnCacheMiss(): void
+    {
+        $expectedRocks = [
+            [
+                'lat' => '49.100000',
+                'lng' => '11.200000',
+                'name' => 'Konstein',
+                'slug' => 'konstein',
+                'areaSlug' => 'frankenjura',
+                'areaName' => 'Frankenjura',
+                'travelTimeMinutes' => 90,
+            ],
+        ];
+
+        $this->rockRepository
+            ->expects($this->once())
+            ->method('findOnlineRocksWithCoordinatesForMap')
+            ->willReturn($expectedRocks);
+
+        $this->cache
+            ->expects($this->once())
+            ->method('get')
+            ->with('main_map_rocks_v1', $this->isType('callable'))
+            ->willReturnCallback(function (string $key, callable $callback) {
+                $this->assertSame('main_map_rocks_v1', $key);
+                $item = $this->createMock(ItemInterface::class);
+                $item->expects($this->once())
+                    ->method('expiresAfter')
+                    ->with(3600);
+
+                return $callback($item);
+            });
+
+        $result = $this->service->getMainMapRocks();
+
+        $this->assertEquals($expectedRocks, $result);
+    }
+
+    public function testGetMainMapRocksReturnsEmptyArrayWhenCachedEmpty(): void
+    {
+        $this->rockRepository
+            ->expects($this->never())
+            ->method('findOnlineRocksWithCoordinatesForMap');
+
+        $this->cache
+            ->expects($this->once())
+            ->method('get')
+            ->with('main_map_rocks_v1', $this->isType('callable'))
+            ->willReturn([]);
+
+        $result = $this->service->getMainMapRocks();
+
+        $this->assertIsArray($result);
+        $this->assertEmpty($result);
+    }
+
     public function testClearCacheDeletesAllCacheKeys(): void
     {
         $this->cache
-            ->expects($this->exactly(4))
+            ->expects($this->exactly(5))
             ->method('delete')
             ->willReturnCallback(function (string $key): bool {
                 $this->assertContains($key, [
@@ -173,6 +262,7 @@ class AreasServiceTest extends TestCase
                     'areas_information',
                     'areas_footer',
                     'areas_sidebar',
+                    'main_map_rocks_v1',
                 ]);
                 return true;
             });

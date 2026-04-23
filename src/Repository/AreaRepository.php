@@ -96,7 +96,7 @@ class AreaRepository extends ServiceEntityRepository
                 'area.travelTimeMinutes as travelTimeMinutes',
                 'COUNT(DISTINCT route.id) AS routes',
                 'COUNT(DISTINCT rock.id) AS rocks',
-                'COUNT(DISTINCT CASE WHEN rock.online = 1 AND rock.lat IS NOT NULL AND rock.lng IS NOT NULL THEN rock.id ELSE NULL END) AS rocksWithCoordinates',
+                '(SELECT COUNT(rwc.id) FROM '.Rock::class.' rwc WHERE rwc.area = area AND rwc.online = 1 AND rwc.lat IS NOT NULL AND rwc.lng IS NOT NULL) AS rocksWithCoordinates',
                 'COUNT(DISTINCT CASE WHEN route.gradeNo > 0 AND route.gradeNo <= 15 THEN route.id ELSE 0 END) AS amountEasy',
                 'COUNT(DISTINCT CASE WHEN route.gradeNo > 15 AND route.gradeNo <= 29 THEN route.id ELSE 0 END) AS amountMiddle',
                 'COUNT(DISTINCT CASE WHEN route.gradeNo > 29 THEN route.id ELSE 0 END) AS amountHard',

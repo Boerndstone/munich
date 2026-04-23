@@ -1,3 +1,8 @@
+/**
+ * Shared map marker UI for the homepage main map and the area (rocks) map.
+ * Import from `assets/controllers/*_controller.js` as `../map/icons.js`.
+ * Adjust pin SVG, bubble sizes, and rock cluster thresholds here only.
+ */
 import L from "leaflet";
 
 /** Geo rock clusters (area map + main map rock layer): radius / when pins replace clusters */

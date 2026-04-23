@@ -15,6 +15,7 @@ const PIN_SVG =
   '<circle cx="14" cy="14" r="4.25" fill="#fff"/>' +
   "</svg>";
 
+/** Create a new icon instance per marker — reusing one DivIcon across markers breaks clicks/popups. */
 export function createMapPinIcon() {
   return L.divIcon({
     html: PIN_SVG,

@@ -1,4 +1,4 @@
-<div class="mt-auto">
+<div class="{{ compact_chart|default(false) and fill_chart_panel|default(false) ? 'flex h-full min-h-0 min-w-0 flex-col' : (compact_chart|default(false) ? '' : 'mt-auto') }}">
 	{% set chart_aria_prefix = aria_label_prefix|default(
 		(area.name is defined and area.name is not empty) ? ('Klettergebiet ' ~ area.name ~ '. ') : ''
 	) %}
@@ -10,6 +10,9 @@
 		include_projects_column: true,
 		project_count: area.amountProjects|default(0),
 		chart_summary_include_rocks: chart_summary_include_rocks|default(false),
-		chart_rocks_count: area.rocks|default(0)
+		chart_rocks_count: area.rocks|default(0),
+		compact: compact_chart|default(false),
+		fill_panel: fill_chart_panel|default(false),
+		hide_y_axis: hide_y_axis|default(false)
 	}) }}
 </div>

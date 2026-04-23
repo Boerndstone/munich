@@ -39,7 +39,7 @@ class AreasService
      */
     public function getMainMapRocks(): array
     {
-        return $this->cache->get('main_map_rocks_v1', function (ItemInterface $item): array {
+        return $this->cache->get('main_map_rocks_v2', function (ItemInterface $item): array {
             $item->expiresAfter(self::CACHE_TTL);
 
             return $this->rockRepository->findOnlineRocksWithCoordinatesForMap();
@@ -98,6 +98,7 @@ class AreasService
         $this->cache->delete('areas_information');
         $this->cache->delete('areas_footer');
         $this->cache->delete('areas_sidebar');
+        $this->cache->delete('main_map_rocks_v2');
         $this->cache->delete('main_map_rocks_v1');
     }
 } 

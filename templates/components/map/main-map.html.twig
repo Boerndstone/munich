@@ -1,29 +1,63 @@
 {% set url = 'https://www.munichclimbs.de/uploads/areas/' %}
 {% set rockMarkers = [] %}
 {% for rock in getMainMapRocks() %}
+    {# Rock popup: shared template components/map/rock-map-popup.html.twig #}
+    {% set rockRoute = app.request.locale == 'en' ? 'show_rock_en' : 'show_rock' %}
+    {% set rockLink = path(rockRoute, { areaSlug: rock.areaSlug, slug: rock.rockSlug }) %}
+    {% set rockCardArea = {
+        routes: rock.amountRoutes|default(0),
+        amountEasy: rock.amountEasy|default(0),
+        amountMiddle: rock.amountMiddle|default(0),
+        amountHard: rock.amountHard|default(0),
+        amountProjects: rock.amountProjects|default(0),
+        grade_chart_3: rock.grade_chart_3|default(0),
+        grade_chart_4: rock.grade_chart_4|default(0),
+        grade_chart_5: rock.grade_chart_5|default(0),
+        grade_chart_6: rock.grade_chart_6|default(0),
+        grade_chart_7: rock.grade_chart_7|default(0),
+        grade_chart_8: rock.grade_chart_8|default(0),
+        grade_chart_9: rock.grade_chart_9|default(0),
+        grade_chart_10: rock.grade_chart_10|default(0),
+        grade_chart_11: rock.grade_chart_11|default(0)
+    } %}
+    {% set popupBody = include('components/area/area-card-body.html.twig', {
+        area: rockCardArea,
+        ulClass: 'mt-2',
+        showTravelTime: false,
+        showRocksCount: false,
+        aria_label_prefix: 'Klettergebiet ' ~ rock.areaName ~ ', Fels ' ~ rock.rockName ~ '. ',
+        compact_chart: true,
+        fill_chart_panel: true,
+        hide_y_axis: true
+    }) %}
+    {% set rockPopup %}
+{{ include('components/map/rock-map-popup.html.twig', {
+	rock: rock,
+	areaName: rock.areaName,
+	rockLink: rockLink,
+	popupBody: popupBody
+}) }}
+    {% endset %}
     {% set rockMarkers = rockMarkers|merge([{
         'lat': rock.lat,
         'lng': rock.lng,
-        'rockName': rock.name,
-        'rockUrl': path('show_rock', { areaSlug: rock.areaSlug, slug: rock.slug }),
-        'areaName': rock.areaName,
-        'areaUrl': path('show_rocks', { slug: rock.areaSlug }),
+        'popup': rockPopup|trim,
         'travelTimeMinutes': rock.travelTimeMinutes|default(null)
     }]) %}
 {% endfor %}
 {% set marker = [] %}
 {% for area in getAreasInformation() %}
     {% set popupBody = include('components/area/area-card-body.html.twig', { area: area, ulClass: 'mt-2', showTravelTime: true, chart_summary_include_rocks: true }) %}
-    {% set areaName = '<div class="main-map-popup-card">' ~
-        '<div class="main-map-popup-image-wrap">' ~
+    {% set areaName = '<div class="w-[250px] overflow-hidden rounded-t-xl bg-transparent">' ~
+        '<div class="relative">' ~
         '<picture><source srcset="' ~ url ~ area.image ~ '@1x.webp 1x, ' ~ url ~ area.image ~ '@2x.webp 2x, ' ~ url ~ area.image ~ '@3x.webp 3x" type="image/webp">' ~
-        '<img class="main-map-popup-image" src="' ~ url ~ area.image ~ '.webp" alt="Klettergebiet ' ~ area.name|e('html_attr') ~ '" loading="lazy" decoding="async">' ~
+        '<img class="block h-auto w-full rounded-t-xl object-cover object-center" src="' ~ url ~ area.image ~ '.webp" alt="Klettergebiet ' ~ area.name|e('html_attr') ~ '" loading="lazy" decoding="async">' ~
         '</picture>' ~
-        '<div class="main-map-popup-header">' ~
-        '<a href="' ~ path('show_rocks', { slug: area.slug }) ~ '" class="main-map-popup-link  fw-normal">' ~ area.name|e('html') ~ '</a>' ~
-        '<button type="button" class="main-map-popup-close" onclick="this.closest(\'.leaflet-popup\').querySelector(\'.leaflet-popup-close-button\').click()" aria-label="Schließen"><span>&times;</span></button>' ~
+        '<div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-2 px-3 py-2">' ~
+        '<a href="' ~ path('show_rocks', { slug: area.slug }) ~ '" class="inline-block max-w-[calc(100%-3rem)] truncate rounded bg-white/90 px-2 py-1 text-base font-semibold text-gray-900 no-underline shadow-sm dark:bg-slate-900/90 dark:text-white hover:underline">' ~ area.name|e('html') ~ '</a>' ~
+        '<button type="button" class="relative z-10 flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full bg-white/75 text-xl leading-none text-gray-800 shadow-md transition-colors hover:bg-white/90 dark:bg-slate-700/85 dark:text-white dark:hover:bg-slate-600/90 focus:outline-none" onclick="this.closest(\'.leaflet-popup\').querySelector(\'.leaflet-popup-close-button\').click()" aria-label="Schließen"><span class="block leading-none" aria-hidden="true">&times;</span></button>' ~
         '</div></div>' ~
-        '<div class="main-map-popup-body">' ~ popupBody ~ '</div></div>' %}
+        '<div class="px-3.5 py-3">' ~ popupBody ~ '</div></div>' %}
     {% set areaImage = '' %}
     {% set marker = marker|merge([{
         'lat': area.lat,

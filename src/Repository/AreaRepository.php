@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Area;
+use App\Entity\Rock;
 use App\Entity\Routes;
 use App\Service\GradeTranslationService;
 use Doctrine\DBAL\ArrayParameterType;
@@ -95,6 +96,7 @@ class AreaRepository extends ServiceEntityRepository
                 'area.travelTimeMinutes as travelTimeMinutes',
                 'COUNT(DISTINCT route.id) AS routes',
                 'COUNT(DISTINCT rock.id) AS rocks',
+                '(SELECT COUNT(rwc.id) FROM '.Rock::class.' rwc WHERE rwc.area = area AND rwc.online = 1 AND rwc.lat IS NOT NULL AND rwc.lng IS NOT NULL) AS rocksWithCoordinates',
                 'COUNT(DISTINCT CASE WHEN route.gradeNo > 0 AND route.gradeNo <= 15 THEN route.id ELSE 0 END) AS amountEasy',
                 'COUNT(DISTINCT CASE WHEN route.gradeNo > 15 AND route.gradeNo <= 29 THEN route.id ELSE 0 END) AS amountMiddle',
                 'COUNT(DISTINCT CASE WHEN route.gradeNo > 29 THEN route.id ELSE 0 END) AS amountHard',

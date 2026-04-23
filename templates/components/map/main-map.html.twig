@@ -1,4 +1,16 @@
 {% set url = 'https://www.munichclimbs.de/uploads/areas/' %}
+{% set rockMarkers = [] %}
+{% for rock in getMainMapRocks() %}
+    {% set rockMarkers = rockMarkers|merge([{
+        'lat': rock.lat,
+        'lng': rock.lng,
+        'rockName': rock.name,
+        'rockUrl': path('show_rock', { areaSlug: rock.areaSlug, slug: rock.slug }),
+        'areaName': rock.areaName,
+        'areaUrl': path('show_rocks', { slug: rock.areaSlug }),
+        'travelTimeMinutes': rock.travelTimeMinutes|default(null)
+    }]) %}
+{% endfor %}
 {% set marker = [] %}
 {% for area in getAreasInformation() %}
     {% set popupBody = include('components/area/area-card-body.html.twig', { area: area, ulClass: 'mt-2', showTravelTime: true, chart_summary_include_rocks: true }) %}
@@ -18,7 +30,8 @@
         'lng': area.lng,
         'popup': areaName,
         'image': areaImage,
-        'travelTimeMinutes': area.travelTimeMinutes|default(null)
+        'travelTimeMinutes': area.travelTimeMinutes|default(null),
+        'rocksWithCoordinates': area.rocksWithCoordinates|default(0)
     }]) %}
 {% endfor %}
 
@@ -26,6 +39,7 @@
     class="main-map-container flex min-h-0 flex-1 flex-col"
     data-controller="main-map" 
     data-main-map-markers-value="{{ marker|json_encode|e('html_attr') }}"
+    data-main-map-rock-markers-value="{{ rockMarkers|json_encode|e('html_attr') }}"
 >
     <div class="main-map-filters shrink-0 px-3 py-2" data-main-map-target="filters" role="group" aria-labelledby="main-map-filter-legend">
         <div class="main-map-filters-scroll">

@@ -2,6 +2,8 @@
  * Map entry point - only loaded on pages with maps
  * Contains Leaflet-based controllers and weather
  */
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { Application } from "@hotwired/stimulus";
 import MapController from "./controllers/map_controller";
 import MainMapController from "./controllers/main_map_controller";

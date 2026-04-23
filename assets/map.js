@@ -2,9 +2,11 @@
  * Map entry point - only loaded on pages with maps
  * Symfony UX Map (Leaflet) + filter controllers + weather
  */
-import UxLeafletMapController from "./controllers/symfony_ux_leaflet_map_safe_controller";
-import IndexAreasMapFiltersController from "./controllers/index_areas_map_filters_controller";
-import AreaOverviewMapFiltersController from "./controllers/area_overview_map_filters_controller";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import { Application } from "@hotwired/stimulus";
+import MapController from "./controllers/map_controller";
+import MainMapController from "./controllers/main_map_controller";
 import WeatherController from "./controllers/weather_controller";
 
 const application = window.Stimulus;

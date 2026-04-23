@@ -1,4 +1,69 @@
+<<<<<<< HEAD
 <div class="main-map-container flex min-h-0 flex-1 flex-col" data-controller="area-overview-map-filters">
+=======
+{% set marker = [] %}
+{% set rockImageBaseUrl = 'https://www.munichclimbs.de/build/images/rock/' %}
+{% for rock in rocks %}
+	{% set pictureHtml = '' %}
+	{% if rock.previewImage is not empty %}
+		{% set pictureHtml = '<picture><source type="image/webp" srcset="' ~ rockImageBaseUrl ~ rock.previewImage ~ 'area-map.webp 1x, ' ~ rockImageBaseUrl ~ rock.previewImage ~ 'area-map@2x.webp 2x, ' ~ rockImageBaseUrl ~ rock.previewImage ~ 'area-map@3x.webp 3x" type="image/webp"><img class="main-map-popup-image" src="' ~ rockImageBaseUrl ~ rock.previewImage ~ 'area-map.webp" alt="' ~ ('Klettergebiet ' ~ areaName ~ ', Fels: ' ~ rock.rockName)|e('html_attr') ~ '" loading="lazy" decoding="async"></picture>' %}
+	{% endif %}
+	{% set rockLink = path('show_rock', { 'areaSlug': rock.areaSlug, slug: rock.rockSlug }) %}
+	{% set rockCardArea = {
+		routes: rock.amountRoutes|default(0),
+		amountEasy: rock.amountEasy|default(0),
+		amountMiddle: rock.amountMiddle|default(0),
+		amountHard: rock.amountHard|default(0),
+		amountProjects: rock.amountProjects|default(0),
+		grade_chart_3: rock.grade_chart_3|default(0),
+		grade_chart_4: rock.grade_chart_4|default(0),
+		grade_chart_5: rock.grade_chart_5|default(0),
+		grade_chart_6: rock.grade_chart_6|default(0),
+		grade_chart_7: rock.grade_chart_7|default(0),
+		grade_chart_8: rock.grade_chart_8|default(0),
+		grade_chart_9: rock.grade_chart_9|default(0),
+		grade_chart_10: rock.grade_chart_10|default(0),
+		grade_chart_11: rock.grade_chart_11|default(0)
+	} %}
+	{% set popupBody = include('components/area/area-card-body.html.twig', {
+		area: rockCardArea,
+		ulClass: 'mt-2',
+		showTravelTime: false,
+		showRocksCount: false,
+		aria_label_prefix: 'Klettergebiet ' ~ areaName ~ ', Fels ' ~ rock.rockName ~ '. '
+	}) %}
+	{% set rockName = '<div class="main-map-popup-card">' ~
+		'<div class="main-map-popup-image-wrap">' ~
+		pictureHtml ~
+		'<div class="main-map-popup-header">' ~
+		'<a href="' ~ rockLink ~ '" class="main-map-popup-link fw-normal">' ~ rock.rockName|e('html') ~ '</a>' ~
+		'<button type="button" class="main-map-popup-close" onclick="this.closest(\'.leaflet-popup\').querySelector(\'.leaflet-popup-close-button\').click()" aria-label="Schließen"><span>&times;</span></button>' ~
+		'</div></div>' ~
+		'<p class="main-map-popup-area-context mb-0 border-b border-gray-200 px-3 py-2 text-sm text-gray-600 dark:border-gray-600 dark:text-gray-300">' ~
+		'Klettergebiet ' ~ areaName|e('html') ~
+		'</p>' ~
+		'<div class="main-map-popup-body">' ~ popupBody ~ '</div></div>' %}
+
+	{% set rockImage = '' %}
+	{% set childFriendly = rock.rockChild is defined and rock.rockChild == 1 %}
+	{% set sunny = rock.rockSunny is defined and rock.rockSunny %}
+	{% set rain = rock.rockRain is defined and rock.rockRain %}
+	{% set train = rock.rockTrain is defined and rock.rockTrain == 1 %}
+	{% set bike = rock.rockBike is defined and rock.rockBike == 1 %}
+	{% set marker = marker|merge([[ rock.rockLat, rock.rockLng, rockName, rockImage, childFriendly, sunny, rain, train, bike ]]) %}
+{% endfor %}
+{% set intialZoom = [] %}
+{% set intialZoom = intialZoom|merge([areaLat, areaLng, areaZoom]) %}
+{% set railwayStation = areaRailwayStation %}
+
+<div 
+	class="main-map-container flex min-h-0 flex-1 flex-col" 
+	data-controller="map" 
+	data-map-markers-area="{{ marker|json_encode|e('html_attr') }}" 
+	data-map-zoom="{{ intialZoom|json_encode|e('html_attr') }}" 
+	data-map-railway-stations="{{ railwayStation|json_encode|e('html_attr') }}"
+>
+>>>>>>> main
 	<div class="area-map-filters shrink-0 px-3 py-2">
 		<div class="main-map-filters-scroll">
 			<ul class="main-map-filters-list">

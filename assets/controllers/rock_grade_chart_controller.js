@@ -130,6 +130,8 @@ export default class extends Controller {
     ariaPrefix: { type: String, default: "" },
     /** Localised "Total N routes" fragment for aria-label (from Twig). */
     ariaTotalPrefix: { type: String, default: "" },
+    /** When true (e.g. index map rock popup), hide the Y-axis amount scale; values stay on bars + aria. */
+    hideYAxis: { type: Boolean, default: false },
   };
 
   connect() {
@@ -180,6 +182,7 @@ export default class extends Controller {
     const labelInk = dark ? colors.zinc[100] : "#000000";
     const yAxisLine = dark ? "rgba(244, 244, 245, 0.14)" : "rgba(0, 0, 0, 0.08)";
     const yTickColor = dark ? "rgba(244, 244, 245, 0.55)" : "rgba(0, 0, 0, 0.45)";
+    const hideY = this.hideYAxisValue === true;
 
     if (this.chart) {
       this.chart.destroy();
@@ -225,12 +228,12 @@ export default class extends Controller {
             },
           },
           y: {
-            display: true,
+            display: !hideY,
             min: 0,
             max: scaleMax,
             beginAtZero: true,
             ticks: {
-              display: true,
+              display: !hideY,
               stepSize,
               precision: 0,
               color: yTickColor,
@@ -240,12 +243,12 @@ export default class extends Controller {
             },
             grid: {
               display: false,
-              drawTicks: true,
+              drawTicks: !hideY,
               tickLength: 4,
               tickWidth: 1,
               tickColor: yAxisLine,
               drawOnChartArea: false,
-              drawBorder: true,
+              drawBorder: !hideY,
               borderWidth: 1,
               borderColor: yAxisLine,
             },

@@ -41,7 +41,7 @@ export default class extends Controller {
           const latLng = [trainStation.lat, trainStation.lng];
           const marker = L.marker(latLng, { icon: trainStationIcon })
             .bindPopup(
-              `<div class="main-map-popup-card main-map-popup-card--text-only"><div class="main-map-popup-body"><h3 class="fs-6 mb-2">Haltestelle ${trainStation.name}</h3>${
+              `<div class="w-[250px] overflow-visible rounded-xl"><div class="px-3.5 py-3"><h3 class="mb-2 text-base font-semibold">Haltestelle ${trainStation.name}</h3>${
                 trainStation.link
                   ? `<a href="${trainStation.link}" target="_blank" rel="noopener noreferrer">Link zum Fahrplan</a>`
                   : ""
@@ -60,7 +60,7 @@ export default class extends Controller {
           const latLng = [campingSite.lat, campingSite.lng];
           const marker = L.marker(latLng, { icon: campingIcon })
             .bindPopup(
-              `<div class="main-map-popup-card main-map-popup-card--text-only"><div class="main-map-popup-body"><h3 class="fs-6 mb-2">Campingplatz ${campingSite.name}</h3><a href="${campingSite.link}" target="_blank" rel="noopener noreferrer">${campingSite.link}</a></div></div>`
+              `<div class="w-[250px] overflow-visible rounded-xl"><div class="px-3.5 py-3"><h3 class="mb-2 text-base font-semibold">Campingplatz ${campingSite.name}</h3><a href="${campingSite.link}" target="_blank" rel="noopener noreferrer">${campingSite.link}</a></div></div>`
             )
             .addTo(this.areaMap);
           this.campingMarkers.push(marker);
@@ -68,7 +68,6 @@ export default class extends Controller {
       });
     }
 
-    const pinIcon = createMapPinIcon();
     this.rocksClusterGroup = L.markerClusterGroup(rockMarkerClusterGroupOptions());
 
     this.areaMarkers = [];
@@ -79,7 +78,7 @@ export default class extends Controller {
       if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
         return;
       }
-      const marker = L.marker([lat, lng], { icon: pinIcon }).bindPopup(markerData[2]);
+      const marker = L.marker([lat, lng], { icon: createMapPinIcon() }).bindPopup(markerData[2]);
       this.areaMarkers.push(marker);
       this.areaMarkerData.push(markerData);
       this.rocksClusterGroup.addLayer(marker);

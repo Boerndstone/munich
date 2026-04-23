@@ -1,18 +1,13 @@
 {% set url = 'https://www.munichclimbs.de/uploads/areas/' %}
 {% set rockMarkers = [] %}
 {% for rock in getMainMapRocks() %}
-    {% set rockPopup = '<div class="main-map-popup-card main-map-popup-card--text-only">' ~
-        '<div class="main-map-popup-header" style="position:static;padding:10px 12px;">' ~
-        '<a href="' ~ path('show_rock', { areaSlug: rock.areaSlug, slug: rock.slug }) ~ '" class="main-map-popup-link fw-normal">' ~ rock.name|e('html') ~ '</a>' ~
-        '<button type="button" class="main-map-popup-close" onclick="this.closest(\'.leaflet-popup\').querySelector(\'.leaflet-popup-close-button\').click()" aria-label="Schließen"><span>&times;</span></button>' ~
-        '</div>' ~
-        '<div class="main-map-popup-body px-3 pb-3 text-sm">' ~
-        '<a class="main-map-popup-link fw-normal" href="' ~ path('show_rocks', { slug: rock.areaSlug }) ~ '">' ~ rock.areaName|e('html') ~ '</a>' ~
-        '</div></div>' %}
     {% set rockMarkers = rockMarkers|merge([{
         'lat': rock.lat,
         'lng': rock.lng,
-        'popup': rockPopup,
+        'rockName': rock.name,
+        'rockUrl': path('show_rock', { areaSlug: rock.areaSlug, slug: rock.slug }),
+        'areaName': rock.areaName,
+        'areaUrl': path('show_rocks', { slug: rock.areaSlug }),
         'travelTimeMinutes': rock.travelTimeMinutes|default(null)
     }]) %}
 {% endfor %}

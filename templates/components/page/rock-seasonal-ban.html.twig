@@ -1,16 +1,18 @@
 {# Expects: rock, currentDate (PHP date z: 0 = Jan 1). banned 1 = bis 30.06., banned 2 = bis 31.07. #}
 <section class="mx-auto w-full max-w-[1024px] px-2 sm:px-4">
 	{% if rock.rockBanned == 1 and currentDate < 181 %}
-		<div class="alert alert-danger my-3 flex flex-col gap-1 rounded-lg px-4 py-3 text-sm sm:my-4 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-2 sm:text-base" role="alert">
-			<strong class="shrink-0 font-bold">Jahreszeitliche Sperrung!</strong>
-			<span class="min-w-0">{{ rock.rockName }}
-				ist leider noch bis zum 30.06. gesperrt!</span>
-		</div>
+		<twig:Alert variant="destructive" class="my-3 flex flex-col gap-1 sm:my-4 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-2">
+			<twig:Alert:Title class="shrink-0 font-bold">{{ 'rock.seasonal_ban.title'|trans }}</twig:Alert:Title>
+			<twig:Alert:Description class="min-w-0 text-red-950 dark:text-red-100">
+				{{ 'rock.seasonal_ban.body_until_june'|trans({ '%name%': rock.rockName }) }}
+			</twig:Alert:Description>
+		</twig:Alert>
 	{% elseif rock.rockBanned == 2 and currentDate < 212 %}
-		<div class="alert alert-danger my-3 flex flex-col gap-1 rounded-lg px-4 py-3 text-sm sm:my-4 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-2 sm:text-base" role="alert">
-			<strong class="shrink-0 font-bold">Jahreszeitliche Sperrung!</strong>
-			<span class="min-w-0">{{ rock.rockName }}
-				ist leider noch bis zum 31.07. gesperrt!</span>
-		</div>
+		<twig:Alert variant="destructive" class="my-3 flex flex-col gap-1 sm:my-4 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-2">
+			<twig:Alert:Title class="shrink-0 font-bold">{{ 'rock.seasonal_ban.title'|trans }}</twig:Alert:Title>
+			<twig:Alert:Description class="min-w-0 text-red-950 dark:text-red-100">
+				{{ 'rock.seasonal_ban.body_until_july'|trans({ '%name%': rock.rockName }) }}
+			</twig:Alert:Description>
+		</twig:Alert>
 	{% endif %}
 </section>

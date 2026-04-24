@@ -1,0 +1,18 @@
+{# Local Shadcn-style Alert (Symfony UX Shadcn kit pattern: https://ux.symfony.com/toolkit/kits/shadcn/components/alert ). #}
+{# @prop variant 'default'|'destructive' Visual style. Defaults to `default` #}
+{# @block content Typically `Alert:Title` and `Alert:Description` #}
+{%- props variant = 'default' -%}
+<div
+	role="alert"
+	data-slot="alert"
+	class="{{ (
+		(variant == 'destructive'
+			? 'border-red-200 bg-red-50 text-red-950 dark:border-red-900 dark:bg-red-950/40 dark:text-red-100 '
+			: 'border-border bg-card text-card-foreground ')
+		~ 'relative w-full rounded-lg border px-4 py-3 text-sm shadow-sm '
+		~ attributes.render('class')
+	)|tailwind_merge }}"
+	{{ attributes.without('class') }}
+>
+	{%- block content %}{% endblock -%}
+</div>

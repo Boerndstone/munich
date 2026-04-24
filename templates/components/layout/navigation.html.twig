@@ -99,8 +99,8 @@
 				</summary>
 				<div class="absolute end-0 top-[calc(100%+6px)] z-[1070] min-w-[14rem] rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] py-1 text-[var(--theme-text)] shadow-lg ring-1 ring-black/5 dark:ring-white/10" role="menu" aria-orientation="vertical" onclick="event.stopPropagation()">
 					<div class="flex items-center justify-between p-1">
-							{{ include('components/layout/language-switch.html.twig', { switch_id: 'languageSwitchNavMenu' }) }} 
-							| 
+							{{ include('components/layout/language-switch.html.twig', { switch_id: 'languageSwitchNavMenu' }) }}
+							<span class="mx-2 inline-block h-5 w-px bg-[var(--theme-border)]" aria-hidden="true"></span>
 							{{ include('components/layout/theme-switcher.html.twig', { variant: 'menu_row' }) }}
 					</div>
 				</div>

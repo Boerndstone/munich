@@ -93,22 +93,18 @@
 					<span class="truncate opacity-80">{{ 'search'|trans }}</span>
 				</div>
 			</div>
-			{% set _showLang = (app.request.attributes.get('_route') == 'show_rock' and hasTranslationDescription is defined and hasTranslationDescription) or (app.request.attributes.get('_route') == 'show_rock_en' and hasTranslationDescription is defined and hasTranslationDescription) %}
-			<twig:Collapsible class="flex shrink-0 items-center justify-end gap-1 ps-1">
-				<twig:Collapsible:Content class="me-1 max-sm:max-w-[min(100vw-8rem,14rem)] sm:max-w-none">
-					{% if _showLang %}
-						{{ include('components/layout/language-switch.html.twig', {
-							hasTranslationDescription: hasTranslationDescription,
-							areaSlug: app.request.attributes.get('areaSlug'),
-							rockSlug: app.request.attributes.get('slug')
-						}) }}
-					{% endif %}
-					{{ include('components/layout/theme-switcher.html.twig') }}
-				</twig:Collapsible:Content>
-				<twig:Collapsible:Trigger class="h-9 w-9 shrink-0" aria-label="{{ 'nav.collapsible_settings'|trans }}" title="{{ 'nav.collapsible_settings'|trans }}">
+			<details class="relative shrink-0 ps-1">
+				<summary class="inline-flex h-9 w-9 list-none cursor-pointer items-center justify-center rounded-md text-[var(--theme-text)] outline-none hover:bg-[var(--theme-bg-lighter)] focus-visible:ring-2 focus-visible:ring-[var(--theme-border)] [&::-webkit-details-marker]:hidden" aria-label="{{ 'nav.settings_toggle_aria'|trans }}" title="{{ 'nav.settings_toggle_aria'|trans }}">
 					<twig:ux:icon name="lucide:settings" class="size-[18px] shrink-0" aria-hidden="true" />
-				</twig:Collapsible:Trigger>
-			</twig:Collapsible>
+				</summary>
+				<div class="absolute end-0 top-[calc(100%+6px)] z-[1070] min-w-[14rem] rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] py-1 text-[var(--theme-text)] shadow-lg ring-1 ring-black/5 dark:ring-white/10" role="menu" aria-orientation="vertical" onclick="event.stopPropagation()">
+					<div class="flex items-center justify-between p-1">
+							{{ include('components/layout/language-switch.html.twig', { switch_id: 'languageSwitchNavMenu' }) }} 
+							| 
+							{{ include('components/layout/theme-switcher.html.twig', { variant: 'menu_row' }) }}
+					</div>
+				</div>
+			</details>
 		</div>
 		</twig:Sheet>
 	</nav>

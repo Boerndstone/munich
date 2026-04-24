@@ -3,7 +3,7 @@
 {% set language_url_de = alternate_locale_path('de') ?? path('index') %}
 {% set language_url_en = alternate_locale_path('en') ?? path('index_en') %}
 {% set _switch_id = switch_id|default('languageSwitch') %}
-<div class="inline-flex shrink-0 px-1" id="language-switch-nav">
+<div class="inline-flex shrink-0 px-1">
 	<label class="relative inline-flex cursor-pointer items-center">
 		<input
 			type="checkbox"

@@ -164,7 +164,7 @@
 								<i class="fas fa-chevron-left text-xs" aria-hidden="true"></i>
 								{{ 'search_modal.pager_back'|trans }}
 							</button>
-							<span class="text-xs text-gray-500 dark:text-gray-400" data-search-modal-target="pagerInfo">{{ 'search_modal.page_info'|replace({'{page}': '1', '{total}': '1'}) }}</span>
+							<span class="text-xs text-gray-500 dark:text-gray-400" data-search-modal-target="pagerInfo">{{ 'search_modal.page_info'|trans|replace({'{page}': '1', '{total}': '1'}) }}</span>
 							<button type="button" class="inline-flex items-center gap-1 rounded-md border border-[var(--theme-border)] bg-transparent px-3 py-1.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)] disabled:cursor-not-allowed disabled:opacity-50" data-search-modal-target="pagerNext" data-action="click->search-modal#gradePageNext" aria-label="{{ 'search_modal.pager_next_aria'|trans }}">
 								{{ 'search_modal.pager_forward'|trans }}
 								<i class="fas fa-chevron-right text-xs" aria-hidden="true"></i>

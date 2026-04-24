@@ -1,6 +1,6 @@
 {% set marker = [] %}
 {% for rock in rocks %}
-	{% set rockLink = path('show_rock', { 'areaSlug': rock.areaSlug, slug: rock.rockSlug }) %}
+	{% set rockLink = rock_path(rock.areaSlug, rock.rockSlug) %}
 	{% set rockCardArea = {
 		routes: rock.amountRoutes|default(0),
 		amountEasy: rock.amountEasy|default(0),

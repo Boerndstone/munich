@@ -4,11 +4,12 @@
 
 {% block meta_tags %}
 	{% include 'components/seo/meta-tags.html.twig' with {
-		'title': 'grade_comparison_free_climbing.meta_title'|trans,
-		'description': 'grade_comparison_free_climbing.meta_description'|trans,
-		'url': app.request.locale == 'en'
+		title: 'grade_comparison_free_climbing.meta_title'|trans,
+		description: 'grade_comparison_free_climbing.meta_description'|trans,
+		url: app.request.locale == 'en'
 			? 'https://munichclimbs.de/en/free-climbing-grade-comparison'
-			: 'https://munichclimbs.de/Gradvergleich-Freiklettern'
+			: 'https://munichclimbs.de/Gradvergleich-Freiklettern',
+		og_locale_alternate: app.request.locale == 'en' ? 'de_DE' : 'en_US',
 	} %}
 {% endblock %}
 

@@ -1,22 +1,21 @@
-{% if hasTranslationDescription %}
-	{% set language_url_de = path('show_rock', { areaSlug: areaSlug, slug: rockSlug }) %}
-	{% set language_url_en = path('show_rock_en', { areaSlug: areaSlug, slug: rockSlug }) %}
-	<div class="inline-flex shrink-0" id="language-switch-nav">
-		<label class="relative inline-flex cursor-pointer items-center">
-			<input
-				type="checkbox"
-				class="peer sr-only absolute inset-0 z-[3] h-full w-full cursor-pointer"
-				id="languageSwitch"
-				role="switch"
-				aria-label="{{ 'nav.language_switch'|trans }}"
-				onchange="location.href=this.checked?'{{ language_url_en|e('js') }}':'{{ language_url_de|e('js') }}'"
-				{% if app.request.locale == 'en' %}checked="checked"{% endif %}
-			>
-			<div class="pointer-events-none relative h-6 w-11 shrink-0 rounded-full bg-input peer-checked:bg-primary peer-disabled:cursor-not-allowed peer-disabled:opacity-50 after:absolute after:start-[2px] after:top-[2px] after:z-[2] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white rtl:peer-checked:after:-translate-x-full dark:after:border-gray-600">
-				<span class="absolute inset-0 z-[1] flex items-center text-[0.55rem] font-bold uppercase leading-none tracking-wide text-muted-foreground {% if app.request.locale == 'de' %}justify-end pe-1.5{% else %}justify-start ps-1.5{% endif %}" aria-hidden="true">
-					{% if app.request.locale == 'de' %}EN{% else %}DE{% endif %}
-				</span>
-			</div>
-		</label>
-	</div>
-{% endif %}
+{# URLs for the other locale; falls back to home if the current route has no pair (see AlternateLocaleUrlGenerator). #}
+{% set language_url_de = alternate_locale_path('de') ?? path('index') %}
+{% set language_url_en = alternate_locale_path('en') ?? path('index_en') %}
+<div class="inline-flex shrink-0" id="language-switch-nav">
+	<label class="relative inline-flex cursor-pointer items-center">
+		<input
+			type="checkbox"
+			class="peer sr-only absolute inset-0 z-[3] h-full w-full cursor-pointer"
+			id="languageSwitch"
+			role="switch"
+			aria-label="{{ 'nav.language_switch'|trans }}"
+			onchange="location.href=this.checked?'{{ language_url_en|e('js') }}':'{{ language_url_de|e('js') }}'"
+			{% if app.request.locale == 'en' %}checked="checked"{% endif %}
+		>
+		<div class="pointer-events-none relative h-6 w-11 shrink-0 rounded-full bg-input peer-checked:bg-primary peer-disabled:cursor-not-allowed peer-disabled:opacity-50 after:absolute after:start-[2px] after:top-[2px] after:z-[2] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white rtl:peer-checked:after:-translate-x-full dark:after:border-gray-600">
+			<span class="absolute inset-0 z-[1] flex items-center text-[0.55rem] font-bold uppercase leading-none tracking-wide text-muted-foreground {% if app.request.locale == 'de' %}justify-end pe-1.5{% else %}justify-start ps-1.5{% endif %}" aria-hidden="true">
+				{% if app.request.locale == 'de' %}EN{% else %}DE{% endif %}
+			</span>
+		</div>
+	</label>
+</div>

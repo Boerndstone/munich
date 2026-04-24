@@ -14,8 +14,9 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class PhotoUploadController extends AbstractController
 {
-    #[Route('/upload-photo', name: 'upload_photo', methods: ['GET', 'POST'])]
-    #[Route('/Foto-hochladen', name: 'upload_photo_de', methods: ['GET', 'POST'])]
+    #[Route('/upload-photo', name: 'upload_photo', methods: ['GET', 'POST'], defaults: ['_locale' => 'de'], priority: 350)]
+    #[Route('/Foto-hochladen', name: 'upload_photo_de', methods: ['GET', 'POST'], defaults: ['_locale' => 'de'], priority: 350)]
+    #[Route('/en/upload-photo', name: 'upload_photo_en', methods: ['GET', 'POST'], defaults: ['_locale' => 'en'], priority: 350)]
     public function upload(
         Request $request,
         EntityManagerInterface $entityManager,

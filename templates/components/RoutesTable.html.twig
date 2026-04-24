@@ -57,7 +57,7 @@
 					<twig:Table:Cell class="py-2 align-top sm:px-3">
 						<div class="flex flex-nowrap items-center gap-x-1">
 							{% if route.areaSlug and route.rockSlug %}
-								<a href="{{ path('show_rock', {'areaSlug': route.areaSlug, 'slug': route.rockSlug}) }}#{{ route.name|replace({' ': ''})|lower }}" class="font-medium text-[#075985] no-underline hover:underline">
+								<a href="{{ rock_path(route.areaSlug, route.rockSlug) }}#{{ route.name|replace({' ': ''})|lower }}" class="font-medium text-[#075985] no-underline hover:underline">
 									{{ route.name|raw }}
 								</a>
 							{% else %}
@@ -79,7 +79,7 @@
 					</twig:Table:Cell>
 					<twig:Table:Cell class="py-2 align-top sm:px-3">
 						{% if route.areaSlug and route.rockSlug %}
-							<a href="{{ path('show_rock', {'areaSlug': route.areaSlug, 'slug': route.rockSlug}) }}" class="text-[#075985] no-underline hover:underline">
+							<a href="{{ rock_path(route.areaSlug, route.rockSlug) }}" class="text-[#075985] no-underline hover:underline">
 								{{ route.rockName }}
 							</a>
 						{% elseif route.rockName %}

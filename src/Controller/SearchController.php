@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class SearchController extends AbstractController
 {
-    #[Route('/search', name: 'search_autocomplete')]
+    #[Route('/search', name: 'search_autocomplete', priority: 350)]
     public function autocomplete(Request $request, RockRepository $rockRepository, RoutesRepository $routesRepository): JsonResponse
     {
         try {
@@ -26,6 +26,12 @@ class SearchController extends AbstractController
 
     private function doAutocomplete(Request $request, RockRepository $rockRepository, RoutesRepository $routesRepository): JsonResponse
     {
+        $locale = $request->query->get('_locale', $request->getLocale());
+        if (!\in_array($locale, ['de', 'en'], true)) {
+            $locale = 'de';
+        }
+        $request->setLocale($locale);
+
         $query = $request->query->get('query', '');
         $mode = $request->query->get('mode', 'name');
         $selectedGrades = $request->query->all('grades') ?? [];
@@ -55,10 +61,7 @@ class SearchController extends AbstractController
                 if ($area) {
                     $rockResults[] = [
                         'name' => $rock->getName(),
-                        'url' => $this->generateUrl('show_rock', [
-                            'areaSlug' => $area->getSlug(),
-                            'slug' => $rock->getSlug(),
-                        ]),
+                        'url' => $this->rockListUrl($request, $area->getSlug(), $rock->getSlug()),
                     ];
                 }
             }
@@ -77,7 +80,7 @@ class SearchController extends AbstractController
             $page = min($page, $totalPages);
             $offset = ($page - 1) * $perPage;
             $routes = $routesRepository->findByGrades($selectedGrades, $selectedArea ?: null, $perPage, $offset);
-            $routeResults = $this->formatRoutesForJson($routes);
+            $routeResults = $this->formatRoutesForJson($request, $routes);
             return $this->json([
                 'rocks' => [],
                 'routes' => $routeResults,
@@ -105,18 +108,15 @@ class SearchController extends AbstractController
                 if ($area) {
                     $rockResults[] = [
                         'name' => $rock->getName(),
-                        'url' => $this->generateUrl('show_rock', [
-                            'areaSlug' => $area->getSlug(),
-                            'slug' => $rock->getSlug()
-                        ])
+                        'url' => $this->rockListUrl($request, $area->getSlug(), $rock->getSlug())
                     ];
                 }
             }
             $routes = $routesRepository->search($query);
-            $routeResults = $this->formatRoutesForJson($routes);
+            $routeResults = $this->formatRoutesForJson($request, $routes);
         } elseif ($mode === 'firstascent') {
             $routes = $routesRepository->findByFirstAscent($query);
-            $routeResults = $this->formatRoutesForJson($routes);
+            $routeResults = $this->formatRoutesForJson($request, $routes);
         }
 
         return $this->json([
@@ -145,7 +145,11 @@ class SearchController extends AbstractController
      * @param \App\Entity\Routes[] $routes
      * @return array<int, array{name: string, area: string, rock: string, grade: ?string, firstAscent: ?string, yearFirstAscent: ?int, url: string, rating: ?int, protection: ?int, rockQuality: ?bool}>
      */
-    private function formatRoutesForJson(array $routes): array
+    /**
+     * @param \App\Entity\Routes[] $routes
+     * @return array<int, array<string, mixed>>
+     */
+    private function formatRoutesForJson(Request $request, array $routes): array
     {
         $results = [];
         foreach ($routes as $route) {
@@ -159,12 +163,20 @@ class SearchController extends AbstractController
                 'rating' => $route->getRating(),
                 'protection' => $route->getProtection(),
                 'rockQuality' => $route->isRockQuality(),
-                'url' => $this->generateUrl('show_rock', [
-                    'areaSlug' => $route->getArea() ? $route->getArea()->getSlug() : 'unknown',
-                    'slug' => $route->getRock() ? $route->getRock()->getSlug() : 'unknown'
-                ])
+                'url' => $this->rockListUrl(
+                    $request,
+                    $route->getArea() ? $route->getArea()->getSlug() : 'unknown',
+                    $route->getRock() ? $route->getRock()->getSlug() : 'unknown'
+                ),
             ];
         }
         return $results;
+    }
+
+    private function rockListUrl(Request $request, string $areaSlug, string $slug): string
+    {
+        $routeName = 'en' === $request->getLocale() ? 'show_rock_en' : 'show_rock';
+
+        return $this->generateUrl($routeName, ['areaSlug' => $areaSlug, 'slug' => $slug]);
     }
 }

@@ -54,6 +54,8 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
 
     protected function getLoginUrl(Request $request): string
     {
-        return $this->urlGenerator->generate(self::LOGIN_ROUTE);
+        $route = 'en' === $request->getLocale() ? 'app_login_en' : self::LOGIN_ROUTE;
+
+        return $this->urlGenerator->generate($route);
     }
 }

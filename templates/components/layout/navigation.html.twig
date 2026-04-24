@@ -94,16 +94,21 @@
 				</div>
 			</div>
 			{% set _showLang = (app.request.attributes.get('_route') == 'show_rock' and hasTranslationDescription is defined and hasTranslationDescription) or (app.request.attributes.get('_route') == 'show_rock_en' and hasTranslationDescription is defined and hasTranslationDescription) %}
-			<div class="{{ _showLang ? 'flex w-10 shrink-0 items-center justify-end sm:w-12' : 'hidden' }}">
-				{% if _showLang %}
-					{{ include('components/layout/language-switch.html.twig', {
-						hasTranslationDescription: hasTranslationDescription,
-						areaSlug: app.request.attributes.get('areaSlug'),
-						rockSlug: app.request.attributes.get('slug')
-					}) }}
-				{% endif %}
-			</div>
-			{{ include('components/layout/theme-switcher.html.twig') }}
+			<twig:Collapsible class="flex shrink-0 items-center justify-end gap-1 ps-1">
+				<twig:Collapsible:Content class="me-1 max-sm:max-w-[min(100vw-8rem,14rem)] sm:max-w-none">
+					{% if _showLang %}
+						{{ include('components/layout/language-switch.html.twig', {
+							hasTranslationDescription: hasTranslationDescription,
+							areaSlug: app.request.attributes.get('areaSlug'),
+							rockSlug: app.request.attributes.get('slug')
+						}) }}
+					{% endif %}
+					{{ include('components/layout/theme-switcher.html.twig') }}
+				</twig:Collapsible:Content>
+				<twig:Collapsible:Trigger class="h-9 w-9 shrink-0" aria-label="{{ 'nav.collapsible_settings'|trans }}" title="{{ 'nav.collapsible_settings'|trans }}">
+					<twig:ux:icon name="lucide:settings" class="size-[18px] shrink-0" aria-hidden="true" />
+				</twig:Collapsible:Trigger>
+			</twig:Collapsible>
 		</div>
 		</twig:Sheet>
 	</nav>

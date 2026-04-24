@@ -97,7 +97,7 @@
 				<summary class="inline-flex h-9 w-9 list-none cursor-pointer items-center justify-center rounded-md text-[var(--theme-text)] outline-none hover:bg-[var(--theme-bg-lighter)] focus-visible:ring-2 focus-visible:ring-[var(--theme-border)] [&::-webkit-details-marker]:hidden" aria-label="{{ 'nav.settings_toggle_aria'|trans }}" title="{{ 'nav.settings_toggle_aria'|trans }}">
 					<twig:ux:icon name="lucide:settings" class="size-[18px] shrink-0" aria-hidden="true" />
 				</summary>
-				<div class="absolute end-0 top-[calc(100%+6px)] z-[1070] min-w-[14rem] rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] py-1 text-[var(--theme-text)] shadow-lg ring-1 ring-black/5 dark:ring-white/10" role="menu" aria-orientation="vertical" onclick="event.stopPropagation()">
+				<div class="absolute end-0 top-[calc(100%+6px)] z-[1070] rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] py-1 text-[var(--theme-text)] shadow-lg ring-1 ring-black/5 dark:ring-white/10" role="menu" aria-orientation="vertical" onclick="event.stopPropagation()">
 					<div class="flex items-center justify-between p-1">
 							{{ include('components/layout/language-switch.html.twig', { switch_id: 'languageSwitchNavMenu' }) }}
 							<span class="mx-2 inline-block h-5 w-px bg-[var(--theme-border)]" aria-hidden="true"></span>

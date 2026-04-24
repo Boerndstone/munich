@@ -274,7 +274,7 @@ class FrontendController extends AbstractController
                 ->htmlTemplate('emails/rock_improvement.html.twig')
                 ->context([
                     'name' => $data->name,
-                    'email' => $data->email,
+                    'contactEmail' => $data->email,
                     'rockName' => $data->rockName,
                     'routeName' => $data->routeName,
                     'grade' => $data->grade,

@@ -291,6 +291,7 @@
 									{{ form_start(improvementForm, { action: path(app.request.attributes.get('_route'), { areaSlug: areaSlug, slug: slug }), attr: { class: 'max-w-full text-sm', novalidate: 'novalidate' } }) }}
 									{{ form_row(improvementForm.rockName) }}
 									{{ form_row(improvementForm.name) }}
+									{{ form_row(improvementForm.email) }}
 									{{ form_row(improvementForm.routeName) }}
 									{{ form_row(improvementForm.grade) }}
 									{{ form_row(improvementForm.firstAscent) }}

@@ -274,12 +274,16 @@ class FrontendController extends AbstractController
                 ->htmlTemplate('emails/rock_improvement.html.twig')
                 ->context([
                     'name' => $data->name,
+                    'email' => $data->email,
                     'rockName' => $data->rockName,
                     'routeName' => $data->routeName,
                     'grade' => $data->grade,
                     'firstAscent' => $data->firstAscent,
                     'comment' => $data->comment,
                 ]);
+            if (\is_string($data->email) && '' !== $data->email) {
+                $email->replyTo($data->email);
+            }
             $mailer->send($email);
             $this->addFlash('success', $translator->trans('rock_improvement.success'));
             $rockRoute = $request->getLocale() === 'en' ? 'show_rock_en' : 'show_rock';

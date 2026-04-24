@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% set setTitle = 'Munichclimbs | Klettergebiet ' ~ areaName %}
+{% set setTitle = 'rocks.page_title'|trans({ '%area%': areaName }) %}
 {% set currentDate =  "now"|date("z") %}
 
 {% block page_javascripts %}
@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block meta_tags %}
-	{% set description = 'Felsen im Klettergebiet ' ~ areaName ~ ': ' %}
+	{% set description = 'rocks.meta_description_prefix'|trans({ '%area%': areaName }) %}
 	{% for rock in rocks %}
 		{% set description = description ~ rock.rockName %}
 		{% if loop.last == false %}
@@ -24,10 +24,13 @@
 		{% endif %}
 	{% endfor %}
 	{% include 'components/seo/meta-tags.html.twig' with {
-		'title': setTitle,
-		'description': description,
-		'url': 'https://munichclimbs.de/Klettergebiet/' ~ areaSlug,
-		'area_name': areaName
+		title: setTitle,
+		description: description,
+		url: app.request.locale == 'en'
+			? 'https://munichclimbs.de/en/' ~ areaSlug
+			: 'https://munichclimbs.de/' ~ areaSlug,
+		area_name: areaName,
+		og_locale_alternate: app.request.locale == 'en' ? 'de_DE' : 'en_US',
 	} %}
 {% endblock %}
 

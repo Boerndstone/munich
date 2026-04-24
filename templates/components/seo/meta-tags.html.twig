@@ -36,7 +36,10 @@
 {% endif %}
 {% endif %}
 <meta property="og:site_name" content="Munichclimbs"/>
-<meta property="og:locale" content="de_DE"/>
+<meta property="og:locale" content="{{ og_locale|default(app.locale == 'en' ? 'en_US' : 'de_DE') }}"/>
+{% if og_locale_alternate is defined and og_locale_alternate is not empty %}
+<meta property="og:locale:alternate" content="{{ og_locale_alternate }}"/>
+{% endif %}
 
 {# Twitter Card #}
 <meta name="twitter:card" content="summary_large_image"/>

@@ -15,7 +15,7 @@
 					<tr class="even:bg-white odd:bg-gray-100 hover:bg-gray-200 dark:even:bg-black dark:odd:bg-gray-800 dark:hover:bg-gray-700">
 						<td class="px-3 py-2">{{ loop.index }}</td>
 						<td class="px-3 py-2">
-							<a href="{{ path('show_rock', { areaSlug: latestRoute.area.slug, slug: latestRoute.rock.slug }) }}" title="Tourenname: {{ latestRoute.name }}, Fels: {{ latestRoute.rock }}" class="text-sky-800 no-underline hover:underline dark:text-sky-400">{{ latestRoute.name }}
+							<a href="{{ rock_path(latestRoute.area.slug, latestRoute.rock.slug) }}" title="{{ 'latest_routes.table.route_link_title'|trans({ '%route%': latestRoute.name, '%rock%': latestRoute.rock }) }}" class="text-sky-800 no-underline hover:underline dark:text-sky-400">{{ latestRoute.name }}
 							</a>
 							{% set routeRating = latestRoute.rating|default(0) %}
 							{% if routeRating >= 1 and routeRating <= 3 %}

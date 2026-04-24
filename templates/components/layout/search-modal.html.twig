@@ -10,14 +10,14 @@
 >
 	<div class="relative flex max-h-[min(92vh,52rem)] w-full min-w-0 max-w-3xl flex-col self-center overflow-hidden overflow-x-hidden rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] text-[var(--theme-text)] shadow-xl" onclick="event.stopPropagation()">
 		<header class="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--theme-border)] px-4 py-2">
-			<h2 id="searchModalLabel" class="stay-black m-0 min-w-0 flex-1 text-base font-semibold leading-tight text-[var(--theme-text)]">Suche</h2>
+			<h2 id="searchModalLabel" class="stay-black m-0 min-w-0 flex-1 text-base font-semibold leading-tight text-[var(--theme-text)]">{{ 'search_modal.title'|trans }}</h2>
 			<button
 				type="button"
 				class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--theme-text)] opacity-70 hover:bg-[var(--theme-bg-lighter)] hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]"
 				onclick="this.closest('dialog').close()"
-				aria-label="{{ 'close'|trans({}, 'messages') }}"
+				aria-label="{{ 'close'|trans }}"
 			>
-				<span class="sr-only">{{ 'close'|trans({}, 'messages') }}</span>
+				<span class="sr-only">{{ 'close'|trans }}</span>
 				<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
 				</svg>
@@ -25,22 +25,22 @@
 		</header>
 		<div class="min-h-0 flex-1 overflow-y-auto px-4 py-3">
 			<twig:Tabs defaultValue="name" class="mb-4">
-				<twig:Tabs:List variant="default" id="searchTabs" aria-label="Suchmodus" class="mb-3">
-					<twig:Tabs:Trigger value="name">Route/Fels</twig:Tabs:Trigger>
-					<twig:Tabs:Trigger value="firstascent">Erstbegeher</twig:Tabs:Trigger>
-					<twig:Tabs:Trigger value="grade">Grad</twig:Tabs:Trigger>
-					<twig:Tabs:Trigger value="attributes">Eigenschaften</twig:Tabs:Trigger>
+				<twig:Tabs:List variant="default" id="searchTabs" aria-label="{{ 'search_modal.tabs_aria'|trans }}" class="mb-3">
+					<twig:Tabs:Trigger value="name">{{ 'search_modal.tab_name'|trans }}</twig:Tabs:Trigger>
+					<twig:Tabs:Trigger value="firstascent">{{ 'search_modal.tab_first_ascent'|trans }}</twig:Tabs:Trigger>
+					<twig:Tabs:Trigger value="grade">{{ 'search_modal.tab_grade'|trans }}</twig:Tabs:Trigger>
+					<twig:Tabs:Trigger value="attributes">{{ 'search_modal.tab_attributes'|trans }}</twig:Tabs:Trigger>
 				</twig:Tabs:List>
 
 				<twig:Tabs:Content value="name">
-					<label for="searchModalNameInput" class="sr-only">Suche nach Felsen oder Routen</label>
+					<label for="searchModalNameInput" class="sr-only">{{ 'search_modal.name_label_sr'|trans }}</label>
 					<div class="flex min-w-0 items-center gap-2 rounded-md border border-black/20 bg-[var(--theme-bg-lighter)] px-2 py-1.5 text-[var(--theme-text)] dark:border-white/20">
 						<i class="fas fa-search magnifier shrink-0 text-base text-gray-500 opacity-80 dark:text-gray-400" aria-hidden="true"></i>
 						<twig:Input
 							type="search"
 							id="searchModalNameInput"
 							name="searchName"
-							placeholder="Suche nach Felsen oder Routen..."
+							placeholder="{{ 'search_modal.name_placeholder'|trans }}"
 							minlength="2"
 							data-search-modal-target="nameInput"
 							data-action="input->search-modal#searchNameDebounced keydown.enter->search-modal#searchName"
@@ -49,13 +49,13 @@
 					</div>
 				</twig:Tabs:Content>
 				<twig:Tabs:Content value="firstascent">
-					<label for="searchModalFirstAscentInput" class="sr-only">Name des Erstbegehers</label>
+					<label for="searchModalFirstAscentInput" class="sr-only">{{ 'search_modal.first_ascent_label_sr'|trans }}</label>
 					<div class="flex min-w-0 items-center gap-2 rounded-md border border-black/20 bg-[var(--theme-bg-lighter)] px-2 py-1.5 text-[var(--theme-text)] dark:border-white/20">
 						<i class="fas fa-search magnifier shrink-0 text-base text-gray-500 opacity-80 dark:text-gray-400" aria-hidden="true"></i>
 						<twig:Input
 							type="search"
 							id="searchModalFirstAscentInput"
-							placeholder="Name des Erstbegehers..."
+							placeholder="{{ 'search_modal.first_ascent_placeholder'|trans }}"
 							minlength="2"
 							data-search-modal-target="firstAscentInput"
 							data-action="input->search-modal#searchFirstAscentDebounced keydown.enter->search-modal#searchFirstAscent"
@@ -66,9 +66,9 @@
 				<twig:Tabs:Content value="grade">
 					<div class="mb-3 grid grid-cols-1 gap-3 md:grid-cols-2">
 						<div class="md:col-span-1">
-							<label class="mb-1 block text-xs font-medium text-[var(--theme-text)]" for="searchModalGradeAreaSelect">Gebiet</label>
+							<label class="mb-1 block text-xs font-medium text-[var(--theme-text)]" for="searchModalGradeAreaSelect">{{ 'search_modal.area_label'|trans }}</label>
 							<select id="searchModalGradeAreaSelect" class="block w-full rounded-md border border-[var(--theme-border)] bg-[var(--theme-bg)] px-2 py-1.5 text-base text-[var(--theme-text)] focus:border-[var(--theme-border)] focus:outline-hidden focus:ring-2 focus:ring-[var(--theme-border)]" data-search-modal-target="areaSelect">
-								<option value="">Alle Gebiete</option>
+								<option value="">{{ 'search_modal.all_areas'|trans }}</option>
 								{% for area in getSidebarAreas() %}
 									<option value="{{ area.slug }}">{{ area.name }}</option>
 								{% endfor %}
@@ -76,7 +76,7 @@
 						</div>
 						<div class="md:col-span-2">
 							<fieldset class="m-0 border-0 p-0">
-								<legend class="mb-2 block w-auto p-0 text-xs font-medium text-[var(--theme-text)]">Schwierigkeitsgrade</legend>
+								<legend class="mb-2 block w-auto p-0 text-xs font-medium text-[var(--theme-text)]">{{ 'search_modal.grades_legend'|trans }}</legend>
 								<div class="flex flex-wrap gap-3">
 									{% for i in 1..11 %}
 										<label class="inline-flex cursor-pointer items-center gap-2 text-sm text-[var(--theme-text)]" for="searchGrade{{ i }}">
@@ -90,7 +90,7 @@
 						<div class="md:col-span-2">
 							<button class="inline-flex items-center gap-2 rounded-md border border-[var(--theme-border)] bg-transparent px-3 py-1.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" type="button" data-action="click->search-modal#searchByGrade">
 								<i class="fas fa-search text-xs opacity-80" aria-hidden="true"></i>
-								Nach Schwierigkeit suchen
+								{{ 'search_modal.search_by_grade'|trans }}
 							</button>
 						</div>
 					</div>
@@ -98,9 +98,9 @@
 				<twig:Tabs:Content value="attributes">
 					<div class="mb-3 grid grid-cols-1 gap-3 md:grid-cols-2">
 						<div class="md:col-span-1">
-							<label class="mb-1 block text-xs font-medium text-[var(--theme-text)]" for="searchModalAttributesAreaSelect">Gebiet</label>
+							<label class="mb-1 block text-xs font-medium text-[var(--theme-text)]" for="searchModalAttributesAreaSelect">{{ 'search_modal.area_label'|trans }}</label>
 							<select id="searchModalAttributesAreaSelect" class="block w-full rounded-md border border-[var(--theme-border)] bg-[var(--theme-bg)] px-2 py-1.5 text-base text-[var(--theme-text)] focus:border-[var(--theme-border)] focus:outline-hidden focus:ring-2 focus:ring-[var(--theme-border)]" data-search-modal-target="areaSelectAttributes">
-								<option value="">Alle Gebiete</option>
+								<option value="">{{ 'search_modal.all_areas'|trans }}</option>
 								{% for area in getSidebarAreas() %}
 									<option value="{{ area.slug }}">{{ area.name }}</option>
 								{% endfor %}
@@ -108,7 +108,7 @@
 						</div>
 						<div class="md:col-span-2">
 							<fieldset class="m-0 border-0 p-0">
-								<legend class="mb-2 block w-auto p-0 text-xs font-medium text-[var(--theme-text)]">Eigenschaften</legend>
+								<legend class="mb-2 block w-auto p-0 text-xs font-medium text-[var(--theme-text)]">{{ 'search_modal.tab_attributes'|trans }}</legend>
 								<div class="flex flex-wrap gap-x-4 gap-y-3">
 									<label class="inline-flex cursor-pointer items-center gap-2 text-sm text-[var(--theme-text)]" for="searchAttrChildFriendly">
 										<input class="h-4 w-4 shrink-0 rounded border-[var(--theme-border)] text-[#075985] focus:ring-[var(--theme-border)]" type="checkbox" data-search-modal-target="attrChildFriendly" value="1" id="searchAttrChildFriendly">
@@ -141,7 +141,7 @@
 						<div class="md:col-span-2">
 							<button class="inline-flex items-center gap-2 rounded-md border border-[var(--theme-border)] bg-transparent px-3 py-1.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" type="button" data-action="click->search-modal#searchByAttributes">
 								<i class="fas fa-search text-xs opacity-80" aria-hidden="true"></i>
-								Nach Eigenschaften suchen
+								{{ 'search_modal.search_by_attributes'|trans }}
 							</button>
 						</div>
 					</div>
@@ -149,30 +149,30 @@
 			</twig:Tabs>
 
 			<div data-search-modal-target="resultsContainer" class="hidden">
-				<h3 class="mb-2 text-sm font-semibold text-[var(--theme-text)]"><span data-search-modal-target="resultsCount">0</span> Ergebnisse</h3>
+				<h3 class="mb-2 text-sm font-semibold text-[var(--theme-text)]"><span data-search-modal-target="resultsCount">0</span> {{ 'search_modal.results_suffix'|trans }}</h3>
 				<div data-search-modal-target="rocksSection" class="mb-3 hidden">
-					<div class="mb-1 text-xs font-bold uppercase tracking-wide text-[var(--theme-text)]">Felsen</div>
+					<div class="mb-1 text-xs font-bold uppercase tracking-wide text-[var(--theme-text)]">{{ 'search_modal.section_rocks'|trans }}</div>
 					<ul class="m-0 list-none divide-y divide-[var(--theme-border)] text-sm" data-search-modal-target="rocksList"></ul>
 				</div>
 				<hr class="my-3 border-[var(--theme-border)]" />
 				<div data-search-modal-target="routesSection" class="hidden">
-					<div class="mb-2 text-xs font-bold uppercase tracking-wide text-[var(--theme-text)]">Touren</div>
+					<div class="mb-2 text-xs font-bold uppercase tracking-wide text-[var(--theme-text)]">{{ 'search_modal.section_routes'|trans }}</div>
 					<div class="relative min-w-0 w-full overflow-x-auto" data-search-modal-target="routesTable"></div>
 					<div data-search-modal-target="pagerContainer" class="mt-2 hidden">
 						<div class="flex flex-wrap items-center justify-between gap-2">
-							<button type="button" class="inline-flex items-center gap-1 rounded-md border border-[var(--theme-border)] bg-transparent px-3 py-1.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)] disabled:cursor-not-allowed disabled:opacity-50" data-search-modal-target="pagerPrev" data-action="click->search-modal#gradePagePrev" aria-label="Vorherige Seite">
+							<button type="button" class="inline-flex items-center gap-1 rounded-md border border-[var(--theme-border)] bg-transparent px-3 py-1.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)] disabled:cursor-not-allowed disabled:opacity-50" data-search-modal-target="pagerPrev" data-action="click->search-modal#gradePagePrev" aria-label="{{ 'search_modal.pager_prev_aria'|trans }}">
 								<i class="fas fa-chevron-left text-xs" aria-hidden="true"></i>
-								Zurück
+								{{ 'search_modal.pager_back'|trans }}
 							</button>
-							<span class="text-xs text-gray-500 dark:text-gray-400" data-search-modal-target="pagerInfo">Seite 1 von 1</span>
-							<button type="button" class="inline-flex items-center gap-1 rounded-md border border-[var(--theme-border)] bg-transparent px-3 py-1.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)] disabled:cursor-not-allowed disabled:opacity-50" data-search-modal-target="pagerNext" data-action="click->search-modal#gradePageNext" aria-label="Nächste Seite">
-								Weiter
+							<span class="text-xs text-gray-500 dark:text-gray-400" data-search-modal-target="pagerInfo">{{ 'search_modal.page_info'|trans|replace({'{page}': '1', '{total}': '1'}) }}</span>
+							<button type="button" class="inline-flex items-center gap-1 rounded-md border border-[var(--theme-border)] bg-transparent px-3 py-1.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)] disabled:cursor-not-allowed disabled:opacity-50" data-search-modal-target="pagerNext" data-action="click->search-modal#gradePageNext" aria-label="{{ 'search_modal.pager_next_aria'|trans }}">
+								{{ 'search_modal.pager_forward'|trans }}
 								<i class="fas fa-chevron-right text-xs" aria-hidden="true"></i>
 							</button>
 						</div>
 					</div>
 				</div>
-				<div data-search-modal-target="emptyState" class="hidden text-sm text-gray-500 dark:text-gray-400">Keine Ergebnisse gefunden.</div>
+				<div data-search-modal-target="emptyState" class="hidden text-sm text-gray-500 dark:text-gray-400">{{ 'search_modal.no_results'|trans }}</div>
 			</div>
 		</div>
 	</div>

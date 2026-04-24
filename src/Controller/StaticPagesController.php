@@ -14,11 +14,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StaticPagesController extends AbstractController
 {
 
-    #[Route('/Datenschutz', name: 'datenschutz')]
+    #[Route('/Datenschutz', name: 'datenschutz', defaults: ['_locale' => 'de'], priority: 350)]
+    #[Route('/en/privacy', name: 'datenschutz_en', defaults: ['_locale' => 'en'], priority: 350)]
     public function datenschutz(
         AreaRepository $areaRepository,
         FooterAreas $footerAreas,
@@ -32,13 +34,15 @@ class StaticPagesController extends AbstractController
         ]);
     }
 
-    #[Route('/Impressum', name: 'impressum')]
+    #[Route('/Impressum', name: 'impressum', defaults: ['_locale' => 'de'], priority: 350)]
+    #[Route('/en/impressum', name: 'impressum_en', defaults: ['_locale' => 'en'], priority: 350)]
     public function impressum(
         AreaRepository $areaRepository,
         FooterAreas $footerAreas,
         Request $request,
         EntityManagerInterface $entityManager,
-        MailerInterface $mailer
+        MailerInterface $mailer,
+        TranslatorInterface $translator,
     ): Response {
         $areas = $footerAreas->getFooterAreas();
         $sideBar = $areaRepository->sidebarNavigation();
@@ -68,12 +72,14 @@ class StaticPagesController extends AbstractController
                     ]);
 
                 $mailer->send($email);
-                $this->addFlash('success', 'Ihre Nachricht wurde erfolgreich versendet!');
+                $this->addFlash('success', $translator->trans('contact.flash.success'));
 
-                return $this->redirectToRoute('impressum');
+                $impressumRoute = $request->getLocale() === 'en' ? 'impressum_en' : 'impressum';
+
+                return $this->redirectToRoute($impressumRoute);
             } else {
                 // This block now only executes if the form is submitted but not valid
-                $this->addFlash('error', 'Ihre Nachricht konnte nicht versendet werden!');
+                $this->addFlash('error', $translator->trans('contact.flash.error'));
             }
         }
 

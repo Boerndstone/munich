@@ -2,8 +2,7 @@
 {% set rockMarkers = [] %}
 {% for rock in getMainMapRocks() %}
     {# Rock popup: shared template components/map/rock-map-popup.html.twig #}
-    {% set rockRoute = app.request.locale == 'en' ? 'show_rock_en' : 'show_rock' %}
-    {% set rockLink = path(rockRoute, { areaSlug: rock.areaSlug, slug: rock.rockSlug }) %}
+    {% set rockLink = rock_path(rock.areaSlug, rock.rockSlug) %}
     {% set rockCardArea = {
         routes: rock.amountRoutes|default(0),
         amountEasy: rock.amountEasy|default(0),
@@ -54,7 +53,7 @@
         '<img class="block h-auto w-full rounded-t-xl object-cover object-center" src="' ~ url ~ area.image ~ '.webp" alt="Klettergebiet ' ~ area.name|e('html_attr') ~ '" loading="lazy" decoding="async">' ~
         '</picture>' ~
         '<div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-2 px-3 py-2">' ~
-        '<a href="' ~ path('show_rocks', { slug: area.slug }) ~ '" class="inline-block max-w-[calc(100%-3rem)] truncate rounded bg-white/90 px-2 py-1 text-base font-semibold text-gray-900 no-underline shadow-sm dark:bg-slate-900/90 dark:text-white hover:underline">' ~ area.name|e('html') ~ '</a>' ~
+        '<a href="' ~ area_path(area.slug) ~ '" class="inline-block max-w-[calc(100%-3rem)] truncate rounded bg-white/90 px-2 py-1 text-base font-semibold text-gray-900 no-underline shadow-sm dark:bg-slate-900/90 dark:text-white hover:underline">' ~ area.name|e('html') ~ '</a>' ~
         '<button type="button" class="relative z-10 flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full bg-white/75 text-xl leading-none text-gray-800 shadow-md transition-colors hover:bg-white/90 dark:bg-slate-700/85 dark:text-white dark:hover:bg-slate-600/90 focus:outline-none" onclick="this.closest(\'.leaflet-popup\').querySelector(\'.leaflet-popup-close-button\').click()" aria-label="Schließen"><span class="block leading-none" aria-hidden="true">&times;</span></button>' ~
         '</div></div>' ~
         '<div class="px-3.5 py-3">' ~ popupBody ~ '</div></div>' %}

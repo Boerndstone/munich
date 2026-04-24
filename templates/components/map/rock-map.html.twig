@@ -1,8 +1,6 @@
 {% set marker = [] %}
 {% for rock in rocks %}
-	{% set rockLink = app.request.locale == 'en'
-		? path('show_rock_en', { areaSlug: areaSlug, slug: slug })
-		: path('show_rock', { areaSlug: areaSlug, slug: slug }) %}
+	{% set rockLink = rock_path(areaSlug, slug) %}
 	{% set mapPopupHtml %}
 		{% include 'components/map/rock-map-popup.html.twig' with {
 			rock: rock,

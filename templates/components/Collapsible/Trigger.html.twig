@@ -1,0 +1,13 @@
+{# @block content Clickable control that toggles the collapsible (e.g. icon button) #}
+<button
+	type="button"
+	class="{{ ('inline-flex shrink-0 items-center justify-center rounded-md text-[var(--theme-text)] outline-none hover:bg-[var(--theme-bg-lighter)] focus-visible:ring-2 focus-visible:ring-[var(--theme-border)] ' ~ attributes.render('class'))|tailwind_merge }}"
+	{{ attributes.defaults({
+		'data-slot': 'collapsible-trigger',
+		'data-collapsible-target': 'trigger',
+		'data-action': 'click->collapsible#toggle',
+		'aria-expanded': 'false',
+	}) }}
+>
+	{%- block content %}{% endblock -%}
+</button>

@@ -1,8 +1,8 @@
 {# Same slot: only one icon visible (grid stack). Sun = light, moon = dark. #}
-{# @prop variant 'toolbar'|'menu_row' — menu_row: label + switch for nav dropdown #}
+{# @prop variant 'toolbar'|'menu_row' — menu_row: icon-only switch for nav dropdown #}
 {%- set _variant = variant|default('toolbar') -%}
 {% if _variant == 'menu_row' %}
-	<div class="flex w-full min-w-0 items-center justify-between px-1" data-controller="theme">
+	<div class="flex w-full min-w-0 items-center justify-start px-1" data-controller="theme">
 		<twig:Button
 			type="button"
 			variant="ghost"

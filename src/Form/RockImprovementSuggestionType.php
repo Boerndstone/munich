@@ -4,9 +4,12 @@ namespace App\Form;
 
 use App\Dto\RockImprovementSuggestion;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -37,6 +40,17 @@ class RockImprovementSuggestionType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'rock_improvement.name',
                 'attr' => ['class' => 'form-control form-control-sm', 'placeholder' => $this->translator->trans('rock_improvement.placeholder.name')],
+                'label_attr' => ['class' => 'form-label small fw-medium'],
+                'row_attr' => ['class' => 'mb-3'],
+            ])
+            ->add('email', EmailType::class, [
+                'label' => 'rock_improvement.email',
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-control form-control-sm',
+                    'placeholder' => $this->translator->trans('rock_improvement.placeholder.email'),
+                    'autocomplete' => 'email',
+                ],
                 'label_attr' => ['class' => 'form-label small fw-medium'],
                 'row_attr' => ['class' => 'mb-3'],
             ])
@@ -76,6 +90,16 @@ class RockImprovementSuggestionType extends AbstractType
                 'label_attr' => ['class' => 'form-label small fw-medium'],
                 'row_attr' => ['class' => 'mb-3'],
             ]);
+
+        $builder->get('email')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
+            $value = $event->getData();
+            if (!\is_string($value) || '' === trim($value)) {
+                $event->setData(null);
+
+                return;
+            }
+            $event->setData(trim($value));
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

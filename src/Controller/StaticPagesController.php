@@ -90,8 +90,8 @@ class StaticPagesController extends AbstractController
         ]);
     }
 
-    #[Route('/Gradvergleich-Bouldern', name: 'bouldering_grade_comparison_redirect', defaults: ['_locale' => 'de'])]
-    #[Route('/en/bouldering-grade-comparison', name: 'bouldering_grade_comparison_en_redirect', defaults: ['_locale' => 'en'])]
+    #[Route('/Gradvergleich-Bouldern', name: 'bouldering_grade_comparison_redirect', defaults: ['_locale' => 'de'], priority: 350)]
+    #[Route('/en/bouldering-grade-comparison', name: 'bouldering_grade_comparison_en_redirect', defaults: ['_locale' => 'en'], priority: 350)]
     public function boulderingGradeComparisonRedirect(Request $request): Response
     {
         $route = str_starts_with($request->getPathInfo(), '/en/')
@@ -101,8 +101,8 @@ class StaticPagesController extends AbstractController
         return $this->redirectToRoute($route, [], Response::HTTP_MOVED_PERMANENTLY);
     }
 
-    #[Route('/Gradvergleich-Freiklettern', name: 'free_climbing_grade_comparison', defaults: ['_locale' => 'de'])]
-    #[Route('/en/free-climbing-grade-comparison', name: 'free_climbing_grade_comparison_en', defaults: ['_locale' => 'en'])]
+    #[Route('/Gradvergleich-Freiklettern', name: 'free_climbing_grade_comparison', defaults: ['_locale' => 'de'], priority: 350)]
+    #[Route('/en/free-climbing-grade-comparison', name: 'free_climbing_grade_comparison_en', defaults: ['_locale' => 'en'], priority: 350)]
     public function freeClimbingGradeComparison(
         AreaRepository $areaRepository,
         FooterAreas $footerAreas,

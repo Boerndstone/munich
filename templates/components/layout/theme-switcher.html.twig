@@ -1,29 +1,62 @@
 {# Same slot: only one icon visible (grid stack). Sun = light, moon = dark. #}
-<div class="flex shrink-0 items-center justify-end ps-1" data-controller="theme">
-	<twig:Button
-		type="button"
-		variant="ghost"
-		size="icon-sm"
-		class="text-[var(--theme-text)] hover:cursor-pointer"
-		data-theme-target="trigger"
-		data-action="click->theme#toggle"
-		role="switch"
-		aria-checked="false"
-		aria-label="{{ 'theme.toggle_aria'|trans }}"
-		title="{{ 'theme.toggle_aria'|trans }}"
-	>
-		<span class="relative grid size-[18px] place-items-center" aria-hidden="true">
-			<span data-theme-target="sun" class="col-start-1 row-start-1">
-				<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0">
-					<circle cx="12" cy="12" r="4"/>
-					<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
-				</svg>
+{# @prop variant 'toolbar'|'menu_row' — menu_row: label + switch for nav dropdown #}
+{%- set _variant = variant|default('toolbar') -%}
+{% if _variant == 'menu_row' %}
+	<div class="flex w-full min-w-0 items-center justify-between px-1" data-controller="theme">
+		<twig:Button
+			type="button"
+			variant="ghost"
+			size="icon-sm"
+			class="shrink-0 text-[var(--theme-text)] hover:cursor-pointer"
+			data-theme-target="trigger"
+			data-action="click->theme#toggle"
+			role="switch"
+			aria-checked="false"
+			aria-label="{{ 'theme.toggle_aria'|trans }}"
+			title="{{ 'theme.toggle_aria'|trans }}"
+		>
+			<span class="relative grid size-[18px] place-items-center" aria-hidden="true">
+				<span data-theme-target="sun" class="col-start-1 row-start-1">
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0">
+						<circle cx="12" cy="12" r="4"/>
+						<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+					</svg>
+				</span>
+				<span data-theme-target="moon" class="col-start-1 row-start-1 hidden">
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0">
+						<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+					</svg>
+				</span>
 			</span>
-			<span data-theme-target="moon" class="col-start-1 row-start-1 hidden">
-				<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0">
-					<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
-				</svg>
+		</twig:Button>
+	</div>
+{% else %}
+	<div class="flex shrink-0 items-center justify-end ps-1" data-controller="theme">
+		<twig:Button
+			type="button"
+			variant="ghost"
+			size="icon-sm"
+			class="text-[var(--theme-text)] hover:cursor-pointer"
+			data-theme-target="trigger"
+			data-action="click->theme#toggle"
+			role="switch"
+			aria-checked="false"
+			aria-label="{{ 'theme.toggle_aria'|trans }}"
+			title="{{ 'theme.toggle_aria'|trans }}"
+		>
+			<span class="relative grid size-[18px] place-items-center" aria-hidden="true">
+				<span data-theme-target="sun" class="col-start-1 row-start-1">
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0">
+						<circle cx="12" cy="12" r="4"/>
+						<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+					</svg>
+				</span>
+				<span data-theme-target="moon" class="col-start-1 row-start-1 hidden">
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0">
+						<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+					</svg>
+				</span>
 			</span>
-		</span>
-	</twig:Button>
-</div>
+		</twig:Button>
+	</div>
+{% endif %}

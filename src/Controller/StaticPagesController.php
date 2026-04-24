@@ -14,11 +14,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StaticPagesController extends AbstractController
 {
 
-    #[Route('/Datenschutz', name: 'datenschutz')]
+    #[Route('/Datenschutz', name: 'datenschutz', defaults: ['_locale' => 'de'], priority: 350)]
+    #[Route('/en/privacy', name: 'datenschutz_en', defaults: ['_locale' => 'en'], priority: 350)]
     public function datenschutz(
         AreaRepository $areaRepository,
         FooterAreas $footerAreas,
@@ -32,13 +34,15 @@ class StaticPagesController extends AbstractController
         ]);
     }
 
-    #[Route('/Impressum', name: 'impressum')]
+    #[Route('/Impressum', name: 'impressum', defaults: ['_locale' => 'de'], priority: 350)]
+    #[Route('/en/impressum', name: 'impressum_en', defaults: ['_locale' => 'en'], priority: 350)]
     public function impressum(
         AreaRepository $areaRepository,
         FooterAreas $footerAreas,
         Request $request,
         EntityManagerInterface $entityManager,
-        MailerInterface $mailer
+        MailerInterface $mailer,
+        TranslatorInterface $translator,
     ): Response {
         $areas = $footerAreas->getFooterAreas();
         $sideBar = $areaRepository->sidebarNavigation();
@@ -68,12 +72,14 @@ class StaticPagesController extends AbstractController
                     ]);
 
                 $mailer->send($email);
-                $this->addFlash('success', 'Ihre Nachricht wurde erfolgreich versendet!');
+                $this->addFlash('success', $translator->trans('contact.flash.success'));
 
-                return $this->redirectToRoute('impressum');
+                $impressumRoute = $request->getLocale() === 'en' ? 'impressum_en' : 'impressum';
+
+                return $this->redirectToRoute($impressumRoute);
             } else {
                 // This block now only executes if the form is submitted but not valid
-                $this->addFlash('error', 'Ihre Nachricht konnte nicht versendet werden!');
+                $this->addFlash('error', $translator->trans('contact.flash.error'));
             }
         }
 
@@ -84,8 +90,8 @@ class StaticPagesController extends AbstractController
         ]);
     }
 
-    #[Route('/Gradvergleich-Bouldern', name: 'bouldering_grade_comparison_redirect', defaults: ['_locale' => 'de'])]
-    #[Route('/en/bouldering-grade-comparison', name: 'bouldering_grade_comparison_en_redirect', defaults: ['_locale' => 'en'])]
+    #[Route('/Gradvergleich-Bouldern', name: 'bouldering_grade_comparison_redirect', defaults: ['_locale' => 'de'], priority: 350)]
+    #[Route('/en/bouldering-grade-comparison', name: 'bouldering_grade_comparison_en_redirect', defaults: ['_locale' => 'en'], priority: 350)]
     public function boulderingGradeComparisonRedirect(Request $request): Response
     {
         $route = str_starts_with($request->getPathInfo(), '/en/')
@@ -95,8 +101,8 @@ class StaticPagesController extends AbstractController
         return $this->redirectToRoute($route, [], Response::HTTP_MOVED_PERMANENTLY);
     }
 
-    #[Route('/Gradvergleich-Freiklettern', name: 'free_climbing_grade_comparison', defaults: ['_locale' => 'de'])]
-    #[Route('/en/free-climbing-grade-comparison', name: 'free_climbing_grade_comparison_en', defaults: ['_locale' => 'en'])]
+    #[Route('/Gradvergleich-Freiklettern', name: 'free_climbing_grade_comparison', defaults: ['_locale' => 'de'], priority: 350)]
+    #[Route('/en/free-climbing-grade-comparison', name: 'free_climbing_grade_comparison_en', defaults: ['_locale' => 'en'], priority: 350)]
     public function freeClimbingGradeComparison(
         AreaRepository $areaRepository,
         FooterAreas $footerAreas,

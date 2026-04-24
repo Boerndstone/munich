@@ -25,8 +25,8 @@ class PhotoUploadType extends AbstractType
             ->add('belongsToRock', EntityType::class, [
                 'class' => Rock::class,
                 'choice_label' => 'name',
-                'label' => 'Fels',
-                'placeholder' => 'Bitte wählen Sie einen Fels',
+                'label' => 'upload_photo.label.rock',
+                'placeholder' => 'upload_photo.placeholder.rock',
                 'required' => true,
                 'query_builder' => function ($er) {
                     return $er->createQueryBuilder('r')
@@ -35,7 +35,7 @@ class PhotoUploadType extends AbstractType
                         ->orderBy('r.name', 'ASC');
                 },
                 'constraints' => [
-                    new NotBlank(['message' => 'Bitte wählen Sie einen Fels']),
+                    new NotBlank(['message' => 'upload_photo.validation.rock_required']),
                 ],
             ])
             ->add('belongsToRoute', EntityType::class, [
@@ -43,8 +43,8 @@ class PhotoUploadType extends AbstractType
                 'choice_label' => function (Routes $route) {
                     return $route->getName() . ' (' . ($route->getRock() ? $route->getRock()->getName() : '') . ')';
                 },
-                'label' => 'Route (optional)',
-                'placeholder' => 'Optional: Wählen Sie eine Route',
+                'label' => 'upload_photo.label.route',
+                'placeholder' => 'upload_photo.placeholder.route',
                 'required' => false,
                 'query_builder' => function ($er) {
                     return $er->createQueryBuilder('r')
@@ -53,11 +53,11 @@ class PhotoUploadType extends AbstractType
                 },
             ])
             ->add('image', FileType::class, [
-                'label' => 'Bild',
+                'label' => 'upload_photo.label.image',
                 'mapped' => false,
                 'required' => true,
                 'constraints' => [
-                    new NotBlank(['message' => 'Bitte wählen Sie ein Bild']),
+                    new NotBlank(['message' => 'upload_photo.validation.image_required']),
                     new File([
                         'maxSize' => '10M',
                         'mimeTypes' => [
@@ -66,30 +66,30 @@ class PhotoUploadType extends AbstractType
                             'image/webp',
                             'image/gif',
                         ],
-                        'mimeTypesMessage' => 'Bitte laden Sie nur Bilder hoch (JPEG, PNG, WebP oder GIF)',
+                        'mimeTypesMessage' => 'upload_photo.validation.mime_types',
                     ]),
                 ],
             ])
             ->add('description', TextareaType::class, [
-                'label' => 'Beschreibung (optional)',
+                'label' => 'upload_photo.label.description',
                 'required' => false,
                 'attr' => [
                     'rows' => 3,
                 ],
             ])
             ->add('uploaderName', TextType::class, [
-                'label' => 'Ihr Name',
+                'label' => 'upload_photo.label.uploader_name',
                 'required' => true,
                 'constraints' => [
-                    new NotBlank(['message' => 'Bitte geben Sie Ihren Namen ein']),
+                    new NotBlank(['message' => 'upload_photo.validation.name_required']),
                 ],
             ])
             ->add('uploaderEmail', EmailType::class, [
-                'label' => 'Ihre E-Mail',
+                'label' => 'upload_photo.label.uploader_email',
                 'required' => true,
                 'constraints' => [
-                    new NotBlank(['message' => 'Bitte geben Sie Ihre E-Mail ein']),
-                    new Email(['message' => 'Bitte geben Sie eine gültige E-Mail-Adresse ein']),
+                    new NotBlank(['message' => 'upload_photo.validation.email_required']),
+                    new Email(['message' => 'upload_photo.validation.email_invalid']),
                 ],
             ]);
     }
@@ -98,6 +98,7 @@ class PhotoUploadType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Photos::class,
+            'translation_domain' => 'messages',
         ]);
     }
 }

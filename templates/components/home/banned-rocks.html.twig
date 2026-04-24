@@ -4,11 +4,11 @@
 ) %}
 {% if active_banned is not empty %}
 	<div class="overflow-hidden rounded-lg border-b border-gray-200 border-l border-r border-t border-red-700 bg-white shadow-md dark:border-b-gray-700 dark:border-l-red-800 dark:border-r-red-800 dark:border-t-red-800 dark:bg-black">
-		<h3 class="mb-0 bg-red-700 px-3 py-2 text-lg font-light leading-normal text-white dark:bg-red-800">Aktuelle Sperrungen</h3>
+		<h3 class="mb-0 bg-red-700 px-3 py-2 text-lg font-light leading-normal text-white dark:bg-red-800">{{ 'home.banned_rocks_title'|trans }}</h3>
 		<ul class="my-2 list-none px-0">
 			{% for bannedRock in active_banned %}
 				<li class="">
-					<a class="flex items-start gap-x-2 px-2 py-1 leading-[1.3rem] text-black no-underline hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800" href="{{ path('show_rock', { 'areaSlug': bannedRock.areaSlug, slug: bannedRock.slug }) }}">
+					<a class="flex items-start gap-x-2 px-2 py-1 leading-[1.3rem] text-black no-underline hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800" href="{{ rock_path(bannedRock.areaSlug, bannedRock.slug) }}">
 						<span class="w-4 shrink-0 select-none pt-0.5 text-center text-sm leading-none text-red-700 pe-1 dark:text-red-500" aria-hidden="true">&#8226;</span>
 						<span class="min-w-0 flex-1">
 							<span class="block truncate text-sm font-normal text-gray-900 dark:text-gray-100">{{ bannedRock.name }}</span>

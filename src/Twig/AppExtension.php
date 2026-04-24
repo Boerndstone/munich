@@ -2,6 +2,9 @@
 
 namespace App\Twig;
 
+use App\I18n\AlternateLocaleUrlGenerator;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -19,8 +22,15 @@ class AppExtension extends AbstractExtension
     private TopoSvgParser $topoSvgParser;
     private TopoPathRendererService $topoPathRenderer;
 
-    public function __construct(AreasService $areasService, ImageSeoService $imageSeoService, TopoSvgParser $topoSvgParser, TopoPathRendererService $topoPathRenderer)
-    {
+    public function __construct(
+        AreasService $areasService,
+        ImageSeoService $imageSeoService,
+        TopoSvgParser $topoSvgParser,
+        TopoPathRendererService $topoPathRenderer,
+        private readonly AlternateLocaleUrlGenerator $alternateLocaleUrlGenerator,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RequestStack $requestStack,
+    ) {
         $this->areasService = $areasService;
         $this->imageSeoService = $imageSeoService;
         $this->topoSvgParser = $topoSvgParser;
@@ -38,7 +48,49 @@ class AppExtension extends AbstractExtension
             new TwigFunction('getImageAltText', [$this, 'getImageAltText']),
             new TwigFunction('isImageAccessible', [$this, 'isImageAccessible']),
             new TwigFunction('topo_paths_overlay', [$this, 'topoPathsOverlay']),
+            new TwigFunction('alternate_locale_path', [$this, 'alternateLocalePath']),
+            new TwigFunction('index_path', [$this, 'indexPath']),
+            new TwigFunction('area_path', [$this, 'areaPath']),
+            new TwigFunction('rock_path', [$this, 'rockPath']),
         ];
+    }
+
+    public function alternateLocalePath(string $targetLocale): ?string
+    {
+        return $this->alternateLocaleUrlGenerator->generateForLocale($targetLocale);
+    }
+
+    public function indexPath(): string
+    {
+        $request = $this->requestStack->getMainRequest();
+        $locale = ($request && str_starts_with($request->getPathInfo(), '/admin'))
+            ? 'de'
+            : ($request?->getLocale() ?? 'de');
+
+        return $this->urlGenerator->generate('en' === $locale ? 'index_en' : 'index');
+    }
+
+    public function areaPath(string $slug): string
+    {
+        $request = $this->requestStack->getMainRequest();
+        $locale = ($request && str_starts_with($request->getPathInfo(), '/admin'))
+            ? 'de'
+            : ($request?->getLocale() ?? 'de');
+
+        return $this->urlGenerator->generate('en' === $locale ? 'show_rocks_en' : 'show_rocks', ['slug' => $slug]);
+    }
+
+    public function rockPath(string $areaSlug, string $slug): string
+    {
+        $request = $this->requestStack->getMainRequest();
+        $locale = ($request && str_starts_with($request->getPathInfo(), '/admin'))
+            ? 'de'
+            : ($request?->getLocale() ?? 'de');
+
+        return $this->urlGenerator->generate('en' === $locale ? 'show_rock_en' : 'show_rock', [
+            'areaSlug' => $areaSlug,
+            'slug' => $slug,
+        ]);
     }
 
     public function getAreas(): array

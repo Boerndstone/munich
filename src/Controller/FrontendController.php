@@ -32,8 +32,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FrontendController extends AbstractController
 {
-    // I have to define the static routes before the dynamic routes with $slug otherwise I get a 404 for the static routes!!!
-    #[Route('/neuesteRouten', name: 'neuesteRouten')]
+    // Static routes must register before `/{slug}`; use `priority` so `/en` is not captured as an area slug.
+    #[Route('/neuesteRouten', name: 'neuesteRouten', defaults: ['_locale' => 'de'], priority: 350)]
+    #[Route('/en/latest-routes', name: 'neuesteRouten_en', defaults: ['_locale' => 'en'], priority: 350)]
     public function neuesteRouten(
         RoutesRepository $routesRepository,
     ): Response {
@@ -47,7 +48,8 @@ class FrontendController extends AbstractController
         ]);
     }
 
-    #[Route('/Database', name: 'databasequeries')]
+    #[Route('/Database', name: 'databasequeries', defaults: ['_locale' => 'de'], priority: 350)]
+    #[Route('/en/database', name: 'databasequeries_en', defaults: ['_locale' => 'en'], priority: 350)]
     public function databasequeries(
         AreaRepository $areaRepository,
         RockRepository $rockRepository,
@@ -60,18 +62,8 @@ class FrontendController extends AbstractController
         ]);
     }
 
-    #[Route(
-        path: '/',
-        name: 'index',
-        defaults: ['_locale' => 'de'],
-        requirements: ['_locale' => 'de']
-    )]
-    #[Route(
-        path: '/en',
-        name: 'index_en',
-        defaults: ['_locale' => 'en'],
-        requirements: ['_locale' => 'en']
-    )]
+    #[Route(path: '/', name: 'index', defaults: ['_locale' => 'de'], priority: 100)]
+    #[Route(path: '/en', name: 'index_en', defaults: ['_locale' => 'en'], priority: 100)]
     public function index(
         FrontendCacheService $frontendCacheService,
         Request $request,
@@ -98,7 +90,8 @@ class FrontendController extends AbstractController
         return $response;
     }
 
-    #[Route('/{slug}', name: 'show_rocks')]
+    #[Route('/{slug}', name: 'show_rocks', defaults: ['_locale' => 'de'], priority: -20)]
+    #[Route('/en/{slug}', name: 'show_rocks_en', defaults: ['_locale' => 'en'], priority: 200)]
     public function showRocksArea(
         FrontendCacheService $frontendCacheService,
         #[MapEntity(
@@ -162,18 +155,8 @@ class FrontendController extends AbstractController
 
     // #[Route('/{areaSlug}/{slug}', name: 'show_rock')]
 
-    #[Route(
-        path: '/{areaSlug}/{slug}',
-        name: 'show_rock',
-        defaults: ['_locale' => 'de'],
-        requirements: ['_locale' => 'de']
-    )]
-    #[Route(
-        path: '/en/{areaSlug}/{slug}',
-        name: 'show_rock_en',
-        defaults: ['_locale' => 'en'],
-        requirements: ['_locale' => 'en']
-    )]
+    #[Route(path: '/{areaSlug}/{slug}', name: 'show_rock', defaults: ['_locale' => 'de'], priority: 10, requirements: ['areaSlug' => '^(?!en$)[^/]++$'])]
+    #[Route(path: '/en/{areaSlug}/{slug}', name: 'show_rock_en', defaults: ['_locale' => 'en'], priority: 250)]
     public function showRock(
         RoutesRepository $routesRepository,
         RockRepository $rockRepository,

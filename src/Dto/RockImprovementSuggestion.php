@@ -23,6 +23,15 @@ class RockImprovementSuggestion
     #[Assert\Length(max: 255)]
     public ?string $firstAscent = null;
 
+    #[Assert\When(
+        expression: 'this.email != null',
+        constraints: [
+            new Assert\Email(message: 'rock_improvement.email_invalid'),
+            new Assert\Length(max: 255),
+        ],
+    )]
+    public ?string $email = null;
+
     public ?string $comment = null;
 
     /**

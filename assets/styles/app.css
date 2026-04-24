@@ -87,6 +87,18 @@
     html {
         overflow-x: clip;
     }
+
+    /* Pointer on interactive controls (native buttons default to `default` in some browsers). */
+    a[href]:not([aria-disabled="true"]),
+    summary,
+    button:not(:disabled),
+    [role="button"]:not([aria-disabled="true"]),
+    input[type="submit"]:not(:disabled),
+    input[type="button"]:not(:disabled),
+    input[type="reset"]:not(:disabled),
+    input[type="image"]:not(:disabled) {
+        @apply cursor-pointer;
+    }
 }
 
 /* Matches previous tailwind.config.js container + legacy app.css rule */

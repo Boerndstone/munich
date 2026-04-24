@@ -1,5 +1,5 @@
 {# Map opens in Shadcn Dialog (see components/map/collapse-map.html.twig). #}
 <div class="mb-3 flex items-center justify-between gap-3 py-3">
-	<h1 class="mb-0 text-2xl font-medium leading-tight text-gray-900 sm:text-3xl dark:text-gray-100" id="index-page-heading">Klettergebiete um München</h1>
+	<h1 class="mb-0 text-2xl font-medium leading-tight text-gray-900 sm:text-3xl dark:text-gray-100" id="index-page-heading">{{ 'index.page_heading'|trans }}</h1>
 	{% include 'components/map/collapse-map.html.twig' with { ariaLabel: 'index.map_open'|trans({}, 'messages') } %}
 </div>

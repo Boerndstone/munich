@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 {% form_theme contactForm 'form/tailwind_form_layout.html.twig' %}
 
-{% block title %}Impressum – Munichclimbs{% endblock %}
+{% block title %}{{ 'legal.impressum_page_title'|trans }}{% endblock %}
 
 {% block body %}
 	{{ include('components/layout/navigation.html.twig') }}
@@ -9,43 +9,14 @@
 		<div class="mx-auto my-4 w-full max-w-[1024px] px-2 sm:px-4">
 			<section>
 				<div class="mb-3 flex items-center justify-between py-3">
-					<h1 class="mb-0 text-3xl font-medium leading-tight text-gray-900 dark:text-gray-100">Impressum</h1>
+					<h1 class="mb-0 text-3xl font-medium leading-tight text-gray-900 dark:text-gray-100">{{ 'legal.impressum_h1'|trans }}</h1>
 				</div>
 			</section>
 			<section class="max-w-3xl space-y-4 text-sm leading-relaxed text-gray-800 dark:text-gray-200">
-				<p>
-					<span class="font-semibold text-gray-900 dark:text-gray-100">Copyright:</span><br>
-					© 2013 munichclimbs.com<br>
-					Alle Rechte vorbehalten.
-				</p>
-				<p>Inhaltlich verantwortlich gemäß § 6 MDStV:</p>
-				<p>
-					Bernd Ullmann<br>
-					Petra-Kelly-Str. 29<br>
-					80797 München<br>
-					<a href="mailto:admin@munichclimbs.de" class="text-sky-700 underline-offset-2 hover:underline dark:text-sky-400">admin@munichclimbs.de</a>
-				</p>
-				<p>
-					Konzeption und Design:<br>
-					Bernd Ullmann
-				</p>
-				<p>
-					Technische Umsetzung:<br>
-					Bernd Ullmann | <a href="https://www.berndullmann.de" class="text-sky-700 underline-offset-2 hover:underline dark:text-sky-400" rel="noopener noreferrer">www.berndullmann.de</a>
-				</p>
+				{% include app.locale == 'en' ? 'frontend/impressum_content.en.html.twig' : 'frontend/impressum_content.de.html.twig' %}
 				<hr class="my-8 border-0 border-t border-gray-200 dark:border-gray-700"/>
-				<h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">WICHTIGE HINWEISE:</h2>
-				<p class="text-gray-700 dark:text-gray-300">
-					Klettern ist eine Risikosportart, Fehler beim Ausüben der Sportart können mit schweren Verletzungen oder sogar tödlich enden.
-					<br>
-					Die Informationen auf www.munichclimbs.de sind nach bestem Wissen recherchiert. Trotzdem können Fehler und Ungenauigkeiten NICHT vollständig ausgeschlossen werden.
-					<br>
-					Alle Angaben erfolgen ohne Gewähr. Eine Haftung für Schäden, die sich aus der Verwendung der veröffentlichten Inhalte ergeben, ist ausgeschlossen.<br>
-					Die Website www.munichclimbs.de ist ein freiwilliges NICHT-kommerzielles Informationsangebot über die Klettergebiete rund um München.
-				</p>
-				<hr class="my-8 border-0 border-t border-gray-200 dark:border-gray-700"/>
-				<h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Kontakt</h2>
-				<p class="mb-4 text-sm text-gray-600 dark:text-gray-400">Du hast Fragen, Anregungen, Ergänzungen? Bitte schreib uns!</p>
+				<h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ 'legal.contact_h2'|trans }}</h2>
+				<p class="mb-4 text-sm text-gray-600 dark:text-gray-400">{{ 'legal.contact_intro'|trans }}</p>
 
 				{% for message in app.flashes('success') %}
 					<div class="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-100" role="alert">
@@ -61,7 +32,7 @@
 				{{ form_start(contactForm, { attr: { novalidate: 'novalidate', 'data-turbo': 'false', class: 'max-w-2xl space-y-1' } }) }}
 					{{ form_widget(contactForm) }}
 					<button type="submit" class="mb-8 mt-2 inline-flex items-center justify-center rounded-md border border-emerald-700 bg-emerald-600 px-4 py-2.5 text-sm font-medium shadow-sm transition-colors hover:bg-emerald-700 focus-visible:outline focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:border-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-500 dark:focus-visible:ring-offset-gray-900">
-						Nachricht senden!
+						{{ 'legal.contact_submit'|trans }}
 					</button>
 				{{ form_end(contactForm) }}
 			</section>

@@ -11,16 +11,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PhotoUploadController extends AbstractController
 {
-    #[Route('/upload-photo', name: 'upload_photo', methods: ['GET', 'POST'])]
-    #[Route('/Foto-hochladen', name: 'upload_photo_de', methods: ['GET', 'POST'])]
+    #[Route('/upload-photo', name: 'upload_photo', methods: ['GET', 'POST'], defaults: ['_locale' => 'de'], priority: 350)]
+    #[Route('/Foto-hochladen', name: 'upload_photo_de', methods: ['GET', 'POST'], defaults: ['_locale' => 'de'], priority: 350)]
+    #[Route('/en/upload-photo', name: 'upload_photo_en', methods: ['GET', 'POST'], defaults: ['_locale' => 'en'], priority: 350)]
     public function upload(
         Request $request,
         EntityManagerInterface $entityManager,
         SluggerInterface $slugger,
-        ImageProcessingService $imageProcessingService
+        ImageProcessingService $imageProcessingService,
+        TranslatorInterface $translator,
     ): Response {
         $photo = new Photos();
         $photo->setStatus('pending');
@@ -68,7 +71,9 @@ class PhotoUploadController extends AbstractController
                         unlink($tempPath);
                     }
                     
-                    $this->addFlash('error', 'Fehler beim Verarbeiten des Bildes: ' . $e->getMessage());
+                    $this->addFlash('error', $translator->trans('upload_photo.flash.process_error', [
+                        '%error%' => $e->getMessage(),
+                    ]));
                     return $this->render('frontend/upload_photo.html.twig', [
                         'form' => $form,
                     ]);
@@ -83,9 +88,11 @@ class PhotoUploadController extends AbstractController
             $entityManager->persist($photo);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Vielen Dank! Ihr Bild wurde erfolgreich hochgeladen und wartet auf Freigabe durch einen Administrator.');
+            $this->addFlash('success', $translator->trans('upload_photo.flash.success'));
 
-            return $this->redirectToRoute('upload_photo');
+            $uploadRoute = $request->getLocale() === 'en' ? 'upload_photo_en' : 'upload_photo';
+
+            return $this->redirectToRoute($uploadRoute);
         }
 
         return $this->render('frontend/upload_photo.html.twig', [

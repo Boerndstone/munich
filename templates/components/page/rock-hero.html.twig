@@ -27,14 +27,14 @@
 					<twig:Breadcrumb class="mt-1">
 						<twig:Breadcrumb:List>
 							<twig:Breadcrumb:Item>
-								<twig:Breadcrumb:Link class="inline-flex shrink-0 items-center text-black hover:underline" href="{{ path('index') }}">
+								<twig:Breadcrumb:Link class="inline-flex shrink-0 items-center text-black hover:underline" href="{{ index_path() }}">
 									<twig:ux:icon name="lucide:house" class="size-4 shrink-0" aria-hidden="true" />
-									<span class="sr-only">Start</span>
+									<span class="sr-only">{{ 'nav.breadcrumb_home'|trans }}</span>
 								</twig:Breadcrumb:Link>
 							</twig:Breadcrumb:Item>
 							<twig:Breadcrumb:Separator />
 							<twig:Breadcrumb:Item>
-								<twig:Breadcrumb:Link class="stay-black text-black hover:underline" href="{{ path('show_rocks', { slug: rock.areaSlug }) }}">{{ rock.areaName }}</twig:Breadcrumb:Link>
+								<twig:Breadcrumb:Link class="stay-black text-black hover:underline" href="{{ area_path(rock.areaSlug) }}">{{ rock.areaName }}</twig:Breadcrumb:Link>
 							</twig:Breadcrumb:Item>
 							<twig:Breadcrumb:Separator />
 							<twig:Breadcrumb:Item>

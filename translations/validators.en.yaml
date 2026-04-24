@@ -1,2 +1,9 @@
 rock_improvement.validation_error: "Please try again."
 rock_improvement.email_invalid: "Please enter a valid email address."
+
+upload_photo.validation.rock_required: "Please select a crag."
+upload_photo.validation.image_required: "Please choose an image."
+upload_photo.validation.mime_types: "Please upload only images (JPEG, PNG, WebP or GIF)."
+upload_photo.validation.name_required: "Please enter your name."
+upload_photo.validation.email_required: "Please enter your email."
+upload_photo.validation.email_invalid: "Please enter a valid email address."

@@ -1828,7 +1828,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         name?: mixed,
  *         allow_create?: mixed,
  *         item_uri_template?: mixed,
- *         ...<string, mixed>
+ *         ...<mixed>
  *     },
  * }
  * @psalm-type TwigComponentConfig = array{

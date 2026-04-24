@@ -34,7 +34,7 @@
 		{% block leaflet %}{% endblock %}
 	</head>
 	{# pt-[50px]: reserve space for fixed navigation (50px); nav stays position:fixed above this region #}
-	<body id="body" {% block body_attributes %} {% endblock %} class="{% block bodyclass %}{% endblock %} pt-[50px]" data-controller="search-modal" data-search-modal-search-url-value="{{ path('search_autocomplete') }}">
+	<body id="body" {% block body_attributes %} {% endblock %} class="{% block bodyclass %}{% endblock %} pt-[50px]" data-controller="search-modal" data-search-modal-search-url-value="{{ path('search_autocomplete') }}" data-search-modal-locale-value="{{ app.locale }}" data-search-modal-empty-text-value="{{ 'search_modal.no_results'|trans|e('html_attr') }}" data-search-modal-loading-text-value="{{ 'search_modal.loading'|trans|e('html_attr') }}" data-search-modal-page-info-template-value="{{ 'search_modal.page_info'|trans|e('html_attr') }}" data-search-modal-request-failed-template-value="{{ 'search_modal.request_failed'|trans|e('html_attr') }}" data-search-modal-unexpected-response-value="{{ 'search_modal.unexpected_response'|trans|e('html_attr') }}" data-search-modal-error-prefix-value="{{ 'search_modal.error_prefix'|trans|e('html_attr') }}">
 		<div data-controller="scroll-progress" class="bg-theme fixed start-0 end-0 top-0" style="height: 3px; z-index: 10000;"></div>
 
 		<a href="#main-content" class="sr-only start-4 top-4 z-[1060] rounded-md bg-sky-700 px-3 py-2 text-sm font-medium text-white shadow focus:fixed focus:not-sr-only focus:outline-hidden focus-visible:ring-2 focus-visible:ring-sky-300">{{ 'skip_to_content'|trans({}, 'messages') }}</a>

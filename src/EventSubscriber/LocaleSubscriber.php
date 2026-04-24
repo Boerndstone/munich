@@ -16,16 +16,32 @@ class LocaleSubscriber implements EventSubscriberInterface
         $this->defaultLocale = $defaultLocale;
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
+
+        // EasyAdmin / backoffice: always German (public site handles DE/EN separately).
+        if (str_starts_with($request->getPathInfo(), '/admin')) {
+            $request->setLocale('de');
+
+            return;
+        }
+
+        // Prefer locale from the matched route (works without a session, e.g. first visit to /en/...).
+        if ($request->attributes->has('_locale')) {
+            $request->setLocale((string) $request->attributes->get('_locale'));
+
+            return;
+        }
+
         if (!$request->hasPreviousSession()) {
             return;
         }
 
-        // Try to set the locale from the URL
-        $locale = $request->attributes->get('_locale', $this->defaultLocale);
-        $request->setLocale($locale);
+        $sessionLocale = $request->getSession()->get('_locale');
+        if (\is_string($sessionLocale) && '' !== $sessionLocale) {
+            $request->setLocale($sessionLocale);
+        }
     }
 
     public static function getSubscribedEvents(): array

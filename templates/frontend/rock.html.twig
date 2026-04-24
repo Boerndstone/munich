@@ -24,15 +24,18 @@
 		{% set image_alt = getImageAltText(slug|custom_replace, areaName, 'rock') %}
 	{% endif %}
 	{% include 'components/seo/meta-tags.html.twig' with {
-		'title': setTitle,
-		'description': description,
-		'url': 'https://munichclimbs.de/Kletterfels/' ~ slug,
-		'keywords': keywords,
-		'image': image,
-		'image_alt': image_alt,
-		'latitude': rockLat,
-		'longitude': rockLng,
-		'area_name': areaName
+		title: setTitle,
+		description: description,
+		url: app.request.locale == 'en'
+			? 'https://munichclimbs.de/en/' ~ areaSlug ~ '/' ~ slug
+			: 'https://munichclimbs.de/' ~ areaSlug ~ '/' ~ slug,
+		keywords: keywords,
+		image: image,
+		image_alt: image_alt,
+		latitude: rockLat,
+		longitude: rockLng,
+		area_name: areaName,
+		og_locale_alternate: app.request.locale == 'en' ? 'de_DE' : 'en_US',
 	} %}
 {% endblock %}
 

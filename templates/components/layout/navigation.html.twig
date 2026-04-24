@@ -1,11 +1,11 @@
 <header class="fixed top-0 z-[1045] h-[50px] w-full border-b border-[var(--theme-border)] bg-[var(--theme-bg)] text-[var(--theme-text)] transition-colors">
-	<nav class="mx-auto flex h-full max-w-[1024px] items-stretch px-2" aria-label="Hauptnavigation">
+	<nav class="mx-auto flex h-full max-w-[1024px] items-stretch px-2" aria-label="{{ 'nav.main_aria'|trans }}">
 		<twig:Sheet class="contents">
 		<twig:Sheet:Content id="navOffcanvas" side="left" aria-labelledby="navOffcanvasTitle">
 			<div class="flex h-full min-h-0 w-full">
 				<div class="flex h-full min-h-0 w-[min(100vw,20rem)] max-w-full flex-col overflow-y-auto bg-[var(--theme-bg)] shadow-xl" onclick="event.stopPropagation()">
 					<div class="flex shrink-0 items-center justify-between border-b border-[var(--theme-border)] px-3 py-2">
-						<a class="chelsea-market-regular text-lg text-[var(--theme-text)] no-underline" id="navOffcanvasTitle" href="{{ path('index') }}">munichclimbs</a>
+						<a class="chelsea-market-regular text-lg text-[var(--theme-text)] no-underline" id="navOffcanvasTitle" href="{{ index_path() }}">munichclimbs</a>
 						<button type="button" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--theme-text)] opacity-70 hover:bg-[var(--theme-bg-lighter)] hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" data-action="click->sheet#close" aria-label="{{ 'close_navigation'|trans({}, 'messages') }}">
 							<span class="sr-only">{{ 'close_navigation'|trans({}, 'messages') }}</span>
 							<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -15,8 +15,8 @@
 					</div>
 					<div class="min-h-0 flex-1 overflow-y-auto pe-2 ps-1 mt-2">
 						{% set _route = app.request.attributes.get('_route') %}
-						{% set currentAreaSlug = _route == 'show_rock' or _route == 'show_rock_en' ? app.request.attributes.get('areaSlug') : (_route == 'show_rocks' ? app.request.attributes.get('slug') : null) %}
-						{% set currentRockSlug = (_route == 'show_rock' or _route == 'show_rock_en') ? app.request.attributes.get('slug') : null %}
+						{% set currentAreaSlug = _route in ['show_rock', 'show_rock_en'] ? app.request.attributes.get('areaSlug') : (_route in ['show_rocks', 'show_rocks_en'] ? app.request.attributes.get('slug') : null) %}
+						{% set currentRockSlug = _route in ['show_rock', 'show_rock_en'] ? app.request.attributes.get('slug') : null %}
 						<ul class="m-0 list-none p-0">
 							{% for area in getSidebarAreas() %}
 								{% set isCurrentArea = currentAreaSlug and area.slug == currentAreaSlug %}
@@ -32,7 +32,7 @@
 												{% for rock in area.rocks %}
 													{% set isCurrentRock = isCurrentArea and currentRockSlug and rock.slug == currentRockSlug %}
 													<li class="rounded px-1 py-0.5 {{ isCurrentRock ? 'bg-black text-white' : '' }}">
-														<a href="{{ path('show_rock', { 'areaSlug': area.slug, slug: rock.slug }) }}" title="Link zum Klettergebiet: {{ rock.name }}" class="block w-full truncate py-1 ps-2 text-sm no-underline {{ isCurrentRock ? 'text-white' : 'text-gray-800 dark:text-gray-200' }}" data-area="{{ area.name }}" data-rocks-information="{{ rock.name }}" data-banned="0">{{ rock.name }}</a>
+														<a href="{{ rock_path(area.slug, rock.slug) }}" title="{{ 'nav.rock_link_title'|trans({ '%rock%': rock.name }) }}" class="block w-full truncate py-1 ps-2 text-sm no-underline {{ isCurrentRock ? 'text-white' : 'text-gray-800 dark:text-gray-200' }}" data-area="{{ area.name }}" data-rocks-information="{{ rock.name }}" data-banned="0">{{ rock.name }}</a>
 													</li>
 												{% endfor %}
 											</ul>
@@ -44,24 +44,24 @@
 						<hr class="my-2 border-gray-200 dark:border-gray-700" />
 						<ul class="m-0 list-none p-0 pb-4">
 							<li>
-								<a class="flex items-center gap-2 px-2 py-2 text-sm text-gray-900 no-underline hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800" href="{{ path('app_login') }}" title="Login">
+								<a class="flex items-center gap-2 px-2 py-2 text-sm text-gray-900 no-underline hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800" href="{{ path(app.request.locale == 'en' ? 'app_login_en' : 'app_login') }}" title="{{ 'nav.login'|trans }}">
 									<span class="user inline-block shrink-0" aria-hidden="true"></span>
-									<span class="truncate">Login</span>
+									<span class="truncate">{{ 'nav.login'|trans }}</span>
 								</a>
 							</li>
 							<li>
-								<div class="truncate px-2 py-2 text-sm text-gray-600 dark:text-gray-400">Kontakt</div>
+								<div class="truncate px-2 py-2 text-sm text-gray-600 dark:text-gray-400">{{ 'nav.contact_section'|trans }}</div>
 							</li>
 							<li>
-								<a class="flex items-center gap-2 px-2 py-2 text-sm text-gray-900 no-underline hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800" href="{{ path('datenschutz') }}">
+								<a class="flex items-center gap-2 px-2 py-2 text-sm text-gray-900 no-underline hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800" href="{{ path(app.request.locale == 'en' ? 'datenschutz_en' : 'datenschutz') }}">
 									<span class="chart inline-block shrink-0" aria-hidden="true"></span>
-									<span class="truncate">Datenschutz</span>
+									<span class="truncate">{{ 'nav.datenschutz'|trans }}</span>
 								</a>
 							</li>
 							<li>
-								<a class="flex items-center gap-2 px-2 py-2 text-sm text-gray-900 no-underline hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800" href="{{ path('impressum') }}">
+								<a class="flex items-center gap-2 px-2 py-2 text-sm text-gray-900 no-underline hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800" href="{{ path(app.request.locale == 'en' ? 'impressum_en' : 'impressum') }}">
 									<span class="chart inline-block shrink-0" aria-hidden="true"></span>
-									<span class="truncate">Impressum</span>
+									<span class="truncate">{{ 'nav.impressum'|trans }}</span>
 								</a>
 							</li>
 							<li>
@@ -79,29 +79,22 @@
 		<div class="flex w-full max-w-[1024px] flex-1 items-center gap-2 px-0">
 			<div class="flex shrink-0 items-center gap-1 ps-0 md:w-1/4 md:gap-2 md:ps-1">
 				<twig:Sheet:Trigger>
-				<button class="inline-flex shrink-0 cursor-pointer border-0 bg-transparent p-0 shadow-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" type="button" aria-controls="navOffcanvas" aria-label="Toggle navigation">
+				<button class="inline-flex shrink-0 cursor-pointer border-0 bg-transparent p-0 shadow-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" type="button" aria-controls="navOffcanvas" aria-label="{{ 'nav.toggle'|trans }}">
 					<div class="menu" aria-hidden="true"></div>
 				</button>
 				</twig:Sheet:Trigger>
-				<a href="{{ path('index') }}" aria-label="Startseite munichclimbs" class="munich chelsea-market-regular ms-2 pb-1 text-xl leading-tight no-underline">
+				<a href="{{ index_path() }}" aria-label="{{ 'nav.home_aria'|trans }}" class="munich chelsea-market-regular ms-2 pb-1 text-xl leading-tight no-underline">
 					<span class="max-md:hidden md:inline-block">munichclimbs</span>
 				</a>
 			</div>
-			<div class="min-w-0 flex-1 {% if app.request.attributes.get('_route') == 'show_rock' and hasTranslationDescription is defined and hasTranslationDescription or app.request.attributes.get('_route') == 'show_rock_en' and hasTranslationDescription is defined and hasTranslationDescription %}md:w-7/12{% else %}md:w-2/3{% endif %}">
-				<div class="flex cursor-pointer items-center rounded-md border border-[var(--theme-border)] bg-[var(--theme-bg-lighter)] px-2 py-1.5 text-sm text-[var(--theme-text)] shadow-sm focus-within:ring-2 focus-within:ring-[var(--theme-border)]" data-action="click->search-modal#open keydown.enter->search-modal#open" role="button" tabindex="0" aria-label="Suche öffnen">
+			<div class="min-w-0 flex-1 md:w-2/3">
+				<div class="flex cursor-pointer items-center rounded-md border border-[var(--theme-border)] bg-[var(--theme-bg-lighter)] px-2 py-1.5 text-sm text-[var(--theme-text)] shadow-sm focus-within:ring-2 focus-within:ring-[var(--theme-border)]" data-action="click->search-modal#open keydown.enter->search-modal#open" role="button" tabindex="0" aria-label="{{ 'nav.search_open_aria'|trans }}">
 					<i class="fas fa-search magnifier me-2 shrink-0 opacity-60" aria-hidden="true"></i>
-					<span class="truncate opacity-80">Suche</span>
+					<span class="truncate opacity-80">{{ 'search'|trans }}</span>
 				</div>
 			</div>
-			{% set _showLang = (app.request.attributes.get('_route') == 'show_rock' and hasTranslationDescription is defined and hasTranslationDescription) or (app.request.attributes.get('_route') == 'show_rock_en' and hasTranslationDescription is defined and hasTranslationDescription) %}
-			<div class="{{ _showLang ? 'flex w-10 shrink-0 items-center justify-end sm:w-12' : 'hidden' }}">
-				{% if _showLang %}
-					{{ include('components/layout/language-switch.html.twig', {
-						hasTranslationDescription: hasTranslationDescription,
-						areaSlug: app.request.attributes.get('areaSlug'),
-						rockSlug: app.request.attributes.get('slug')
-					}) }}
-				{% endif %}
+			<div class="flex w-10 shrink-0 items-center justify-end sm:w-12">
+				{{ include('components/layout/language-switch.html.twig') }}
 			</div>
 			{{ include('components/layout/theme-switcher.html.twig') }}
 		</div>

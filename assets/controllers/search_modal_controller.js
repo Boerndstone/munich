@@ -2,7 +2,16 @@ import { Controller } from "stimulus";
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
-  static values = { searchUrl: { type: String, default: '/search' } };
+  static values = {
+    searchUrl: { type: String, default: '/search' },
+    locale: { type: String, default: 'de' },
+    emptyText: { type: String, default: '' },
+    loadingText: { type: String, default: 'Loading…' },
+    pageInfoTemplate: { type: String, default: 'Page {page} of {total}' },
+    requestFailedTemplate: { type: String, default: 'Request failed ({status})' },
+    unexpectedResponse: { type: String, default: 'Unexpected response from the server.' },
+    errorPrefix: { type: String, default: 'Error: ' },
+  };
   static targets = [
     "modal", "nameInput", "firstAscentInput", "areaSelect",
     "areaSelectAttributes", "gradeCheck", "attrChildFriendly", "attrSunny", "attrRainProtected", "attrTrain", "attrBike",
@@ -134,7 +143,7 @@ export default class extends Controller {
     if (this.hasPagerContainerTarget) this.pagerContainerTarget.classList.add("hidden");
     if (this.hasEmptyStateTarget) {
       this.emptyStateTarget.classList.add("hidden");
-      this.emptyStateTarget.textContent = "Keine Ergebnisse gefunden.";
+      this.emptyStateTarget.textContent = this.emptyTextValue;
     }
   }
 
@@ -180,6 +189,7 @@ export default class extends Controller {
     const baseUrl = this.hasSearchUrlValue ? this.searchUrlValue : '/search';
     const url = new URL(baseUrl, window.location.origin);
     url.searchParams.set('mode', mode);
+    if (this.localeValue) url.searchParams.set('_locale', this.localeValue);
     if (params.query) url.searchParams.set('query', params.query);
     if (params.area) url.searchParams.set('area', params.area);
     if (params.grades?.length) {
@@ -199,11 +209,11 @@ export default class extends Controller {
       const contentType = res.headers.get('Content-Type') || '';
       const data = contentType.includes('application/json') ? await res.json() : null;
       if (!res.ok) {
-        const msg = data?._error || `Anfrage fehlgeschlagen (${res.status})`;
+        const msg = data?._error || this.requestFailedTemplateValue.replace("{status}", String(res.status));
         throw new Error(msg);
       }
       if (!data) {
-        throw new Error('Unerwartete Antwort vom Server.');
+        throw new Error(this.unexpectedResponseValue);
       }
       this.renderResults(data);
     } catch (err) {
@@ -218,7 +228,7 @@ export default class extends Controller {
     if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add("hidden");
     if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add("hidden");
     if (this.hasRoutesTableTarget) {
-      this.routesTableTarget.innerHTML = '<div class="py-3 text-center text-sm text-[var(--theme-text)]">Lade…</div>';
+      this.routesTableTarget.innerHTML = `<div class="py-3 text-center text-sm text-[var(--theme-text)]">${this.escapeHtml(this.loadingTextValue)}</div>`;
     }
   }
 
@@ -237,7 +247,11 @@ export default class extends Controller {
       const totalPages = Math.ceil(totalCount / perPage);
       if (this.hasPagerContainerTarget) {
         this.pagerContainerTarget.classList.remove("hidden");
-        if (this.hasPagerInfoTarget) this.pagerInfoTarget.textContent = `Seite ${page} von ${totalPages}`;
+        if (this.hasPagerInfoTarget) {
+          this.pagerInfoTarget.textContent = this.pageInfoTemplateValue
+            .replace("{page}", String(page))
+            .replace("{total}", String(totalPages));
+        }
         if (this.hasPagerPrevTarget) this.pagerPrevTarget.disabled = page <= 1;
         if (this.hasPagerNextTarget) this.pagerNextTarget.disabled = page >= totalPages;
       }
@@ -247,7 +261,10 @@ export default class extends Controller {
     }
 
     if (total === 0) {
-      if (this.hasEmptyStateTarget) this.emptyStateTarget.classList.remove("hidden");
+      if (this.hasEmptyStateTarget) {
+        this.emptyStateTarget.classList.remove("hidden");
+        this.emptyStateTarget.textContent = this.emptyTextValue;
+      }
       if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add("hidden");
       if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add("hidden");
       return;
@@ -280,7 +297,7 @@ export default class extends Controller {
     if (this.hasResultsCountTarget) this.resultsCountTarget.textContent = "0";
     if (this.hasEmptyStateTarget) {
       this.emptyStateTarget.classList.remove("hidden");
-      this.emptyStateTarget.textContent = `Fehler: ${msg}`;
+      this.emptyStateTarget.textContent = `${this.errorPrefixValue}${msg}`;
     }
     if (this.hasRocksSectionTarget) this.rocksSectionTarget.classList.add("hidden");
     if (this.hasRoutesSectionTarget) this.routesSectionTarget.classList.add("hidden");

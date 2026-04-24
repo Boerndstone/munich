@@ -1,0 +1,8 @@
+{# @block content Supporting text (and links if needed) #}
+<div
+	data-slot="alert-description"
+	class="{{ ('text-sm leading-snug text-balance [&_p]:leading-relaxed sm:text-base ' ~ attributes.render('class'))|tailwind_merge }}"
+	{{ attributes.without('class') }}
+>
+	{%- block content %}{% endblock -%}
+</div>

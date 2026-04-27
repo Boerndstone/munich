@@ -1,5 +1,7 @@
 {# Same pill pattern as language-switch: peer checkbox + sliding knob; shows opposite scale (FR / UIAA). #}
+{# @prop grade_display_heading_id string|null Optional id of visible heading for aria-labelledby (e.g. settings menu). #}
 {% set _grade_switch_id = grade_switch_id|default('gradeDisplaySwitch') %}
+{% set _heading_id = grade_display_heading_id|default(null) %}
 <div
 	class="inline-flex shrink-0 px-1"
 	data-controller="grade-preference"
@@ -14,7 +16,11 @@
 			data-grade-preference-target="toggle"
 			data-action="change->grade-preference#toggleChanged"
 			role="switch"
-			aria-label="{{ 'nav.grade_display_switch_aria'|trans }}"
+			{% if _heading_id %}
+				aria-labelledby="{{ _heading_id }}"
+			{% else %}
+				aria-label="{{ 'nav.grade_display_switch_aria'|trans }}"
+			{% endif %}
 		>
 		<div class="pointer-events-none relative h-6 w-14 shrink-0 rounded-full bg-input peer-checked:bg-primary peer-disabled:cursor-not-allowed peer-disabled:opacity-50 after:absolute after:start-[2px] after:top-[2px] after:z-[2] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-8 peer-checked:after:border-white rtl:peer-checked:after:-translate-x-8 dark:after:border-gray-600">
 			<span

@@ -11,7 +11,7 @@ function routeTooltipTextFromRow(tr) {
   const fixed = tr.getAttribute("data-route-grade-fixed") === "1";
   const grade = fixed ? stored : labelForPreference(stored, getGradeDisplayMode());
   const g = grade || stored;
-  return `${name} (${g})`.trim();
+  return g ? `${name} (${g})`.trim() : name.trim();
 }
 
 export default class extends Controller {

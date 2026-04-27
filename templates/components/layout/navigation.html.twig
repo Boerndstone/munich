@@ -107,10 +107,10 @@
 					</div>
 					{% if nav_settings_is_rock_page %}
 						<hr class="mx-0 border-0 border-t border-[var(--theme-border)]" />
-						<div class="px-2 pb-2 pt-2">
-							<p class="mb-2 text-[10px] font-semibold uppercase leading-tight tracking-wide text-[var(--theme-text)]/75">{{ 'nav.settings_grade_switch_headline'|trans }}</p>
+						<div class="px-2 pb-2 pt-2" role="group" aria-label="{{ 'nav.grade_display_group_aria'|trans|e('html_attr') }}">
+							<p id="gradeDisplaySwitchNavMenu-heading" class="mb-2 text-[10px] font-semibold uppercase leading-tight tracking-wide text-[var(--theme-text)]/75">{{ 'nav.settings_grade_switch_headline'|trans }}</p>
 							<div class="flex items-center justify-start">
-								{{ include('components/layout/grade-display-switch.html.twig', { grade_switch_id: 'gradeDisplaySwitchNavMenu' }) }}
+								{{ include('components/layout/grade-display-switch.html.twig', { grade_switch_id: 'gradeDisplaySwitchNavMenu', grade_display_heading_id: 'gradeDisplaySwitchNavMenu-heading' }) }}
 							</div>
 						</div>
 					{% endif %}

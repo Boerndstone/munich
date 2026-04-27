@@ -11,11 +11,13 @@ import AutoDismissAlertController from "./controllers/auto_dismiss_alert_control
 import FlashDismissController from "./controllers/flash_dismiss_controller";
 import AccordionController from "./controllers/accordion_controller";
 import RockMapController from "./controllers/rock_map_controller";
+import GradeLabelsController from "./controllers/grade_labels_controller";
 
 // Get or create the Stimulus application
 const application = window.Stimulus || (window.Stimulus = Application.start());
 
 // Register rock page controllers
+application.register("grade-labels", GradeLabelsController);
 application.register("route-information-tooltip", RouteInformationTooltipController);
 application.register("routeparams", RouteparamsController);
 application.register("modal-route-information", ModalRouteInformationController);

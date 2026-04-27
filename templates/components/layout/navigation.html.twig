@@ -93,16 +93,27 @@
 					<span class="truncate opacity-80">{{ 'search'|trans }}</span>
 				</div>
 			</div>
+			{% set nav_settings_route = app.request.attributes.get('_route') %}
+			{% set nav_settings_is_rock_page = nav_settings_route in ['show_rock', 'show_rock_en'] %}
 			<details class="relative shrink-0 ps-1">
 				<summary class="inline-flex h-9 w-9 list-none cursor-pointer items-center justify-center rounded-md text-[var(--theme-text)] outline-none hover:bg-[var(--theme-bg-lighter)] focus-visible:ring-2 focus-visible:ring-[var(--theme-border)] [&::-webkit-details-marker]:hidden" aria-label="{{ 'nav.settings_toggle_aria'|trans }}" title="{{ 'nav.settings_toggle_aria'|trans }}">
 					<twig:ux:icon name="lucide:settings" class="size-[18px] shrink-0" aria-hidden="true" />
 				</summary>
-				<div class="absolute end-0 top-[calc(100%+6px)] z-[1070] rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] py-1 text-[var(--theme-text)] shadow-lg ring-1 ring-black/5 dark:ring-white/10" role="menu" aria-orientation="vertical" onclick="event.stopPropagation()">
-					<div class="flex items-center justify-between p-1">
-							{{ include('components/layout/language-switch.html.twig', { switch_id: 'languageSwitchNavMenu' }) }}
-							<span class="mx-2 inline-block h-5 w-px bg-[var(--theme-border)]" aria-hidden="true"></span>
-							{{ include('components/layout/theme-switcher.html.twig', { variant: 'menu_row' }) }}
+				<div class="absolute end-0 top-[calc(100%+6px)] z-[1070] w-max min-w-0 rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] py-1 text-[var(--theme-text)] shadow-lg ring-1 ring-black/5 dark:ring-white/10" role="menu" aria-orientation="vertical" onclick="event.stopPropagation()">
+					<div class="flex flex-wrap items-center gap-3 px-2 py-2">
+						{{ include('components/layout/language-switch.html.twig', { switch_id: 'languageSwitchNavMenu' }) }}
+						<span class="inline-block h-5 w-px shrink-0 self-center bg-[var(--theme-border)]" aria-hidden="true"></span>
+						{{ include('components/layout/theme-switcher.html.twig', { variant: 'menu_row' }) }}
 					</div>
+					{% if nav_settings_is_rock_page %}
+						<hr class="mx-0 border-0 border-t border-[var(--theme-border)]" />
+						<div class="px-2 pb-2 pt-2">
+							<p class="mb-2 text-[10px] font-semibold uppercase leading-tight tracking-wide text-[var(--theme-text)]/75">{{ 'nav.settings_grade_switch_headline'|trans }}</p>
+							<div class="flex items-center justify-start">
+								{{ include('components/layout/grade-display-switch.html.twig', { grade_switch_id: 'gradeDisplaySwitchNavMenu' }) }}
+							</div>
+						</div>
+					{% endif %}
 				</div>
 			</details>
 		</div>

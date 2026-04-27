@@ -1,0 +1,27 @@
+{# Same pill pattern as language-switch: peer checkbox + sliding knob; shows opposite scale (FR / UIAA). #}
+{% set _grade_switch_id = grade_switch_id|default('gradeDisplaySwitch') %}
+<div
+	class="inline-flex shrink-0 px-1"
+	data-controller="grade-preference"
+	data-grade-preference-uiaa-peer-value="{{ 'nav.grade_display_uiaa'|trans|e('html_attr') }}"
+	data-grade-preference-french-peer-value="{{ 'nav.grade_display_french_abbr'|trans|e('html_attr') }}"
+>
+	<label class="relative inline-flex cursor-pointer items-center">
+		<input
+			type="checkbox"
+			id="{{ _grade_switch_id }}"
+			class="peer sr-only absolute inset-0 z-[3] h-full w-full cursor-pointer"
+			data-grade-preference-target="toggle"
+			data-action="change->grade-preference#toggleChanged"
+			role="switch"
+			aria-label="{{ 'nav.grade_display_switch_aria'|trans }}"
+		>
+		<div class="pointer-events-none relative h-6 w-14 shrink-0 rounded-full bg-input peer-checked:bg-primary peer-disabled:cursor-not-allowed peer-disabled:opacity-50 after:absolute after:start-[2px] after:top-[2px] after:z-[2] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-8 peer-checked:after:border-white rtl:peer-checked:after:-translate-x-8 dark:after:border-gray-600">
+			<span
+				class="absolute inset-0 z-[1] flex items-center text-[0.5rem] font-bold uppercase leading-none tracking-wide text-muted-foreground justify-end pe-1.5"
+				data-grade-preference-target="peerLabel"
+				aria-hidden="true"
+			></span>
+		</div>
+	</label>
+</div>

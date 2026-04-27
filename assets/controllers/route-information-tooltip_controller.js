@@ -1,4 +1,18 @@
 import { Controller } from "@hotwired/stimulus";
+import {
+  getGradeDisplayMode,
+  labelForPreference,
+} from "../js/climbing_grade_display";
+
+function routeTooltipTextFromRow(tr) {
+  if (!tr) return "";
+  const name = tr.getAttribute("data-route-name") || "";
+  const stored = tr.getAttribute("data-route-grade-stored") || "";
+  const fixed = tr.getAttribute("data-route-grade-fixed") === "1";
+  const grade = fixed ? stored : labelForPreference(stored, getGradeDisplayMode());
+  const g = grade || stored;
+  return `${name} (${g})`.trim();
+}
 
 export default class extends Controller {
   connect() {
@@ -48,10 +62,10 @@ export default class extends Controller {
       element,
     }));
 
-    const tableElements = this.element.querySelectorAll("[data-route-id]");
-    const routeInfo = Array.from(tableElements).map((element) => ({
-      routeId: element.getAttribute("data-route-id"),
-      info: element.getAttribute("data-route-information"),
+    const tableElements = this.element.querySelectorAll("tr[data-route-id]");
+    const routeRows = Array.from(tableElements).map((rowElement) => ({
+      routeId: rowElement.getAttribute("data-route-id"),
+      rowElement,
     }));
 
     this._tooltipEl = null;
@@ -86,21 +100,32 @@ export default class extends Controller {
       this._tooltipEl = tip;
     };
 
+    const refreshPathDataInfo = () => {
+      pathIds.forEach((path) => {
+        const route = routeRows.find((r) => r.routeId === path.pathId);
+        const text = route ? routeTooltipTextFromRow(route.rowElement) : "";
+        path.element.setAttribute("data-info", text);
+      });
+    };
+    refreshPathDataInfo();
+    this._onGradeDisplay = () => refreshPathDataInfo();
+    document.addEventListener("munich:grade-display", this._onGradeDisplay);
+
     pathIds.forEach((path) => {
-      const route = routeInfo.find((r) => r.routeId === path.pathId);
+      const route = routeRows.find((r) => r.routeId === path.pathId);
       if (!route) {
         return;
       }
-      path.element.setAttribute("data-info", route.info);
 
       path.element.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
         const isOpen = this._tooltipEl && this._tooltipEl.isConnected;
+        const tipText = routeTooltipTextFromRow(route.rowElement);
         if (isOpen) {
           hideTooltip();
         } else {
-          showTooltip(path.element, route.info);
+          showTooltip(path.element, tipText);
         }
 
         const strokeEl = strokeElements.find(
@@ -134,6 +159,7 @@ export default class extends Controller {
   }
 
   disconnect() {
+    document.removeEventListener("munich:grade-display", this._onGradeDisplay);
     document.removeEventListener("click", this._docClick);
     if (this._tooltipEl) {
       this._tooltipEl.remove();

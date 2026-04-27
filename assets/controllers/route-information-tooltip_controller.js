@@ -1,4 +1,18 @@
 import { Controller } from "@hotwired/stimulus";
+import {
+  getGradeDisplayMode,
+  labelForPreference,
+} from "../js/climbing_grade_display";
+
+function routeTooltipTextFromRow(tr) {
+  if (!tr) return "";
+  const name = tr.getAttribute("data-route-name") || "";
+  const stored = tr.getAttribute("data-route-grade-stored") || "";
+  const fixed = tr.getAttribute("data-route-grade-fixed") === "1";
+  const grade = fixed ? stored : labelForPreference(stored, getGradeDisplayMode());
+  const g = grade || stored;
+  return g ? `${name} (${g})`.trim() : name.trim();
+}
 
 export default class extends Controller {
   connect() {
@@ -48,13 +62,89 @@ export default class extends Controller {
       element,
     }));
 
-    const tableElements = this.element.querySelectorAll("[data-route-id]");
-    const routeInfo = Array.from(tableElements).map((element) => ({
-      routeId: element.getAttribute("data-route-id"),
-      info: element.getAttribute("data-route-information"),
-    }));
+    const tableElements = this.element.querySelectorAll("tr[data-route-id]");
+    /** @type {Map<string, HTMLElement>} */
+    const routeRowByPathId = new Map();
+    tableElements.forEach((rowEl) => {
+      const id = rowEl.getAttribute("data-route-id");
+      if (id != null && id !== "") {
+        routeRowByPathId.set(id, rowEl);
+      }
+    });
+
+    /** @type {Map<string, HTMLElement>} */
+    const strokeElByPathId = new Map();
+    strokeElements.forEach(({ id, element }) => {
+      const m = id.match(/^svg_(\d+)$/);
+      if (m) {
+        strokeElByPathId.set(m[1], element);
+      }
+    });
+
+    /** @type {Map<string, Element>} */
+    const circleByPathId = new Map();
+    this.element.querySelectorAll("circle[data-path-id]").forEach((el) => {
+      const id = el.getAttribute("data-path-id");
+      if (id) {
+        circleByPathId.set(id, el);
+      }
+    });
+
+    /** @type {Map<string, Element>} */
+    const textByPathId = new Map();
+    this.element.querySelectorAll("text[data-path-id]").forEach((el) => {
+      const id = el.getAttribute("data-path-id");
+      if (id) {
+        textByPathId.set(id, el);
+      }
+    });
+
+    /**
+     * Active: white circle fill, number uses the route circle color.
+     * Inactive: restore saved fills from data attributes.
+     * @param {string} pathId
+     * @param {boolean} active
+     */
+    const setNumberBadgeActive = (pathId, active) => {
+      const circle = circleByPathId.get(pathId);
+      const text = textByPathId.get(pathId);
+      if (!circle) {
+        return;
+      }
+
+      if (active) {
+        if (!circle.dataset.topoSavedFill) {
+          circle.dataset.topoSavedFill = circle.getAttribute("fill") || "";
+        }
+        if (text && !text.dataset.topoSavedFill) {
+          text.dataset.topoSavedFill = text.getAttribute("fill") || "#ffffff";
+        }
+        const routeColor = circle.dataset.topoSavedFill || "";
+        circle.setAttribute("fill", "#ffffff");
+        if (text && routeColor) {
+          text.setAttribute("fill", routeColor);
+        }
+      } else {
+        const cFill = circle.dataset.topoSavedFill;
+        if (cFill !== undefined && cFill !== "") {
+          circle.setAttribute("fill", cFill);
+        }
+        delete circle.dataset.topoSavedFill;
+        if (text) {
+          const tFill = text.dataset.topoSavedFill;
+          if (tFill !== undefined && tFill !== "") {
+            text.setAttribute("fill", tFill);
+          }
+          delete text.dataset.topoSavedFill;
+        }
+      }
+    };
+
+    this._setNumberBadgeActive = setNumberBadgeActive;
 
     this._tooltipEl = null;
+    /** @type {string|null} */
+    this._tooltipPathId = null;
     let activeStrokeElement = null;
 
     const hideTooltip = () => {
@@ -62,9 +152,15 @@ export default class extends Controller {
         this._tooltipEl.remove();
         this._tooltipEl = null;
       }
+      this._tooltipPathId = null;
     };
 
-    const showTooltip = (anchorEl, text) => {
+    /**
+     * @param {string} pathId
+     * @param {HTMLElement} anchorEl
+     * @param {string} text
+     */
+    const showTooltip = (pathId, anchorEl, text) => {
       hideTooltip();
       if (!text) return;
       const tip = document.createElement("div");
@@ -84,47 +180,81 @@ export default class extends Controller {
       tip.style.left = `${left}px`;
       tip.style.top = `${top}px`;
       this._tooltipEl = tip;
+      this._tooltipPathId = pathId;
     };
 
-    pathIds.forEach((path) => {
-      const route = routeInfo.find((r) => r.routeId === path.pathId);
-      if (!route) {
+    const refreshPathDataInfo = () => {
+      pathIds.forEach((path) => {
+        const row = routeRowByPathId.get(path.pathId);
+        const text = row ? routeTooltipTextFromRow(row) : "";
+        path.element.setAttribute("data-info", text);
+      });
+    };
+    refreshPathDataInfo();
+    this._onGradeDisplay = () => refreshPathDataInfo();
+    document.addEventListener("munich:grade-display", this._onGradeDisplay);
+
+    /** Clicks on wide hit path, number circle, or label — all share data-path-id. */
+    this._pathClickHandler = (event) => {
+      const hit = event.target.closest("[data-path-id]");
+      if (!hit || !this.element.contains(hit)) {
         return;
       }
-      path.element.setAttribute("data-info", route.info);
 
-      path.element.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        const isOpen = this._tooltipEl && this._tooltipEl.isConnected;
-        if (isOpen) {
-          hideTooltip();
-        } else {
-          showTooltip(path.element, route.info);
-        }
+      const pathId = hit.getAttribute("data-path-id");
+      if (!pathId) {
+        return;
+      }
 
-        const strokeEl = strokeElements.find(
-          (stroke) => stroke.id === `svg_${path.pathId}`
-        );
+      const row = routeRowByPathId.get(pathId);
+      if (!row) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const tipText = routeTooltipTextFromRow(row);
+      const strokeEl = strokeElByPathId.get(pathId);
+      const isOpen = this._tooltipEl && this._tooltipEl.isConnected;
+      const closingSamePath = isOpen && this._tooltipPathId === pathId;
+
+      if (closingSamePath) {
+        hideTooltip();
+        setNumberBadgeActive(pathId, false);
         if (strokeEl) {
-          if (
-            activeStrokeElement &&
-            activeStrokeElement !== strokeEl.element
-          ) {
-            activeStrokeElement.style.stroke = "";
+          strokeEl.style.stroke = "";
+          if (activeStrokeElement === strokeEl) {
+            activeStrokeElement = null;
           }
-          strokeEl.element.style.stroke =
-            strokeEl.element.style.stroke === "white" ? "" : "white";
-          activeStrokeElement =
-            strokeEl.element.style.stroke === "white"
-              ? strokeEl.element
-              : null;
         }
-      });
-    });
+        return;
+      }
+
+      const prevPathForBadge = isOpen ? this._tooltipPathId : null;
+
+      if (activeStrokeElement) {
+        activeStrokeElement.style.stroke = "";
+        activeStrokeElement = null;
+      }
+      showTooltip(pathId, hit, tipText);
+      if (prevPathForBadge && prevPathForBadge !== pathId) {
+        setNumberBadgeActive(prevPathForBadge, false);
+      }
+      setNumberBadgeActive(pathId, true);
+      if (strokeEl) {
+        strokeEl.style.stroke = "white";
+        activeStrokeElement = strokeEl;
+      }
+    };
+    this.element.addEventListener("click", this._pathClickHandler);
 
     this._docClick = () => {
+      const pid = this._tooltipPathId;
       hideTooltip();
+      if (pid) {
+        setNumberBadgeActive(pid, false);
+      }
       if (activeStrokeElement) {
         activeStrokeElement.style.stroke = "";
         activeStrokeElement = null;
@@ -134,10 +264,20 @@ export default class extends Controller {
   }
 
   disconnect() {
+    document.removeEventListener("munich:grade-display", this._onGradeDisplay);
     document.removeEventListener("click", this._docClick);
+    if (this._pathClickHandler) {
+      this.element.removeEventListener("click", this._pathClickHandler);
+      this._pathClickHandler = null;
+    }
+    if (this._tooltipPathId && this._setNumberBadgeActive) {
+      this._setNumberBadgeActive(this._tooltipPathId, false);
+    }
     if (this._tooltipEl) {
       this._tooltipEl.remove();
       this._tooltipEl = null;
     }
+    this._tooltipPathId = null;
+    this._setNumberBadgeActive = null;
   }
 }

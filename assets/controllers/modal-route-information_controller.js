@@ -1,4 +1,8 @@
 import { Controller } from "stimulus";
+import {
+  getGradeDisplayMode,
+  labelForPreference,
+} from "../js/climbing_grade_display";
 
 export default class extends Controller {
   static targets = ["modal", "title", "content"];
@@ -32,7 +36,11 @@ export default class extends Controller {
     const button = event.currentTarget;
 
     const name = button.dataset.modalRouteInformationNameValue || "";
-    const grade = button.dataset.modalRouteInformationGradeValue || "";
+    const stored = button.dataset.modalRouteInformationGradeStoredValue || "";
+    const gradeFixed = button.dataset.modalRouteInformationGradeFixedValue === "1";
+    const grade = gradeFixed
+      ? stored
+      : labelForPreference(stored, getGradeDisplayMode());
     const firstAscent = button.dataset.modalRouteInformationFirstAscentValue || "";
     const yearFirstAscentRaw = button.dataset.modalRouteInformationYearFirstAscentValue;
     const yearFirstAscent =

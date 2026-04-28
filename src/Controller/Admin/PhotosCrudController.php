@@ -181,7 +181,7 @@ class PhotosCrudController extends AbstractCrudController
 
         yield ImageField::new('name')
             ->setBasePath((string) $this->parameterBag->get('app.gallery_public_base_url'))
-            ->setUploadDir('public/uploads/galerie')
+            ->setUploadDir($uploadDir)
             ->setLabel('Bild')
             ->setColumns('col-12');
 

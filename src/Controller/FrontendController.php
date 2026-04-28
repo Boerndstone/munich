@@ -262,7 +262,19 @@ class FrontendController extends AbstractController
 
         $gallerySuggestion = new RockImprovementSuggestion();
         $gallerySuggestion->rockName = $rock->getName();
-        $galleryUploadForm = $this->createForm(RockGalleryUploadType::class, $gallerySuggestion);
+        $rockRoutes = $routesRepository->findBy(['rock' => $rock], ['name' => 'ASC']);
+        $galleryRouteChoices = [];
+        foreach ($rockRoutes as $routeEntity) {
+            $routeName = $routeEntity->getName();
+            if (!\is_string($routeName) || '' === trim($routeName)) {
+                continue;
+            }
+            $galleryRouteChoices[$routeName] = $routeEntity->getId();
+        }
+
+        $galleryUploadForm = $this->createForm(RockGalleryUploadType::class, $gallerySuggestion, [
+            'route_choices' => $galleryRouteChoices,
+        ]);
         $galleryUploadForm->handleRequest($request);
 
         if ($improvementForm->isSubmitted() && $improvementForm->isValid()) {
@@ -335,6 +347,17 @@ class FrontendController extends AbstractController
                 $photo->setBelongsToArea($rock->getArea());
                 $photo->setUploaderName($data->name);
                 $photo->setUploaderEmail($data->email);
+
+                if (null !== $data->routeId) {
+                    $selectedRoute = $routesRepository->find($data->routeId);
+                    if (null !== $selectedRoute && $selectedRoute->getRock()?->getId() === $rock->getId()) {
+                        $photo->setBelongsToRoute($selectedRoute);
+                    }
+                }
+
+                if (\is_string($data->photographer) && '' !== trim($data->photographer)) {
+                    $photo->setPhotgrapher(trim($data->photographer));
+                }
 
                 if (\is_string($data->comment) && '' !== trim($data->comment)) {
                     $photo->setDescription($data->comment);

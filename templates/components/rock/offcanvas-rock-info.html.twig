@@ -2,7 +2,7 @@
 	{% set rock = rocks|first %}
 	<dialog id="offcanvasRight" class="rock-info-dialog z-[1055]" aria-labelledby="offcanvasRightLabel" aria-modal="true">
 		<div class="flex h-full min-h-0 w-full flex-row-reverse">
-			<div class="flex h-full min-h-0 w-full max-w-full shrink-0 flex-col overflow-y-auto bg-[var(--theme-bg)] text-[var(--theme-text)] shadow-xl sm:w-[min(100vw,24rem)]" onclick="event.stopPropagation()">
+			<div class="rock-info-dialog__panel flex h-full min-h-0 w-full max-w-full shrink-0 flex-col overflow-y-auto bg-[var(--theme-bg)] text-[var(--theme-text)] shadow-xl sm:w-[min(100vw,24rem)]" onclick="event.stopPropagation()">
 				<div class="flex shrink-0 items-center justify-between border-b border-[var(--theme-border)] px-3 py-2">
 					<h2 class="m-0 text-lg font-bold text-[var(--theme-text)]" id="offcanvasRightLabel">{{ rock.rockName }}</h2>
 					<button type="button" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--theme-text)] opacity-70 hover:bg-[var(--theme-bg-lighter)] hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" onclick="document.getElementById('offcanvasRight').close()" aria-label="{{ 'close'|trans({}, 'messages') }}">
@@ -16,7 +16,9 @@
 					{% set hasDescription = (description is defined and description is not null and description|striptags|trim != '') or (rock.rockDescription is defined and rock.rockDescription is not null and rock.rockDescription|striptags|trim != '') %}
 					{% set hasAccess = (access is defined and access is not null and access|striptags|trim != '') or (rock.rockAccess is defined and rock.rockAccess is not null and rock.rockAccess|striptags|trim != '') %}
 					{% set hasNature = (nature is defined and nature is not null and nature|striptags|trim != '') or (rock.rockNature is defined and rock.rockNature is not null and rock.rockNature|striptags|trim != '') %}
-					<twig:Accordion id="rock-offcanvas-accordion" defaultValue="general">
+					{% set mithelfenOpenState = mithelfenOpen|default(false) %}
+					{% set mithelfenTabState = mithelfenTab|default('content') %}
+					<twig:Accordion id="rock-offcanvas-accordion" defaultValue="{{ mithelfenOpenState ? 'improvement' : 'general' }}">
 						<twig:Accordion:Item value="general">
 							<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
 								<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
@@ -285,19 +287,59 @@
 								</span>
 							</twig:Accordion:Trigger>
 							<twig:Accordion:Content class="border-t border-[var(--theme-border)] px-3 pb-4 pt-2">
-								{% if improvementForm is defined and improvementForm is not null %}
+								{% if improvementForm is defined and improvementForm is not null and galleryUploadForm is defined and galleryUploadForm is not null %}
 									{% form_theme improvementForm 'form/tailwind_form_layout.html.twig' %}
-									<p class="mb-3 text-sm text-gray-600 dark:text-gray-400">{{ 'rock_improvement.intro'|trans({ '%rock_name%': rock.rockName }) }}</p>
-									{{ form_start(improvementForm, { action: path(app.request.attributes.get('_route'), { areaSlug: areaSlug, slug: slug }), attr: { class: 'max-w-full text-sm', novalidate: 'novalidate' } }) }}
-									{{ form_row(improvementForm.rockName) }}
-									{{ form_row(improvementForm.name) }}
-									{{ form_row(improvementForm.email) }}
-									{{ form_row(improvementForm.routeName) }}
-									{{ form_row(improvementForm.grade) }}
-									{{ form_row(improvementForm.firstAscent) }}
-									{{ form_row(improvementForm.comment) }}
-									<button type="submit" class="mt-2 inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium shadow-sm hover:bg-emerald-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900">{{ 'rock_improvement.submit'|trans }}</button>
-									{{ form_end(improvementForm) }}
+									{% form_theme galleryUploadForm 'form/tailwind_form_layout.html.twig' %}
+									{% set mithelfenDefaultTab = mithelfenTabState %}
+									{% for message in app.flashes('mithelfen_success') %}
+										<div data-mithelfen-success-alert class="mb-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-200" role="status">{{ message }}</div>
+									{% endfor %}
+									<script>
+										(() => {
+											const alerts = document.querySelectorAll('[data-mithelfen-success-alert]');
+											if (!alerts.length) {
+												return;
+											}
+											window.setTimeout(() => {
+												alerts.forEach((alert) => alert.remove());
+											}, 2000);
+										})();
+									</script>
+									{% for message in app.flashes('mithelfen_error') %}
+										<div class="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-900 dark:border-red-800 dark:bg-red-950/30 dark:text-red-200" role="alert">{{ message }}</div>
+									{% endfor %}
+									<twig:Tabs defaultValue="{{ mithelfenDefaultTab }}" class="mb-1">
+										<twig:Tabs:List variant="default" class="mb-3 grid w-full grid-cols-2">
+											<twig:Tabs:Trigger value="content">{{ 'rock_improvement.tab.content'|trans }}</twig:Tabs:Trigger>
+											<twig:Tabs:Trigger value="gallery">{{ 'rock_improvement.tab.gallery'|trans }}</twig:Tabs:Trigger>
+										</twig:Tabs:List>
+
+										<twig:Tabs:Content value="content">
+											<p class="mb-3 text-sm text-gray-600 dark:text-gray-400">{{ 'rock_improvement.intro'|trans({ '%rock_name%': rock.rockName }) }}</p>
+											{{ form_start(improvementForm, { action: path(app.request.attributes.get('_route'), { areaSlug: areaSlug, slug: slug }), attr: { class: 'max-w-full text-sm', novalidate: 'novalidate' } }) }}
+											{{ form_row(improvementForm.rockName) }}
+											{{ form_row(improvementForm.name) }}
+											{{ form_row(improvementForm.email) }}
+											{{ form_row(improvementForm.routeName) }}
+											{{ form_row(improvementForm.grade) }}
+											{{ form_row(improvementForm.firstAscent) }}
+											{{ form_row(improvementForm.comment) }}
+											<button type="submit" class="mt-2 inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium shadow-sm hover:bg-emerald-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900">{{ 'rock_improvement.submit'|trans }}</button>
+											{{ form_end(improvementForm) }}
+										</twig:Tabs:Content>
+
+										<twig:Tabs:Content value="gallery">
+											<p class="mb-3 text-sm text-gray-600 dark:text-gray-400">{{ 'rock_improvement.gallery_intro'|trans({ '%rock_name%': rock.rockName }) }}</p>
+											{{ form_start(galleryUploadForm, { action: path(app.request.attributes.get('_route'), { areaSlug: areaSlug, slug: slug }), attr: { class: 'max-w-full text-sm', novalidate: 'novalidate', enctype: 'multipart/form-data' } }) }}
+											{{ form_row(galleryUploadForm.rockName) }}
+											{{ form_row(galleryUploadForm.name) }}
+											{{ form_row(galleryUploadForm.email) }}
+											{{ form_row(galleryUploadForm.image, { help: 'rock_improvement.help.image'|trans }) }}
+											{{ form_row(galleryUploadForm.comment) }}
+											<button type="submit" class="mt-2 inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium shadow-sm hover:bg-emerald-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900">{{ 'rock_improvement.submit_gallery'|trans }}</button>
+											{{ form_end(galleryUploadForm) }}
+										</twig:Tabs:Content>
+									</twig:Tabs>
 								{% endif %}
 							</twig:Accordion:Content>
 						</twig:Accordion:Item>
@@ -307,4 +349,19 @@
 			<button type="button" class="min-h-0 min-w-0 flex-1 cursor-default border-0 bg-black/40 p-0" aria-label="{{ 'close'|trans({}, 'messages') }}" onclick="document.getElementById('offcanvasRight').close()"></button>
 		</div>
 	</dialog>
+	{% if mithelfenOpenState %}
+		<script>
+			(() => {
+				const dialog = document.getElementById('offcanvasRight');
+				if (!dialog || dialog.open) {
+					return;
+				}
+				try {
+					dialog.showModal();
+				} catch (e) {
+					/* ignore if dialog cannot be opened in current browser state */
+				}
+			})();
+		</script>
+	{% endif %}
 {% endif %}

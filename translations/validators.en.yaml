@@ -1,5 +1,9 @@
 rock_improvement.validation_error: "Please try again."
 rock_improvement.email_invalid: "Please enter a valid email address."
+rock_improvement.name_required: "Please enter your name."
+rock_improvement.route_name_required: "Please enter a route name."
+rock_improvement.image_max_size: "Please upload an image up to 10 MB."
+rock_improvement.image_mime_types: "Please upload only images (JPEG, PNG, WebP or GIF)."
 
 upload_photo.validation.rock_required: "Please select a crag."
 upload_photo.validation.image_required: "Please choose an image."

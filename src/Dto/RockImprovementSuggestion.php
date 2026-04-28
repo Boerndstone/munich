@@ -2,6 +2,7 @@
 
 namespace App\Dto;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class RockImprovementSuggestion
@@ -13,7 +14,6 @@ class RockImprovementSuggestion
     #[Assert\NotBlank]
     public ?string $rockName = null;
 
-    #[Assert\NotBlank(message: 'rock_improvement.route_name_required')]
     #[Assert\Length(max: 255)]
     public ?string $routeName = null;
 
@@ -33,6 +33,14 @@ class RockImprovementSuggestion
     public ?string $email = null;
 
     public ?string $comment = null;
+
+    #[Assert\File(
+        maxSize: '10M',
+        mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+        maxSizeMessage: 'rock_improvement.image_max_size',
+        mimeTypesMessage: 'rock_improvement.image_mime_types',
+    )]
+    public ?UploadedFile $image = null;
 
     /**
      * Honeypot: must stay empty (bots often fill it). Not rendered visibly.

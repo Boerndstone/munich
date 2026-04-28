@@ -220,10 +220,41 @@
     padding: 0;
     border: none;
     background: transparent;
+    overscroll-behavior: contain;
 }
 
 .rock-info-dialog::backdrop {
-    background: transparent;
+    background-color: rgb(0 0 0 / 0.45);
+}
+
+.rock-info-dialog__panel {
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+html:has(.rock-info-dialog[open]),
+body:has(.rock-info-dialog[open]) {
+    overflow: hidden;
+}
+
+/* lightGallery inside native <dialog>: keep lightbox above drawer content on mobile. */
+.rock-info-dialog[open] .lg-container.lg-inline,
+.rock-info-dialog[open] .lg-inline .lg-backdrop,
+.rock-info-dialog[open] .lg-inline .lg-outer {
+    position: fixed;
+    inset: 0;
+}
+
+.rock-info-dialog[open] .lg-container.lg-inline {
+    z-index: 2200;
+}
+
+.rock-info-dialog[open] .lg-inline .lg-backdrop {
+    z-index: 2201;
+}
+
+.rock-info-dialog[open] .lg-inline .lg-outer {
+    z-index: 2202;
 }
 
 /* Rock route info: centered <dialog> (do not put flex on <dialog> without [open] — same rule as map dialog). */

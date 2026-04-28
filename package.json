@@ -10,6 +10,7 @@
         "@symfony/stimulus-bundle": "file:vendor/symfony/stimulus-bundle/assets",
         "@symfony/ux-autocomplete": "file:vendor/symfony/ux-autocomplete/assets",
         "@symfony/ux-chartjs": "file:vendor/symfony/ux-chartjs/assets",
+        "@symfony/ux-leaflet-map": "file:vendor/symfony/ux-leaflet-map/assets",
         "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
         "@symfony/webpack-encore": "^5.0.0",
         "@tailwindcss/forms": "^0.5.11",
@@ -68,7 +69,6 @@
         "@stimulus-components/scroll-progress": "^5.0.0",
         "leaflet": "^1.9.4",
         "leaflet-draw": "^1.0.4",
-        "leaflet.markercluster": "^1.5.3",
         "lightgallery": "^2.7.2",
         "sortablejs": "^1.15.6",
         "vanilla-cookieconsent": "3.0.0"

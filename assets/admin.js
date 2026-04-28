@@ -1,4 +1,5 @@
 import './styles/admin.css';
+import './styles/admin-bootstrap-bridge.scss';
 // Bootstrap JS for EasyAdmin and admin Twig that use data-bs-* (separate from public app bundle).
 import 'bootstrap';
 import './bootstrap';

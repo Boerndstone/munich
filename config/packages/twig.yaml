@@ -7,5 +7,5 @@ when@test:
   twig:
     strict_variables: true
     form_themes:
-      - "bootstrap_5_layout.html.twig"
-      # - "FormThemes/bootstrap_5_layout.html.twig"
+      # Align tests with public site (Tailwind); admin EasyAdmin still ships Bootstrap CSS/JS via admin entry.
+      - "form/tailwind_form_layout.html.twig"

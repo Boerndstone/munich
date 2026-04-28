@@ -4,7 +4,6 @@
 @custom-variant dark (&:is(.dark *));
 @source "../../templates/**/*.{html,twig}";
 @source "../**/*.{js,ts,jsx,tsx,vue}";
-
 /* Symfony UX Toolkit (Shadcn) design tokens — used by templates/components/Button.html.twig etc. */
 :root {
     --background: oklch(1 0 0);
@@ -253,6 +252,21 @@
 
 .shared-route-dialog::backdrop {
     background-color: rgb(0 0 0 / 0.45);
+}
+
+/* Explicit focus rings for rock area list links (Twig conditionals can hide utilities from scanner). */
+.rock-item-link-banned:focus-visible {
+    outline: 2px solid rgb(185 28 28);
+    outline-offset: 2px;
+}
+
+.rock-item-link-default:focus-visible {
+    outline: 2px solid rgb(100 116 139);
+    outline-offset: 2px;
+}
+
+.dark .rock-item-link-default:focus-visible {
+    outline-color: rgb(148 163 184);
 }
 
 @media (max-width: 575.98px) {

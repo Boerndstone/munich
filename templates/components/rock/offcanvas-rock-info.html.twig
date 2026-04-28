@@ -195,7 +195,7 @@
 									<div class="mx-0 grid grid-cols-3 gap-1 md:grid-cols-4" data-controller="off-canvas-gallery">
 										{% for data in jsonData %}
 											<div class="mb-1">
-												<a class="lg-item block" data-target="lg-item" data-src="{{ data.src }}" href="{{ data.src }}" role="button">
+												<a class="lg-item block" data-target="lg-item" data-src="{{ data.src }}" data-srcset="{{ data.srcset }}" href="{{ data.src }}" role="button">
 													<img src="{{ data.thumb }}" class="mb-1 w-full shadow-md" alt="{{ data.subHtml }}" loading="lazy">
 												</a>
 											</div>

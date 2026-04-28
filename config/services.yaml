@@ -7,6 +7,10 @@ parameters:
   env(SITE_BASE_URL): "%env(SITE_BASE_SCHEME)%://%env(SITE_BASE_HOST)%"
   locale: "de"
   app.topo_image_base_url: "https://www.munichclimbs.de"
+  app.default_gallery_public_base_url: "https://www.munichclimbs.de/uploads/galerie"
+  app.gallery_public_base_url: "%env(default:app.default_gallery_public_base_url:GALLERY_PUBLIC_BASE_URL)%"
+  app.default_gallery_upload_dir: "%kernel.project_dir%/public/uploads/galerie"
+  app.gallery_upload_dir: "%env(default:app.default_gallery_upload_dir:GALLERY_UPLOAD_DIR)%"
 
 services:
   # default configuration for services in *this* file

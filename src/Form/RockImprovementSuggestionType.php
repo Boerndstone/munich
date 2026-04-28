@@ -31,7 +31,7 @@ class RockImprovementSuggestionType extends AbstractType
                     'autocomplete' => 'off',
                     'aria-hidden' => 'true',
                 ],
-                // Honeypot: must stay empty. Bootstrap visually-hidden is not in Tailwind — use off-screen + zero box.
+                // Honeypot: must stay empty (off-screen; not `sr-only` so bots still “see” a text field).
                 'row_attr' => [
                     'class' => 'pointer-events-none absolute -left-[9999px] m-0 block h-px w-px overflow-hidden border-0 p-0 opacity-0',
                     'aria-hidden' => 'true',
@@ -39,55 +39,47 @@ class RockImprovementSuggestionType extends AbstractType
             ])
             ->add('name', TextType::class, [
                 'label' => 'rock_improvement.name',
-                'attr' => ['class' => 'form-control form-control-sm', 'placeholder' => $this->translator->trans('rock_improvement.placeholder.name')],
-                'label_attr' => ['class' => 'form-label small fw-medium'],
+                'attr' => ['placeholder' => $this->translator->trans('rock_improvement.placeholder.name')],
                 'row_attr' => ['class' => 'mb-3'],
             ])
             ->add('email', EmailType::class, [
                 'label' => 'rock_improvement.email',
                 'required' => false,
                 'attr' => [
-                    'class' => 'form-control form-control-sm',
                     'placeholder' => $this->translator->trans('rock_improvement.placeholder.email'),
                     'autocomplete' => 'email',
                 ],
-                'label_attr' => ['class' => 'form-label small fw-medium'],
                 'row_attr' => ['class' => 'mb-3'],
             ])
             ->add('rockName', TextType::class, [
                 'label' => 'rock_improvement.rock_name',
                 'attr' => [
-                    'class' => 'form-control form-control-sm bg-light',
                     'readonly' => 'readonly',
+                    'class' => 'cursor-default bg-gray-100 dark:bg-gray-900',
                 ],
-                'label_attr' => ['class' => 'form-label small fw-medium'],
                 'row_attr' => ['class' => 'mb-3'],
             ])
             ->add('routeName', TextType::class, [
                 'label' => 'rock_improvement.route_name',
-                'attr' => ['class' => 'form-control form-control-sm', 'placeholder' => $this->translator->trans('rock_improvement.placeholder.route_name')],
-                'label_attr' => ['class' => 'form-label small fw-medium'],
+                'attr' => ['placeholder' => $this->translator->trans('rock_improvement.placeholder.route_name')],
                 'row_attr' => ['class' => 'mb-3'],
             ])
             ->add('grade', TextType::class, [
                 'label' => 'rock_improvement.grade',
                 'required' => false,
-                'attr' => ['class' => 'form-control form-control-sm', 'placeholder' => $this->translator->trans('rock_improvement.placeholder.grade')],
-                'label_attr' => ['class' => 'form-label small fw-medium'],
+                'attr' => ['placeholder' => $this->translator->trans('rock_improvement.placeholder.grade')],
                 'row_attr' => ['class' => 'mb-3'],
             ])
             ->add('firstAscent', TextType::class, [
                 'label' => 'rock_improvement.first_ascent',
                 'required' => false,
-                'attr' => ['class' => 'form-control form-control-sm', 'placeholder' => $this->translator->trans('rock_improvement.placeholder.first_ascent')],
-                'label_attr' => ['class' => 'form-label small fw-medium'],
+                'attr' => ['placeholder' => $this->translator->trans('rock_improvement.placeholder.first_ascent')],
                 'row_attr' => ['class' => 'mb-3'],
             ])
             ->add('comment', TextareaType::class, [
                 'label' => 'rock_improvement.comment',
                 'required' => false,
-                'attr' => ['class' => 'form-control form-control-sm', 'placeholder' => $this->translator->trans('rock_improvement.placeholder.comment'), 'rows' => 3],
-                'label_attr' => ['class' => 'form-label small fw-medium'],
+                'attr' => ['placeholder' => $this->translator->trans('rock_improvement.placeholder.comment'), 'rows' => 3],
                 'row_attr' => ['class' => 'mb-3'],
             ]);
 

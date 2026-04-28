@@ -19,16 +19,16 @@
 							</a>
 							{% set routeRating = latestRoute.rating|default(0) %}
 							{% if routeRating >= 1 and routeRating <= 3 %}
-								<span class="visually-hidden">Bewertung: {{ routeRating }} von 3 Sternen.</span>
+								<span class="sr-only">Bewertung: {{ routeRating }} von 3 Sternen.</span>
 								{% for _i in 1..routeRating %}
 									<i class="fas fa-star text-amber-600 dark:text-amber-400" aria-hidden="true"></i>
 								{% endfor %}
 							{% endif %}
 							{% if latestRoute.protection == 2 %}
-								<span class="visually-hidden">Hinweis: erschwerte Absicherung.</span>
+								<span class="sr-only">Hinweis: erschwerte Absicherung.</span>
 								<i class="fa fa-exclamation-triangle text-red-700 dark:text-red-500" aria-hidden="true"></i>
 							{% elseif latestRoute.protection == 3 %}
-								<span class="visually-hidden">Hinweis: sehr erschwerte oder unzureichende Absicherung.</span>
+								<span class="sr-only">Hinweis: sehr erschwerte oder unzureichende Absicherung.</span>
 								<i class="fa fa-ambulance text-red-700 dark:text-red-500" aria-hidden="true"></i>
 							{% endif %}
 						</td>

@@ -21,7 +21,6 @@ use App\Repository\TopoRepository;
 use App\Repository\PhotosRepository;
 use App\Repository\RoutesRepository;
 use App\Repository\CommentRepository;
-use Symfony\Component\Asset\Packages;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
@@ -174,7 +173,6 @@ class FrontendController extends AbstractController
         Rock $rock,
         $areaSlug,
         $slug,
-        Packages $assetPackages,
         Request $request,
         MailerInterface $mailer,
         TranslatorInterface $translator,
@@ -235,6 +233,7 @@ class FrontendController extends AbstractController
         $galleryItems = $photosRepository->findPhotosForRock($rockId);
 
         // Serialize data to JSON format
+        $galleryBaseUrl = rtrim((string) $this->getParameter('app.gallery_public_base_url'), '/');
         $jsonData = [];
         foreach ($galleryItems as $item) {
             $extension = pathinfo($item->getName(), PATHINFO_EXTENSION);
@@ -243,11 +242,10 @@ class FrontendController extends AbstractController
             $newName3x = $filenameWithoutExtension . "@3x." . $extension;
             $thumbName = $filenameWithoutExtension . "_thumb." . $extension;
             $jsonData[] = [
-                'src' =>
-                $assetPackages->getUrl('https://www.munichclimbs.de/uploads/galerie/' . $item->getName()),
+                'src' => $galleryBaseUrl . '/' . $item->getName(),
                 'subHtml' => $item->getDescription(),
-                'srcset' => 'https://www.munichclimbs.de/uploads/galerie/' . $newName . ' 2x, https://www.munichclimbs.de/uploads/galerie/' . $newName3x . ' 3x',
-                'thumb' => 'https://www.munichclimbs.de/uploads/galerie/' . $thumbName
+                'srcset' => $galleryBaseUrl . '/' . $newName . ' 2x, ' . $galleryBaseUrl . '/' . $newName3x . ' 3x',
+                'thumb' => $galleryBaseUrl . '/' . $thumbName
             ];
         }
 
@@ -317,7 +315,7 @@ class FrontendController extends AbstractController
         if ($galleryUploadForm->isSubmitted() && $galleryUploadForm->isValid()) {
             /** @var RockImprovementSuggestion $data */
             $data = $galleryUploadForm->getData();
-            $uploadDir = $this->getParameter('kernel.project_dir') . '/public/uploads/galerie';
+            $uploadDir = (string) $this->getParameter('app.gallery_upload_dir');
             $originalFilename = pathinfo($data->image->getClientOriginalName(), PATHINFO_FILENAME);
             $safeFilename = (string) $slugger->slug($originalFilename);
             if ('' === $safeFilename) {
@@ -327,9 +325,14 @@ class FrontendController extends AbstractController
             $extension = $data->image->guessExtension() ?: 'tmp';
             $tempFilename = 'temp_' . $baseFilename . '.' . $extension;
             $tempPath = $uploadDir . '/' . $tempFilename;
-            $data->image->move($uploadDir, $tempFilename);
 
             try {
+                if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true) && !is_dir($uploadDir)) {
+                    throw new \RuntimeException('Upload directory cannot be created: ' . $uploadDir);
+                }
+
+                $data->image->move($uploadDir, $tempFilename);
+
                 $processedFiles = $imageProcessingService->processUploadedImage(
                     $tempPath,
                     $baseFilename,

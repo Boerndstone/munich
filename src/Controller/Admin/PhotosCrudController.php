@@ -173,15 +173,15 @@ class PhotosCrudController extends AbstractCrudController
             ->setLabel('Tour')
             ->setColumns('col-12');
         
-        // Ensure directory exists (EasyAdmin uses relative path from project root)
-        $uploadDir = $this->parameterBag->get('kernel.project_dir') . '/public/uploads/galerie';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
+        // Ensure directory exists for conversion pipeline.
+        $uploadDir = (string) $this->parameterBag->get('app.gallery_upload_dir');
+        if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true) && !is_dir($uploadDir)) {
+            throw new \RuntimeException(sprintf('Upload directory could not be created: %s', $uploadDir));
         }
 
         yield ImageField::new('name')
-            ->setBasePath('uploads/galerie')
-            ->setUploadDir('public/uploads/galerie')
+            ->setBasePath((string) $this->parameterBag->get('app.gallery_public_base_url'))
+            ->setUploadDir($uploadDir)
             ->setLabel('Bild')
             ->setColumns('col-12');
 
@@ -233,7 +233,7 @@ class PhotosCrudController extends AbstractCrudController
             return;
         }
 
-        $uploadDir = $this->parameterBag->get('kernel.project_dir') . '/public/uploads/galerie';
+        $uploadDir = (string) $this->parameterBag->get('app.gallery_upload_dir');
         $sourcePath = $uploadDir . '/' . $name;
 
         if (!is_file($sourcePath)) {

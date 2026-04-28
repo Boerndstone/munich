@@ -127,70 +127,14 @@ body {
   color: var(--theme-text);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
-.container {
-    max-width: 1024px;
-}
-.nav-link {
-    font-size: 14px;
-}
 // Sidebar area toggle: arrow right when collapsed, down when expanded
 .nav-area-chevron {
     transition: transform 0.2s ease;
     display: inline-block;
 }
-.nav-link[aria-expanded="true"] .nav-area-chevron {
-    transform: rotate(90deg);
-}
-.card {
-    border: 1px solid var(--theme-shadow);
-}
-.accordion-body {
-font-size: 0.875em;
-}
-.card, .offcanvas, .table, .accordion-item, .accordion-header, .accordion-button {
-    background-color: var(--theme-bg-lighter) !important;
-    color: var(--theme-text) !important;
-    transition: background-color 0.3s ease, color 0.3s ease !important;
-}
-  .table, .table > :not(caption) > * > * {
-      background-color: white !important;
-      color: black !important;
-  }
-  .table {
-    border-bottom: 1px solid black !important;
-  }
-  .btn {
-    background-color: var(--theme-bg-lighter) !important;
-    color: var(--theme-text-vise-versa) !important;
-}
-.list-group, .list-group-item, .list-group-item:hover {
-    color: var(--theme-text) !important;
-}
-.list-group-item.active, .nav-link.active
-{
-    background-color: black !important;
-    color: white !important;
-    border-radius: 5px;
-}
-.accordion-button:focus {
-    box-shadow: none !important;
-      border: 1px solid var(--theme-border);
-  }
-  .accordion-button::after, .accordion-button:not(.collapsed)::after {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="%23000000" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>') !important;
-}
-.btn-outline-secondary {
-      background-color: var(--theme-bg) !important;
-    border: 1px solid var(--theme-border) !important;
-      color: var(--theme-text) !important;
-}
 hr {
     border-color: var(--theme-border) !important;
     opacity: 1 !important;
-}
-.badge {
-    background-color: var(--theme-text) !important;
-    color: var(--theme-bg) !important;
 }
 .badge-opacity {
     background-color: var(--theme-bg-opacity) !important;
@@ -419,19 +363,8 @@ h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-
   text-shadow: 0 1px 2px rgba(15, 23, 42, 0.35);
 }
 
-.card:hover {
-    border: 1px solid var(--theme-shadow);
-}
-
 /* .btn-to-top: visibility and layout live in base.html.twig (Tailwind + scrolltop_controller). */
 
-.form-check-input {
-    background-color: var(--theme-bg) !important;
-    border: 1px solid var(--theme-border) !important;
-}
-.border-bottom {
-    border-bottom: var(--bs-border-width) var(--bs-border-style) black !important;
-}
 .route-highlight {
     background-color: rgba(211, 211, 211, 0.2) !important;
     
@@ -442,83 +375,16 @@ h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-
 
 // Theme-aware components
 [data-theme="dark"] {
-    body, .navbar {
+    body {
         background-color: var(--theme-bg) !important;
         color: var(--theme-text);
-    }
-    .modal-content, .modal-header, .modal-body, .modal-footer {
-        background-color: var(--theme-bg);
-        color: var(--theme-text);
-    }
-    .form-check-input:checked[type=checkbox] {
-        background-color: var(--theme-bg) !important;
-        border-color: var(--theme-text) !important;
-        background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27%3e%3cpath fill=%27none%27 stroke=%27%23fff%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%273%27 d=%27m6 10 3 3 6-6%27/%3e%3c/svg%3e') !important;
-    }
-    .list-group, .list-group-item, .list-group-item:hover {
-        color: var(--theme-text) !important;
-    }
-    .list-group-item.active, .nav-link.active
-    {
-        background-color: white !important;
-        color: black !important;
-    }
-   .navbar {
-        border-bottom: 1px solid var(--theme-border);
     }
     header {
         border-bottom: 1px solid var(--theme-border);
     }
-      .card, .offcanvas, .table {
-        background-color: var(--theme-bg-lighter) !important;
-        border: 1px solid var(--theme-shadow);
-    }
-      .accordion-item, .accordion-header, .accordion-button, .accordion-body {
-        background-color: var(--theme-bg-lighter) !important;
-        border: 1px solid var(--theme-shadow);
-    }
-      .table, .table > :not(caption) > * > * {
-          background-color: black !important;
-          color: white !important;
-      }
-      .table {
-        border: none !important;
-        border-bottom: 1px solid white !important;
-      }
-    .btn{
-        background-color: var(--theme-bg-lighter) !important;
-        color: var(--theme-text-vise-versa) !important;
-    }
-    .list-group, .list-group-item, .list-group-item::before {
-        background-color: var(--theme-bg-lighter) !important;
-        color: var(--theme-text) !important;
-        a {color: var(--theme-text) !important;}
-    }
-    .card:hover {
-        border: 1px solid var(--theme-border);
-    }
-    .accordion-item, .accordion-header {
-        border: none !important;
-    }
-    .accordion-button:focus {
-        box-shadow: none !important;
-        border: 1px solid var(--theme-shadow);
-    }
-      .accordion-button::after, .accordion-button:not(.collapsed)::after {
-          background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="%23ffffff" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>') !important;
-      }
-    .btn-outline-secondary {
-        background-color: var(--theme-bg) !important;
-        border: 1px solid var(--theme-border) !important;
-        color: var(--theme-text) !important;
-    }
     hr {
         border-color: var(--theme-border) !important;
         opacity: 1 !important;
-    }
-    .badge {
-        background-color: var(--theme-text) !important;
-        color: var(--theme-bg) !important;
     }
     h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .list-unstyled, .text {
           color: var(--theme-text)!important;
@@ -564,11 +430,6 @@ h1, h2, h3, h4, h5, h6, p, a, .offcanvas-title, .nav-link, .munich, .breadcrumb-
               color: var(--theme-bg-vise-versa)!important;
           }
       }
-      .form-check-input {
-          background-color: var(--theme-bg) !important;
-          border: 1px solid var(--theme-border) !important;
-          color: var(--theme-text) !important;
-      }
 }
 html {
     height: 100%;
@@ -581,12 +442,6 @@ body {
 }
 
 // General
-
-// Colors
-$primary: #075985;
-$danger: rgb(185 28 28);
-$warning: rgb(161 98 7);
-$success: var(--green-base);
 
 .progress-bar {
     height: 1rem;
@@ -803,18 +658,6 @@ footer {
     .chart {
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffffff" d="M17.45 15.18L22 7.31V21H2V3h2v12.54L9.5 6L16 9.78l4.24-7.33l1.73 1l-5.23 9.05l-6.51-3.75L4.31 19h2.26l4.39-7.56z" /></svg>');
     }
-    // Dark theme close button - white
-    .btn-close {
-        filter: invert(1) grayscale(100%) brightness(200%);
-    }
-    .border-bottom {
-        border-bottom: var(--bs-border-width) var(--bs-border-style) white !important;
-    }
-}
-
-// Light theme close button - black (default Bootstrap)
-.btn-close {
-    filter: none;
 }
 
 .menu {
@@ -880,31 +723,11 @@ footer {
     color: black;
 }
 
-.table {
-    th {
-        font-weight: 600;
-    }
-    th, td {
-        padding: .65rem;
-    }
-}
-
 // Rock topo tabs: layout and scrollbar styling live in rock-topo-tabs.html.twig (Tailwind).
 
 a {
     text-decoration: none;
 }
-.btn-primary, .btn-outline-primary {
-    border-color: $primary;
-}
-.btn-outline-primary {
-    color: $primary;
-}
-.btn:hover {
-    background-color: $primary;
-    border-color: $primary;
-}
-
 .icon-content {
     width: 20px;
     height: 20px;
@@ -913,35 +736,6 @@ a {
     height: 2px;
 }
 
-.nav-pills .nav-link.active,
-.nav-pills .show>.nav-link {
-    background-color: rgb(7, 89, 133) !important;
-    color: white;
-}
-
-.nav-tabs {
-    background-color:   oklch(92.3% 0.003 48.717);
-    border: none;
-    .nav-link.active {
-        background-color: var(--bs-white) !important;
-        color: var(--bs-black) !important;
-    }
-    .nav-link {
-        border: none;
-        margin: 0;
-    }
-}
-.tab-content {
-    .form-control:focus  {
-        box-shadow: none;
-    }
-    .form-control:focus-visible {
-        outline: none;
-    }
-}
-.list-group-item-action:hover {
-    background-color: #dee2e6;
-}
 .error {
     #Polygon-1,
     #Polygon-2,
@@ -1188,42 +982,7 @@ input[data-autocomplete-target="input"]:focus {
 }
 
 .banned {
-    .rock-item-card,
-    .card-body {
+    .rock-item-card {
         border: 1px solid #b91c1c;
     }
-}
-
-// Custom checkbox styling for search forms
-.form-check-input {
-    // Light mode - black checkmark
-    &:checked {
-        background-color: #000000 !important;
-        border-color: #000000 !important;
-    }
-    
-    &:focus {
-        border-color: #000000 !important;
-        box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.25) !important;
-    }
-}
-
-// Dark mode checkbox styling
-[data-theme="dark"] {
-    .form-check-input {
-        // Dark mode - white checkmark
-        &:checked {
-            background-color: #ffffff !important;
-            border-color: #ffffff !important;
-        }
-        
-        &:focus {
-            border-color: #ffffff !important;
-            box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25) !important;
-        }
-    }
-}
-
-.page-link {
-    min-height: 31px;
 }

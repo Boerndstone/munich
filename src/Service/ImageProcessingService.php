@@ -59,28 +59,42 @@ class ImageProcessingService
             throw new \Exception('Failed to save thumbnail image to ' . $thumbPath);
         }
 
-        // Process 2x version (2000x1126)
-        $image2x = $this->resizeAndCrop($sourceImage, self::MAIN_WIDTH * 2, self::MAIN_HEIGHT * 2);
+        // Process 2x version (2000x1126). If high-res creation fails, keep flow alive with main fallback.
         $filename2x = $baseFilename . '@2x.webp';
         $path2x = $uploadDir . '/' . $filename2x;
-        if (!$this->saveWebP($image2x, $path2x)) {
-            throw new \Exception('Failed to save 2x image to ' . $path2x);
+        try {
+            $image2x = $this->resizeAndCrop($sourceImage, self::MAIN_WIDTH * 2, self::MAIN_HEIGHT * 2);
+            if (!$this->saveWebP($image2x, $path2x)) {
+                throw new \Exception('Failed to save 2x image to ' . $path2x);
+            }
+            imagedestroy($image2x);
+        } catch (\Throwable $exception) {
+            $this->copyFallbackVariant($mainPath, $path2x);
         }
 
-        // Process 3x version (3000x1689)
-        $image3x = $this->resizeAndCrop($sourceImage, self::MAIN_WIDTH * 3, self::MAIN_HEIGHT * 3);
+        // Process 3x version (3000x1689). If high-res creation fails, keep flow alive with main fallback.
         $filename3x = $baseFilename . '@3x.webp';
         $path3x = $uploadDir . '/' . $filename3x;
-        if (!$this->saveWebP($image3x, $path3x)) {
-            throw new \Exception('Failed to save 3x image to ' . $path3x);
+        try {
+            $image3x = $this->resizeAndCrop($sourceImage, self::MAIN_WIDTH * 3, self::MAIN_HEIGHT * 3);
+            if (!$this->saveWebP($image3x, $path3x)) {
+                throw new \Exception('Failed to save 3x image to ' . $path3x);
+            }
+            imagedestroy($image3x);
+        } catch (\Throwable $exception) {
+            $this->copyFallbackVariant($mainPath, $path3x);
+        }
+
+        // Compatibility alias for historic naming patterns observed in existing data.
+        $path3Legacy = $uploadDir . '/' . $baseFilename . '@3.webp';
+        if (!file_exists($path3Legacy)) {
+            $this->copyFallbackVariant($path3x, $path3Legacy);
         }
 
         // Clean up memory
         imagedestroy($sourceImage);
         imagedestroy($mainImage);
         imagedestroy($thumbImage);
-        imagedestroy($image2x);
-        imagedestroy($image3x);
 
         return [
             'main' => $mainFilename,
@@ -187,5 +201,15 @@ class ImageProcessingService
     private function saveWebP($image, string $path): bool
     {
         return imagewebp($image, $path, self::QUALITY);
+    }
+
+    /**
+     * Copy a generated variant from an existing file.
+     */
+    private function copyFallbackVariant(string $sourcePath, string $targetPath): void
+    {
+        if (!file_exists($sourcePath) || !copy($sourcePath, $targetPath)) {
+            throw new \Exception('Failed to create fallback variant ' . $targetPath . ' from ' . $sourcePath);
+        }
     }
 }

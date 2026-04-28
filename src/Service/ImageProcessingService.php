@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use Psr\Log\LoggerInterface;
+
 class ImageProcessingService
 {
     private const MAIN_WIDTH = 1000;
@@ -9,6 +11,12 @@ class ImageProcessingService
     private const THUMB_WIDTH = 110;
     private const THUMB_HEIGHT = 56;
     private const QUALITY = 85; // WebP quality (0-100)
+    private const SAVE_ERROR_CODE_2X = 2002;
+    private const SAVE_ERROR_CODE_3X = 3003;
+
+    public function __construct(private ?LoggerInterface $logger = null)
+    {
+    }
 
     /**
      * Process uploaded image: resize to 1000x563 and create all variants
@@ -62,27 +70,67 @@ class ImageProcessingService
         // Process 2x version (2000x1126). If high-res creation fails, keep flow alive with main fallback.
         $filename2x = $baseFilename . '@2x.webp';
         $path2x = $uploadDir . '/' . $filename2x;
+        $image2x = null;
         try {
             $image2x = $this->resizeAndCrop($sourceImage, self::MAIN_WIDTH * 2, self::MAIN_HEIGHT * 2);
             if (!$this->saveWebP($image2x, $path2x)) {
-                throw new \Exception('Failed to save 2x image to ' . $path2x);
+                throw new \RuntimeException('Failed to save 2x image to ' . $path2x, self::SAVE_ERROR_CODE_2X);
             }
-            imagedestroy($image2x);
         } catch (\Throwable $exception) {
-            $this->copyFallbackVariant($mainPath, $path2x);
+            if ($this->isExpectedVariantSaveFailure($exception, self::SAVE_ERROR_CODE_2X)) {
+                $this->logger?->warning('Falling back to main image for 2x gallery variant.', [
+                    'source_path' => $sourcePath,
+                    'main_path' => $mainPath,
+                    'variant_path' => $path2x,
+                    'exception' => $exception,
+                ]);
+                $this->copyFallbackVariant($mainPath, $path2x);
+            } else {
+                $this->logger?->error('Unexpected 2x gallery variant processing failure.', [
+                    'source_path' => $sourcePath,
+                    'main_path' => $mainPath,
+                    'variant_path' => $path2x,
+                    'exception' => $exception,
+                ]);
+                throw $exception;
+            }
+        } finally {
+            if (null !== $image2x) {
+                imagedestroy($image2x);
+            }
         }
 
         // Process 3x version (3000x1689). If high-res creation fails, keep flow alive with main fallback.
         $filename3x = $baseFilename . '@3x.webp';
         $path3x = $uploadDir . '/' . $filename3x;
+        $image3x = null;
         try {
             $image3x = $this->resizeAndCrop($sourceImage, self::MAIN_WIDTH * 3, self::MAIN_HEIGHT * 3);
             if (!$this->saveWebP($image3x, $path3x)) {
-                throw new \Exception('Failed to save 3x image to ' . $path3x);
+                throw new \RuntimeException('Failed to save 3x image to ' . $path3x, self::SAVE_ERROR_CODE_3X);
             }
-            imagedestroy($image3x);
         } catch (\Throwable $exception) {
-            $this->copyFallbackVariant($mainPath, $path3x);
+            if ($this->isExpectedVariantSaveFailure($exception, self::SAVE_ERROR_CODE_3X)) {
+                $this->logger?->warning('Falling back to main image for 3x gallery variant.', [
+                    'source_path' => $sourcePath,
+                    'main_path' => $mainPath,
+                    'variant_path' => $path3x,
+                    'exception' => $exception,
+                ]);
+                $this->copyFallbackVariant($mainPath, $path3x);
+            } else {
+                $this->logger?->error('Unexpected 3x gallery variant processing failure.', [
+                    'source_path' => $sourcePath,
+                    'main_path' => $mainPath,
+                    'variant_path' => $path3x,
+                    'exception' => $exception,
+                ]);
+                throw $exception;
+            }
+        } finally {
+            if (null !== $image3x) {
+                imagedestroy($image3x);
+            }
         }
 
         // Compatibility alias for historic naming patterns observed in existing data.
@@ -211,5 +259,10 @@ class ImageProcessingService
         if (!file_exists($sourcePath) || !copy($sourcePath, $targetPath)) {
             throw new \Exception('Failed to create fallback variant ' . $targetPath . ' from ' . $sourcePath);
         }
+    }
+
+    private function isExpectedVariantSaveFailure(\Throwable $exception, int $expectedCode): bool
+    {
+        return $exception instanceof \RuntimeException && $exception->getCode() === $expectedCode;
     }
 }

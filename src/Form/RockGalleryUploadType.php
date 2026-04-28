@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Dto\RockImprovementSuggestion;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -46,6 +47,13 @@ class RockGalleryUploadType extends AbstractType
                 ],
                 'row_attr' => ['class' => 'mb-3'],
             ])
+            ->add('routeId', ChoiceType::class, [
+                'label' => 'upload_photo.label.route',
+                'required' => false,
+                'placeholder' => 'upload_photo.placeholder.route',
+                'choices' => $options['route_choices'],
+                'row_attr' => ['class' => 'mb-3'],
+            ])
             ->add('name', TextType::class, [
                 'label' => 'rock_improvement.name',
                 'attr' => ['placeholder' => $this->translator->trans('rock_improvement.placeholder.name')],
@@ -61,6 +69,12 @@ class RockGalleryUploadType extends AbstractType
                     'placeholder' => $this->translator->trans('rock_improvement.placeholder.email'),
                     'autocomplete' => 'email',
                 ],
+                'row_attr' => ['class' => 'mb-3'],
+            ])
+            ->add('photographer', TextType::class, [
+                'label' => 'upload_photo.label.photographer',
+                'required' => false,
+                'attr' => ['placeholder' => $this->translator->trans('upload_photo.placeholder.photographer')],
                 'row_attr' => ['class' => 'mb-3'],
             ])
             ->add('image', FileType::class, [
@@ -96,6 +110,8 @@ class RockGalleryUploadType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => RockImprovementSuggestion::class,
+            'route_choices' => [],
         ]);
+        $resolver->setAllowedTypes('route_choices', ['array']);
     }
 }

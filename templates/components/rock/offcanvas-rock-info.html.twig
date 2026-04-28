@@ -332,8 +332,10 @@
 											<p class="mb-3 text-sm text-gray-600 dark:text-gray-400">{{ 'rock_improvement.gallery_intro'|trans({ '%rock_name%': rock.rockName }) }}</p>
 											{{ form_start(galleryUploadForm, { action: path(app.request.attributes.get('_route'), { areaSlug: areaSlug, slug: slug }), attr: { class: 'max-w-full text-sm', novalidate: 'novalidate', enctype: 'multipart/form-data' } }) }}
 											{{ form_row(galleryUploadForm.rockName) }}
+											{{ form_row(galleryUploadForm.routeId) }}
 											{{ form_row(galleryUploadForm.name) }}
 											{{ form_row(galleryUploadForm.email) }}
+											{{ form_row(galleryUploadForm.photographer) }}
 											{{ form_row(galleryUploadForm.image, { help: 'rock_improvement.help.image'|trans }) }}
 											{{ form_row(galleryUploadForm.comment) }}
 											<button type="submit" class="mt-2 inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium shadow-sm hover:bg-emerald-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900">{{ 'rock_improvement.submit_gallery'|trans }}</button>

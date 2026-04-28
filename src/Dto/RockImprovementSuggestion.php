@@ -17,11 +17,16 @@ class RockImprovementSuggestion
     #[Assert\Length(max: 255)]
     public ?string $routeName = null;
 
+    public ?int $routeId = null;
+
     #[Assert\Length(max: 20)]
     public ?string $grade = null;
 
     #[Assert\Length(max: 255)]
     public ?string $firstAscent = null;
+
+    #[Assert\Length(max: 255)]
+    public ?string $photographer = null;
 
     #[Assert\When(
         expression: 'this.email != null',

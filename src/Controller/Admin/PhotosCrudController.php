@@ -175,8 +175,8 @@ class PhotosCrudController extends AbstractCrudController
         
         // Ensure directory exists for conversion pipeline.
         $uploadDir = (string) $this->parameterBag->get('app.gallery_upload_dir');
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
+        if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true) && !is_dir($uploadDir)) {
+            throw new \RuntimeException(sprintf('Upload directory could not be created: %s', $uploadDir));
         }
 
         yield ImageField::new('name')

@@ -3,13 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Area;
+use App\Entity\Photos;
 use App\Entity\Rock;
 use App\Entity\Contact;
 use App\Dto\RockImprovementSuggestion;
 use App\Service\FooterAreas;
 use App\Service\FrontendCacheService;
+use App\Service\ImageProcessingService;
 use App\Service\RouteGroupingService;
 use App\Form\ContactFormType;
+use App\Form\RockGalleryUploadType;
 use App\Form\RockImprovementSuggestionType;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use App\Repository\AreaRepository;
@@ -28,6 +31,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 
 class FrontendController extends AbstractController
@@ -173,7 +177,10 @@ class FrontendController extends AbstractController
         Packages $assetPackages,
         Request $request,
         MailerInterface $mailer,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        EntityManagerInterface $entityManager,
+        SluggerInterface $slugger,
+        ImageProcessingService $imageProcessingService
     ): Response {
 
         $rockId = $rockRepository->getRockId($slug);
@@ -193,6 +200,11 @@ class FrontendController extends AbstractController
         $comments = $rockRepository->getCommentsForRoutes($slug);
 
         $locale = $request->getLocale();
+        $openMithelfen = $request->query->getBoolean('mithelfenOpen', false);
+        $mithelfenTab = $request->query->get('mithelfenTab', 'content');
+        if (!\in_array($mithelfenTab, ['content', 'gallery'], true)) {
+            $mithelfenTab = 'content';
+        }
         $rockDescription = $rockRepository->findWithTranslations($slug, $locale);
         $rockDescriptionArray = [
             'description' => $rockDescription[0]['description'] ?? null,
@@ -247,6 +259,12 @@ class FrontendController extends AbstractController
         $suggestion->rockName = $rock->getName();
         $improvementForm = $this->createForm(RockImprovementSuggestionType::class, $suggestion);
         $improvementForm->handleRequest($request);
+
+        $gallerySuggestion = new RockImprovementSuggestion();
+        $gallerySuggestion->rockName = $rock->getName();
+        $galleryUploadForm = $this->createForm(RockGalleryUploadType::class, $gallerySuggestion);
+        $galleryUploadForm->handleRequest($request);
+
         if ($improvementForm->isSubmitted() && $improvementForm->isValid()) {
             /** @var RockImprovementSuggestion $data */
             $data = $improvementForm->getData();
@@ -268,10 +286,86 @@ class FrontendController extends AbstractController
                 $email->replyTo($data->email);
             }
             $mailer->send($email);
-            $this->addFlash('success', $translator->trans('rock_improvement.success'));
+            $this->addFlash('mithelfen_success', $translator->trans('rock_improvement.success'));
             $rockRoute = $request->getLocale() === 'en' ? 'show_rock_en' : 'show_rock';
 
-            return $this->redirectToRoute($rockRoute, ['areaSlug' => $areaSlug, 'slug' => $slug]);
+            return $this->redirectToRoute($rockRoute, [
+                'areaSlug' => $areaSlug,
+                'slug' => $slug,
+                'mithelfenOpen' => 1,
+                'mithelfenTab' => 'content',
+            ]);
+        }
+
+        if ($improvementForm->isSubmitted() && !$improvementForm->isValid()) {
+            $openMithelfen = true;
+            $mithelfenTab = 'content';
+        }
+
+        if ($galleryUploadForm->isSubmitted() && $galleryUploadForm->isValid()) {
+            /** @var RockImprovementSuggestion $data */
+            $data = $galleryUploadForm->getData();
+            $uploadDir = $this->getParameter('kernel.project_dir') . '/public/uploads/galerie';
+            $originalFilename = pathinfo($data->image->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeFilename = (string) $slugger->slug($originalFilename);
+            if ('' === $safeFilename) {
+                $safeFilename = 'mithelfen-image';
+            }
+            $baseFilename = $safeFilename . '-' . uniqid();
+            $extension = $data->image->guessExtension() ?: 'tmp';
+            $tempFilename = 'temp_' . $baseFilename . '.' . $extension;
+            $tempPath = $uploadDir . '/' . $tempFilename;
+            $data->image->move($uploadDir, $tempFilename);
+
+            try {
+                $processedFiles = $imageProcessingService->processUploadedImage(
+                    $tempPath,
+                    $baseFilename,
+                    $uploadDir
+                );
+
+                if (file_exists($tempPath)) {
+                    unlink($tempPath);
+                }
+
+                $photo = new Photos();
+                $photo->setStatus('pending');
+                $photo->setName($processedFiles['main']);
+                $photo->setBelongsToRock($rock);
+                $photo->setBelongsToArea($rock->getArea());
+                $photo->setUploaderName($data->name);
+                $photo->setUploaderEmail($data->email);
+
+                if (\is_string($data->comment) && '' !== trim($data->comment)) {
+                    $photo->setDescription($data->comment);
+                }
+
+                $entityManager->persist($photo);
+                $entityManager->flush();
+                $this->addFlash('mithelfen_success', $translator->trans('rock_improvement.image_success'));
+                $rockRoute = $request->getLocale() === 'en' ? 'show_rock_en' : 'show_rock';
+
+                return $this->redirectToRoute($rockRoute, [
+                    'areaSlug' => $areaSlug,
+                    'slug' => $slug,
+                    'mithelfenOpen' => 1,
+                    'mithelfenTab' => 'gallery',
+                ]);
+            } catch (\Throwable $exception) {
+                if (file_exists($tempPath)) {
+                    unlink($tempPath);
+                }
+                $openMithelfen = true;
+                $mithelfenTab = 'gallery';
+                $this->addFlash('mithelfen_error', $translator->trans('rock_improvement.image_upload_failed', [
+                    '%error%' => $exception->getMessage(),
+                ]));
+            }
+        }
+
+        if ($galleryUploadForm->isSubmitted() && !$galleryUploadForm->isValid()) {
+            $openMithelfen = true;
+            $mithelfenTab = 'gallery';
         }
 
         return $this->render('frontend/rock.html.twig', [
@@ -295,6 +389,9 @@ class FrontendController extends AbstractController
             'jsonData' => $jsonData,
             'locale' => $locale,
             'improvementForm' => $improvementForm,
+            'galleryUploadForm' => $galleryUploadForm,
+            'mithelfenOpen' => $openMithelfen,
+            'mithelfenTab' => $mithelfenTab,
         ]);
     }
 }

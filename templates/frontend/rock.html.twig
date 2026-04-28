@@ -87,7 +87,16 @@
 			{{ include('components/page/rock-seasonal-ban.html.twig', { rock: rock, currentDate: currentDate }) }}
 		{% endfor %}
 		{# Offcanvas outside .image-container so backdrop/panel stack above the hero (z-index context) #}
-		{{ include('components/rock/offcanvas-rock-info.html.twig', { rocks: rocks, improvementForm: improvementForm|default(null), areaName: areaName, areaSlug: areaSlug, slug: slug }) }}
+		{{ include('components/rock/offcanvas-rock-info.html.twig', {
+			rocks: rocks,
+			improvementForm: improvementForm|default(null),
+			galleryUploadForm: galleryUploadForm|default(null),
+			areaName: areaName,
+			areaSlug: areaSlug,
+			slug: slug,
+			mithelfenOpen: mithelfenOpen|default(false),
+			mithelfenTab: mithelfenTab|default('content')
+		}) }}
 		{{ include('components/page/rock-grouped-routes.html.twig', { groupedRoutes: groupedRoutes, rocks: rocks }) }}
 	</main>
 	{{ include('components/page/rock-hash-scroll.html.twig') }}

@@ -1,4 +1,31 @@
 	(function() {
+		function readTphI18n() {
+			var el = document.getElementById('topo-path-helper-i18n');
+			if (!el || !el.textContent) return {};
+			try {
+				return JSON.parse(el.textContent);
+			} catch (e) {
+				return {};
+			}
+		}
+
+		var TPH_I18N = readTphI18n();
+
+		function tphT(key, params) {
+			var s = TPH_I18N[key];
+			if (s == null || s === '') {
+				s = key;
+			}
+			if (params && typeof params === 'object') {
+				for (var k in params) {
+					if (Object.prototype.hasOwnProperty.call(params, k)) {
+						s = String(s).split('%' + k + '%').join(String(params[k]));
+					}
+				}
+			}
+			return s;
+		}
+
 		function escapeHtml(s) {
 			var div = document.createElement('div');
 			div.textContent = s;
@@ -23,7 +50,7 @@
 		function loadDrawImage() {
 			var url = getDrawImageUrl();
 			if (!url) {
-				document.getElementById('tph-drawStatus').textContent = 'Enter an image URL or choose a file.';
+				document.getElementById('tph-drawStatus').textContent = tphT('draw_status_need_url');
 				return;
 			}
 			drawW = 1024;
@@ -43,11 +70,13 @@
 				updateDrawPathButtons();
 				requestAnimationFrame(function() {
 					var count = drawSvg.querySelectorAll('path[id^="svg_"]').length || drawnPaths.length;
-					document.getElementById('tph-drawStatus').textContent = count ? count + ' path(s) on image. Click to add points or \"New path\" for the next route.' : 'Click on the image to add points. "New path" starts the next route.';
+					document.getElementById('tph-drawStatus').textContent = count
+						? tphT('draw_status_on_image', { count: count })
+						: tphT('draw_status_start_routes');
 				});
 			};
 			drawImg.onerror = function() {
-				document.getElementById('tph-drawStatus').textContent = 'Could not load image. Check URL or try a file.';
+				document.getElementById('tph-drawStatus').textContent = tphT('draw_status_image_error');
 			};
 			drawImg.src = url;
 		}
@@ -193,14 +222,14 @@
 			if (index < 0 || index >= drawnPaths.length) return;
 			var pts = pathToPoints(drawnPaths[index].d);
 			if (pts.length < 2) {
-				document.getElementById('tph-drawStatus').textContent = 'Path has too few points to edit.';
+				document.getElementById('tph-drawStatus').textContent = tphT('draw_status_few_points');
 				return;
 			}
 			selectedPathIndex = index;
 			editingPathPoints = pts.map(function(p) { return [p[0], p[1]]; });
 			redrawOverlay();
 			updateDrawPathButtons();
-			document.getElementById('tph-drawStatus').textContent = 'Path ' + (index + 1) + ' selected. Drag points to edit, or click "Delete selected path" / "Deselect".';
+			document.getElementById('tph-drawStatus').textContent = tphT('draw_status_path_selected', { pathNum: index + 1 });
 		}
 
 		function deselectPath() {
@@ -215,7 +244,9 @@
 			draggingPointIndex = null;
 			pathsUiSync();
 			updateDrawPathButtons();
-			document.getElementById('tph-drawStatus').textContent = drawnPaths.length ? drawnPaths.length + ' path(s). Click a path to edit, or click on image to add points.' : 'Click on the image to add points.';
+			document.getElementById('tph-drawStatus').textContent = drawnPaths.length
+				? tphT('draw_status_paths_click_edit', { count: drawnPaths.length })
+				: tphT('draw_status_click_image');
 		}
 
 		function deleteSelectedPath() {
@@ -226,7 +257,9 @@
 			editingPathPoints = null;
 			pathsUiSync();
 			updateDrawPathButtons();
-			document.getElementById('tph-drawStatus').textContent = 'Path deleted. ' + (drawnPaths.length ? drawnPaths.length + ' path(s) left.' : 'Click on the image to add points.');
+			document.getElementById('tph-drawStatus').textContent = drawnPaths.length
+				? tphT('draw_status_path_deleted_remaining', { count: drawnPaths.length })
+				: tphT('draw_status_path_deleted_none');
 		}
 
 		function onDrawSvgMouseDown(ev) {
@@ -277,7 +310,10 @@
 			var pt = svgCoords(ev);
 			currentPath.push(pt);
 			redrawOverlay();
-			document.getElementById('tph-drawStatus').textContent = 'Path ' + (drawnPaths.length + 1) + ': ' + currentPath.length + ' point(s). Click "New path" to finish this route.';
+			document.getElementById('tph-drawStatus').textContent = tphT('draw_status_drawing', {
+				pathNum: drawnPaths.length + 1,
+				pointCount: currentPath.length,
+			});
 		}
 
 		function newPath() {
@@ -285,13 +321,13 @@
 				drawnPaths.push({ d: pathToD(currentPath) });
 				currentPath = [];
 				redrawOverlay();
-				document.getElementById('tph-drawStatus').textContent = 'Path ' + drawnPaths.length + ' saved. Click on image to start next path.';
+				document.getElementById('tph-drawStatus').textContent = tphT('draw_status_path_saved', { pathNum: drawnPaths.length });
 			} else if (currentPath.length > 0) {
 				currentPath = [];
 				redrawOverlay();
-				document.getElementById('tph-drawStatus').textContent = 'Path cleared (need at least 2 points).';
+				document.getElementById('tph-drawStatus').textContent = tphT('draw_status_path_cleared');
 			} else {
-				document.getElementById('tph-drawStatus').textContent = 'Draw at least 2 points before starting a new path.';
+				document.getElementById('tph-drawStatus').textContent = tphT('draw_status_need_two_before_new');
 			}
 		}
 
@@ -299,7 +335,7 @@
 			if (currentPath.length > 0) {
 				currentPath.pop();
 				redrawOverlay();
-				document.getElementById('tph-drawStatus').textContent = 'Last point removed. Points: ' + currentPath.length;
+				document.getElementById('tph-drawStatus').textContent = tphT('draw_status_undo_point', { count: currentPath.length });
 			}
 		}
 
@@ -307,7 +343,7 @@
 			if (currentPath.length >= 2) drawnPaths.push({ d: pathToD(currentPath) });
 			currentPath = [];
 			if (drawnPaths.length === 0) {
-				showToast('No paths to copy. Draw at least one path with 2+ points.');
+				showToast(tphT('copy_no_paths_toast'));
 				return;
 			}
 			var lines = drawnPaths.map(function(p, i) {
@@ -317,9 +353,9 @@
 			document.getElementById('tph-input').value = html;
 			parsePaths();
 			navigator.clipboard.writeText(html).then(function() {
-				showToast('Pfade nach Schritt 1 kopiert und geparst. Farben/Dot in der Routen-Tabelle.');
+				showToast(tphT('copy_parsed_clipboard_toast'));
 			});
-			document.getElementById('tph-drawStatus').textContent = 'Copied ' + drawnPaths.length + ' path(s) to Step 1.';
+			document.getElementById('tph-drawStatus').textContent = tphT('copy_paths_to_step1_status', { count: drawnPaths.length });
 		}
 
 		document.getElementById('tph-drawLoadImage').addEventListener('click', loadDrawImage);
@@ -398,9 +434,9 @@
 				var dotOn = hasPath && !!paths[rowIdx].dot;
 				var disabledAttr = hasPath ? '' : ' disabled';
 				var checkedAttr = dotOn ? ' checked' : '';
-				return '<tr><td>' + escapeHtml(nr) + '</td><td>' + escapeHtml(r.name || '') + '</td><td>' + escapeHtml(r.grade || '') + '</td><td>' + escapeHtml(bucket) + '</td><td><span class="tph-color-swatch" style="background-color:' + escapeHtml(hex) + '" title="' + escapeHtml(hex) + '"></span><code style="font-size:11px">' + escapeHtml(hex) + '</code></td><td><label class="tph-route-dot-label"><input type="checkbox" class="tph-route-dot" data-path-index="' + rowIdx + '"' + disabledAttr + checkedAttr + '> Anker</label></td></tr>';
+				return '<tr><td>' + escapeHtml(nr) + '</td><td>' + escapeHtml(r.name || '') + '</td><td>' + escapeHtml(r.grade || '') + '</td><td>' + escapeHtml(bucket) + '</td><td><span class="tph-color-swatch" style="background-color:' + escapeHtml(hex) + '" title="' + escapeHtml(hex) + '"></span><code style="font-size:11px">' + escapeHtml(hex) + '</code></td><td><label class="tph-route-dot-label"><input type="checkbox" class="tph-route-dot" data-path-index="' + rowIdx + '"' + disabledAttr + checkedAttr + '> ' + escapeHtml(tphT('routes_dot_anchor')) + '</label></td></tr>';
 			}).join('');
-			wrap.innerHTML = '<table class="tph-routes-table"><thead><tr><th>Nr</th><th>Route</th><th>Grad</th><th>Bucket</th><th>Farbe</th><th>Dot</th></tr></thead><tbody>' + rows + '</tbody></table>';
+			wrap.innerHTML = '<table class="tph-routes-table"><thead><tr><th>' + escapeHtml(tphT('routes_col_nr')) + '</th><th>' + escapeHtml(tphT('routes_col_route')) + '</th><th>' + escapeHtml(tphT('routes_col_grade')) + '</th><th>' + escapeHtml(tphT('routes_col_bucket')) + '</th><th>' + escapeHtml(tphT('routes_col_color')) + '</th><th>' + escapeHtml(tphT('routes_col_dot')) + '</th></tr></thead><tbody>' + rows + '</tbody></table>';
 			wireRouteTableDotCheckboxes();
 		}
 
@@ -498,7 +534,7 @@
 			var el = document.getElementById('tph-output');
 			el.select();
 			el.setSelectionRange(0, 99999);
-			navigator.clipboard.writeText(el.value).then(function() { showToast('Copied to clipboard!'); });
+			navigator.clipboard.writeText(el.value).then(function() { showToast(tphT('clipboard_copied')); });
 		}
 
 		function showToast(msg) {
@@ -512,11 +548,11 @@
 			var te = window.TOPO_EDIT;
 			var sorted = routesSortedByNr(te);
 			if (!sorted.length) {
-				showToast('Keine Routendaten für dieses Topo.');
+				showToast(tphT('apply_no_routes'));
 				return;
 			}
 			if (!paths.length) {
-				showToast('Zuerst gültige path-Elemente in Schritt 1 einfügen oder aus Schritt 0 kopieren.');
+				showToast(tphT('apply_no_paths_first'));
 				return;
 			}
 			var applied = 0;
@@ -531,12 +567,12 @@
 				}
 			}
 			pathsUiSync();
-			var msg = applied + ' Pfad(e) eingefärbt (Zeile i = Pfad i, Routen nach Nr. sortiert).';
+			var msg = tphT('apply_summary_start', { applied: applied });
 			if (missing > 0) {
-				msg += ' ' + missing + ' ohne Route in dieser Zeile.';
+				msg += ' ' + tphT('apply_summary_missing', { missing: missing });
 			}
 			if (paths.length > sorted.length) {
-				msg += ' (' + (paths.length - sorted.length) + ' Pfad(e) mehr als Routen — ohne Farbe.)';
+				msg += ' ' + tphT('apply_summary_extra', { extra: paths.length - sorted.length });
 			}
 			showToast(msg);
 		}
@@ -622,13 +658,13 @@
 						if (data.success && data.redirectUrl) {
 							window.location.href = data.redirectUrl;
 						} else {
-							showToast(data.error || data.message || 'Save failed');
-						}
-					})
-					.catch(function() {
-						saveToTopoBtn.disabled = false;
-						showToast('Save failed');
-					});
+						showToast(data.error || data.message || tphT('save_failed'));
+					}
+				})
+				.catch(function() {
+					saveToTopoBtn.disabled = false;
+					showToast(tphT('save_failed'));
+				});
 					return;
 				}
 
@@ -647,12 +683,12 @@
 					if (data.success && data.redirectUrl) {
 						window.location.href = data.redirectUrl;
 					} else {
-						showToast(data.error || data.message || 'Save failed');
+						showToast(data.error || data.message || tphT('save_failed'));
 					}
 				})
 				.catch(function() {
 					saveToTopoBtn.disabled = false;
-					showToast('Save failed');
+					showToast(tphT('save_failed'));
 				});
 			});
 		}

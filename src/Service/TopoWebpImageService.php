@@ -29,22 +29,50 @@ final class TopoWebpImageService
             throw new \RuntimeException('Cannot create topo image directory: ' . $outputDir);
         }
 
-        $sourceImage = $this->loadImage($sourcePath);
-        if ($sourceImage === false) {
-            throw new \RuntimeException('Failed to load image: ' . $sourcePath);
-        }
+        $sourceImage = null;
+        $img1x = null;
+        $img2x = null;
 
-        $h1x = (int) round(self::WIDTH_1X * self::VIEW_H / self::VIEW_W);
-        $img1x = $this->resizeAndCrop($sourceImage, self::WIDTH_1X, $h1x);
-        $path1x = $outputDir . '/' . $basename . '.webp';
-        if (!imagewebp($img1x, $path1x, self::QUALITY)) {
-            throw new \RuntimeException('Failed to write ' . $path1x);
-        }
+        try {
+            $sourceImage = $this->loadImage($sourcePath);
+            if ($sourceImage === false) {
+                throw new \RuntimeException('Failed to load image: ' . $sourcePath);
+            }
 
-        $img2x = $this->resizeAndCrop($sourceImage, self::WIDTH_2X, self::VIEW_H);
-        $path2x = $outputDir . '/' . $basename . '@2x.webp';
-        if (!imagewebp($img2x, $path2x, self::QUALITY)) {
-            throw new \RuntimeException('Failed to write ' . $path2x);
+            $h1x = (int) round(self::WIDTH_1X * self::VIEW_H / self::VIEW_W);
+            $img1x = $this->resizeAndCrop($sourceImage, self::WIDTH_1X, $h1x);
+            if ($img1x === false) {
+                throw new \RuntimeException('Failed to resize/crop image for ' . $basename . '.webp');
+            }
+
+            $path1x = $outputDir . '/' . $basename . '.webp';
+            if (!imagewebp($img1x, $path1x, self::QUALITY)) {
+                throw new \RuntimeException('Failed to write ' . $path1x);
+            }
+
+            $img2x = $this->resizeAndCrop($sourceImage, self::WIDTH_2X, self::VIEW_H);
+            if ($img2x === false) {
+                throw new \RuntimeException('Failed to resize/crop image for ' . $basename . '@2x.webp');
+            }
+
+            $path2x = $outputDir . '/' . $basename . '@2x.webp';
+            if (!imagewebp($img2x, $path2x, self::QUALITY)) {
+                throw new \RuntimeException('Failed to write ' . $path2x);
+            }
+        } finally {
+            $this->destroyImage($img2x);
+            $this->destroyImage($img1x);
+            $this->destroyImage($sourceImage);
+        }
+    }
+
+    /**
+     * @param mixed $image
+     */
+    private function destroyImage($image): void
+    {
+        if ($image instanceof \GdImage || is_resource($image)) {
+            imagedestroy($image);
         }
     }
 

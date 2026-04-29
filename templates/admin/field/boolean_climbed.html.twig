@@ -1,0 +1,17 @@
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# Index / detail: check / times. New / edit: EasyAdmin switch when renderAsSwitch is on. #}
+{% set ea = ea() %}
+
+{% if ea.crud.currentAction in ['index', 'detail'] %}
+	{% if field.value %}
+		<span class="d-inline-flex align-items-center justify-content-center text-success" title="Bereits geklettert" aria-label="{{ 'label.true'|trans({}, 'EasyAdminBundle') }}">
+			<i class="fa fa-check fa-lg" aria-hidden="true"></i>
+		</span>
+	{% else %}
+		<span class="d-inline-flex align-items-center justify-content-center text-danger" title="Noch nicht geklettert" aria-label="{{ 'label.false'|trans({}, 'EasyAdminBundle') }}">
+			<i class="fa fa-times fa-lg" aria-hidden="true"></i>
+		</span>
+	{% endif %}
+{% else %}
+	{{ form_widget(field.form) }}
+{% endif %}

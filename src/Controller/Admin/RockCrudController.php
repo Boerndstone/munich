@@ -98,33 +98,24 @@ class RockCrudController extends AbstractCrudController
                     ->setLabel('Speichern und ein weiteres Gebiet hinzufügen');
             })
 
-            ->update(Crud::PAGE_DETAIL, Action::EDIT, function (Action $action) {
+            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
                 return $action
-                    ->setLabel('Bearbeiten')
-                    ->setCssClass('btn btn-success');
-            })
-
-            ->update(Crud::PAGE_DETAIL, Action::INDEX, function (Action $action) {
-                return $action
-                    ->setLabel('Zurück zur Liste');
-            })
-            ->update(Crud::PAGE_DETAIL, Action::DELETE, function (Action $action) {
-                return $action
-                    ->setLabel('Löschen')
+                    ->setIcon('fa fa-trash')
+                    ->setLabel(false)
                     ->displayIf(fn () => $this->canCreateOrDeleteRockInAdmin());
             })
-            ->add(Crud::PAGE_DETAIL, Action::new('importRoutes', 'Routen importieren')
+            ->add(Crud::PAGE_INDEX, Action::new('importRoutes', 'Routen importieren')
                 ->linkToRoute('admin_rock_import_routes', function (Rock $rock): array {
                     return ['rockId' => $rock->getId()];
                 })
                 ->setIcon('fa fa-upload')
                 ->setCssClass('btn btn-primary'))
-            ->add(Crud::PAGE_DETAIL, Action::new('editGeolocation', 'Pfad bearbeiten')
-                ->linkToRoute('admin_rock_geolocation', function (Rock $rock): array {
+            ->add(Crud::PAGE_EDIT, Action::new('importRoutes', 'Routen importieren')
+                ->linkToRoute('admin_rock_import_routes', function (Rock $rock): array {
                     return ['rockId' => $rock->getId()];
                 })
-                ->setIcon('fa fa-map-marker-alt')
-                ->setCssClass('btn btn-secondary'))
+                ->setIcon('fa fa-upload')
+                ->setCssClass('btn btn-primary'))
             ->add(Crud::PAGE_EDIT, Action::new('editGeolocation', 'Pfad bearbeiten')
                 ->linkToRoute('admin_rock_geolocation', function (Rock $rock): array {
                     return ['rockId' => $rock->getId()];
@@ -140,9 +131,6 @@ class RockCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_NEW, 'Neuen Fels anlegen')
             ->showEntityActionsInlined()
             ->setPageTitle(Crud::PAGE_EDIT, static function (Rock $rock) {
-                return $rock->getName();
-            })
-            ->setPageTitle(Crud::PAGE_DETAIL, static function (Rock $rock) {
                 return $rock->getName();
             });
     }
@@ -169,7 +157,7 @@ class RockCrudController extends AbstractCrudController
 
         yield CollectionField::new('routes')
             ->setLabel(false)
-            ->onlyOnDetail()
+            ->hideOnIndex()
             ->setTemplatePath('admin/field/routes.html.twig')
             ->setCustomOption('gradeFormChoices', $this->gradeTranslationService->getGradeFormChoices())
             ->addCssClass('field-address')

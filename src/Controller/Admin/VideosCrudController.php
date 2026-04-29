@@ -73,19 +73,10 @@ class VideosCrudController extends AbstractCrudController
                     ->setLabel('Speichern und ein weiteres Video hinzufügen');
             })
 
-            ->update(Crud::PAGE_DETAIL, Action::EDIT, function (Action $action) {
+            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
                 return $action
-                    ->setLabel('Bearbeiten')
-                    ->setCssClass('btn btn-success');
-            })
-
-            ->update(Crud::PAGE_DETAIL, Action::INDEX, function (Action $action) {
-                return $action
-                    ->setLabel('Zurück zur Liste');
-            })
-            ->update(Crud::PAGE_DETAIL, Action::DELETE, function (Action $action) {
-                return $action
-                    ->setLabel('Löschen');
+                    ->setIcon('fa fa-trash')
+                    ->setLabel(false);
             });
     }
 
@@ -96,9 +87,6 @@ class VideosCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_NEW, 'Video hinzufügen')
             ->showEntityActionsInlined()
             ->setPageTitle(Crud::PAGE_EDIT, static function (Videos $videos) {
-                return $videos->getVideoRoutes();
-            })
-            ->setPageTitle(Crud::PAGE_DETAIL, static function (Videos $videos) {
                 return $videos->getVideoRoutes();
             })
             ->setFormOptions(['attr' => ['novalidate' => null]]);

@@ -48,9 +48,6 @@ class TopoCrudController extends AbstractCrudController
             ->add(Crud::PAGE_INDEX, Action::new('editPaths', 'Tourenpfade bearbeiten', 'fa fa-pencil-square-o')
                 ->linkToRoute('admin_topo_edit_paths', fn (Topo $topo) => ['id' => $topo->getId()])
                 ->setCssClass('btn btn-secondary'))
-            ->add(Crud::PAGE_DETAIL, Action::new('editPaths', 'Tourenpfade bearbeiten', 'fa fa-pencil-square-o')
-                ->linkToRoute('admin_topo_edit_paths', fn (Topo $topo) => ['id' => $topo->getId()])
-                ->setCssClass('btn btn-secondary'))
             ->add(Crud::PAGE_EDIT, Action::new('editPaths', 'Tourenpfade bearbeiten', 'fa fa-pencil-square-o')
                 ->linkToRoute('admin_topo_edit_paths', fn (Topo $topo) => ['id' => $topo->getId()])
                 ->setCssClass('btn btn-secondary'))
@@ -84,19 +81,10 @@ class TopoCrudController extends AbstractCrudController
                     ->setLabel('Speichern und ein weiteres Topo hinzufügen');
             })
 
-            ->update(Crud::PAGE_DETAIL, Action::EDIT, function (Action $action) {
+            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
                 return $action
-                    ->setLabel('Bearbeiten')
-                    ->setCssClass('btn btn-success');
-            })
-
-            ->update(Crud::PAGE_DETAIL, Action::INDEX, function (Action $action) {
-                return $action
-                    ->setLabel('Zurück zur Liste');
-            })
-            ->update(Crud::PAGE_DETAIL, Action::DELETE, function (Action $action) {
-                return $action
-                    ->setLabel('Löschen');
+                    ->setIcon('fa fa-trash')
+                    ->setLabel(false);
             });
     }
 
@@ -107,9 +95,6 @@ class TopoCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_NEW, 'Topo hinzufügen')
             ->showEntityActionsInlined()
             ->setPageTitle(Crud::PAGE_EDIT, static function (Topo $topo) {
-                return $topo->getName();
-            })
-            ->setPageTitle(Crud::PAGE_DETAIL, static function (Topo $topo) {
                 return $topo->getName();
             })
             ->setFormOptions(['attr' => ['novalidate' => null]]);

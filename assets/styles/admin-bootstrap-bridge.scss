@@ -91,6 +91,47 @@ body.ea .wrapper {
         color: var(--theme-bg) !important;
     }
 
+    /* EasyAdmin emits `badge badge-*` (e.g. ChoiceField); restore Bootstrap palette over generic `.badge` above. */
+    .badge.badge-success {
+        background-color: var(--bs-success, #198754) !important;
+        color: #fff !important;
+    }
+
+    .badge.badge-warning {
+        background-color: var(--bs-warning, #ffc107) !important;
+        color: var(--bs-dark, #212529) !important;
+    }
+
+    .badge.badge-danger {
+        background-color: var(--bs-danger, #dc3545) !important;
+        color: #fff !important;
+    }
+
+    .badge.badge-info {
+        background-color: var(--bs-info, #0dcaf0) !important;
+        color: var(--bs-dark, #212529) !important;
+    }
+
+    .badge.badge-primary {
+        background-color: var(--bs-primary, #0d6efd) !important;
+        color: #fff !important;
+    }
+
+    .badge.badge-secondary {
+        background-color: var(--bs-secondary, #6c757d) !important;
+        color: #fff !important;
+    }
+
+    .badge.badge-light {
+        background-color: var(--bs-light, #f8f9fa) !important;
+        color: var(--bs-dark, #212529) !important;
+    }
+
+    .badge.badge-dark {
+        background-color: var(--bs-dark, #212529) !important;
+        color: #fff !important;
+    }
+
     .form-check-input {
         background-color: var(--theme-bg) !important;
         border: 1px solid var(--theme-border) !important;
@@ -272,6 +313,46 @@ body.ea.ea-dark-scheme {
             .badge {
                 background-color: var(--theme-text) !important;
                 color: var(--theme-bg) !important;
+            }
+
+            .badge.badge-success {
+                background-color: var(--bs-success, #198754) !important;
+                color: #fff !important;
+            }
+
+            .badge.badge-warning {
+                background-color: var(--bs-warning, #ffc107) !important;
+                color: var(--bs-dark, #212529) !important;
+            }
+
+            .badge.badge-danger {
+                background-color: var(--bs-danger, #dc3545) !important;
+                color: #fff !important;
+            }
+
+            .badge.badge-info {
+                background-color: var(--bs-info, #0dcaf0) !important;
+                color: var(--bs-dark, #212529) !important;
+            }
+
+            .badge.badge-primary {
+                background-color: var(--bs-primary, #0d6efd) !important;
+                color: #fff !important;
+            }
+
+            .badge.badge-secondary {
+                background-color: var(--bs-secondary, #6c757d) !important;
+                color: #fff !important;
+            }
+
+            .badge.badge-light {
+                background-color: var(--bs-light, #f8f9fa) !important;
+                color: var(--bs-dark, #212529) !important;
+            }
+
+            .badge.badge-dark {
+                background-color: var(--bs-dark, #212529) !important;
+                color: #fff !important;
             }
         
             .form-check-input {

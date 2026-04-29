@@ -123,6 +123,18 @@ class PhotosCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->hideOnForm();
         
+        yield AssociationField::new('belongsToRoute')
+            ->setLabel('Tour')
+            ->setColumns('col-12');
+        
+        yield AssociationField::new('belongsToRock')
+            ->setLabel('Fels')
+            ->setColumns('col-12');
+
+        yield AssociationField::new('belongsToArea')
+            ->setLabel('Gebiet')
+            ->setColumns('col-12');
+        
         yield ChoiceField::new('status')
             ->setLabel('Status')
             ->setChoices([
@@ -137,15 +149,8 @@ class PhotosCrudController extends AbstractCrudController
             ])
             ->setColumns('col-12');
         
-        yield AssociationField::new('belongsToArea')
-            ->setLabel('Gebiet')
-            ->setColumns('col-12');
-        yield AssociationField::new('belongsToRock')
-            ->setLabel('Fels')
-            ->setColumns('col-12');
-        yield AssociationField::new('belongsToRoute')
-            ->setLabel('Tour')
-            ->setColumns('col-12');
+        
+        
         
         // Ensure directory exists for conversion pipeline.
         $uploadDir = (string) $this->parameterBag->get('app.gallery_upload_dir');
@@ -164,6 +169,7 @@ class PhotosCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->setColumns('col-12');
         yield Field::new('photgrapher')
+            ->hideOnIndex()
             ->setLabel('Fotograph')
             ->setColumns('col-12');
         

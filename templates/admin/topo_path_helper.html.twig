@@ -543,18 +543,37 @@
 		}
 
 		function parsePaths() {
-			const html = document.getElementById('tph-input').value;
+			const html = document.getElementById('tph-input').value || '';
+			if (html.trim() === '') {
+				return;
+			}
+			const prevByD = new Map();
+			paths.forEach(function(p) {
+				if (p && typeof p.d === 'string' && p.d.length) {
+					prevByD.set(p.d, { dot: !!p.dot, dashed: !!p.dashed, color: p.color });
+				}
+			});
 			const pattern = /<path[^>]*\sd="([^"]*)"/g;
 			const dValues = [];
 			let m;
-			while ((m = pattern.exec(html)) !== null) dValues.push(m[1]);
+			while ((m = pattern.exec(html)) !== null) {
+				dValues.push(m[1]);
+			}
 
 			if (dValues.length === 0) {
 				paths = [];
 				pathsUiSync();
 				return;
 			}
-			paths = dValues.map(d => ({ d, color: '#E42522', dashed: false, dot: false }));
+			paths = dValues.map(function(d) {
+				var pr = prevByD.get(d);
+				return {
+					d: d,
+					color: pr && pr.color ? pr.color : '#E42522',
+					dashed: pr ? pr.dashed : false,
+					dot: pr ? pr.dot : false,
+				};
+			});
 			autoApplyGradeColorsIfTopoRoutes();
 			pathsUiSync();
 		}
@@ -619,7 +638,6 @@
 		}
 
 		function applyGradeColorsFromRoutes() {
-			parsePaths();
 			var te = window.TOPO_EDIT;
 			var sorted = routesSortedByNr(te);
 			if (!sorted.length) {
@@ -696,7 +714,6 @@
 			saveToTopoBtn.addEventListener('click', function() {
 				var te = window.TOPO_EDIT;
 				var viewBox = '0 0 1024 820';
-				parsePaths();
 				var phpLiteral = getPhpLiteralContent();
 				var body = new URLSearchParams({ phpLiteral: phpLiteral, viewBox: viewBox });
 				var csrfToken = (saveToTopoBtn && saveToTopoBtn.getAttribute('data-csrf-token')) || '';

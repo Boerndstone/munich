@@ -96,9 +96,11 @@ final class TopoWebpImageService
     }
 
     /**
-     * @param resource $sourceImage
+     * @param resource|\GdImage $sourceImage
      *
-     * @return resource
+     * @return resource|\GdImage
+     *
+     * @throws \RuntimeException when GD cannot allocate an image buffer
      */
     private function resizeAndCrop($sourceImage, int $targetWidth, int $targetHeight)
     {
@@ -117,6 +119,13 @@ final class TopoWebpImageService
         }
 
         $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
+        if ($resizedImage === false) {
+            throw new \RuntimeException(sprintf(
+                'imagecreatetruecolor() failed for resize buffer (%dx%d).',
+                $newWidth,
+                $newHeight,
+            ));
+        }
         imagealphablending($resizedImage, false);
         imagesavealpha($resizedImage, true);
         $transparent = imagecolorallocatealpha($resizedImage, 0, 0, 0, 127);
@@ -132,6 +141,14 @@ final class TopoWebpImageService
 
         if ($newWidth !== $targetWidth || $newHeight !== $targetHeight) {
             $croppedImage = imagecreatetruecolor($targetWidth, $targetHeight);
+            if ($croppedImage === false) {
+                $this->destroyImage($resizedImage);
+                throw new \RuntimeException(sprintf(
+                    'imagecreatetruecolor() failed for crop buffer (%dx%d).',
+                    $targetWidth,
+                    $targetHeight,
+                ));
+            }
             imagealphablending($croppedImage, false);
             imagesavealpha($croppedImage, true);
             $transparent2 = imagecolorallocatealpha($croppedImage, 0, 0, 0, 127);

@@ -29,6 +29,17 @@ final class TopoPathSuggestionController extends AbstractController
 {
     public const CSRF_INTENT_SEND = 'topo_path_suggestion_send';
 
+    /** Same order of magnitude as gallery photo uploads ({@see PhotoUploadType}). */
+    private const REF_IMAGE_MAX_BYTES = 10 * 1024 * 1024;
+
+    /** MIME types supported by {@see TopoWebpImageService::loadImage()}. */
+    private const REF_IMAGE_ALLOWED_MIMES = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+    ];
+
     public function __construct(
         private readonly RockRepository $rockRepository,
         private readonly TopoPathEditorPayloadFactory $payloadFactory,
@@ -146,15 +157,47 @@ final class TopoPathSuggestionController extends AbstractController
 
         $file = $request->files->get('refImage');
         if ($file instanceof UploadedFile && $file->isValid()) {
+            $size = $file->getSize();
+            if ($size === false || $size < 1 || $size > self::REF_IMAGE_MAX_BYTES) {
+                return $this->json([
+                    'success' => false,
+                    'error' => $en
+                        ? 'The reference image is too large or empty (max 10 MB).'
+                        : 'Das Referenzbild ist zu groß oder leer (max. 10 MB).',
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
+            $mime = $this->detectMimeType($file->getPathname());
+            if (!\in_array($mime, self::REF_IMAGE_ALLOWED_MIMES, true)) {
+                return $this->json([
+                    'success' => false,
+                    'error' => $en
+                        ? 'Unsupported image type. Use JPEG, PNG, GIF, or WebP.'
+                        : 'Nicht unterstütztes Bildformat. Bitte JPEG, PNG, GIF oder WebP verwenden.',
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
             $basename = $this->makePendingImageBasename($rock->getName() ?? 'topo');
             if (!is_dir($this->pendingTopoUploadDir) && !mkdir($this->pendingTopoUploadDir, 0755, true) && !is_dir($this->pendingTopoUploadDir)) {
                 return $this->json(['success' => false, 'error' => 'Upload-Verzeichnis fehlt.'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
-            $this->topoWebpImageService->writeTopoVariantsFromFile(
-                $file->getPathname(),
-                $basename,
-                $this->pendingTopoUploadDir
-            );
+
+            try {
+                $this->topoWebpImageService->writeTopoVariantsFromFile(
+                    $file->getPathname(),
+                    $basename,
+                    $this->pendingTopoUploadDir
+                );
+            } catch (\Throwable) {
+                $this->deletePendingTopoImageVariants($basename);
+                return $this->json([
+                    'success' => false,
+                    'error' => $en
+                        ? 'The reference image could not be processed. Try another file (JPEG, PNG, GIF, or WebP, max 10 MB).'
+                        : 'Das Referenzbild konnte nicht verarbeitet werden. Bitte eine andere Datei versuchen (JPEG, PNG, GIF oder WebP, max. 10 MB).',
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
             $suggestion->setReferenceImageBasename($basename);
         }
 
@@ -207,5 +250,29 @@ final class TopoPathSuggestionController extends AbstractController
         }
 
         return 'pending-' . $slug . '-' . bin2hex(random_bytes(4));
+    }
+
+    private function detectMimeType(string $path): string
+    {
+        if (!is_file($path) || !is_readable($path)) {
+            return '';
+        }
+        $finfo = new \finfo(\FILEINFO_MIME_TYPE);
+        $mime = @$finfo->file($path);
+        if (!\is_string($mime) || $mime === '') {
+            return '';
+        }
+
+        return strtolower(trim(explode(';', $mime, 2)[0]));
+    }
+
+    private function deletePendingTopoImageVariants(string $basename): void
+    {
+        foreach ([$basename . '.webp', $basename . '@2x.webp'] as $name) {
+            $path = $this->pendingTopoUploadDir . '/' . $name;
+            if (is_file($path)) {
+                @unlink($path);
+            }
+        }
     }
 }

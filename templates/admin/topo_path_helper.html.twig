@@ -43,7 +43,7 @@
 		{% if topoEdit is defined and topoEdit %}
 			<div class="page-actions">    
 				<div class="global-actions">
-					<button type="button" class="btn btn-secondary  btn btn-success" id="tph-saveToTopo" data-csrf-token="{{ csrf_token('topo_save_topo_path_helper')|e('html_attr') }}">Änderungen speichern</button>
+					<button type="button" class="btn btn-success" id="tph-saveToTopo" data-csrf-token="{{ csrf_token('topo_save_topo_path_helper')|e('html_attr') }}">Änderungen speichern</button>
 					<a href="{{ topoEdit.backUrl }}" class="btn btn-secondary">Zurück zum Topo</a>
 				</div>
 			</div>

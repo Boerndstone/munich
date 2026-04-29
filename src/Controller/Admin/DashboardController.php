@@ -19,7 +19,6 @@ use Symfony\UX\Chartjs\Model\Chart;
 use App\Repository\RoutesRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
@@ -159,12 +158,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Felsen', 'fa fa-home', Rock::class);
         yield MenuItem::linkToCrud('Touren', 'fa fa-home', Routes::class);
         yield MenuItem::linkToCrud('Topos', 'fa fa-home', Topo::class)->setPermission('ROLE_SUPER_ADMIN');
-        yield MenuItem::linkToRoute('Topo Path Helper', 'fa fa-pencil-square-o', 'admin_topo_path_helper')->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToCrud('Photos', 'fa fa-camera-retro', Photos::class)->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToCrud('Kommentare', 'fa fa-comment', Comment::class)->setPermission(new Expression('is_granted("ROLE_MODERATOR") or is_granted("ROLE_ROCK_EDITOR")'));
         yield MenuItem::linkToCrud('Videos', 'fa fa-video', Videos::class)->setPermission(new Expression('is_granted("ROLE_SUPER_ADMIN") or not is_granted("ROCK_SCOPED_EDITOR")'));
         yield MenuItem::linkToCrud('User', 'fa fa-user', User::class)->setPermission('ROLE_SUPER_ADMIN');
-        yield MenuItem::linkToRoute('Geolocation', 'fa fa-map-marker', 'admin_geolocation')->setPermission('ROLE_SUPER_ADMIN');
     }
 
     public function configureUserMenu(UserInterface $user): UserMenu
@@ -173,12 +170,10 @@ class DashboardController extends AbstractDashboardController
             ->setAvatarUrl($user->getAvatarUrl() ?? '');
     }
 
-    // This is the setup for a global Show Action
-    // It is possible to diable it for specific pages or disable it globally
     public function configureActions(): Actions
     {
         return parent::configureActions()
-            ->add(Crud::PAGE_INDEX, Action::DETAIL);
+            ->disable(Action::DETAIL);
     }
 
     public function configureAssets(): Assets

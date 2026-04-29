@@ -1,5 +1,11 @@
-{% if field.value == 0 %}
-    <div class="badge bg-danger text-white">offline</div> 
-{% elseif field.value == 1 %}
-    <div class="badge bg-success text-white">online</div> 
+{# Online / offline: icon-only (Area + Rock use this template). Values may be int or string from ChoiceField. #}
+{% set v = field.value %}
+{% if v in [0, '0', false] %}
+	<span class="d-inline-flex align-items-center justify-content-center text-danger" title="Offline" aria-label="Offline">
+		<i class="fa fa-times fa-lg" aria-hidden="true"></i>
+	</span>
+{% elseif v in [1, '1', true] %}
+	<span class="d-inline-flex align-items-center justify-content-center text-success" title="Online" aria-label="Online">
+		<i class="fa fa-check fa-lg" aria-hidden="true"></i>
+	</span>
 {% endif %}

@@ -37,7 +37,7 @@
 	<section class="content-header">
         <div class="content-header-title">
             <h1 class="title">
-                Topo {{ topoEdit.name }}
+                {% if topoEdit is defined and topoEdit %}Topo {{ topoEdit.name }}{% else %}Topo Path Helper{% endif %}
             </h1>
         </div>
 		{% if topoEdit is defined and topoEdit %}

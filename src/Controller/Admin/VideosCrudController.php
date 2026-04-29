@@ -113,29 +113,24 @@ class VideosCrudController extends AbstractCrudController
         yield Field::new('id')
             ->hideOnIndex()
             ->hideonForm();
-        yield AssociationField::new('videoArea')
-            ->setLabel('Gebiet')
-            ->setColumns('col-12')
-            ->hideOnForm()
-            ->setHelp('Wird automatisch aus der gewählten Tour bzw. dem Fels gesetzt.');
-        yield AssociationField::new('videoRocks')
-            ->setLabel('Fels')
-            ->setColumns('col-12')
-            ->setQueryBuilder(function (QueryBuilder $qb) {
-                $this->rockAccessService->restrictRockQueryBuilder($qb, $this->getUser());
-
-                return $qb;
-            })
-            ->setHelp('Gebiet wird aus dem Fels übernommen, sofern keine Tour gewählt ist.');
         yield AssociationField::new('videoRoutes')
             ->setLabel('Tour')
             ->setColumns('col-12')
             ->setQueryBuilder(function (QueryBuilder $qb) {
                 $this->rockAccessService->restrictRoutesQueryBuilder($qb, $this->getUser());
-
                 return $qb;
-            })
-            ->setHelp('Wenn gesetzt, hat die Tour Vorrang: Gebiet kommt von der Tour bzw. deren Fels.');
+        });
+        yield AssociationField::new('videoRocks')
+            ->setLabel('Fels')
+            ->setColumns('col-12')
+            ->setQueryBuilder(function (QueryBuilder $qb) {
+                $this->rockAccessService->restrictRockQueryBuilder($qb, $this->getUser());
+                return $qb;
+        });
+        yield AssociationField::new('videoArea')
+            ->setLabel('Gebiet')
+            ->setColumns('col-12')
+            ->hideOnForm();
         yield Field::new('videoLink')
             ->setLabel('Link')
             ->setColumns('col-12');

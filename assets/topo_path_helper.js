@@ -448,15 +448,24 @@
 				const rest = cmd.slice(1).trim();
 				const values = rest ? rest.split(/[\s,]+/).map(parseFloat) : [];
 				switch (type) {
-					case 'M': case 'm': currentX = values[0]; currentY = values[1]; break;
-					case 'L': case 'l': currentX += values[0]; currentY += values[1]; break;
-					case 'C': case 'c': currentX += values[4]; currentY += values[5]; break;
-					case 'S': case 's': currentX += values[2]; currentY += values[3]; break;
-					case 'Q': case 'q': currentX += values[2]; currentY += values[3]; break;
-					case 'T': case 't': currentX += values[0]; currentY += values[1]; break;
-					case 'A': case 'a': currentX += values[5]; currentY += values[6]; break;
-					case 'H': case 'h': currentX += values[0]; break;
-					case 'V': case 'v': currentY += values[0]; break;
+					case 'M': currentX = values[0]; currentY = values[1]; break;
+					case 'm': currentX += values[0]; currentY += values[1]; break;
+					case 'L': currentX = values[0]; currentY = values[1]; break;
+					case 'l': currentX += values[0]; currentY += values[1]; break;
+					case 'C': currentX = values[4]; currentY = values[5]; break;
+					case 'c': currentX += values[4]; currentY += values[5]; break;
+					case 'S': currentX = values[2]; currentY = values[3]; break;
+					case 's': currentX += values[2]; currentY += values[3]; break;
+					case 'Q': currentX = values[2]; currentY = values[3]; break;
+					case 'q': currentX += values[2]; currentY += values[3]; break;
+					case 'T': currentX = values[0]; currentY = values[1]; break;
+					case 't': currentX += values[0]; currentY += values[1]; break;
+					case 'A': currentX = values[5]; currentY = values[6]; break;
+					case 'a': currentX += values[5]; currentY += values[6]; break;
+					case 'H': currentX = values[0]; break;
+					case 'h': currentX += values[0]; break;
+					case 'V': currentY = values[0]; break;
+					case 'v': currentY += values[0]; break;
 				}
 				endX = currentX; endY = currentY;
 			}

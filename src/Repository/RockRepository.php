@@ -81,6 +81,18 @@ class RockRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return list<Rock>
+     */
+    public function findAllForPublicTopoSelect(): array
+    {
+        return $this->createQueryBuilder('rock')
+            ->orderBy('rock.name', 'ASC')
+            ->addOrderBy('rock.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * @return RockName[] Returns an array of Rocks objects
      */
     public function findRockName($rockSlug): array

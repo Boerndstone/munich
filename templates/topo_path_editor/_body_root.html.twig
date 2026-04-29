@@ -1,0 +1,73 @@
+{# Shared markup for topo path editor (admin + frontend). Requires Bootstrap-ish .form-control / .btn on admin; frontend provides compatible classes. #}
+<div class="topo-path-helper-root {{ frontend_class|default('') }}">
+	<section>
+		<div class="row">
+			<div class="col-12">
+				<div class="field-text form-group">
+					<label class="form-control-label" for="tph-drawImageUrl">Bild-URL</label>
+					<div class="form-widget">
+						<input type="text" id="tph-drawImageUrl" placeholder="https://www.munichclimbs.de/build/images/topos/..." value="{{ (topoEdit is defined and topoEdit and topoEdit.imageUrl is defined) ? topoEdit.imageUrl|e('html_attr') : '' }}" class="form-control">
+					</div>
+				</div>
+			</div>
+			<div class="col-12">
+				<div class="field-text form-group">
+					<label class="form-control-label" for="tph-drawImageFile">oder Datei auswählen</label>
+					<input type="file" id="tph-drawImageFile" accept="image/*" class="form-control">
+				</div>
+			</div>
+			<div class="col-12">
+				<button type="button" id="tph-drawLoadImage" class="btn btn-secondary">Bild laden</button>
+			</div>
+			<hr class="my-4">
+		</div>
+		<div class="tph-draw-toolbar">
+			<button type="button" id="tph-drawNewPath" class="btn btn-secondary">Neuer Pfad</button>
+			<button type="button" id="tph-drawUndo" class="btn btn-secondary">Letzten Punkt rückgängig machen</button>
+			<button type="button" id="tph-drawDeselect" class="btn btn-secondary">Auswahl aufheben</button>
+			<button type="button" id="tph-drawDeletePath" class="btn btn-secondary">Ausgewählten Pfad löschen</button>
+		</div>
+		<div id="tph-drawStatus" class="text-muted mt-2" aria-live="polite"></div>
+		<div class="tph-draw-area" id="tph-drawArea" style="display: none;">
+			<img id="tph-drawImg" class="tph-draw-area__bg" alt="Topo">
+			<div class="tph-draw-area__overlay" aria-hidden="true">
+				<svg id="tph-drawSvg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
+			</div>
+		</div>
+		<button type="button" id="tph-drawCopyToStep1" class="btn btn-secondary mt-3">Pfade parsen</button>
+	</section>
+
+	<hr class="my-4">
+
+	<section>
+		<div class="row">
+			<div class="col-12">
+				<div class="field-text form-group">
+					<label class="form-control-label" for="tph-input">Geparste Pfade</label>
+					<textarea id="tph-input" class="form-control" placeholder='<path id="svg_2" d="m236,774c6,-209 30,-394..." stroke="#000" fill="#fff"/>'></textarea>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<hr class="my-4">
+
+	<section id="tph-routes-section" style="display: none;">
+		<label class="form-control-label">Routen Topo (Farben wie Grad-Karte)</label>
+		<div id="tph-routes-table-wrap"></div>
+		<button type="button" class="btn btn-secondary mt-3" id="tph-apply-grade-colors">Grad-Farben auf Pfade anwenden</button>
+	</section>
+
+	<hr class="my-4">
+
+	<section>
+		<label class="form-control-label" for="tph-output">2. PHP output (paste into your topo file)</label>
+		<div class="output-wrap">
+			<textarea id="tph-output" class="form-control" readonly style="min-height: 120px;" placeholder="Generiere Code für Topo."></textarea>
+			<button type="button" class="btn btn-secondary" id="tph-copyPhp" style="position: absolute; top: 8px; right: 8px; padding: 6px 12px; font-size: 12px;">Kopiere Code</button>
+		</div>
+		<button type="button" class="btn btn-secondary mt-3" id="tph-generatePhp">Generiere Code für Topo</button>
+	</section>
+
+	<div id="tph-toast" class="toast">Copied to clipboard!</div>
+</div>

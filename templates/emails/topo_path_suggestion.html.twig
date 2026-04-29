@@ -1,0 +1,56 @@
+{% extends 'emails/emailBase.html.twig' %}
+
+{% block content %}
+
+	<row>
+		<columns>
+			<spacer size="20"></spacer>
+			<h1>Tourenpfad-Vorschlag (Mithelfen)</h1>
+			<p>
+				<strong>Fels:</strong> {{ rockName }}
+			</p>
+			{% if topoNumber is not null %}
+			<p>
+				<strong>Topo-Nr.:</strong> {{ topoNumber }}
+			</p>
+			{% endif %}
+			<p>
+				<strong>Vorschlags-ID:</strong> {{ suggestionId }}
+			</p>
+		</columns>
+	</row>
+	<row>
+		<columns>
+			<p>
+				Von: <strong>{{ name }}</strong>
+			</p>
+			{% if contactEmail is not empty %}
+			<p>
+				<strong>E-Mail:</strong> {{ contactEmail }}
+			</p>
+			{% endif %}
+		</columns>
+	</row>
+	{% if comment is not empty %}
+	<row>
+		<columns>
+			<p><strong>Kommentar:</strong></p>
+			<p>{{ comment|nl2br }}</p>
+		</columns>
+	</row>
+	{% endif %}
+	<row>
+		<columns>
+			<p><strong>PHP-Ausgabe (Anfang):</strong></p>
+			<pre style="white-space:pre-wrap;font-size:12px;">{{ pathPreview|e }}</pre>
+		</columns>
+	</row>
+	<row>
+		<columns>
+			<p>
+				<a href="{{ adminListUrl }}">Vorschläge im Admin öffnen</a>
+			</p>
+		</columns>
+	</row>
+
+{% endblock %}

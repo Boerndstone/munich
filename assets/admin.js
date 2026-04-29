@@ -1,7 +1,7 @@
 import './styles/admin.css';
 import './styles/admin-bootstrap-bridge.scss';
-// Bootstrap JS for EasyAdmin and admin Twig that use data-bs-* (separate from public app bundle).
-import 'bootstrap';
+// EasyAdmin's bundled `app.js` already includes Bootstrap; do not import `bootstrap` again here
+// (double init breaks components and can make the Symfony web debug toolbar misbehave).
 import './bootstrap';
 
 // Register admin-specific Stimulus controllers

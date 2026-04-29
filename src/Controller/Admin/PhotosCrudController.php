@@ -70,19 +70,10 @@ class PhotosCrudController extends AbstractCrudController
                     ->setLabel('Speichern und ein weiteres Foto hinzufügen');
             })
 
-            ->update(Crud::PAGE_DETAIL, Action::EDIT, function (Action $action) {
+            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
                 return $action
-                    ->setLabel('Bearbeiten')
-                    ->setCssClass('btn btn-success');
-            })
-
-            ->update(Crud::PAGE_DETAIL, Action::INDEX, function (Action $action) {
-                return $action
-                    ->setLabel('Zurück zur Liste');
-            })
-            ->update(Crud::PAGE_DETAIL, Action::DELETE, function (Action $action) {
-                return $action
-                    ->setLabel('Löschen');
+                    ->setIcon('fa fa-trash')
+                    ->setLabel(false);
             })
             ->add(Crud::PAGE_INDEX, Action::new('approve', 'Freigeben')
                 ->linkToRoute('admin_photo_approve', function (Photos $photo) {
@@ -97,20 +88,6 @@ class PhotosCrudController extends AbstractCrudController
                 })
                 ->setIcon('fa fa-times')
                 ->setCssClass('btn btn-danger btn-sm')
-                ->displayIf(fn (Photos $photo) => $photo->isPending()))
-            ->add(Crud::PAGE_DETAIL, Action::new('approve', 'Freigeben')
-                ->linkToRoute('admin_photo_approve', function (Photos $photo) {
-                    return ['id' => $photo->getId()];
-                })
-                ->setIcon('fa fa-check')
-                ->setCssClass('btn btn-success')
-                ->displayIf(fn (Photos $photo) => $photo->isPending()))
-            ->add(Crud::PAGE_DETAIL, Action::new('reject', 'Ablehnen')
-                ->linkToRoute('admin_photo_reject', function (Photos $photo) {
-                    return ['id' => $photo->getId()];
-                })
-                ->setIcon('fa fa-times')
-                ->setCssClass('btn btn-danger')
                 ->displayIf(fn (Photos $photo) => $photo->isPending()));
     }
 
@@ -122,9 +99,6 @@ class PhotosCrudController extends AbstractCrudController
             ->showEntityActionsInlined()
             ->setPageTitle(Crud::PAGE_EDIT, static function (Photos $photos) {
                 return $photos->getBelongsToRoute() ? $photos->getBelongsToRoute()->getName() : 'Foto bearbeiten';
-            })
-            ->setPageTitle(Crud::PAGE_DETAIL, static function (Photos $photos) {
-                return $photos->getBelongsToRoute() ? $photos->getBelongsToRoute()->getName() : 'Foto Details';
             })
             ->setDefaultSort(['createdAt' => 'DESC'])
             ->setFormOptions(['attr' => ['novalidate' => null]]);

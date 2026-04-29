@@ -33,13 +33,8 @@ class AreaCrudController extends AbstractCrudController
 
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {
                 return $action
-                    ->setLabel('Änderungen speichern')
+                    ->setLabel('Speichern')
                     ->setCssClass('btn btn-success');
-            })
-
-            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, function (Action $action) {
-                return $action
-                    ->setLabel('Speichern und bearbeiten fortsetzen');
             })
 
             ->update(Crud::PAGE_NEW, Action::SAVE_AND_RETURN, function (Action $action) {
@@ -53,19 +48,10 @@ class AreaCrudController extends AbstractCrudController
                     ->setLabel('Speichern und ein weiteres Gebiet hinzufügen');
             })
 
-            ->update(Crud::PAGE_DETAIL, Action::EDIT, function (Action $action) {
+            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
                 return $action
-                    ->setLabel('Bearbeiten')
-                    ->setCssClass('btn btn-success');
-            })
-
-            ->update(Crud::PAGE_DETAIL, Action::INDEX, function (Action $action) {
-                return $action
-                    ->setLabel('Zurück zur Liste');
-            })
-            ->update(Crud::PAGE_DETAIL, Action::DELETE, function (Action $action) {
-                return $action
-                    ->setLabel('Löschen');
+                    ->setIcon('fa fa-trash')
+                    ->setLabel(false);
             });
     }
 

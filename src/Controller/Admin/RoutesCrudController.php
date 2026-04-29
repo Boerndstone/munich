@@ -94,19 +94,10 @@ class RoutesCrudController extends AbstractCrudController
                     ->setLabel('Speichern und ein weiteres Gebiet hinzufügen');
             })
 
-            ->update(Crud::PAGE_DETAIL, Action::EDIT, function (Action $action) {
+            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
                 return $action
-                    ->setLabel('Bearbeiten')
-                    ->setCssClass('btn btn-success');
-            })
-
-            ->update(Crud::PAGE_DETAIL, Action::INDEX, function (Action $action) {
-                return $action
-                    ->setLabel('Zurück zur Liste');
-            })
-            ->update(Crud::PAGE_DETAIL, Action::DELETE, function (Action $action) {
-                return $action
-                    ->setLabel('Löschen');
+                    ->setIcon('fa fa-trash')
+                    ->setLabel(false);
             });
     }
 
@@ -117,9 +108,6 @@ class RoutesCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_NEW, 'Neue Route hinzufügen')
             ->showEntityActionsInlined()
             ->setPageTitle(Crud::PAGE_EDIT, static function (Routes $routes) {
-                return $routes->getName();
-            })
-            ->setPageTitle(Crud::PAGE_DETAIL, static function (Routes $routes) {
                 return $routes->getName();
             })
             ->setFormOptions([

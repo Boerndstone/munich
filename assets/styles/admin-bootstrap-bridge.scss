@@ -1,183 +1,60 @@
 /* Bootstrap bridge for admin/EasyAdmin screens only.
  * Keep public styles in global.scss Tailwind-first.
+ *
+ * Scope rules under `body.ea .wrapper` so the Symfony Web Debug Toolbar (injected as a
+ * sibling of `.wrapper`) is not affected by broad selectors like `.btn` and `.table`.
  */
 
-.nav-link {
-    font-size: 14px;
-}
-
-.nav-link[aria-expanded="true"] .nav-area-chevron {
-    transform: rotate(90deg);
-}
-
-.card {
-    border: 1px solid var(--theme-shadow);
-}
-
-.accordion-body {
-    font-size: 0.875em;
-}
-
-.card,
-.offcanvas,
-.table,
-.accordion-item,
-.accordion-header,
-.accordion-button {
-    background-color: var(--theme-bg-lighter) !important;
-    color: var(--theme-text) !important;
-    transition: background-color 0.3s ease, color 0.3s ease !important;
-}
-
-.table,
-.table > :not(caption) > * > * {
-    background-color: white !important;
-    color: black !important;
-}
-
-.table {
-    border-bottom: 1px solid black !important;
-
-    th {
-        font-weight: 600;
-    }
-
-    th,
-    td {
-        padding: 0.65rem;
-    }
-}
-
-.btn {
-    background-color: var(--theme-bg-lighter) !important;
-    color: var(--theme-text-vise-versa) !important;
-}
-
-.list-group,
-.list-group-item,
-.list-group-item:hover {
-    color: var(--theme-text) !important;
-}
-
-.list-group-item.active,
-.nav-link.active {
-    background-color: black !important;
-    color: white !important;
-    border-radius: 5px;
-}
-
-.accordion-button:focus {
-    box-shadow: none !important;
-    border: 1px solid var(--theme-border);
-}
-
-.accordion-button::after,
-.accordion-button:not(.collapsed)::after {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="%23000000" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>') !important;
-}
-
-.btn-outline-secondary {
-    background-color: var(--theme-bg) !important;
-    border: 1px solid var(--theme-border) !important;
-    color: var(--theme-text) !important;
-}
-
-.badge {
-    background-color: var(--theme-text) !important;
-    color: var(--theme-bg) !important;
-}
-
-.form-check-input {
-    background-color: var(--theme-bg) !important;
-    border: 1px solid var(--theme-border) !important;
-
-    &:checked {
-        background-color: #000000 !important;
-        border-color: #000000 !important;
-    }
-
-    &:focus {
-        border-color: #000000 !important;
-        box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.25) !important;
-    }
-}
-
-.border-bottom {
-    border-bottom: var(--bs-border-width) var(--bs-border-style) black !important;
-}
-
-.btn-close {
-    filter: none;
-}
-
-.btn-primary,
-.btn-outline-primary {
-    border-color: #075985;
-}
-
-.btn-outline-primary {
-    color: #075985;
-}
-
-.btn:hover {
-    background-color: #075985;
-    border-color: #075985;
-}
-
-.nav-pills .nav-link.active,
-.nav-pills .show > .nav-link {
-    background-color: rgb(7, 89, 133) !important;
-    color: white;
-}
-
-.nav-tabs {
-    background-color: oklch(92.3% 0.003 48.717);
-    border: none;
-
-    .nav-link.active {
-        background-color: var(--bs-white) !important;
-        color: var(--bs-black) !important;
-    }
-
+body.ea .wrapper {
     .nav-link {
-        border: none;
-        margin: 0;
-    }
-}
-
-.tab-content {
-    .form-control:focus {
-        box-shadow: none;
+        font-size: 14px;
     }
 
-    .form-control:focus-visible {
-        outline: none;
-    }
-}
-
-.list-group-item-action:hover {
-    background-color: #dee2e6;
-}
-
-[data-theme="dark"] {
-    body,
-    .navbar {
-        background-color: var(--theme-bg) !important;
-        color: var(--theme-text);
+    .nav-link[aria-expanded="true"] .nav-area-chevron {
+        transform: rotate(90deg);
     }
 
-    .modal-content,
-    .modal-header,
-    .modal-body,
-    .modal-footer {
-        background-color: var(--theme-bg);
-        color: var(--theme-text);
+    .card {
+        border: 1px solid var(--theme-shadow);
     }
 
-    .form-check-input:checked[type='checkbox'] {
-        background-color: var(--theme-bg) !important;
-        border-color: var(--theme-text) !important;
-        background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27%3e%3cpath fill=%27none%27 stroke=%27%23fff%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%273%27 d=%27m6 10 3 3 6-6%27/%3e%3c/svg%3e') !important;
+    .accordion-body {
+        font-size: 0.875em;
+    }
+
+    .card,
+    .offcanvas,
+    .table,
+    .accordion-item,
+    .accordion-header,
+    .accordion-button {
+        background-color: var(--theme-bg-lighter) !important;
+        color: var(--theme-text) !important;
+        transition: background-color 0.3s ease, color 0.3s ease !important;
+    }
+
+    .table,
+    .table > :not(caption) > * > * {
+        background-color: white !important;
+        color: black !important;
+    }
+
+    .table {
+        border-bottom: 1px solid black !important;
+
+        th {
+            font-weight: 600;
+        }
+
+        th,
+        td {
+            padding: 0.65rem;
+        }
+    }
+
+    .btn {
+        background-color: var(--theme-bg-lighter) !important;
+        color: var(--theme-text-vise-versa) !important;
     }
 
     .list-group,
@@ -188,73 +65,19 @@
 
     .list-group-item.active,
     .nav-link.active {
-        background-color: white !important;
-        color: black !important;
-    }
-
-    .navbar {
-        border-bottom: 1px solid var(--theme-border);
-    }
-
-    .card,
-    .offcanvas,
-    .table {
-        background-color: var(--theme-bg-lighter) !important;
-        border: 1px solid var(--theme-shadow);
-    }
-
-    .accordion-item,
-    .accordion-header,
-    .accordion-button,
-    .accordion-body {
-        background-color: var(--theme-bg-lighter) !important;
-        border: 1px solid var(--theme-shadow);
-    }
-
-    .table,
-    .table > :not(caption) > * > * {
         background-color: black !important;
         color: white !important;
-    }
-
-    .table {
-        border: none !important;
-        border-bottom: 1px solid white !important;
-    }
-
-    .btn {
-        background-color: var(--theme-bg-lighter) !important;
-        color: var(--theme-text-vise-versa) !important;
-    }
-
-    .list-group,
-    .list-group-item,
-    .list-group-item::before {
-        background-color: var(--theme-bg-lighter) !important;
-        color: var(--theme-text) !important;
-
-        a {
-            color: var(--theme-text) !important;
-        }
-    }
-
-    .card:hover {
-        border: 1px solid var(--theme-border);
-    }
-
-    .accordion-item,
-    .accordion-header {
-        border: none !important;
+        border-radius: 5px;
     }
 
     .accordion-button:focus {
         box-shadow: none !important;
-        border: 1px solid var(--theme-shadow);
+        border: 1px solid var(--theme-border);
     }
 
     .accordion-button::after,
     .accordion-button:not(.collapsed)::after {
-        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="%23ffffff" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>') !important;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="%23000000" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>') !important;
     }
 
     .btn-outline-secondary {
@@ -271,24 +94,208 @@
     .form-check-input {
         background-color: var(--theme-bg) !important;
         border: 1px solid var(--theme-border) !important;
-        color: var(--theme-text) !important;
 
         &:checked {
-            background-color: #ffffff !important;
-            border-color: #ffffff !important;
+            background-color: #000000 !important;
+            border-color: #000000 !important;
         }
 
         &:focus {
-            border-color: #ffffff !important;
-            box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25) !important;
+            border-color: #000000 !important;
+            box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.25) !important;
         }
     }
 
-    .btn-close {
-        filter: invert(1) grayscale(100%) brightness(200%);
+    .border-bottom {
+        border-bottom: var(--bs-border-width) var(--bs-border-style) black !important;
     }
 
-    .border-bottom {
-        border-bottom: var(--bs-border-width) var(--bs-border-style) white !important;
+    .btn-close {
+        filter: none;
+    }
+
+    .btn-primary,
+    .btn-outline-primary {
+        border-color: #075985;
+    }
+
+    .btn-outline-primary {
+        color: #075985;
+    }
+
+    .btn:hover {
+        background-color: #075985;
+        border-color: #075985;
+    }
+
+    .nav-pills .nav-link.active,
+    .nav-pills .show > .nav-link {
+        background-color: rgb(7, 89, 133) !important;
+        color: white;
+    }
+
+    .nav-tabs {
+        background-color: oklch(92.3% 0.003 48.717);
+        border: none;
+
+        .nav-link.active {
+            background-color: var(--bs-white) !important;
+            color: var(--bs-black) !important;
+        }
+
+        .nav-link {
+            border: none;
+            margin: 0;
+        }
+    }
+
+    .tab-content {
+        .form-control:focus {
+            box-shadow: none;
+        }
+
+        .form-control:focus-visible {
+            outline: none;
+        }
+    }
+
+    .list-group-item-action:hover {
+        background-color: #dee2e6;
+    }
+}
+
+body.ea.ea-dark-scheme {
+    background-color: var(--theme-bg) !important;
+    color: var(--theme-text);
+
+    .wrapper {
+        .navbar {
+            background-color: var(--theme-bg) !important;
+            color: var(--theme-text);
+            border-bottom: 1px solid var(--theme-border);
+        }
+        
+            .modal-content,
+            .modal-header,
+            .modal-body,
+            .modal-footer {
+                background-color: var(--theme-bg);
+                color: var(--theme-text);
+            }
+        
+            .form-check-input:checked[type='checkbox'] {
+                background-color: var(--theme-bg) !important;
+                border-color: var(--theme-text) !important;
+                background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27%3e%3cpath fill=%27none%27 stroke=%27%23fff%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%273%27 d=%27m6 10 3 3 6-6%27/%3e%3c/svg%3e') !important;
+            }
+        
+            .list-group,
+            .list-group-item,
+            .list-group-item:hover {
+                color: var(--theme-text) !important;
+            }
+        
+            .list-group-item.active,
+            .nav-link.active {
+                background-color: white !important;
+                color: black !important;
+            }
+        
+        
+            .card,
+            .offcanvas,
+            .table {
+                background-color: var(--theme-bg-lighter) !important;
+                border: 1px solid var(--theme-shadow);
+            }
+        
+            .accordion-item,
+            .accordion-header,
+            .accordion-button,
+            .accordion-body {
+                background-color: var(--theme-bg-lighter) !important;
+                border: 1px solid var(--theme-shadow);
+            }
+        
+            .table,
+            .table > :not(caption) > * > * {
+                background-color: black !important;
+                color: white !important;
+            }
+        
+            .table {
+                border: none !important;
+                border-bottom: 1px solid white !important;
+            }
+        
+            .btn {
+                background-color: var(--theme-bg-lighter) !important;
+                color: var(--theme-text-vise-versa) !important;
+            }
+        
+            .list-group,
+            .list-group-item,
+            .list-group-item::before {
+                background-color: var(--theme-bg-lighter) !important;
+                color: var(--theme-text) !important;
+        
+                a {
+                    color: var(--theme-text) !important;
+                }
+            }
+        
+            .card:hover {
+                border: 1px solid var(--theme-border);
+            }
+        
+            .accordion-item,
+            .accordion-header {
+                border: none !important;
+            }
+        
+            .accordion-button:focus {
+                box-shadow: none !important;
+                border: 1px solid var(--theme-shadow);
+            }
+        
+            .accordion-button::after,
+            .accordion-button:not(.collapsed)::after {
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="%23ffffff" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>') !important;
+            }
+        
+            .btn-outline-secondary {
+                background-color: var(--theme-bg) !important;
+                border: 1px solid var(--theme-border) !important;
+                color: var(--theme-text) !important;
+            }
+        
+            .badge {
+                background-color: var(--theme-text) !important;
+                color: var(--theme-bg) !important;
+            }
+        
+            .form-check-input {
+                background-color: var(--theme-bg) !important;
+                border: 1px solid var(--theme-border) !important;
+                color: var(--theme-text) !important;
+        
+                &:checked {
+                    background-color: #ffffff !important;
+                    border-color: #ffffff !important;
+                }
+        
+                &:focus {
+                    border-color: #ffffff !important;
+                    box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25) !important;
+                }
+            }
+        
+            .btn-close {
+                filter: invert(1) grayscale(100%) brightness(200%);
+            }
+        
+            .border-bottom {
+                border-bottom: var(--bs-border-width) var(--bs-border-style) white !important;
+            }
     }
 }

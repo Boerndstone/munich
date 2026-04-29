@@ -227,3 +227,20 @@ grade_comparison_free_climbing.col_uiaa: "UIAA"
 
 # Topo (route overview image)
 topo.image_alt: "Klettertopo „%topo_name%“ am Fels %rock_name% in %area_name%"
+
+# Mithelfen: Tourenpfade (öffentlicher Editor → Pending)
+topo_path_suggestion.title: "Tourenpfade mithelfen"
+topo_path_suggestion.intro: "Hier kannst du Tourenpfade für ein Topo zeichnen oder einfügen und uns als Vorschlag senden – analog zum Foto-Upload prüfen wir das und übernehmen es bei Freigabe."
+topo_path_suggestion.filter_heading: "Fels & Topo für Farb-Tabelle"
+topo_path_suggestion.filter_help: "Optional: Fels und Topo-Nummer wählen und laden, damit die Routen-Tabelle mit Grad-Farben wie im Admin erscheint."
+topo_path_suggestion.rock_label: "Fels"
+topo_path_suggestion.topo_nr_label: "Topo-Nummer (Sektor)"
+topo_path_suggestion.filter_submit: "Laden"
+topo_path_suggestion.contact_heading: "Deine Angaben zum Absenden"
+topo_path_suggestion.name: "Dein Name"
+topo_path_suggestion.email: "Deine E-Mail"
+topo_path_suggestion.comment: "Kommentar (optional)"
+topo_path_suggestion.ref_image: "Referenzbild (optional)"
+topo_path_suggestion.submit: "Vorschlag senden"
+topo_path_suggestion.success: "Danke! Dein Vorschlag ist eingegangen und wird geprüft."
+topo_path_suggestion.back_home: "Zur Startseite"

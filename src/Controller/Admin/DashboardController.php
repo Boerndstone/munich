@@ -10,6 +10,7 @@ use App\Entity\Photos;
 use App\Entity\Routes;
 use App\Entity\Videos;
 use App\Entity\Comment;
+use App\Entity\TopoPathSuggestion;
 use App\Repository\AreaRepository;
 use App\Repository\RockRepository;
 use App\Service\AreasService;
@@ -159,6 +160,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Touren', 'fa fa-home', Routes::class);
         yield MenuItem::linkToCrud('Topos', 'fa fa-home', Topo::class)->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToCrud('Photos', 'fa fa-camera-retro', Photos::class)->setPermission('ROLE_SUPER_ADMIN');
+        yield MenuItem::linkToCrud('Tourenpfad-Vorschläge', 'fa fa-code-fork', TopoPathSuggestion::class)->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToCrud('Kommentare', 'fa fa-comment', Comment::class)->setPermission(new Expression('is_granted("ROLE_MODERATOR") or is_granted("ROLE_ROCK_EDITOR")'));
         yield MenuItem::linkToCrud('Videos', 'fa fa-video', Videos::class)->setPermission(new Expression('is_granted("ROLE_SUPER_ADMIN") or not is_granted("ROCK_SCOPED_EDITOR")'));
         yield MenuItem::linkToCrud('User', 'fa fa-user', User::class)->setPermission('ROLE_SUPER_ADMIN');

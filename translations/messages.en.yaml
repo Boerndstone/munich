@@ -226,3 +226,20 @@ grade_comparison_free_climbing.col_uiaa: "UIAA"
 
 # Topo (route overview image)
 topo.image_alt: "Climbing topo „%topo_name%“ at %rock_name% in %area_name%"
+
+# Help: topo paths (public editor → pending)
+topo_path_suggestion.title: "Help with topo paths"
+topo_path_suggestion.intro: "Draw or paste route paths for a topo and send them as a suggestion — like photo submissions, we review and publish when appropriate."
+topo_path_suggestion.filter_heading: "Rock & topo for color table"
+topo_path_suggestion.filter_help: "Optional: pick rock and topo number and load so the route table shows grade colors like in the admin helper."
+topo_path_suggestion.rock_label: "Rock"
+topo_path_suggestion.topo_nr_label: "Topo number (sector)"
+topo_path_suggestion.filter_submit: "Load"
+topo_path_suggestion.contact_heading: "Your details to submit"
+topo_path_suggestion.name: "Your name"
+topo_path_suggestion.email: "Your email"
+topo_path_suggestion.comment: "Comment (optional)"
+topo_path_suggestion.ref_image: "Reference image (optional)"
+topo_path_suggestion.submit: "Send suggestion"
+topo_path_suggestion.success: "Thanks! Your suggestion was received and will be reviewed."
+topo_path_suggestion.back_home: "Back to home"

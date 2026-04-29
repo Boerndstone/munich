@@ -299,3 +299,14 @@ body.ea.ea-dark-scheme {
             }
     }
 }
+
+/* CRUD index: first *data* column left-aligned (skip batch checkbox column when present). */
+body.ea.ea-index .wrapper table.datagrid thead tr > th:has(.form-batch-checkbox-all) + th,
+body.ea.ea-index .wrapper table.datagrid tbody tr > td.batch-actions-selector + td {
+    text-align: left !important;
+}
+
+body.ea.ea-index .wrapper table.datagrid:not(:has(.form-batch-checkbox-all)) thead tr > th:first-child,
+body.ea.ea-index .wrapper table.datagrid:not(:has(.form-batch-checkbox-all)) tbody tr > td:not(.actions):first-child {
+    text-align: left !important;
+}

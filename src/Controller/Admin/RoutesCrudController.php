@@ -340,6 +340,7 @@ class RoutesCrudController extends AbstractCrudController
         $climbedField = BooleanField::new('climbed')
             ->setLabel('Bereits geklettert')
             ->setColumns('col-12')
+            ->setTemplatePath('admin/field/boolean_climbed.html.twig')
             ->renderAsSwitch();
         if ($this->rockAccessService->isRockScoped($this->getUser())) {
             $climbedField->hideOnForm()->hideOnIndex()->hideOnDetail();

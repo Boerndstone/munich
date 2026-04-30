@@ -30,29 +30,6 @@
 				</div>
 			{% endif %}
 
-			<section class="mb-8 max-w-2xl rounded-lg border border-gray-200 bg-gray-50/80 p-4 dark:border-gray-700 dark:bg-gray-900/40">
-				<h2 class="mb-2 text-base font-medium text-gray-900 dark:text-gray-100">{{ 'topo_path_suggestion.filter_heading'|trans }}</h2>
-				<p class="mb-4 text-sm text-gray-600 dark:text-gray-400">{{ 'topo_path_suggestion.filter_help'|trans }}</p>
-				<form method="get" action="{{ path(app.request.locale == 'en' ? 'frontend_topo_path_suggestion_en' : 'frontend_topo_path_suggestion') }}" class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
-					<div class="min-w-[12rem] flex-1">
-						<label for="tph-suggestion-rock" class="mb-1 block text-sm font-medium text-gray-800 dark:text-gray-200">{{ 'topo_path_suggestion.rock_label'|trans }}</label>
-						<select id="tph-suggestion-rock" name="rock" class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100">
-							<option value="">{{ 'upload_photo.placeholder.rock'|trans }}</option>
-							{% for rock in rocks %}
-								<option value="{{ rock.id }}"{% if selectedRockId is not null and rock.id == selectedRockId %} selected{% endif %}>{{ rock.name }}</option>
-							{% endfor %}
-						</select>
-					</div>
-					<div class="w-full sm:w-28">
-						<label for="tph-suggestion-topoNr" class="mb-1 block text-sm font-medium text-gray-800 dark:text-gray-200">{{ 'topo_path_suggestion.topo_nr_label'|trans }}</label>
-						<input type="number" min="1" step="1" id="tph-suggestion-topoNr" name="topoNr" value="{{ selectedTopoNr ?? '' }}" class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100" placeholder="1">
-					</div>
-					<button type="submit" class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-50 focus-visible:outline focus-visible:ring-2 focus-visible:ring-sky-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700">
-						{{ 'topo_path_suggestion.filter_submit'|trans }}
-					</button>
-				</form>
-			</section>
-
 			<section class="mb-8 max-w-2xl">
 				<h2 class="mb-3 text-base font-medium text-gray-900 dark:text-gray-100">{{ 'topo_path_suggestion.contact_heading'|trans }}</h2>
 				<div class="flex flex-col gap-3">
@@ -80,7 +57,14 @@
 			</section>
 
 			<div class="mb-6">
-				{% include 'topo_path_editor/_body_root.html.twig' with { frontend_class: 'topo-path-helper-root--frontend' } %}
+				{% include 'topo_path_editor/_body_root.html.twig' with {
+					frontend_class: 'topo-path-helper-root--frontend',
+					suggestion_topo_context: true,
+					suggestion_rocks: rocks,
+					suggestion_selected_rock_id: selectedRockId,
+					suggestion_selected_topo_nr: selectedTopoNr,
+					suggestion_form_path: path(app.request.locale == 'en' ? 'frontend_topo_path_suggestion_en' : 'frontend_topo_path_suggestion'),
+				} %}
 			</div>
 
 			<div class="mb-10 flex flex-wrap items-center gap-3">
@@ -91,6 +75,9 @@
 			</div>
 
 			<div id="tph-topo-edit" style="display:none" data-json="{{ topoEditJsonBase64|e('html_attr') }}"></div>
+			<script>
+			window.TPH_SUGGESTION_FORM_PATH = {{ path(app.request.locale == 'en' ? 'frontend_topo_path_suggestion_en' : 'frontend_topo_path_suggestion')|json_encode|raw }};
+			</script>
 			<script>
 			window.TOPO_EDIT = (function(){
 				var el = document.getElementById('tph-topo-edit');

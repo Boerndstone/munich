@@ -43,6 +43,8 @@ final class AlternateLocaleUrlGenerator
         'upload_photo_en' => ['de' => 'upload_photo', 'en' => 'upload_photo_en'],
         'frontend_topo_path_suggestion' => ['de' => 'frontend_topo_path_suggestion', 'en' => 'frontend_topo_path_suggestion_en'],
         'frontend_topo_path_suggestion_en' => ['de' => 'frontend_topo_path_suggestion', 'en' => 'frontend_topo_path_suggestion_en'],
+        'frontend_topo_path_suggestion_routes' => ['de' => 'frontend_topo_path_suggestion_routes', 'en' => 'frontend_topo_path_suggestion_routes_en'],
+        'frontend_topo_path_suggestion_routes_en' => ['de' => 'frontend_topo_path_suggestion_routes', 'en' => 'frontend_topo_path_suggestion_routes_en'],
     ];
 
     public function __construct(
@@ -75,7 +77,12 @@ final class AlternateLocaleUrlGenerator
 
         $targetRoute = self::ROUTE_PAIRS[$route][$localeKey];
         $params = $this->extractRouteParams($request);
-        if (\in_array($route, ['frontend_topo_path_suggestion', 'frontend_topo_path_suggestion_en'], true)) {
+        if (\in_array($route, [
+            'frontend_topo_path_suggestion',
+            'frontend_topo_path_suggestion_en',
+            'frontend_topo_path_suggestion_routes',
+            'frontend_topo_path_suggestion_routes_en',
+        ], true)) {
             foreach (['rock', 'topoNr'] as $q) {
                 if ($request->query->has($q)) {
                     $params[$q] = $request->query->get($q);

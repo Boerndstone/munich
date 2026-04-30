@@ -32,6 +32,7 @@
 	'routes_col_color': 'topo_editor.routes_col_color'|trans,
 	'routes_col_dot': 'topo_editor.routes_col_dot'|trans,
 	'routes_dot_anchor': 'topo_editor.routes_dot_anchor'|trans,
+	'routes_fetch_failed': 'topo_path_suggestion.routes_fetch_failed'|trans,
 } %}
 <div class="topo-path-helper-root {{ frontend_class|default('') }}">
 	<section>
@@ -68,6 +69,46 @@
 				<svg id="tph-drawSvg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
 			</div>
 		</div>
+
+		<div id="tph-suggestion-after-image-block" class="tph-suggestion-after-image-block"{% if suggestion_topo_context is defined and suggestion_topo_context %} style="display: none"{% endif %}>
+			{% if suggestion_topo_context is defined and suggestion_topo_context %}
+				<hr class="my-4">
+				<div class="tph-suggestion-topo-after-image">
+					<p class="form-control-label mb-2" style="font-weight: 600;">{{ 'topo_path_suggestion.image_topo_heading'|trans }}</p>
+					<p class="text-muted small mb-3">{{ 'topo_path_suggestion.image_topo_help'|trans }}</p>
+					<div class="row">
+						<div class="col-12 col-md-6">
+							<div class="field-text form-group">
+								<label class="form-control-label" for="tph-suggestion-rock">{{ 'topo_path_suggestion.rock_label'|trans }}</label>
+								<select id="tph-suggestion-rock" class="form-control">
+									<option value="">{{ 'upload_photo.placeholder.rock'|trans }}</option>
+									{% for rock in suggestion_rocks|default([]) %}
+										<option value="{{ rock.id }}"{% if suggestion_selected_rock_id is defined and suggestion_selected_rock_id is not null and rock.id == suggestion_selected_rock_id %} selected{% endif %}>{{ rock.name }}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="col-12 col-md-3">
+							<div class="field-text form-group">
+								<label class="form-control-label" for="tph-suggestion-topoNr">{{ 'topo_path_suggestion.topo_nr_label'|trans }}</label>
+								<input type="number" min="1" step="1" id="tph-suggestion-topoNr" class="form-control" value="{{ suggestion_selected_topo_nr|default('') }}" placeholder="1">
+							</div>
+						</div>
+					</div>
+					{% if suggestion_form_path is defined and suggestion_form_path %}
+						<button type="button" id="tph-suggestion-open-bookmark" class="btn btn-secondary btn-sm mt-1">{{ 'topo_path_suggestion.bookmark_page'|trans }}</button>
+					{% endif %}
+				</div>
+				<hr class="my-4">
+			{% endif %}
+			<section id="tph-routes-section" style="display: none;">
+				<label class="form-control-label">{{ 'topo_editor.routes_table_caption'|trans }}</label>
+				<div id="tph-routes-table-wrap"></div>
+				<button type="button" class="btn btn-secondary mt-3" id="tph-apply-grade-colors">{{ 'topo_editor.apply_grade_colors'|trans }}</button>
+			</section>
+			<hr class="my-4">
+		</div>
+
 		<button type="button" id="tph-drawCopyToStep1" class="btn btn-secondary mt-3">{{ 'topo_editor.parse_paths'|trans }}</button>
 	</section>
 
@@ -82,14 +123,6 @@
 				</div>
 			</div>
 		</div>
-	</section>
-
-	<hr class="my-4">
-
-	<section id="tph-routes-section" style="display: none;">
-		<label class="form-control-label">{{ 'topo_editor.routes_table_caption'|trans }}</label>
-		<div id="tph-routes-table-wrap"></div>
-		<button type="button" class="btn btn-secondary mt-3" id="tph-apply-grade-colors">{{ 'topo_editor.apply_grade_colors'|trans }}</button>
 	</section>
 
 	<hr class="my-4">

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Rock;
 use App\Entity\Topo;
 use App\Entity\User;
 use App\Service\RockAccessService;

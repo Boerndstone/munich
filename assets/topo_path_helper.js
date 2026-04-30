@@ -482,7 +482,6 @@
 				})
 				.then(function(data) {
 					te.routesForColors = Array.isArray(data.routesForColors) ? data.routesForColors : [];
-					populateRoutesForColorsSection();
 					autoApplyGradeColorsIfTopoRoutes();
 					pathsUiSync();
 				})

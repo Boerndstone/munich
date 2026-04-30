@@ -74,6 +74,11 @@
 						? tphT('draw_status_on_image', { count: count })
 						: tphT('draw_status_start_routes');
 				});
+				refreshSuggestionRoutesFromServer();
+				var afterBlk = document.getElementById('tph-suggestion-after-image-block');
+				if (afterBlk && window.TOPO_EDIT && window.TOPO_EDIT.suggestionMode) {
+					afterBlk.style.display = '';
+				}
 			};
 			drawImg.onerror = function() {
 				document.getElementById('tph-drawStatus').textContent = tphT('draw_status_image_error');
@@ -440,6 +445,52 @@
 			wireRouteTableDotCheckboxes();
 		}
 
+		function refreshSuggestionRoutesFromServer() {
+			var te = window.TOPO_EDIT;
+			if (!te || !te.suggestionMode || !te.routesForColorsFetchUrl) {
+				return;
+			}
+			var rockEl = document.getElementById('tph-suggestion-rock');
+			var topoNrEl = document.getElementById('tph-suggestion-topoNr');
+			if (!rockEl || !topoNrEl) {
+				return;
+			}
+			var rockId = parseInt(rockEl.value, 10) || 0;
+			var topoNr = parseInt(String(topoNrEl.value || '').trim(), 10) || 0;
+			if (rockId < 1 || topoNr < 1) {
+				te.routesForColors = [];
+				populateRoutesForColorsSection();
+				return;
+			}
+			var u;
+			try {
+				u = new URL(te.routesForColorsFetchUrl, window.location.href);
+			} catch (e) {
+				return;
+			}
+			u.searchParams.set('rock', String(rockId));
+			u.searchParams.set('topoNr', String(topoNr));
+			fetch(u.toString(), {
+				headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+				credentials: 'same-origin',
+			})
+				.then(function(r) {
+					if (!r.ok) {
+						throw new Error('routes-json');
+					}
+					return r.json();
+				})
+				.then(function(data) {
+					te.routesForColors = Array.isArray(data.routesForColors) ? data.routesForColors : [];
+					populateRoutesForColorsSection();
+					autoApplyGradeColorsIfTopoRoutes();
+					pathsUiSync();
+				})
+				.catch(function() {
+					showToast(tphT('routes_fetch_failed'));
+				});
+		}
+
 		function parsePaths() {
 			const html = document.getElementById('tph-input').value || '';
 			if (html.trim() === '') {
@@ -615,6 +666,67 @@
 			applyGradBtn.addEventListener('click', applyGradeColorsFromRoutes);
 		}
 
+		var suggestionRoutesTimer = null;
+		function scheduleSuggestionRoutesRefresh() {
+			if (suggestionRoutesTimer) {
+				clearTimeout(suggestionRoutesTimer);
+			}
+			suggestionRoutesTimer = setTimeout(function() {
+				suggestionRoutesTimer = null;
+				refreshSuggestionRoutesFromServer();
+			}, 350);
+		}
+
+		if (window.TOPO_EDIT && window.TOPO_EDIT.suggestionMode && window.TOPO_EDIT.routesForColorsFetchUrl) {
+			var srRock = document.getElementById('tph-suggestion-rock');
+			var srTopo = document.getElementById('tph-suggestion-topoNr');
+			if (srRock) {
+				srRock.addEventListener('change', function() {
+					refreshSuggestionRoutesFromServer();
+				});
+			}
+			if (srTopo) {
+				srTopo.addEventListener('change', function() {
+					refreshSuggestionRoutesFromServer();
+				});
+				srTopo.addEventListener('input', scheduleSuggestionRoutesRefresh);
+			}
+			var srDrawFile = document.getElementById('tph-drawImageFile');
+			if (srDrawFile) {
+				srDrawFile.addEventListener('change', function() {
+					refreshSuggestionRoutesFromServer();
+				});
+			}
+			var bm = document.getElementById('tph-suggestion-open-bookmark');
+			if (bm && typeof window.TPH_SUGGESTION_FORM_PATH === 'string' && window.TPH_SUGGESTION_FORM_PATH) {
+				bm.addEventListener('click', function(ev) {
+					ev.preventDefault();
+					var u;
+					try {
+						u = new URL(window.TPH_SUGGESTION_FORM_PATH, window.location.href);
+					} catch (e) {
+						return;
+					}
+					var r = srRock && srRock.value ? String(srRock.value) : '';
+					var t = srTopo && srTopo.value != null ? String(srTopo.value).trim() : '';
+					if (r) {
+						u.searchParams.set('rock', r);
+					}
+					if (t) {
+						u.searchParams.set('topoNr', t);
+					}
+					window.location.href = u.pathname + u.search;
+				});
+			}
+			var teInit = window.TOPO_EDIT;
+			if ((!teInit.routesForColors || teInit.routesForColors.length === 0) && srRock && srTopo && srRock.value) {
+				var tnr = parseInt(String(srTopo.value || '').trim(), 10) || 0;
+				if (tnr >= 1) {
+					refreshSuggestionRoutesFromServer();
+				}
+			}
+		}
+
 		// Save to topo (admin edit) or submit public suggestion (FormData)
 		var saveToTopoBtn = document.getElementById('tph-saveToTopo');
 		if (saveToTopoBtn && window.TOPO_EDIT) {
@@ -658,13 +770,13 @@
 						if (data.success && data.redirectUrl) {
 							window.location.href = data.redirectUrl;
 						} else {
-						showToast(data.error || data.message || tphT('save_failed'));
-					}
-				})
-				.catch(function() {
-					saveToTopoBtn.disabled = false;
-					showToast(tphT('save_failed'));
-				});
+							showToast(data.error || data.message || tphT('save_failed'));
+						}
+					})
+					.catch(function() {
+						saveToTopoBtn.disabled = false;
+						showToast(tphT('save_failed'));
+					});
 					return;
 				}
 

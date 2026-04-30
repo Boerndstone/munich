@@ -85,6 +85,11 @@ final class TopoPathSuggestionController extends AbstractController
             $topoNumber,
         );
 
+        $routesJsonRoute = $request->getLocale() === 'en'
+            ? 'frontend_topo_path_suggestion_routes_en'
+            : 'frontend_topo_path_suggestion_routes';
+        $topoEdit['routesForColorsFetchUrl'] = $this->generateUrl($routesJsonRoute);
+
         $rocks = $this->rockRepository->findAllForPublicTopoSelect();
 
         return $this->render('frontend/topo_path_suggestion.html.twig', [
@@ -94,6 +99,30 @@ final class TopoPathSuggestionController extends AbstractController
             'topoEdit' => $topoEdit,
             'topoEditJsonBase64' => base64_encode(json_encode($topoEdit, \JSON_UNESCAPED_SLASHES)),
             'sent' => $request->query->getBoolean('sent'),
+        ]);
+    }
+
+    /**
+     * JSON list of routes (nr, name, grade, colours) for the topo path editor when rock + topo number are chosen
+     * without reloading the Mithelfen page (e.g. after picking a reference image file).
+     */
+    #[Route('/mithelfen/topo-pfade/routes-json', name: 'frontend_topo_path_suggestion_routes', defaults: ['_locale' => 'de'], methods: ['GET'], priority: 350)]
+    #[Route('/en/help/topo-paths/routes-json', name: 'frontend_topo_path_suggestion_routes_en', defaults: ['_locale' => 'en'], methods: ['GET'], priority: 350)]
+    public function routesForColorsJson(Request $request): JsonResponse
+    {
+        $rockId = $request->query->getInt('rock', 0);
+        $topoNr = $request->query->getInt('topoNr', 0);
+        if ($rockId < 1 || $topoNr < 1) {
+            return $this->json(['routesForColors' => []]);
+        }
+
+        $rock = $this->rockRepository->find($rockId);
+        if (!$rock instanceof Rock) {
+            return $this->json(['routesForColors' => []]);
+        }
+
+        return $this->json([
+            'routesForColors' => $this->payloadFactory->buildRoutesForColorsForRockAndTopoNumber($rock, $topoNr),
         ]);
     }
 

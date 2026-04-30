@@ -4,8 +4,11 @@ namespace App\Repository;
 
 use App\Entity\Rock;
 use App\Entity\Topo;
+use App\Entity\User;
+use App\Service\RockAccessService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method Topo|null find($id, $lockMode = null, $lockVersion = null)
@@ -55,6 +58,25 @@ class TopoRepository extends ServiceEntityRepository
             ->orderBy('t.number', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @return list<Topo>
+     */
+    public function findAllEditableForUser(UserInterface $user, RockAccessService $rockAccess): array
+    {
+        if (!$user instanceof User) {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('entity')
+            ->orderBy('entity.name', 'ASC');
+        $rockAccess->restrictTopoQueryBuilder($qb, $user);
+
+        /** @var list<Topo> $result */
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
     }
 
     public function findRoutesByTopoNumber($topoNumber)

@@ -27,6 +27,7 @@ Encore
   .addEntry("filter", "./assets/filter.js")
   // EasyAdmin / backend (was a separate Encore build; merged so one `npm run build` serves /admin)
   .addEntry("admin", "./assets/admin.js")
+  .addEntry("topo_editor", "./assets/topo_editor.js")
 
   .copyFiles({
     from: "./assets/images",

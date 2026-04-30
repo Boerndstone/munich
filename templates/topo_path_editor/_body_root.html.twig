@@ -1,0 +1,109 @@
+{# Shared markup for topo path editor (admin + frontend). Requires Bootstrap-ish .form-control / .btn on admin; frontend provides compatible classes. #}
+{% set topo_editor_i18n = {
+	'draw_status_need_url': 'topo_editor.draw_status_need_url'|trans,
+	'draw_status_on_image': 'topo_editor.draw_status_on_image'|trans,
+	'draw_status_start_routes': 'topo_editor.draw_status_start_routes'|trans,
+	'draw_status_image_error': 'topo_editor.draw_status_image_error'|trans,
+	'draw_status_few_points': 'topo_editor.draw_status_few_points'|trans,
+	'draw_status_path_selected': 'topo_editor.draw_status_path_selected'|trans,
+	'draw_status_paths_click_edit': 'topo_editor.draw_status_paths_click_edit'|trans,
+	'draw_status_click_image': 'topo_editor.draw_status_click_image'|trans,
+	'draw_status_path_deleted_remaining': 'topo_editor.draw_status_path_deleted_remaining'|trans,
+	'draw_status_path_deleted_none': 'topo_editor.draw_status_path_deleted_none'|trans,
+	'draw_status_drawing': 'topo_editor.draw_status_drawing'|trans,
+	'draw_status_path_saved': 'topo_editor.draw_status_path_saved'|trans,
+	'draw_status_path_cleared': 'topo_editor.draw_status_path_cleared'|trans,
+	'draw_status_need_two_before_new': 'topo_editor.draw_status_need_two_before_new'|trans,
+	'draw_status_undo_point': 'topo_editor.draw_status_undo_point'|trans,
+	'copy_no_paths_toast': 'topo_editor.copy_no_paths_toast'|trans,
+	'copy_parsed_clipboard_toast': 'topo_editor.copy_parsed_clipboard_toast'|trans,
+	'copy_paths_to_step1_status': 'topo_editor.copy_paths_to_step1_status'|trans,
+	'clipboard_copied': 'topo_editor.clipboard_copied'|trans,
+	'apply_no_routes': 'topo_editor.apply_no_routes'|trans,
+	'apply_no_paths_first': 'topo_editor.apply_no_paths_first'|trans,
+	'apply_summary_start': 'topo_editor.apply_summary_start'|trans,
+	'apply_summary_missing': 'topo_editor.apply_summary_missing'|trans,
+	'apply_summary_extra': 'topo_editor.apply_summary_extra'|trans,
+	'save_failed': 'topo_editor.save_failed'|trans,
+	'routes_col_nr': 'topo_editor.routes_col_nr'|trans,
+	'routes_col_route': 'topo_editor.routes_col_route'|trans,
+	'routes_col_grade': 'topo_editor.routes_col_grade'|trans,
+	'routes_col_bucket': 'topo_editor.routes_col_bucket'|trans,
+	'routes_col_color': 'topo_editor.routes_col_color'|trans,
+	'routes_col_dot': 'topo_editor.routes_col_dot'|trans,
+	'routes_dot_anchor': 'topo_editor.routes_dot_anchor'|trans,
+} %}
+<div class="topo-path-helper-root {{ frontend_class|default('') }}">
+	<section>
+		<div class="row">
+			<div class="col-12">
+				<div class="field-text form-group">
+					<label class="form-control-label" for="tph-drawImageUrl">{{ 'topo_editor.image_url_label'|trans }}</label>
+					<div class="form-widget">
+						<input type="text" id="tph-drawImageUrl" placeholder="{{ 'topo_editor.image_url_placeholder'|trans|e('html_attr') }}" value="{{ (topoEdit is defined and topoEdit and topoEdit.imageUrl is defined) ? topoEdit.imageUrl|e('html_attr') : '' }}" class="form-control">
+					</div>
+				</div>
+			</div>
+			<div class="col-12">
+				<div class="field-text form-group">
+					<label class="form-control-label" for="tph-drawImageFile">{{ 'topo_editor.or_choose_file'|trans }}</label>
+					<input type="file" id="tph-drawImageFile" accept="image/*" class="form-control">
+				</div>
+			</div>
+			<div class="col-12">
+				<button type="button" id="tph-drawLoadImage" class="btn btn-secondary">{{ 'topo_editor.load_image'|trans }}</button>
+			</div>
+			<hr class="my-4">
+		</div>
+		<div class="tph-draw-toolbar">
+			<button type="button" id="tph-drawNewPath" class="btn btn-secondary">{{ 'topo_editor.new_path'|trans }}</button>
+			<button type="button" id="tph-drawUndo" class="btn btn-secondary">{{ 'topo_editor.undo_point'|trans }}</button>
+			<button type="button" id="tph-drawDeselect" class="btn btn-secondary">{{ 'topo_editor.deselect'|trans }}</button>
+			<button type="button" id="tph-drawDeletePath" class="btn btn-secondary">{{ 'topo_editor.delete_selected_path'|trans }}</button>
+		</div>
+		<div id="tph-drawStatus" class="text-muted mt-2" aria-live="polite"></div>
+		<div class="tph-draw-area" id="tph-drawArea" style="display: none;">
+			<img id="tph-drawImg" class="tph-draw-area__bg" alt="{{ 'topo_editor.draw_image_alt'|trans|e('html_attr') }}">
+			<div class="tph-draw-area__overlay" aria-hidden="true">
+				<svg id="tph-drawSvg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
+			</div>
+		</div>
+		<button type="button" id="tph-drawCopyToStep1" class="btn btn-secondary mt-3">{{ 'topo_editor.parse_paths'|trans }}</button>
+	</section>
+
+	<hr class="my-4">
+
+	<section>
+		<div class="row">
+			<div class="col-12">
+				<div class="field-text form-group">
+					<label class="form-control-label" for="tph-input">{{ 'topo_editor.parsed_paths_label'|trans }}</label>
+					<textarea id="tph-input" class="form-control" placeholder="{{ 'topo_editor.parsed_paths_placeholder'|trans|e('html_attr') }}"></textarea>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<hr class="my-4">
+
+	<section id="tph-routes-section" style="display: none;">
+		<label class="form-control-label">{{ 'topo_editor.routes_table_caption'|trans }}</label>
+		<div id="tph-routes-table-wrap"></div>
+		<button type="button" class="btn btn-secondary mt-3" id="tph-apply-grade-colors">{{ 'topo_editor.apply_grade_colors'|trans }}</button>
+	</section>
+
+	<hr class="my-4">
+
+	<section>
+		<label class="form-control-label" for="tph-output">{{ 'topo_editor.php_output_label'|trans }}</label>
+		<div class="output-wrap">
+			<textarea id="tph-output" class="form-control" readonly style="min-height: 120px;" placeholder="{{ 'topo_editor.php_output_placeholder'|trans|e('html_attr') }}"></textarea>
+			<button type="button" class="btn btn-secondary" id="tph-copyPhp" style="position: absolute; top: 8px; right: 8px; padding: 6px 12px; font-size: 12px;">{{ 'topo_editor.copy_code'|trans }}</button>
+		</div>
+		<button type="button" class="btn btn-secondary mt-3" id="tph-generatePhp">{{ 'topo_editor.generate_php'|trans }}</button>
+	</section>
+
+	<div id="tph-toast" class="toast">{{ 'topo_editor.toast_copied_default'|trans }}</div>
+</div>
+{# JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP = 15 — safe inside HTML #}
+<script type="application/json" id="topo-path-helper-i18n">{{ topo_editor_i18n|json_encode(15)|raw }}</script>

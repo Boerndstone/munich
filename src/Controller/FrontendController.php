@@ -185,7 +185,7 @@ class FrontendController extends AbstractController
         defaults: ['_locale' => 'en'],
         priority: 250,
         requirements: [
-            'areaSlug' => '^(?!_(?:wdt|profiler|error)/)[^/]++$',
+            'areaSlug' => '^(?!_(?:wdt|profiler|error)$)[^/]++$',
         ]
     )]
     public function showRock(

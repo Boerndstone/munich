@@ -93,8 +93,20 @@ class FrontendController extends AbstractController
         return $response;
     }
 
-    #[Route('/{slug}', name: 'show_rocks', defaults: ['_locale' => 'de'], priority: -20)]
-    #[Route('/en/{slug}', name: 'show_rocks_en', defaults: ['_locale' => 'en'], priority: 200)]
+    #[Route(
+        '/{slug}',
+        name: 'show_rocks',
+        defaults: ['_locale' => 'de'],
+        priority: -20,
+        requirements: ['slug' => '^(?!_(?:wdt|profiler|error)$)[^/]+$']
+    )]
+    #[Route(
+        '/en/{slug}',
+        name: 'show_rocks_en',
+        defaults: ['_locale' => 'en'],
+        priority: 200,
+        requirements: ['slug' => '^(?!_(?:wdt|profiler|error)$)[^/]+$']
+    )]
     public function showRocksArea(
         FrontendCacheService $frontendCacheService,
         #[MapEntity(
@@ -158,8 +170,24 @@ class FrontendController extends AbstractController
 
     // #[Route('/{areaSlug}/{slug}', name: 'show_rock')]
 
-    #[Route(path: '/{areaSlug}/{slug}', name: 'show_rock', defaults: ['_locale' => 'de'], priority: 10, requirements: ['areaSlug' => '^(?!en$)[^/]++$'])]
-    #[Route(path: '/en/{areaSlug}/{slug}', name: 'show_rock_en', defaults: ['_locale' => 'en'], priority: 250)]
+    #[Route(
+        path: '/{areaSlug}/{slug}',
+        name: 'show_rock',
+        defaults: ['_locale' => 'de'],
+        priority: 10,
+        requirements: [
+            'areaSlug' => '^(?!(?:en|_(?:wdt|profiler|error))/)[^/]++$',
+        ]
+    )]
+    #[Route(
+        path: '/en/{areaSlug}/{slug}',
+        name: 'show_rock_en',
+        defaults: ['_locale' => 'en'],
+        priority: 250,
+        requirements: [
+            'areaSlug' => '^(?!_(?:wdt|profiler|error)/)[^/]++$',
+        ]
+    )]
     public function showRock(
         RoutesRepository $routesRepository,
         RockRepository $rockRepository,

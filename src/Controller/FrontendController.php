@@ -176,7 +176,7 @@ class FrontendController extends AbstractController
         defaults: ['_locale' => 'de'],
         priority: 10,
         requirements: [
-            'areaSlug' => '^(?!(?:en|_(?:wdt|profiler|error))/)[^/]++$',
+            'areaSlug' => '^(?!(?:en|_(?:wdt|profiler|error))$)[^/]++$',
         ]
     )]
     #[Route(

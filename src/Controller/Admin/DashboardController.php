@@ -149,6 +149,7 @@ class DashboardController extends AbstractDashboardController
     {
         return Dashboard::new()
             ->setTitle('Munichclimbs')
+            ->renderContentMaximized()
             ->setFaviconPath('build/images/favicon/favicon.png');
     }
 

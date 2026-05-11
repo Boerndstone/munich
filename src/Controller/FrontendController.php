@@ -175,8 +175,9 @@ class FrontendController extends AbstractController
         name: 'show_rock',
         defaults: ['_locale' => 'de'],
         priority: 10,
+        condition: "params['areaSlug'] != 'en' and params['areaSlug'] != '_wdt' and params['areaSlug'] != '_profiler' and params['areaSlug'] != '_error'",
         requirements: [
-            'areaSlug' => '^(?!(?:en|_(?:wdt|profiler|error))$)[^/]++$',
+            'areaSlug' => '[^/]++',
         ]
     )]
     #[Route(
@@ -184,8 +185,9 @@ class FrontendController extends AbstractController
         name: 'show_rock_en',
         defaults: ['_locale' => 'en'],
         priority: 250,
+        condition: "params['areaSlug'] != '_wdt' and params['areaSlug'] != '_profiler' and params['areaSlug'] != '_error'",
         requirements: [
-            'areaSlug' => '^(?!_(?:wdt|profiler|error)$)[^/]++$',
+            'areaSlug' => '[^/]++',
         ]
     )]
     public function showRock(

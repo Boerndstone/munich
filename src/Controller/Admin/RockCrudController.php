@@ -160,6 +160,7 @@ class RockCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->setTemplatePath('admin/field/routes.html.twig')
             ->setCustomOption('gradeFormChoices', $this->gradeTranslationService->getGradeFormChoices())
+            ->setFormTypeOption('mapped', false)
             ->addCssClass('field-address')
             ->setColumns('col-12');
 

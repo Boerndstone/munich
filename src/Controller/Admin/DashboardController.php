@@ -21,8 +21,6 @@ use App\Repository\RoutesRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -177,12 +175,6 @@ class DashboardController extends AbstractDashboardController
     {
         return parent::configureActions()
             ->disable(Action::DETAIL);
-    }
-
-    public function configureAssets(): Assets
-    {
-        return parent::configureAssets()
-            ->addWebpackEncoreEntry(Asset::new('admin'));
     }
 
     private function createChart(): Chart

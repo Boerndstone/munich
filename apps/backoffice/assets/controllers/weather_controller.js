@@ -1,12 +1,16 @@
 import { Controller } from "stimulus";
 
-const apiKey = ""; // Replace with your actual API key
-
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
   async connect() {
     const areaLng = this.element.dataset.weatherAreaLng;
     const areaLat = this.element.dataset.weatherAreaLat;
+    const apiKey = this.element.dataset.weatherApiKey;
+
+    if (!apiKey || !areaLat || !areaLng) {
+      return;
+    }
+
     const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${areaLat}&lon=${areaLng}&lang=de&date={date}&appid=${apiKey}&units=metric`;
     const forecastWeatherUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${areaLat}&lon=${areaLng}&lang=de&appid=${apiKey}&units=metric`;
 

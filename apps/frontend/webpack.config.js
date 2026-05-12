@@ -22,19 +22,11 @@ Encore
   })
   .enableStimulusBridge("./assets/controllers.json")
   .splitEntryChunks()
-
-    // enables the Symfony UX Stimulus bridge (used in assets/stimulus_bootstrap.js)
-    .enableStimulusBridge('./assets/controllers.json')
   .enableSingleRuntimeChunk()
   .cleanupOutputBeforeBuild()
   .enableBuildNotifications()
   .enableSourceMaps(!Encore.isProduction())
   .enableVersioning(Encore.isProduction())
-  .configureCssMinimizerPlugin((options) => {
-    options.minimizerOptions = {
-      preset: ["default", { discardComments: { removeAll: true } }],
-    };
-  })
   .configureBabel((babelConfig) => {
     babelConfig.plugins.push("@babel/plugin-proposal-class-properties");
   })

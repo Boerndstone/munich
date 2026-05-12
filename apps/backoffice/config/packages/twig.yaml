@@ -2,6 +2,8 @@ twig:
   file_name_pattern: "*.twig"
   paths:
     "assets/css": styles
+  globals:
+    weather_api_key: "%env(default::OPENWEATHERMAP_API_KEY)%"
 
 when@test:
   twig:

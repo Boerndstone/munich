@@ -24,7 +24,7 @@
 		</header>
 		<div class="min-h-0 flex-1 overflow-y-auto px-4 py-3">
 			<div class="rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg-lighter)] px-3 py-3 sm:px-4">
-				<div {{ stimulus_controller('weather') }} data-weather-area-lat="{{ areaLat }}" data-weather-area-lng="{{ areaLng }}">
+				<div {{ stimulus_controller('weather') }} data-weather-area-lat="{{ areaLat }}" data-weather-area-lng="{{ areaLng }}" data-weather-api-key="{{ weather_api_key|e('html_attr') }}">
 					<div class="current-weather flex items-center gap-2">
 						<div class="icon icon-weather shrink-0"></div>
 						<div id="temperature" class="min-w-0 text-sm text-[var(--theme-text)] sm:text-base"></div>

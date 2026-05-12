@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+{% set setTitle = 'rocks.page_title'|trans({ '%area%': areaName }) %}
+{% set currentDate =  "now"|date("z") %}
+
+{% block page_javascripts %}
+	{{ encore_entry_script_tags('map') }}
+	{{ encore_entry_script_tags('filter') }}
+	{{ encore_entry_script_tags('routeparams') }}
+{% endblock %}
+
+{% block leaflet %}
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
+	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+{% endblock %}
+
+{% block meta_tags %}
+	{% set description = 'rocks.meta_description_prefix'|trans({ '%area%': areaName }) %}
+	{% for rock in rocks %}
+		{% set description = description ~ rock.rockName %}
+		{% if loop.last == false %}
+			{% set description = description ~ ', ' %}
+		{% else %}
+			{% set description = description ~ ' ' %}
+		{% endif %}
+	{% endfor %}
+	{% include 'components/seo/meta-tags.html.twig' with {
+		title: setTitle,
+		description: description,
+		url: app.request.locale == 'en'
+			? 'https://munichclimbs.de/en/' ~ areaSlug
+			: 'https://munichclimbs.de/' ~ areaSlug,
+		area_name: areaName,
+		og_locale_alternate: app.request.locale == 'en' ? 'de_DE' : 'en_US',
+	} %}
+{% endblock %}
+
+{% block title %}
+	{{ setTitle }}
+{% endblock %}
+
+{% block body %}
+	{{ include('components/layout/navigation.html.twig') }}
+	<main id="main-content">
+		{{ include('components/page/area-hero.html.twig', {
+			setTitle: setTitle,
+			areaName: areaName,
+			areaImage: areaImage,
+			areaKletterkonzeption: areaKletterkonzeption,
+			top100Routes: top100Routes
+		}) }}
+		<div class="mx-auto my-4 w-full max-w-[1024px] px-2 sm:px-4">
+			<section>
+				{# Modals must live outside .image-container so fixed backdrop/dialog stack above the hero (z-index context) #}
+				{% if areaKletterkonzeption %}
+					{{ include('components/modals/modal-kletterkonzeption.html.twig') }}
+				{% endif %}
+				{% if top100Routes is not empty %}
+					{{ include('components/modals/modal-top100-routes.html.twig') }}
+				{% endif %}
+				{{ include('components/page/area-weather-modal.html.twig', { areaLat: areaLat, areaLng: areaLng }) }}
+				{{ include('components/page/area-map-modal.html.twig', { areaName: areaName }) }}
+				<div class="grid grid-cols-1 gap-3 md:grid-cols-12 md:gap-4" data-controller="filter">
+					<div class="order-2 min-w-0 md:order-2 md:col-span-8 lg:order-1">
+						<div class="flex flex-col">
+							{% for rock in rocks %}
+								{{ include('components/rock-area-list-item.html.twig', { rock: rock, areaName: areaName, currentDate: currentDate }) }}
+							{% endfor %}
+						</div>
+					</div>
+					<div class="order-1 min-w-0 md:order-1 md:col-span-4 lg:order-2">
+						{{ include('components/rocks-sticky-filter.html.twig') }}
+					</div>
+				</div>
+			</section>
+		</div>
+	</main>
+{% endblock %}

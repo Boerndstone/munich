@@ -1,0 +1,136 @@
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/Inter-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/Inter-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/Inter-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/Inter-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/Inter-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Chelsea Market", system-ui;
+    src: url('../fonts/ChelseaMarket-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f3f3f3;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.chelsea-market-regular {
+    font-family: "Chelsea Market", system-ui;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 20px;
+}
+
+h1 {
+    font-weight: normal;
+}
+
+.text-white {
+    color: #ffffff;
+}
+
+hr {
+    border: none;
+    border-top: 3px solid #075985;
+    margin: 20px;
+}
+
+.container {
+    background-color: #fefefe;
+    width: 580px;
+    margin: 0 auto;
+}
+
+.bottom {
+    border-top: 1px solid white;
+}
+
+.bottom, .footer, .welcome {
+    background-color: #075985;
+}
+
+.footer a {
+    color: #ffffff !important;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.h-line {
+    height: 2px;
+    background-color: #fff;
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+}
+
+.block {
+    margin: 0;
+    padding: 10px 20px 20px;
+   
+}
+
+.logo {
+    width: 100px;
+    height: 100px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #075985;
+    color: #fefefe;
+    border: 1px solid #fff;
+    border-radius: 3px;
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.header {
+    background-color: #075985;
+    color: #ffffff;
+}
+
+.header a {
+    color: #ffffff;
+    text-decoration: none;
+}

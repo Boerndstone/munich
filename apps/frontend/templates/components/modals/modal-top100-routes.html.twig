@@ -1,0 +1,29 @@
+{# Expects: areaName, top100Routes — open via document.getElementById('top100RoutesModal').showModal() #}
+<dialog
+	id="top100RoutesModal"
+	class="shared-route-dialog z-[1060]"
+	tabindex="-1"
+	aria-labelledby="top100RoutesModalLabel"
+	aria-modal="true"
+	onclick="if (event.target === this) this.close()"
+>
+	<div class="relative flex max-h-[min(90vh,48rem)] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] text-[var(--theme-text)] shadow-xl" onclick="event.stopPropagation()">
+		<header class="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--theme-border)] px-4 py-3">
+			<h2 id="top100RoutesModalLabel" class="stay-black m-0 min-w-0 flex-1 text-base font-semibold leading-tight text-[var(--theme-text)] sm:text-lg">Top 100 - {{ areaName }}</h2>
+			<button
+				type="button"
+				class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--theme-text)] opacity-70 hover:bg-[var(--theme-bg-lighter)] hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]"
+				onclick="this.closest('dialog').close()"
+				aria-label="{{ 'close'|trans({}, 'messages') }}"
+			>
+				<span class="sr-only">{{ 'close'|trans({}, 'messages') }}</span>
+				<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+				</svg>
+			</button>
+		</header>
+		<div class="min-h-0 flex-1 overflow-y-auto px-4 py-3">
+			<twig:RoutesTable variant="top100" :routes="top100Routes" />
+		</div>
+	</div>
+</dialog>

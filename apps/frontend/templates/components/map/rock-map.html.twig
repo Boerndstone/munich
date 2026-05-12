@@ -1,0 +1,61 @@
+{% set marker = [] %}
+{% for rock in rocks %}
+	{% set rockLink = rock_path(areaSlug, slug) %}
+	{% set mapPopupHtml %}
+		{% include 'components/map/rock-map-popup.html.twig' with {
+			rock: rock,
+			areaName: areaName,
+			rockLink: rockLink,
+			map_compact: true,
+			show_chart: false,
+			popupBody: ''
+		} only %}
+	{% endset %}
+	{% set mapPopupHtml = mapPopupHtml|trim %}
+	{% set marker = marker|merge([ rock.rockLat, rock.rockLng, rock.pathCoordinates, mapPopupHtml, rock.rockZoom ]) %}
+{% endfor %}
+{% set parkingIconHtml %}
+	<twig:ux:icon name="lucide:square-parking" class="size-6 shrink-0 text-sky-800" aria-hidden="true" />
+{% endset %}
+{# Outside #rockMap: Leaflet replaces the map container contents and would drop a parking icon placed inside. #}
+<script type="application/json" id="rock-map-parking-icon-json">{{ parkingIconHtml|trim|json_encode|raw }}</script>
+<div
+	id="rockMap"
+	class="z-10 mb-3 w-full min-h-[12rem]"
+	style="aspect-ratio: 16/16;"
+	data-controller="rock-map"
+	data-rock-map-payload="{{ marker|json_encode|e('html_attr') }}"
+>
+	<style>
+		.leaflet-popup-tip {
+			height: 0;
+		}
+		/* Leaflet 1.9 defaults use inner <span>+</span>; global/Tailwind styles can make glyph + label read as “double”. Plain-text control + system font avoids duplicate-looking icons. */
+		#rockMap .leaflet-control-zoom-in,
+		#rockMap .leaflet-control-zoom-out {
+			font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+			font-weight: 600;
+			font-size: 18px;
+			line-height: 26px;
+			text-indent: 0;
+		}
+		#rockMap.leaflet-touch .leaflet-control-zoom-in,
+		#rockMap.leaflet-touch .leaflet-control-zoom-out {
+			font-size: 22px;
+			line-height: 30px;
+			height: 30px;
+			width: 30px;
+		}
+		#rockMap .rock-map-parking-marker {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 36px;
+			height: 36px;
+			border-radius: 9999px;
+			border: 2px solid rgb(7 89 133);
+			background: #fff;
+			box-shadow: 0 1px 4px rgb(15 23 42 / 0.2);
+		}
+	</style>
+</div>

@@ -1,0 +1,68 @@
+{% apply inky_to_html|inline_css(source('@styles/foundation-emails.css'), source('@styles/email.css')) %}
+
+<container>
+	<row class="header">
+		<columns>
+			<spacer size="20"></spacer>
+			<a href="{{ url('index') }}" class="chelsea-market-regular" href="/">
+				munichclimbs
+			</a>
+			<spacer size="20"></spacer>
+		</columns>
+	</row>
+	{% block content %}{% endblock %}
+	<row class="footer">
+		{% set areas = getAreas() %}
+		{% set total_areas = areas|length %}
+		{% set third_point = (total_areas / 3)|round(0, 'ceil') %}
+		{% set two_third_point = (2 * total_areas / 3)|round(0, 'ceil') %}
+
+		<columns large="4">
+			<spacer size="20"></spacer>
+			{% for area in areas %}
+				{% if loop.index <= third_point %}
+					<menu class="vertical">
+						<item href="{{ url('show_rocks', { slug: area.slug }) }}" title="Klettergebiet {{ area.name }}">{{ area.name }}</item>
+					</menu>
+				{% endif %}
+			{% endfor %}
+		</columns>
+
+		<columns large="4">
+			<spacer size="20"></spacer>
+			{% for area in areas %}
+				{% if loop.index > third_point and loop.index <= two_third_point %}
+					<menu class="vertical">
+						<item href="{{ url('show_rocks', { slug: area.slug }) }}" title="Klettergebiet {{ area.name }}">{{ area.name }}</item>
+					</menu>
+				{% endif %}
+			{% endfor %}
+		</columns>
+
+		<columns large="4">
+			<spacer size="20"></spacer>
+			{% for area in areas %}
+				{% if loop.index > two_third_point %}
+					<menu class="vertical">
+						<item href="{{ url('show_rocks', { slug: area.slug }) }}" title="Klettergebiet {{ area.name }}">{{ area.name }}</item>
+					</menu>
+				{% endif %}
+			{% endfor %}
+		</columns>
+
+	</row>
+	<row class="bottom">
+		<columns>
+			<center>
+				<spacer size="20"></spacer>
+				<div>
+					<p class="text-center">
+						<small class="text-white">Copyright © 2024 munichclimbs. Alle Rechte vorbehalten.</small>
+					</p>
+				</div>
+			</center>
+		</columns>
+	</row>
+</container>
+
+{% endapply %}

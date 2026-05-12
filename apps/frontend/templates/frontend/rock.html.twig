@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+{% set setTitle = 'Munichclimbs | Klettergebiet ' ~ areaName ~	' | Fels ' ~ slug|custom_replace %}
+
+{% block page_javascripts %}
+	{{ encore_entry_script_tags('rock') }}
+	{{ encore_entry_script_tags('gallery') }}
+{% endblock %}
+
+{% block leaflet %}
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
+	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+{% endblock %}
+
+{% block meta_tags %}
+	{% set description = (description|default(''))|striptags %}
+	{% set keywords = 'Klettern, Kletterfels, ' ~ slug|custom_replace ~ ', ' ~ areaName ~ ', Klettertouren' %}
+	{% for route in routes %}
+		{% set keywords = keywords ~ ', ' ~ route.routeName ~ ' ' ~ route.routeGrade %}
+	{% endfor %}
+	{% set image = '' %}
+	{% set image_alt = '' %}
+	{% if rockPreviewImage is not empty and isImageAccessible(rockPreviewImage, 'rock') %}
+		{% set image = getSocialMediaImageUrl(rockPreviewImage, 'rock') %}
+		{% set image_alt = getImageAltText(slug|custom_replace, areaName, 'rock') %}
+	{% endif %}
+	{% include 'components/seo/meta-tags.html.twig' with {
+		title: setTitle,
+		description: description,
+		url: app.request.locale == 'en'
+			? 'https://munichclimbs.de/en/' ~ areaSlug ~ '/' ~ slug
+			: 'https://munichclimbs.de/' ~ areaSlug ~ '/' ~ slug,
+		keywords: keywords,
+		image: image,
+		image_alt: image_alt,
+		latitude: rockLat,
+		longitude: rockLng,
+		area_name: areaName,
+		og_locale_alternate: app.request.locale == 'en' ? 'de_DE' : 'en_US',
+	} %}
+{% endblock %}
+
+{% block title %}
+	{{ setTitle }}
+{% endblock %}
+
+{% block structured_data %}
+	<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "Place",
+			"name": "{{ slug|custom_replace }}",
+			"description": "{{ (description|default(''))|striptags }}",
+			"url": "https://munichclimbs.de/Kletterfels/{{ slug }}",
+			{% if rockLat is not empty and rockLng is not empty %}
+				"geo": {
+					"@type": "GeoCoordinates",
+					"latitude": {{ rockLat }},
+					"longitude": {{ rockLng }}
+				},
+			{% endif %}
+			"address": {
+				"@type": "PostalAddress",
+				"addressRegion": "{{ areaName }}",
+				"addressCountry": "DE"
+			},
+			"image": "{% if rockPreviewImage is not empty and isImageAccessible(rockPreviewImage, 'rock') %}{{ getSocialMediaImageUrl(rockPreviewImage, 'rock') }}{% endif %}",
+			"mainEntity": {
+				"@type": "SportsActivityLocation",
+				"name": "Kletterfels {{ slug|custom_replace }}",
+				"description": "Klettergebiet in {{ areaName }} mit {% for route in routes %}{{ route.routeName }}{% if loop.last == false %}, {% else %}{% endif %}{% endfor %}",
+				"sport": "Klettern",
+				"numberOfRoutes": {{ routes|length }},
+				"areaServed": "{{ areaName }}"
+			}
+		}
+	</script>
+{% endblock %}
+
+{% block body %}
+	{{ include('components/layout/navigation.html.twig') }}
+	<main id="main-content">
+		{{ include('components/page/rock-flash-messages.html.twig') }}
+		{% set currentDate = "now"|date("z") %}
+		{% for rock in rocks %}
+			{{ include('components/page/rock-hero.html.twig', { rock: rock, setTitle: setTitle }) }}
+			{{ include('components/page/rock-topo-tabs.html.twig', { topos: topos }) }}
+			{{ include('components/page/rock-seasonal-ban.html.twig', { rock: rock, currentDate: currentDate }) }}
+		{% endfor %}
+		{# Offcanvas outside .image-container so backdrop/panel stack above the hero (z-index context) #}
+		{{ include('components/rock/offcanvas-rock-info.html.twig', {
+			rocks: rocks,
+			improvementForm: improvementForm|default(null),
+			galleryUploadForm: galleryUploadForm|default(null),
+			areaName: areaName,
+			areaSlug: areaSlug,
+			slug: slug,
+			mithelfenOpen: mithelfenOpen|default(false),
+			mithelfenTab: mithelfenTab|default('content')
+		}) }}
+		{{ include('components/page/rock-grouped-routes.html.twig', { groupedRoutes: groupedRoutes, rocks: rocks }) }}
+	</main>
+	{{ include('components/page/rock-hash-scroll.html.twig') }}
+{% endblock %}

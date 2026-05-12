@@ -1,0 +1,49 @@
+{# Expects: rock, setTitle #}
+<div class="image-container">
+	<div class="image-container-media">
+		{% if rock.rockImage is not empty %}
+			<picture>
+				<source media="(min-width: 1200px)" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-large-@1x.webp') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-large-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-large-@3x.webp') }} 3x">
+				<source media="(min-width: 800px)" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-medium-@1x.webp') }}, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-medium-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-medium-@3x.webp') }} 3x">
+				<img src="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~'-small-@1x.webp') }}" srcset="{{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-small-@2x.webp') }} 2x, {{ asset('https://www.munichclimbs.de/uploads/header/' ~ rock.rockImage ~ '-small-@3x.webp') }} 3x" alt="{{ setTitle }}" width="800" height="300" fetchpriority="high" decoding="async">
+			</picture>
+		{% else %}
+			<div class="fallback-image"></div>
+		{% endif %}
+	</div>
+	<div class="absolute inset-x-0 top-0 mx-auto my-3 w-full max-w-[1024px] px-2 sm:px-4">
+		<div class="rounded pb-3">
+			<div class="flex items-center justify-between rounded-md bg-white/60 p-3 shadow-md">
+				<div class="flex w-full flex-col">
+					<div class="flex items-center justify-between gap-2">
+						<h1 class="stay-black mb-0 text-xl font-medium md:text-2xl">
+							{{ rock.rockName }}
+						</h1>
+						<button type="button" class="inline-flex shrink-0 items-center rounded-md border border-gray-600 bg-white px-2 py-1 text-sm font-medium text-gray-800 hover:bg-gray-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-gray-400" onclick="document.getElementById('offcanvasRight').showModal()" aria-controls="offcanvasRight" aria-label="Fels-Informationen anzeigen">
+							<twig:ux:icon name="lucide:info" class="stay-black size-[22px] shrink-0 text-black" aria-hidden="true" />
+							<span class="ms-1 hidden md:inline">{{ "rock"|trans }}</span>
+						</button>
+					</div>
+					<twig:Breadcrumb class="mt-1">
+						<twig:Breadcrumb:List>
+							<twig:Breadcrumb:Item>
+								<twig:Breadcrumb:Link class="inline-flex shrink-0 items-center text-black hover:underline" href="{{ index_path() }}">
+									<twig:ux:icon name="lucide:house" class="size-4 shrink-0" aria-hidden="true" />
+									<span class="sr-only">{{ 'nav.breadcrumb_home'|trans }}</span>
+								</twig:Breadcrumb:Link>
+							</twig:Breadcrumb:Item>
+							<twig:Breadcrumb:Separator />
+							<twig:Breadcrumb:Item>
+								<twig:Breadcrumb:Link class="stay-black text-black hover:underline" href="{{ area_path(rock.areaSlug) }}">{{ rock.areaName }}</twig:Breadcrumb:Link>
+							</twig:Breadcrumb:Item>
+							<twig:Breadcrumb:Separator />
+							<twig:Breadcrumb:Item>
+								<twig:Breadcrumb:Page class="stay-black text-black">{{ rock.rockName }}</twig:Breadcrumb:Page>
+							</twig:Breadcrumb:Item>
+						</twig:Breadcrumb:List>
+					</twig:Breadcrumb>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

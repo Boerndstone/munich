@@ -9,6 +9,12 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
+    #[Route('/', name: 'backoffice_root', methods: ['GET'], priority: 400)]
+    public function index(): Response
+    {
+        return $this->redirectToRoute('app_login');
+    }
+
     #[Route('/login', name: 'app_login', defaults: ['_locale' => 'de'], priority: 350)]
     #[Route('/en/login', name: 'app_login_en', defaults: ['_locale' => 'en'], priority: 350)]
     public function login(AuthenticationUtils $authenticationUtils): Response

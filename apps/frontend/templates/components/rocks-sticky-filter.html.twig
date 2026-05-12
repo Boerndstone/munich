@@ -1,0 +1,55 @@
+{% set rock_filter_switches = [
+    {
+        id: 'flexSwitchCheckDefault',
+        target: 'childFriendly',
+        icon: 'child-friendly',
+        trans_key: 'rocks.filter.child_friendly',
+    },
+    {
+        id: 'sun',
+        target: 'sunny',
+        icon: 'sun',
+        trans_key: 'rocks.filter.sunny',
+    },
+    {
+        id: 'rain',
+        target: 'rain',
+        icon: 'umbrella',
+        trans_key: 'rocks.filter.rain_shelter',
+    },
+    {
+        id: 'train',
+        target: 'train',
+        icon: 'train',
+        trans_key: 'train.reachable',
+    },
+    {
+        id: 'bike',
+        target: 'bike',
+        trans_key: 'bike.reachable',
+        label_variant: 'train_plus_bike',
+    },
+] %}
+
+<div class="mb-2 rounded-lg border border-border bg-card px-3 py-2 text-card-foreground shadow-sm lg:sticky lg:top-[55px] lg:z-[1000]">
+	<h2 class="mb-2 text-base font-medium leading-tight text-foreground" id="resultsCounter"><span id="resultsCount">0</span> {{ 'rocks.filter_results_suffix'|trans }}</h2>
+	<div class="rocks-sticky-filter__switches">
+		{% for f in rock_filter_switches %}
+			<div class="inline-flex shrink-0 items-center gap-2">
+				{% if f.label_variant|default('') == 'train_plus_bike' %}
+					<div class="train shrink-0" aria-hidden="true"></div>
+					<span class="text-muted-foreground text-xs leading-none" aria-hidden="true">+</span>
+					<div class="bike shrink-0" aria-hidden="true"></div>
+				{% else %}
+					<div class="{{ f.icon }} shrink-0" aria-hidden="true"></div>
+				{% endif %}
+				<twig:Switch
+					id="{{ f.id }}"
+					data-filter-target="{{ f.target }}"
+					data-action="change->filter#filterItems"
+					aria-label="{{ f.trans_key|trans }}"
+				/>
+			</div>
+		{% endfor %}
+	</div>
+</div>

@@ -1,0 +1,10 @@
+{# @block content The current page label (non-clickable) #}
+<span
+    class="{{ ('font-normal ' ~ attributes.render('class'))|tailwind_merge }}"
+    {{ attributes.defaults({
+        'data-slot': 'breadcrumb-page',
+        'aria-current': 'page',
+    }).without('class') }}
+>
+    {%- block content %}{% endblock -%}
+</span>

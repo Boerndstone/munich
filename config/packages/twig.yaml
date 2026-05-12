@@ -1,7 +1,5 @@
 twig:
   file_name_pattern: "*.twig"
-  paths:
-    "assets/css": styles
 
 when@test:
   twig:

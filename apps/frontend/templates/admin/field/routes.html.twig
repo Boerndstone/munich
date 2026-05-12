@@ -1,0 +1,234 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+{% if ea.crud.currentAction == 'detail' or ea.crud.currentAction == 'edit' %}
+    {% set hideClimbedUi = is_granted('ROCK_SCOPED_EDITOR') %}
+    {% set rock = entity.instance %}
+    {% set rockId = rock.id %}
+    {% set routes = field.value|sort((a, b) => 
+        (a.topoId ?? 9999) <=> (b.topoId ?? 9999) ?: 
+        (a.nr ?? 9999) <=> (b.nr ?? 9999)
+    ) %}
+    
+    <div class="routes-management" 
+         data-controller="routes-sortable"
+         data-routes-sortable-rock-id-value="{{ rockId }}"
+         data-routes-sortable-reorder-url-value="{{ path('admin_rock_routes_reorder', {rockId: rockId}) }}">
+        {% set climbedCount = hideClimbedUi ? 0 : routes|filter(r => r.climbed == true)|length %}
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h6 class="mb-0">Routen ({{ routes|length }})</h6>
+                {% if not hideClimbedUi and climbedCount > 0 %}
+                    <small class="text-muted">Geklettert: {{ climbedCount }} / {{ routes|length }}</small>
+                {% endif %}
+            </div>
+            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addRouteModal{{ rockId }}">
+                <i class="fa fa-plus"></i> Route hinzufügen
+            </button>
+        </div>
+        
+        <div class="mb-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary filter-btn" data-filter="all">
+                Alle ({{ routes|length }})
+            </button>
+            {% if not hideClimbedUi %}
+            <button type="button" class="btn btn-sm btn-outline-success filter-btn" data-filter="climbed">
+                Geklettert ({{ climbedCount }})
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-danger filter-btn" data-filter="not-climbed">
+                Nicht geklettert ({{ routes|length - climbedCount }})
+            </button>
+            {% endif %}
+        </div>
+
+        <div id="routes-list-{{ rockId }}" class="routes-sortable">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 30px;"><i class="fa fa-grip-vertical text-muted"></i></th>
+                        <th style="width: 50px;">Topo ID</th>
+                        <th style="width: 50px;">Nr.</th>
+                        <th>Name</th>
+                        <th>Schwierigkeitsgrad</th>
+                        {% if not hideClimbedUi %}
+                        <th>Geklettert</th>
+                        {% endif %}
+                        <th>Erstbegeher</th>
+                        <th style="width: 100px;">Aktionen</th>
+                    </tr>
+                </thead>
+                <tbody id="routes-tbody-{{ rockId }}" data-routes-sortable-target="tbody">
+                    {% for route in routes %}
+                    <tr data-route-id="{{ route.id }}" 
+                        data-route-nr="{{ route.nr ?? loop.index }}" 
+                        data-route-topo-id="{{ route.topoId ?? '' }}"
+                        class="route-row{% if not hideClimbedUi %} {% if route.climbed == true %}route-climbed{% else %}route-not-climbed{% endif %}{% endif %}">
+                        <td class="drag-handle" style="cursor: move;">
+                            <i class="fa fa-grip-vertical text-muted"></i>
+                        </td>
+                        <td>{{ route.topoId ?? '-' }}</td>
+                        <td>{{ route.nr ?? loop.index }}</td>
+                        <td>{{ route.name }}</td>
+                        <td>{{ route.grade ?? '-' }}</td>
+                        {% if not hideClimbedUi %}
+                        <td>
+                            {% if route.climbed == 0 %}
+                                <div class="badge bg-danger text-white"><i class="fa-fw fa fa-close"></i></div> 
+                            {% elseif route.climbed == 1 %}
+                                <div class="badge bg-success text-white"><i class="fa-fw fa fa-check"></i></div> 
+                            {% else %}
+                                <div class="badge bg-secondary text-white">-</div>
+                            {% endif %}
+                        </td>
+                        {% endif %}
+                        <td>{{ route.firstAscent ?? '-' }} {% if route.yearFirstAscent %} ({{ route.yearFirstAscent }}){% endif %}</td>
+                        <td>
+                            <a href="{{ ea_url().setController('App\\Controller\\Admin\\RoutesCrudController').setAction('edit').setEntityId(route.id) }}" 
+                               class="btn btn-sm btn-outline-primary" title="Bearbeiten">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {# Quick Add Route Modal #}
+        <div class="modal fade" id="addRouteModal{{ rockId }}" tabindex="-1" aria-labelledby="addRouteModalLabel{{ rockId }}" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addRouteModalLabel{{ rockId }}">Neue Route hinzufügen</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                        <form id="quick-add-route-form-{{ rockId }}" action="{{ ea_url().setController('App\\Controller\\Admin\\RoutesCrudController').setAction('new') }}" method="POST">
+                            <input type="hidden" name="rockId" value="{{ rockId }}">
+                            <input type="hidden" name="rock" value="{{ rockId }}">
+                            <input type="hidden" name="area" value="{{ rock.area.id }}">
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="route-name-{{ rockId }}" class="form-label">Routenname <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="route-name-{{ rockId }}" name="name" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="route-grade-{{ rockId }}" class="form-label">Schwierigkeitsgrad</label>
+                                    <select class="form-select" id="route-grade-{{ rockId }}" name="grade">
+                                        <option value="">-- Bitte wählen --</option>
+                                        {% for label, value in field.customOptions.get('gradeFormChoices')|default({}) %}
+                                        <option value="{{ value|e('html_attr') }}">{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <small class="form-text text-muted">Der numerische Wert wird automatisch gesetzt.</small>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="route-first-ascent-{{ rockId }}" class="form-label">Erstbegeher</label>
+                                    <input type="text" class="form-control" id="route-first-ascent-{{ rockId }}" name="first_ascent" maxlength="100">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="route-year-first-ascent-{{ rockId }}" class="form-label">Jahr der Erstbegehung</label>
+                                    <input type="number" class="form-control" id="route-year-first-ascent-{{ rockId }}" name="year_first_ascent" min="1900" max="2100">
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="route-protection-{{ rockId }}" class="form-label">Absicherung</label>
+                                    <select class="form-select" id="route-protection-{{ rockId }}" name="protection">
+                                        <option value="">-- Bitte wählen --</option>
+                                        <option value="1">gut abgesichert</option>
+                                        <option value="2">vorsichtig</option>
+                                        <option value="3">gefährlich</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="route-rating-{{ rockId }}" class="form-label">Schönheit</label>
+                                    <select class="form-select" id="route-rating-{{ rockId }}" name="rating">
+                                        <option value="">-- Bitte wählen --</option>
+                                        <option value="-1">schlecht => Mülltonne</option>
+                                        <option value="0">keine Angabe</option>
+                                        <option value="1">gut => ein Stern</option>
+                                        <option value="2">super => zwei Sterne</option>
+                                        <option value="3">fantastisch => drei Sterne</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="route-topo-id-{{ rockId }}" class="form-label">Topo ID</label>
+                                    <input type="number" class="form-control" id="route-topo-id-{{ rockId }}" name="topo_id">
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                {% if not hideClimbedUi %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="route-climbed-{{ rockId }}" name="climbed" value="1">
+                                        <label class="form-check-label" for="route-climbed-{{ rockId }}">
+                                            Bereits geklettert
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div class="{% if hideClimbedUi %}col-12{% else %}col-md-6{% endif %} mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="route-rock-quality-{{ rockId }}" name="rock_quality" value="1">
+                                        <label class="form-check-label" for="route-rock-quality-{{ rockId }}">
+                                            Felsqualität zweifelhaft
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                        <button type="submit" form="quick-add-route-form-{{ rockId }}" class="btn btn-primary">Route hinzufügen</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const rockId = {{ rockId|e('js') }};
+            const tbody = document.getElementById('routes-tbody-' + rockId);
+            
+            // Filter functionality
+            const filterButtons = document.querySelectorAll('.filter-btn[data-filter]');
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    const rows = tbody.querySelectorAll('.route-row');
+                    
+                    // Update button states
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Filter rows
+                    rows.forEach(row => {
+                        if (filter === 'all') {
+                            row.style.display = '';
+                        } else if (filter === 'climbed') {
+                            row.style.display = row.classList.contains('route-climbed') ? '' : 'none';
+                        } else if (filter === 'not-climbed') {
+                            row.style.display = row.classList.contains('route-not-climbed') ? '' : 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Set "all" as active by default
+            if (filterButtons.length > 0) {
+                filterButtons[0].classList.add('active');
+            }
+        });
+    </script>
+{% else %}
+    <span class="badge badge-secondary">{{ field.formattedValue }}</span>
+{% endif %}

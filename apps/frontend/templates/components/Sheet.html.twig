@@ -1,0 +1,15 @@
+{# Local Shadcn-style Sheet (Symfony UX Shadcn kit has Dialog but no Sheet yet: https://ux.symfony.com/toolkit/kits/shadcn ). #}
+{# Dialog `id` and `aria-controls` live on `Sheet:Content` / trigger — not on this wrapper. #}
+{# @prop open boolean Whether the sheet is open on first paint. Defaults to `false` #}
+{# @block content Typically `Sheet:Content` plus toolbar with `Sheet:Trigger` #}
+{%- props open = false -%}
+
+<div
+	class="{{ ('contents ' ~ attributes.render('class'))|tailwind_merge }}"
+	{{ attributes.defaults({
+		'data-controller': 'sheet',
+		'data-sheet-open-value': open,
+	}) }}
+>
+	{%- block content %}{% endblock -%}
+</div>

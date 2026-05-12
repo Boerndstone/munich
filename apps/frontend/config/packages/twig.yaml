@@ -1,0 +1,13 @@
+twig:
+  file_name_pattern: "*.twig"
+  paths:
+    "assets/css": styles
+  globals:
+    weather_api_key: "%env(default::OPENWEATHERMAP_API_KEY)%"
+
+when@test:
+  twig:
+    strict_variables: true
+    form_themes:
+      # Align tests with public site (Tailwind); admin EasyAdmin still ships Bootstrap CSS/JS via admin entry.
+      - "form/tailwind_form_layout.html.twig"

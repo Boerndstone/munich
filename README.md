@@ -56,6 +56,7 @@ Das Projekt kann komplett mit Docker laufen: PHP 8.2 + Apache + MySQL 8.
 
 2. **App im Browser öffnen**
    - **App:** http://localhost:8080
+   - **Backoffice:** http://localhost:8082/admin
    - **phpMyAdmin (Datenbank):** http://localhost:8081  
      Login: Benutzer `munich`, Passwort `munich_secret` (oder `root` / `root_secret` für alle Rechte).
 

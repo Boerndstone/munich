@@ -68,7 +68,8 @@ Das Projekt kann komplett mit Docker laufen: PHP 8.2 + Apache + MySQL 8.
 
 4. **Cache leeren** (falls nötig)
    ```bash
-   docker compose exec app php bin/console cache:clear
+   docker compose exec frontend php bin/console cache:clear
+   docker compose exec backoffice php bin/console cache:clear
    ```
 
 5. **Composer / `vendor` im Container**  

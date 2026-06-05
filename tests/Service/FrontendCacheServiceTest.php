@@ -2,7 +2,6 @@
 
 namespace App\Tests\Service;
 
-use App\Repository\CommentRepository;
 use App\Repository\RockRepository;
 use App\Repository\RoutesRepository;
 use App\Service\FrontendCacheService;
@@ -15,20 +14,17 @@ class FrontendCacheServiceTest extends TestCase
 {
     private FrontendCacheService $service;
     private MockObject&RoutesRepository $routesRepository;
-    private MockObject&CommentRepository $commentRepository;
     private MockObject&RockRepository $rockRepository;
     private MockObject&CacheInterface $cache;
 
     protected function setUp(): void
     {
         $this->routesRepository = $this->createMock(RoutesRepository::class);
-        $this->commentRepository = $this->createMock(CommentRepository::class);
         $this->rockRepository = $this->createMock(RockRepository::class);
         $this->cache = $this->createMock(CacheInterface::class);
 
         $this->service = new FrontendCacheService(
             $this->routesRepository,
-            $this->commentRepository,
             $this->rockRepository,
             $this->cache
         );
@@ -81,51 +77,6 @@ class FrontendCacheServiceTest extends TestCase
         $this->assertEquals($expectedRoutes, $result);
     }
 
-    public function testGetLatestCommentsReturnsCachedData(): void
-    {
-        $expectedComments = [
-            ['username' => 'User1', 'routeName' => 'Route 1', 'commentComment' => 'Great!', 'areaSlug' => 'area-a', 'rockSlug' => 'rock-a'],
-        ];
-
-        $this->cache
-            ->expects($this->once())
-            ->method('get')
-            ->with('frontend_latest_comments', $this->isType('callable'))
-            ->willReturn($expectedComments);
-
-        $result = $this->service->getLatestComments();
-
-        $this->assertEquals($expectedComments, $result);
-    }
-
-    public function testGetLatestCommentsCallsRepositoryOnCacheMiss(): void
-    {
-        $expectedComments = [
-            ['username' => 'User1', 'routeName' => 'Route 1', 'commentComment' => 'Great!'],
-        ];
-
-        $this->commentRepository
-            ->expects($this->once())
-            ->method('latestComments')
-            ->willReturn($expectedComments);
-
-        $this->cache
-            ->expects($this->once())
-            ->method('get')
-            ->with('frontend_latest_comments', $this->isType('callable'))
-            ->willReturnCallback(function (string $key, callable $callback) {
-                $item = $this->createMock(ItemInterface::class);
-                $item->expects($this->once())
-                    ->method('expiresAfter')
-                    ->with(600); // 10 minutes TTL
-                return $callback($item);
-            });
-
-        $result = $this->service->getLatestComments();
-
-        $this->assertEquals($expectedComments, $result);
-    }
-
     public function testGetBannedRocksReturnsCachedData(): void
     {
         $expectedBannedRocks = [
@@ -174,29 +125,17 @@ class FrontendCacheServiceTest extends TestCase
     public function testClearCacheDeletesAllCacheKeys(): void
     {
         $this->cache
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(2))
             ->method('delete')
             ->willReturnCallback(function (string $key): bool {
                 $this->assertContains($key, [
                     'frontend_latest_routes',
-                    'frontend_latest_comments',
                     'frontend_banned_rocks_v2',
                 ]);
                 return true;
             });
 
         $this->service->clearCache();
-    }
-
-    public function testClearCommentsCacheDeletesOnlyCommentsKey(): void
-    {
-        $this->cache
-            ->expects($this->once())
-            ->method('delete')
-            ->with('frontend_latest_comments')
-            ->willReturn(true);
-
-        $this->service->clearCommentsCache();
     }
 
     public function testClearRoutesCacheDeletesOnlyRoutesKey(): void
@@ -219,20 +158,6 @@ class FrontendCacheServiceTest extends TestCase
             ->willReturn([]);
 
         $result = $this->service->getLatestRoutes();
-
-        $this->assertIsArray($result);
-        $this->assertEmpty($result);
-    }
-
-    public function testGetLatestCommentsReturnsEmptyArrayWhenNoComments(): void
-    {
-        $this->cache
-            ->expects($this->once())
-            ->method('get')
-            ->with('frontend_latest_comments', $this->isType('callable'))
-            ->willReturn([]);
-
-        $result = $this->service->getLatestComments();
 
         $this->assertIsArray($result);
         $this->assertEmpty($result);

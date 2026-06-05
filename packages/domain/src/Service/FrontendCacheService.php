@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Repository\CommentRepository;
 use App\Repository\RockRepository;
 use App\Repository\RoutesRepository;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -14,25 +13,21 @@ use Symfony\Contracts\Cache\ItemInterface;
 class FrontendCacheService
 {
     private RoutesRepository $routesRepository;
-    private CommentRepository $commentRepository;
     private RockRepository $rockRepository;
     private CacheInterface $cache;
 
     // Cache TTL in seconds
     private const LATEST_ROUTES_TTL = 1800;   // 30 minutes
-    private const LATEST_COMMENTS_TTL = 600;  // 10 minutes (comments change more often)
     private const BANNED_ROCKS_TTL = 3600;    // 1 hour
     private const AREA_ROCKS_TTL = 3600;      // 1 hour
     private const TOP100_ROUTES_TTL = 3600;   // 1 hour
 
     public function __construct(
         RoutesRepository $routesRepository,
-        CommentRepository $commentRepository,
         RockRepository $rockRepository,
         CacheInterface $cache
     ) {
         $this->routesRepository = $routesRepository;
-        $this->commentRepository = $commentRepository;
         $this->rockRepository = $rockRepository;
         $this->cache = $cache;
     }
@@ -50,18 +45,6 @@ class FrontendCacheService
     }
 
     /**
-     * Get latest comments with caching
-     */
-    public function getLatestComments(): array
-    {
-        return $this->cache->get('frontend_latest_comments', function (ItemInterface $item): array {
-            $item->expiresAfter(self::LATEST_COMMENTS_TTL);
-            
-            return $this->commentRepository->latestComments();
-        });
-    }
-
-    /**
      * Get seasonally banned rocks with caching
      */
     public function getBannedRocks(): array
@@ -71,14 +54,6 @@ class FrontendCacheService
             
             return $this->rockRepository->saisonalGesperrt();
         });
-    }
-
-    /**
-     * Clear only the comments cache (useful when new comments are added)
-     */
-    public function clearCommentsCache(): void
-    {
-        $this->cache->delete('frontend_latest_comments');
     }
 
     /**
@@ -137,7 +112,6 @@ class FrontendCacheService
     public function clearCache(): void
     {
         $this->cache->delete('frontend_latest_routes');
-        $this->cache->delete('frontend_latest_comments');
         $this->cache->delete('frontend_banned_rocks_v2');
         // Note: Area-specific caches will expire naturally or can be cleared individually
     }

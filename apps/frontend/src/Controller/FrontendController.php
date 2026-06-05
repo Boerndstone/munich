@@ -20,7 +20,6 @@ use App\Repository\RockRepository;
 use App\Repository\TopoRepository;
 use App\Repository\PhotosRepository;
 use App\Repository\RoutesRepository;
-use App\Repository\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
@@ -75,13 +74,11 @@ class FrontendController extends AbstractController
 
         // Use cached data for better performance
         $latestRoutes = $frontendCacheService->getLatestRoutes();
-        $latestComments = $frontendCacheService->getLatestComments();
         $banned = $frontendCacheService->getBannedRocks();
         $searchTerm = $request->query->get('q');
 
         $response = $this->render('frontend/index.html.twig', [
             'latestRoutes' => $latestRoutes,
-            'latestComments' => $latestComments,
             'banned' => $banned,
         ]);
 

@@ -1,8 +1,11 @@
 twig:
   file_name_pattern: "*.twig"
   paths:
+    "assets/css": styles
     "%kernel.project_dir%/apps/frontend/templates": ~
     "%kernel.project_dir%/apps/backoffice/templates": ~
+  globals:
+    weather_api_key: "%env(default::OPENWEATHERMAP_API_KEY)%"
 
 when@test:
   twig:

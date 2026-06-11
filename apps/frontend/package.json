@@ -9,7 +9,7 @@
         "@symfony/stimulus-bridge": "^3.2.2",
         "@symfony/stimulus-bundle": "file:vendor/symfony/stimulus-bundle/assets",
         "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
-        "@symfony/webpack-encore": "^0.33.0",
+        "@symfony/webpack-encore": "^5.3.1",
         "@tailwindcss/forms": "^0.5.11",
         "@tailwindcss/postcss": "^4.2.2",
         "autoprefixer": "^10.4.21",
@@ -26,7 +26,7 @@
         "sass": "^1.70.0",
         "sass-loader": "^16.0.1",
         "snarkdown": "^2.0.0",
-        "stimulus": "^3.2.1",
+        "stimulus": "^3.2.2",
         "stimulus-scroll-to": "^4.1.0",
         "stimulus-use": "^0.52.0",
         "tailwindcss": "^4.2.2",
@@ -34,7 +34,7 @@
         "webpack": "^5.90.1",
         "webpack-cli": "^5.1.0",
         "webpack-dev-server": "^5.2.3",
-        "webpack-notifier": "^1.15.0"
+        "webpack-notifier": "^1.11.1"
     },
     "license": "UNLICENSED",
     "private": true,

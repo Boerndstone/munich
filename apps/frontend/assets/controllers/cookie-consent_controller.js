@@ -1,4 +1,4 @@
-import { Controller } from "stimulus";
+import { Controller } from "@hotwired/stimulus";
 import * as CookieConsent from "vanilla-cookieconsent";
 
 export default class extends Controller {

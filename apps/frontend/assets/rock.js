@@ -2,7 +2,7 @@
  * Rock detail page entry point
  * Contains route-related controllers
  */
-import { Application } from "@hotwired/stimulus";
+import { app } from "./bootstrap";
 import RouteInformationTooltipController from "./controllers/route-information-tooltip_controller";
 import RouteparamsController from "./controllers/routeparams_controller";
 import ModalRouteInformationController from "./controllers/modal-route-information_controller";
@@ -13,8 +13,8 @@ import AccordionController from "./controllers/accordion_controller";
 import RockMapController from "./controllers/rock_map_controller";
 import GradeLabelsController from "./controllers/grade_labels_controller";
 
-// Get or create the Stimulus application
-const application = window.Stimulus || (window.Stimulus = Application.start());
+// Reuse the shared Stimulus app initialized by the main frontend entry.
+const application = window.Stimulus || app;
 
 // Register rock page controllers
 application.register("grade-labels", GradeLabelsController);

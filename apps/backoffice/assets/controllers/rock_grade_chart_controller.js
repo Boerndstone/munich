@@ -139,6 +139,7 @@ export default class extends Controller {
     if (!this.canvas) {
       return;
     }
+    this.destroyCanvasChart();
     this.ctx = this.canvas.getContext("2d");
     if (!this.ctx) {
       return;
@@ -184,6 +185,7 @@ export default class extends Controller {
     const yTickColor = dark ? "rgba(244, 244, 245, 0.55)" : "rgba(0, 0, 0, 0.45)";
     const hideY = this.hideYAxisValue === true;
 
+    this.destroyCanvasChart();
     if (this.chart) {
       this.chart.destroy();
       this.chart = null;
@@ -259,9 +261,20 @@ export default class extends Controller {
   }
 
   disconnect() {
+    this.destroyCanvasChart();
     if (this.chart) {
       this.chart.destroy();
       this.chart = null;
+    }
+  }
+
+  destroyCanvasChart() {
+    if (!this.canvas) {
+      return;
+    }
+    const existing = Chart.getChart(this.canvas);
+    if (existing) {
+      existing.destroy();
     }
   }
 

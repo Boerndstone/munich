@@ -1,4 +1,4 @@
-import { Controller } from "stimulus";
+import { Controller } from "@hotwired/stimulus";
 import L from "leaflet";
 import "leaflet.markercluster";
 import { createMapPinIcon, rockMarkerClusterGroupOptions } from "../map/icons.js";
@@ -8,10 +8,14 @@ export default class extends Controller {
   static targets = ["map", "layerBtn", "attrFilterBtn"];
 
   connect() {
+    this._cleanupExistingMap();
     const markersArea = JSON.parse(this.data.get("markersArea"));
     const zoom = JSON.parse(this.data.get("zoom"));
     const information = JSON.parse(this.data.get("railwayStations"));
+    this._mapOwner = Symbol("area-map-owner");
     this.areaMap = L.map(this.mapTarget).setView([zoom[0], zoom[1]], zoom[2]);
+    this.mapTarget.__leafletMapInstance = this.areaMap;
+    this.mapTarget.__leafletMapOwner = this._mapOwner;
     this.rocksLayerVisible = true;
 
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -102,7 +106,10 @@ export default class extends Controller {
     if (dialog) {
       this._dialogOpenObserver = new MutationObserver(() => {
         if (dialog.open) {
-          setTimeout(() => this.areaMap.invalidateSize(), 40);
+          if (this._invalidateSizeTimeout) {
+            clearTimeout(this._invalidateSizeTimeout);
+          }
+          this._invalidateSizeTimeout = setTimeout(() => this._safeInvalidateSize(), 40);
         }
       });
       this._dialogOpenObserver.observe(dialog, {
@@ -113,7 +120,71 @@ export default class extends Controller {
   }
 
   disconnect() {
+    if (this._invalidateSizeTimeout) {
+      clearTimeout(this._invalidateSizeTimeout);
+      this._invalidateSizeTimeout = null;
+    }
+
+    const ownsContainerMap =
+      this.mapTarget &&
+      this.mapTarget.__leafletMapInstance === this.areaMap &&
+      this.mapTarget.__leafletMapOwner === this._mapOwner;
+
+    if (this.areaMap) {
+      try {
+        this.areaMap.eachLayer((layer) => {
+          this.areaMap.removeLayer(layer);
+        });
+      } catch {
+        // Ignore teardown races; map may already be partially removed.
+      }
+      if (ownsContainerMap) {
+        try {
+          this.areaMap.remove();
+        } catch {
+          // Another controller may have already replaced/removed this map instance.
+        }
+      }
+      this.areaMap = null;
+    }
+
+    if (this.mapTarget && ownsContainerMap) {
+      this.mapTarget.__leafletMapInstance = null;
+      this.mapTarget.__leafletMapOwner = null;
+      if ("_leaflet_id" in this.mapTarget) {
+        this.mapTarget._leaflet_id = null;
+      }
+    }
+
     this._dialogOpenObserver?.disconnect();
+  }
+
+  _safeInvalidateSize() {
+    const map = this.areaMap;
+    if (!map || !map._container || !map._mapPane) {
+      return;
+    }
+    try {
+      map.invalidateSize();
+    } catch {
+      // Map can be torn down between observer tick and callback.
+    }
+  }
+
+  _cleanupExistingMap() {
+    const existing = this.mapTarget?.__leafletMapInstance;
+    if (existing) {
+      try {
+        existing.remove();
+      } catch {
+        // Ignore stale teardown races; we reset container markers below.
+      }
+      this.mapTarget.__leafletMapInstance = null;
+      this.mapTarget.__leafletMapOwner = null;
+    }
+    if (this.mapTarget && "_leaflet_id" in this.mapTarget) {
+      this.mapTarget._leaflet_id = null;
+    }
   }
 
   toggleLayer(e) {

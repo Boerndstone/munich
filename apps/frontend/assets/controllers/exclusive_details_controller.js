@@ -1,4 +1,4 @@
-import { Controller } from "stimulus";
+import { Controller } from "@hotwired/stimulus";
 
 /**
  * Keeps only one <details> among direct children open (accordion behaviour).

@@ -83,6 +83,7 @@
     },
     "autoload": {
         "psr-4": {
+            "App\\Repository\\": "packages/domain/src/Repository/",
             "App\\": "src/"
         }
     },

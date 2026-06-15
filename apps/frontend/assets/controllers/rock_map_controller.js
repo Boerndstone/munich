@@ -1,4 +1,4 @@
-import { Controller } from "stimulus";
+import { Controller } from "@hotwired/stimulus";
 import L from "leaflet";
 import { createMapPinIcon } from "../map/icons.js";
 
@@ -30,6 +30,7 @@ function createParkingMapIcon(innerHtml) {
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
   connect() {
+    this._mapOwner = Symbol("rock-map");
     const parkingIconHtml = readParkingIconHtml();
 
     const raw = this.element.dataset.rockMapPayload;
@@ -50,7 +51,10 @@ export default class extends Controller {
       zoom = 17;
     }
 
+    this._cleanupExistingMap();
     this.map = L.map(this.element, { zoomControl: false }).setView([lat, lng], zoom);
+    this.element.__leafletMapInstance = this.map;
+    this.element.__leafletMapOwner = this._mapOwner;
 
     L.control
       .zoom({
@@ -121,9 +125,41 @@ export default class extends Controller {
       rockMapDetails.removeEventListener("toggle", this._onDetailsToggle);
     }
     this._openObserver?.disconnect();
+    const ownsContainerMap =
+      this.element?.__leafletMapInstance === this.map &&
+      this.element?.__leafletMapOwner === this._mapOwner;
+
     if (this.map) {
-      this.map.remove();
+      try {
+        this.map.remove();
+      } catch {
+        // Ignore teardown races; another reconnect may already have replaced this map.
+      }
       this.map = null;
+    }
+
+    if (this.element && ownsContainerMap) {
+      this.element.__leafletMapInstance = null;
+      this.element.__leafletMapOwner = null;
+      if ("_leaflet_id" in this.element) {
+        this.element._leaflet_id = null;
+      }
+    }
+  }
+
+  _cleanupExistingMap() {
+    const existing = this.element?.__leafletMapInstance;
+    if (existing) {
+      try {
+        existing.remove();
+      } catch {
+        // Ignore stale teardown races; we reset the container marker below.
+      }
+      this.element.__leafletMapInstance = null;
+      this.element.__leafletMapOwner = null;
+    }
+    if (this.element && "_leaflet_id" in this.element) {
+      this.element._leaflet_id = null;
     }
   }
 }

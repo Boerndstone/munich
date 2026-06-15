@@ -54,7 +54,11 @@ export default class extends Controller {
   };
 
   connect() {
+    this._cleanupExistingMap();
+    this._mapOwner = Symbol("main-map-owner");
     this.map = L.map(this.mapTarget).setView([48.74, 12.44], 7);
+    this.mapTarget.__leafletMapInstance = this.map;
+    this.mapTarget.__leafletMapOwner = this._mapOwner;
 
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
@@ -82,7 +86,10 @@ export default class extends Controller {
     if (dialog) {
       this._dialogOpenObserver = new MutationObserver(() => {
         if (dialog.open) {
-          setTimeout(() => this.map.invalidateSize(), 40);
+          if (this._invalidateSizeTimeout) {
+            clearTimeout(this._invalidateSizeTimeout);
+          }
+          this._invalidateSizeTimeout = setTimeout(() => this._safeInvalidateSize(), 40);
         }
       });
       this._dialogOpenObserver.observe(dialog, {
@@ -93,9 +100,63 @@ export default class extends Controller {
   }
 
   disconnect() {
-    this.map.off("zoomend", this._zoomHandler);
-    this._removeClusterGroups();
+    if (this._invalidateSizeTimeout) {
+      clearTimeout(this._invalidateSizeTimeout);
+      this._invalidateSizeTimeout = null;
+    }
+    const ownsContainerMap =
+      this.mapTarget &&
+      this.mapTarget.__leafletMapInstance === this.map &&
+      this.mapTarget.__leafletMapOwner === this._mapOwner;
+
+    if (this.map) {
+      this.map.off("zoomend", this._zoomHandler);
+      this._removeClusterGroups();
+      if (ownsContainerMap) {
+        try {
+          this.map.remove();
+        } catch {
+          // Another controller may have already replaced/removed this map instance.
+        }
+      }
+      this.map = null;
+    }
+    if (this.mapTarget && ownsContainerMap) {
+      this.mapTarget.__leafletMapInstance = null;
+      this.mapTarget.__leafletMapOwner = null;
+      if ("_leaflet_id" in this.mapTarget) {
+        this.mapTarget._leaflet_id = null;
+      }
+    }
     this._dialogOpenObserver?.disconnect();
+  }
+
+  _safeInvalidateSize() {
+    const map = this.map;
+    if (!map || !map._container || !map._mapPane) {
+      return;
+    }
+    try {
+      map.invalidateSize();
+    } catch {
+      // Map can be torn down between observer tick and callback.
+    }
+  }
+
+  _cleanupExistingMap() {
+    const existing = this.mapTarget?.__leafletMapInstance;
+    if (existing) {
+      try {
+        existing.remove();
+      } catch {
+        // Ignore stale teardown races; we reset container markers below.
+      }
+      this.mapTarget.__leafletMapInstance = null;
+      this.mapTarget.__leafletMapOwner = null;
+    }
+    if (this.mapTarget && "_leaflet_id" in this.mapTarget) {
+      this.mapTarget._leaflet_id = null;
+    }
   }
 
   _removeClusterGroups() {

@@ -1,4 +1,4 @@
-import { Controller } from "stimulus";
+import { Controller } from "@hotwired/stimulus";
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -6,12 +6,24 @@ export default class extends Controller {
     const areaLng = this.element.dataset.weatherAreaLng;
     const areaLat = this.element.dataset.weatherAreaLat;
     const apiKey = this.element.dataset.weatherApiKey;
+    const temperatureEl = this.element.querySelector("#temperature");
 
-    if (!apiKey || !areaLat || !areaLng) {
+    if (!areaLat || !areaLng) {
+      if (temperatureEl) {
+        temperatureEl.textContent = "Keine Wetterkoordinaten vorhanden.";
+      }
       return;
     }
 
-    const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${areaLat}&lon=${areaLng}&lang=de&date={date}&appid=${apiKey}&units=metric`;
+    if (!apiKey) {
+      if (temperatureEl) {
+        temperatureEl.textContent =
+          "OpenWeatherMap API-Key fehlt in apps/frontend/.env.local.";
+      }
+      return;
+    }
+
+    const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${areaLat}&lon=${areaLng}&lang=de&appid=${apiKey}&units=metric`;
     const forecastWeatherUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${areaLat}&lon=${areaLng}&lang=de&appid=${apiKey}&units=metric`;
 
     try {
@@ -40,7 +52,6 @@ export default class extends Controller {
       }
 
       const celsius = Math.round(currentWeatherData.main.temp);
-      const temperatureEl = this.element.querySelector("#temperature");
       if (temperatureEl) {
         temperatureEl.textContent = `${formattedDate} Temperatur: ${celsius}°C`;
       }
@@ -65,6 +76,9 @@ export default class extends Controller {
       for (let i = 0; i < forecastDays.length; i++) {
         const forecastIndex = (i + 1) * 8; // Get data for every 24 hours (3-hour intervals * 8 = 1 day)
         const forecastDay = forecastData.list[forecastIndex];
+        if (!forecastDay) {
+          continue;
+        }
 
         // Update forecast icons and temperature
         const forecastIconCode = forecastDay.weather[0].icon;
@@ -84,6 +98,9 @@ export default class extends Controller {
       }
       // You can now use currentWeatherData and forecastData to update your UI
     } catch (error) {
+      if (temperatureEl) {
+        temperatureEl.textContent = "Wetterdaten konnten nicht geladen werden.";
+      }
     }
   }
 }

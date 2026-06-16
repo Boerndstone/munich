@@ -103,7 +103,7 @@ class AreaRepository extends ServiceEntityRepository
                 'COUNT(DISTINCT CASE WHEN route.gradeNo = 0 OR route.gradeNo IS NULL THEN route.id ELSE 0 END) AS amountProjects'
             )
             ->leftJoin('area.routes', 'route')
-            ->leftJoin('area.rocks', 'rock')
+            ->leftJoin('area.rocks', 'rock', Join::WITH, 'rock.online = 1')
             ->where('area.online = 1')
             ->groupBy('area.id', 'area.name', 'area.slug', 'area.image', 'area.lat', 'area.lng', 'area.travelTimeMinutes', 'area.sequence')
             ->orderBy('area.sequence');

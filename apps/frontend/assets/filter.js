@@ -1,13 +1,12 @@
 /**
  * Filter entry point - only loaded on rock listing pages
  */
-import { Application } from "@hotwired/stimulus";
+import { app } from "./bootstrap";
 import FilterController from "./controllers/filter_controller";
 import GradeFilterController from "./controllers/grade_filter_controller";
 
-// Get or create the Stimulus application
-const application = window.Stimulus || Application.start();
-window.Stimulus = application;
+// Reuse the shared Stimulus app initialized by the main frontend entry.
+const application = window.Stimulus || app;
 
 // Register filter controllers (rock-grade-chart lives in app/bootstrap for index + rocks)
 application.register("filter", FilterController);

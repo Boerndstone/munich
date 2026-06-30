@@ -35,35 +35,45 @@
 {% set aria_label = aria_label_prefix|default('') ~ 'Routen je Gradstufe. ' ~ aria_parts|join('; ') %}
 {% if route_total > 0 and segments is not empty %}
 	<div class="not-prose w-full min-w-0">
-		<div class="mb-[2px] flex text-center text-[11px] font-normal leading-none tabular-nums text-gray-900 dark:text-gray-300 pointer-events-none" aria-hidden="true">
-			{% for seg in segments %}
-				{% set amt_divider = not loop.first ? ' border-l border-black/[0.08] dark:border-white/[0.12]' : '' %}
-				<div class="min-w-0 flex-1 px-px{{ amt_divider }}">{{ seg.n }}</div>
-			{% endfor %}
-		</div>
-		<div
-			class="flex h-4 w-full overflow-hidden rounded"
-			role="img"
-			aria-label="{{ aria_label|e('html_attr') }}"
-		>
-			{% for seg in segments %}
-				{% set seg_divider = not loop.first ? ' border-l border-white/25 dark:border-black/20' : '' %}
-				{% if seg.kind == 'grade' %}
-					<div
-						class="flex min-w-0 flex-1 items-center justify-center px-px text-center text-[10px] font-light leading-none tabular-nums{{ seg_divider }} {{ strip_bg[seg.g] }} {{ strip_text_on_color }}"
-						title="Grad {{ seg.g }}: {{ seg.n }}"
-					>
-						{{ seg.g }}
-					</div>
-				{% else %}
-					<div
-						class="flex min-w-0 flex-1 items-center justify-center px-px text-center text-[10px] font-light leading-none{{ seg_divider }} bg-gray-800 text-white dark:bg-gray-500"
-						title="{{ 'projects'|trans }}: {{ seg.n }}"
-					>
-						Proj.
-					</div>
-				{% endif %}
-			{% endfor %}
+		<div class="flex w-full min-w-0 gap-[2px]">
+			<div
+				class="flex w-7 shrink-0 flex-col items-center justify-end px-1 dark:text-white"
+				title="Summe: {{ route_total }}"
+			>
+				<span class="mb-[1px] text-[14px] font-normal leading-none tabular-nums">{{ route_total }}</span>
+			</div>
+			<div class="min-w-0 flex-1">
+				<div class="mb-[2px] flex text-center text-[11px] font-normal leading-none tabular-nums text-gray-900 dark:text-gray-300 pointer-events-none" aria-hidden="true">
+					{% for seg in segments %}
+						{% set amt_divider = not loop.first ? ' border-l border-black/[0.08] dark:border-white/[0.12]' : '' %}
+						<div class="min-w-0 flex-1 px-px{{ amt_divider }}">{{ seg.n }}</div>
+					{% endfor %}
+				</div>
+				<div
+					class="flex h-4 w-full overflow-hidden rounded"
+					role="img"
+					aria-label="{{ aria_label|e('html_attr') }}"
+				>
+					{% for seg in segments %}
+						{% set seg_divider = not loop.first ? ' border-l border-white/25 dark:border-black/20' : '' %}
+						{% if seg.kind == 'grade' %}
+							<div
+								class="flex min-w-0 flex-1 items-center justify-center px-px text-center text-[10px] font-light leading-none tabular-nums{{ seg_divider }} {{ strip_bg[seg.g] }} {{ strip_text_on_color }}"
+								title="Grad {{ seg.g }}: {{ seg.n }}"
+							>
+								{{ seg.g }}
+							</div>
+						{% else %}
+							<div
+								class="flex min-w-0 flex-1 items-center justify-center px-px text-center text-[10px] font-light leading-none{{ seg_divider }} bg-gray-800 text-white dark:bg-gray-500"
+								title="{{ 'projects'|trans }}: {{ seg.n }}"
+							>
+								Proj.
+							</div>
+						{% endif %}
+					{% endfor %}
+				</div>
+			</div>
 		</div>
 	</div>
 {% endif %}

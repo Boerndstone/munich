@@ -219,11 +219,12 @@ class RoutesRepository extends ServiceEntityRepository
     public function findByFirstAscent(string $name): array
     {
         return $this->createQueryBuilder('r')
-            ->leftJoin('r.rock', 'rock')
-            ->leftJoin('r.area', 'area')
+            ->innerJoin('r.rock', 'rock')
+            ->innerJoin('r.area', 'area')
             ->addSelect('rock', 'area')
             ->where('r.firstAscent LIKE :name')
-            ->andWhere('(area.online = 1 OR rock.online = 1)')
+            ->andWhere('area.online = 1')
+            ->andWhere('rock.online = 1')
             ->setParameter('name', '%' . $name . '%')
             ->orderBy('r.name', 'ASC')
             ->getQuery()
@@ -233,10 +234,12 @@ class RoutesRepository extends ServiceEntityRepository
     public function findByFirstAscentAndGrades(string $name, array $gradeRanges): array
     {
         $qb = $this->createQueryBuilder('r')
-            ->leftJoin('r.rock', 'rock')
-            ->leftJoin('r.area', 'area')
+            ->innerJoin('r.rock', 'rock')
+            ->innerJoin('r.area', 'area')
             ->addSelect('rock', 'area')
             ->where('r.firstAscent LIKE :name')
+            ->andWhere('area.online = 1')
+            ->andWhere('rock.online = 1')
             ->setParameter('name', '%' . $name . '%');
 
         // Build grade conditions based on selected ranges
@@ -259,9 +262,9 @@ class RoutesRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('r')
             ->select('COUNT(r.id)')
-            ->leftJoin('r.rock', 'rock')
-            ->leftJoin('r.area', 'area')
-            ->where('(area.online = 1 OR rock.online = 1)');
+            ->innerJoin('r.rock', 'rock')
+            ->innerJoin('r.area', 'area')
+            ->where('(area.online = 1 AND rock.online = 1)');
 
         $this->applyGradeConditions($qb, $gradeRanges, $areaSlug);
 
@@ -271,10 +274,11 @@ class RoutesRepository extends ServiceEntityRepository
     public function findByGrades(array $gradeRanges, ?string $areaSlug = null, ?int $limit = null, int $offset = 0): array
     {
         $qb = $this->createQueryBuilder('r')
-            ->leftJoin('r.rock', 'rock')
-            ->leftJoin('r.area', 'area')
+            ->innerJoin('r.rock', 'rock')
+            ->innerJoin('r.area', 'area')
             ->addSelect('rock', 'area')
-            ->where('(area.online = 1 OR rock.online = 1)');
+            ->where('area.online = 1')
+            ->andWhere('rock.online = 1');
 
         $this->applyGradeConditions($qb, $gradeRanges, $areaSlug);
 
@@ -332,11 +336,12 @@ class RoutesRepository extends ServiceEntityRepository
     public function search(string $query, ?string $grade = null): array
     {
         $qb = $this->createQueryBuilder('r')
-            ->leftJoin('r.rock', 'rock')
-            ->leftJoin('r.area', 'area')
+            ->innerJoin('r.rock', 'rock')
+            ->innerJoin('r.area', 'area')
             ->addSelect('rock', 'area')
             ->where('r.name LIKE :query')
-            ->andWhere('(area.online = 1 OR rock.online = 1)')
+            ->andWhere('area.online = 1')
+            ->andWhere('rock.online = 1')
             ->setParameter('query', '%' . $query . '%');
 
         // Add grade filter if specified
@@ -363,11 +368,12 @@ class RoutesRepository extends ServiceEntityRepository
         }
 
         $qb = $this->createQueryBuilder('r')
-            ->leftJoin('r.rock', 'rock')
-            ->leftJoin('r.area', 'area')
+            ->innerJoin('r.rock', 'rock')
+            ->innerJoin('r.area', 'area')
             ->addSelect('rock', 'area')
             ->where('r.gradeNo BETWEEN :min_grade AND :max_grade')
-            ->andWhere('(area.online = 1 OR rock.online = 1)')
+            ->andWhere('area.online = 1')
+            ->andWhere('rock.online = 1')
             ->setParameter('min_grade', $rangeValues['min'])
             ->setParameter('max_grade', $rangeValues['max']);
 

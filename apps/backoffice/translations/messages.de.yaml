@@ -87,7 +87,6 @@ rocks.filter_results_suffix: "Felsen"
 area.hero.more_menu_aria: "Weitere Informationen"
 area.hero.kletterkonzeption: "Kletterkonzeption – %name%"
 area.hero.top100: "Top 100 – %name%"
-area.hero.weather: "Wetter"
 area.hero.overview_map: "Übersichtskarte %name%"
 
 neueste_routes.page_title: "Neuste Routen | Munichclimbs"

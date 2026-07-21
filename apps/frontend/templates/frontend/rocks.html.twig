@@ -57,7 +57,6 @@
 				{% if top100Routes is not empty %}
 					{{ include('components/modals/modal-top100-routes.html.twig') }}
 				{% endif %}
-				{{ include('components/page/area-weather-modal.html.twig', { areaLat: areaLat, areaLng: areaLng }) }}
 				{{ include('components/page/area-map-modal.html.twig', { areaName: areaName }) }}
 				<div class="grid grid-cols-1 gap-3 md:grid-cols-12 md:gap-4" data-controller="filter">
 					<div class="order-2 min-w-0 md:order-2 md:col-span-8 lg:order-1">

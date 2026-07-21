@@ -87,7 +87,6 @@ rocks.filter_results_suffix: "rocks"
 area.hero.more_menu_aria: "More information"
 area.hero.kletterkonzeption: "Climbing management plan – %name%"
 area.hero.top100: "Top 100 – %name%"
-area.hero.weather: "Weather"
 area.hero.overview_map: "Overview map %name%"
 
 neueste_routes.page_title: "Latest routes | Munichclimbs"

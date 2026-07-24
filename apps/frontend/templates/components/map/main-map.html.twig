@@ -47,16 +47,19 @@
 {% set marker = [] %}
 {% for area in getAreasInformation() %}
     {% set popupBody = include('components/area/area-card-body.html.twig', { area: area, ulClass: 'mt-2', showTravelTime: true, chart_summary_include_rocks: true }) %}
-    {% set areaName = '<div class="w-[250px] overflow-hidden rounded-t-xl bg-transparent">' ~
+    {% set areaName = '<div class="group relative w-[250px]">' ~
+        '<a href="' ~ area_path(area.slug) ~ '" class="block overflow-hidden rounded-xl bg-white text-inherit no-underline shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 dark:bg-slate-800">' ~
         '<div class="relative">' ~
         '<picture><source srcset="' ~ url ~ area.image ~ '@1x.webp 1x, ' ~ url ~ area.image ~ '@2x.webp 2x, ' ~ url ~ area.image ~ '@3x.webp 3x" type="image/webp">' ~
-        '<img class="block h-auto w-full rounded-t-xl object-cover object-center" src="' ~ url ~ area.image ~ '.webp" alt="Klettergebiet ' ~ area.name|e('html_attr') ~ '" loading="lazy" decoding="async">' ~
+        '<img class="block h-auto w-full rounded-t-xl object-cover object-center transition-transform duration-300 group-hover:scale-[1.02]" src="' ~ url ~ area.image ~ '.webp" alt="Klettergebiet ' ~ area.name|e('html_attr') ~ '" loading="lazy" decoding="async">' ~
         '</picture>' ~
-        '<div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-2 px-3 py-2">' ~
-        '<a href="' ~ area_path(area.slug) ~ '" class="inline-block max-w-[calc(100%-3rem)] truncate rounded bg-white/90 px-2 py-1 text-base font-semibold text-gray-900 no-underline shadow-sm dark:bg-slate-900/90 dark:text-white hover:underline">' ~ area.name|e('html') ~ '</a>' ~
-        '<button type="button" class="relative z-10 flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full bg-white/75 text-xl leading-none text-gray-800 shadow-md transition-colors hover:bg-white/90 dark:bg-slate-700/85 dark:text-white dark:hover:bg-slate-600/90 focus:outline-none" onclick="this.closest(\'.leaflet-popup\').querySelector(\'.leaflet-popup-close-button\').click()" aria-label="Schließen"><span class="block leading-none" aria-hidden="true">&times;</span></button>' ~
+        '<div class="absolute inset-x-0 top-0 z-10 px-3 py-2">' ~
+        '<span class="inline-block max-w-[calc(100%-3rem)] truncate rounded bg-white/90 px-2 py-1 text-base font-semibold text-gray-900 shadow-sm transition-colors group-hover:bg-white dark:bg-slate-900/90 dark:text-white dark:group-hover:bg-slate-900">' ~ area.name|e('html') ~ '</span>' ~
         '</div></div>' ~
-        '<div class="px-3.5 py-3">' ~ popupBody ~ '</div></div>' %}
+        '<div class="px-3.5 py-3">' ~ popupBody ~ '</div>' ~
+        '</a>' ~
+        '<button type="button" class="absolute right-3 top-2 z-20 flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full bg-white/75 text-xl leading-none text-gray-800 shadow-md transition-colors hover:bg-white/90 dark:bg-slate-700/85 dark:text-white dark:hover:bg-slate-600/90 focus:outline-none" onclick="event.stopPropagation(); this.closest(\'.leaflet-popup\').querySelector(\'.leaflet-popup-close-button\').click()" aria-label="Schließen"><span class="block leading-none" aria-hidden="true">&times;</span></button>' ~
+        '</div>' %}
     {% set areaImage = '' %}
     {% set marker = marker|merge([{
         'lat': area.lat,

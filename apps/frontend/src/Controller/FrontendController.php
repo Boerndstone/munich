@@ -23,6 +23,7 @@ use App\Repository\RoutesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,6 +35,49 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class FrontendController extends AbstractController
 {
+    #[Route(
+        '/navigation/area/{slug}/rocks',
+        name: 'navigation_area_rocks',
+        defaults: ['_locale' => 'de'],
+        priority: 340
+    )]
+    #[Route(
+        '/en/navigation/area/{slug}/rocks',
+        name: 'navigation_area_rocks_en',
+        defaults: ['_locale' => 'en'],
+        priority: 340
+    )]
+    public function navigationAreaRocks(
+        AreaRepository $areaRepository,
+        RockRepository $rockRepository,
+        string $slug,
+        Request $request
+    ): JsonResponse {
+        $area = $areaRepository->findOneBy(['slug' => $slug, 'online' => true]);
+        if (!$area instanceof Area) {
+            return $this->json(['html' => ''], 404);
+        }
+
+        $currentRoute = $request->attributes->get('_route');
+        $currentAreaSlug = $currentRoute === 'show_rock' || $currentRoute === 'show_rock_en'
+            ? $request->query->get('currentAreaSlug', $request->attributes->get('areaSlug'))
+            : ($currentRoute === 'show_rocks' || $currentRoute === 'show_rocks_en'
+                ? $request->query->get('currentAreaSlug', $request->attributes->get('slug'))
+                : $request->query->get('currentAreaSlug'));
+        $currentRockSlug = $request->query->get('currentRockSlug', $request->attributes->get('slug'));
+
+        $rocks = $rockRepository->findSidebarRocksByAreaSlug($slug);
+
+        return $this->json([
+            'html' => $this->renderView('components/layout/_navigation-rocks.html.twig', [
+                'rocks' => $rocks,
+                'areaSlug' => $slug,
+                'isCurrentArea' => $currentAreaSlug === $slug,
+                'currentRockSlug' => $currentRockSlug,
+            ]),
+        ]);
+    }
+
     // Static routes must register before `/{slug}`; use `priority` so `/en` is not captured as an area slug.
     #[Route('/neuesteRouten', name: 'neuesteRouten', defaults: ['_locale' => 'de'], priority: 350)]
     #[Route('/en/latest-routes', name: 'neuesteRouten_en', defaults: ['_locale' => 'en'], priority: 350)]

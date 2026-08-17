@@ -73,6 +73,30 @@ class AreasService
     }
 
     /**
+     * Lightweight list of sidebar areas without nested rocks.
+     */
+    public function getSidebarAreaSummaries(): array
+    {
+        return $this->cache->get('areas_sidebar_summaries', function (ItemInterface $item): array {
+            $item->expiresAfter(self::CACHE_TTL);
+
+            return $this->areaRepository->sidebarAreaSummaries();
+        });
+    }
+
+    /**
+     * @return array<int, array{name: string, slug: string, areaSlug: string}>
+     */
+    public function getSidebarRocks(string $areaSlug): array
+    {
+        return $this->cache->get('areas_sidebar_rocks_'.$areaSlug, function (ItemInterface $item) use ($areaSlug): array {
+            $item->expiresAfter(self::CACHE_TTL);
+
+            return $this->rockRepository->findSidebarRocksByAreaSlug($areaSlug);
+        });
+    }
+
+    /**
      * Get all areas with basic information
      */
     public function getAllAreas(): array
@@ -98,7 +122,8 @@ class AreasService
         $this->cache->delete('areas_information');
         $this->cache->delete('areas_footer');
         $this->cache->delete('areas_sidebar');
+        $this->cache->delete('areas_sidebar_summaries');
         $this->cache->delete('main_map_rocks_v2');
         $this->cache->delete('main_map_rocks_v1');
     }
-} 
+}

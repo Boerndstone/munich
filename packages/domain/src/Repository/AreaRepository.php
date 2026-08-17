@@ -176,6 +176,21 @@ class AreaRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
     }
 
+    /**
+     * Lightweight area list for lazy sidebar navigation.
+     *
+     * @return array<int, array{id: int, name: string, slug: string, image: ?string}>
+     */
+    public function sidebarAreaSummaries(): array
+    {
+        return $this->createQueryBuilder('area')
+            ->select('area.id', 'area.name', 'area.slug', 'area.image')
+            ->where('area.online = 1')
+            ->orderBy('area.sequence', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
     public function sidebarNavigationNew()
     {
         $qb = $this->createQueryBuilder('area')

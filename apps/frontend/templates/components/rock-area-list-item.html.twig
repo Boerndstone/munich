@@ -5,10 +5,7 @@
 			<div class="relative w-[75px] shrink-0 self-stretch bg-gray-200 dark:bg-gray-800">
 				<div class="absolute inset-0 overflow-hidden">
 					{% if rock.previewImage is defined and rock.previewImage is not null %}
-						<picture class="absolute inset-0 block">
-							<source type="image/webp" srcset="https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}.webp, https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}@2x.webp 2x, https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}@3x.webp 3x">
-							<img src="https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}.webp" alt="Klettergebiet, {{ areaName}}, Fels: {{ rock.rockName }}" title="Klettergebiet, {{ areaName }}, Fels: {{ rock.rockName }}" loading="lazy" decoding="async" fetchpriority="low" class="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]">
-						</picture>
+						<img src="https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}.webp" alt="Klettergebiet, {{ areaName}}, Fels: {{ rock.rockName }}" title="Klettergebiet, {{ areaName }}, Fels: {{ rock.rockName }}" loading="lazy" decoding="async" fetchpriority="low" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]">
 					{% else %}
 						<div class="flex h-full min-h-[3.5rem] w-full items-center justify-center">
 							<svg role="img" aria-label="Klettergebiet, {{ areaName}}, Fels: {{ rock.rockName }}" title="Klettergebiet, {{ areaName }}, Fels: {{ rock.rockName }}" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24" class="text-gray-600 dark:text-gray-400">

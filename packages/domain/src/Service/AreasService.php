@@ -89,7 +89,14 @@ class AreasService
      */
     public function getSidebarRocks(string $areaSlug): array
     {
-        return $this->cache->get('areas_sidebar_rocks_'.$areaSlug, function (ItemInterface $item) use ($areaSlug): array {
+        $epoch = $this->cache->get('areas_sidebar_rocks_epoch', function (ItemInterface $item): int {
+            $item->expiresAfter(31536000); // 1 year
+            return time();
+        });
+
+        $cacheKey = sprintf('areas_sidebar_rocks_%d_%s', $epoch, $areaSlug);
+
+        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($areaSlug): array {
             $item->expiresAfter(self::CACHE_TTL);
 
             return $this->rockRepository->findSidebarRocksByAreaSlug($areaSlug);

@@ -44,6 +44,8 @@ class AppExtension extends AbstractExtension
             new TwigFunction('getAreasInformation', [$this, 'getAreasInformation']),
             new TwigFunction('getMainMapRocks', [$this, 'getMainMapRocks']),
             new TwigFunction('getSidebarAreas', [$this, 'getSidebarAreas']),
+            new TwigFunction('getSidebarAreaSummaries', [$this, 'getSidebarAreaSummaries']),
+            new TwigFunction('getSidebarRocks', [$this, 'getSidebarRocks']),
             new TwigFunction('getSocialMediaImageUrl', [$this, 'getSocialMediaImageUrl']),
             new TwigFunction('getImageAltText', [$this, 'getImageAltText']),
             new TwigFunction('isImageAccessible', [$this, 'isImageAccessible']),
@@ -114,6 +116,16 @@ class AppExtension extends AbstractExtension
     public function getSidebarAreas(): array
     {
         return $this->areasService->getSidebarAreas();
+    }
+
+    public function getSidebarAreaSummaries(): array
+    {
+        return $this->areasService->getSidebarAreaSummaries();
+    }
+
+    public function getSidebarRocks(string $areaSlug): array
+    {
+        return $this->areasService->getSidebarRocks($areaSlug);
     }
 
     public function getSocialMediaImageUrl(?string $imageName, string $type = 'rock'): ?string

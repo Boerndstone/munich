@@ -1,0 +1,12 @@
+{% if rocks is not empty %}
+	<ul class="m-0 list-none border-l border-gray-300 py-1 ps-2 dark:border-gray-600" style="margin-left: 8px;">
+		{% for rock in rocks %}
+			{% set isCurrentRock = isCurrentArea and currentRockSlug and rock.slug == currentRockSlug %}
+			<li class="rounded px-1 py-0.5 {{ isCurrentRock ? 'bg-black text-white' : '' }}">
+				<a href="{{ rock_path(areaSlug, rock.slug) }}" title="{{ 'nav.rock_link_title'|trans({ '%rock%': rock.name }) }}" class="block w-full truncate py-1 ps-2 text-sm no-underline {{ isCurrentRock ? 'text-white' : 'text-gray-800 dark:text-gray-200' }}" data-area-slug="{{ areaSlug }}" data-rock-slug="{{ rock.slug }}">
+					{{ rock.name }}
+				</a>
+			</li>
+		{% endfor %}
+	</ul>
+{% endif %}

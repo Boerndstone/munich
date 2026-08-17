@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static values = {
-    selector: { type: String, default: "a[href]" },
+    selector: { type: String, default: "a[data-prefetch-candidate]" },
     idleSelector: String,
     maxIdle: { type: Number, default: 6 },
   };

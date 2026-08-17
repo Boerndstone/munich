@@ -49,7 +49,7 @@ class FrontendController extends AbstractController
     )]
     public function navigationAreaRocks(
         AreaRepository $areaRepository,
-        RockRepository $rockRepository,
+        \App\Service\AreasService $areasService,
         string $slug,
         Request $request
     ): JsonResponse {
@@ -58,15 +58,10 @@ class FrontendController extends AbstractController
             return $this->json(['html' => ''], 404);
         }
 
-        $currentRoute = $request->attributes->get('_route');
-        $currentAreaSlug = $currentRoute === 'show_rock' || $currentRoute === 'show_rock_en'
-            ? $request->query->get('currentAreaSlug', $request->attributes->get('areaSlug'))
-            : ($currentRoute === 'show_rocks' || $currentRoute === 'show_rocks_en'
-                ? $request->query->get('currentAreaSlug', $request->attributes->get('slug'))
-                : $request->query->get('currentAreaSlug'));
-        $currentRockSlug = $request->query->get('currentRockSlug', $request->attributes->get('slug'));
+        $currentAreaSlug = $request->query->get('currentAreaSlug');
+        $currentRockSlug = $request->query->get('currentRockSlug');
 
-        $rocks = $rockRepository->findSidebarRocksByAreaSlug($slug);
+        $rocks = $areasService->getSidebarRocks($slug);
 
         return $this->json([
             'html' => $this->renderView('components/layout/_navigation-rocks.html.twig', [

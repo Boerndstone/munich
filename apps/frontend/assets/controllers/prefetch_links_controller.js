@@ -77,6 +77,11 @@ export default class extends Controller {
       return;
     }
 
+    if (window.MunichPageCache?.prime) {
+      void window.MunichPageCache.prime(href);
+      this.prefetched.add(href);
+      return;
+    }
     if (document.head.querySelector(`link[rel="prefetch"][href="${CSS.escape(href)}"]`)) {
       this.prefetched.add(href);
       return;

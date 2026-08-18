@@ -57,7 +57,8 @@ export default class extends Controller {
       return;
     }
 
-    const url = this.normalizeUrl(link.href);
+    const visitUrl = link.href;
+    const url = this.normalizeUrl(visitUrl);
     let entry = this.memory.get(url);
 
     if (!this.isFreshEntry(entry)) {
@@ -72,7 +73,7 @@ export default class extends Controller {
     this.touchEntry(url, entry);
 
     if (window.Turbo?.visit) {
-      window.Turbo.visit(url, {
+      window.Turbo.visit(visitUrl, {
         action: link.dataset.turboAction || "advance",
         response: {
           statusCode: 200,

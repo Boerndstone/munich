@@ -151,6 +151,15 @@
 				var color = p.color || '#E42522';
 				var isSelected = selectedPathIndex === idx;
 				var pathD = (isSelected && editingPathPoints && editingPathPoints.length >= 2) ? pathToD(editingPathPoints) : p.d;
+				var hitPath = document.createElementNS(ns, 'path');
+				hitPath.setAttribute('d', pathD);
+				hitPath.setAttribute('stroke', 'transparent');
+				hitPath.setAttribute('stroke-width', isSelected ? '20' : '16');
+				hitPath.setAttribute('fill', 'none');
+				hitPath.setAttribute('data-path-index', String(idx));
+				hitPath.setAttribute('class', 'tph-path-hit');
+				hitPath.setAttribute('pointer-events', 'stroke');
+				drawSvg.appendChild(hitPath);
 				var path = document.createElementNS(ns, 'path');
 				path.setAttribute('d', pathD);
 				path.setAttribute('stroke', color);
@@ -158,6 +167,7 @@
 				path.setAttribute('fill', 'none');
 				path.setAttribute('data-path-index', String(idx));
 				path.setAttribute('class', 'tph-path' + (isSelected ? ' tph-path-selected' : ''));
+				path.setAttribute('pointer-events', 'none');
 				drawSvg.appendChild(path);
 				if (p.dot && !(isSelected && editingPathPoints)) {
 					var end = calculateEndpoint(pathD);

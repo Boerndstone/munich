@@ -104,10 +104,6 @@ export default class extends Controller {
       return false;
     }
 
-    if (url.hash && url.pathname === window.location.pathname && url.search === window.location.search) {
-      return false;
-    }
-
     return true;
   }
 

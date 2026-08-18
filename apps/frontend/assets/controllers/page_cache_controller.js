@@ -21,6 +21,7 @@ export default class extends Controller {
 
     this.exposeApi();
     this.storeCurrentPage();
+    void this.prunePersistentCache();
   }
 
   disconnect() {
@@ -207,6 +208,7 @@ export default class extends Controller {
     });
 
     await cache.put(url, response);
+    await this.prunePersistentCache(cache);
   }
 
   async readFromCacheStorage(url) {
@@ -248,5 +250,41 @@ export default class extends Controller {
     if (cache) {
       await window.caches.delete(this.cacheNameValue);
     }
+  }
+
+  async prunePersistentCache(existingCache = null) {
+    const cache = existingCache || (await this.openCacheStorage());
+    if (!cache) {
+      return;
+    }
+
+    const requests = await cache.keys();
+    if (requests.length <= this.maxEntriesValue) {
+      return;
+    }
+
+    const entries = await Promise.all(
+      requests.map(async (request) => {
+        const response = await cache.match(request);
+        const cachedAt = Number(response?.headers.get("X-Munich-Cached-At") || "0");
+
+        return {
+          request,
+          cachedAt,
+        };
+      })
+    );
+
+    entries.sort((a, b) => b.cachedAt - a.cachedAt);
+
+    const survivors = new Set(
+      entries.slice(0, this.maxEntriesValue).map((entry) => entry.request.url)
+    );
+
+    await Promise.all(
+      entries
+        .filter((entry) => !survivors.has(entry.request.url))
+        .map((entry) => cache.delete(entry.request))
+    );
   }
 }

@@ -11,7 +11,10 @@
 					{% set aspectRatio = viewBoxValue|viewbox_to_aspect_ratio %}
 					{% set pathsSvg = topo_paths_overlay(topoData.topoPathCollection, null) %}
 					{% if pathsSvg is not empty %}
-					<div class="topo-two-layer"{% if aspectRatio %} style="aspect-ratio: {{ aspectRatio }};"{% endif %}>
+					<div class="topo-two-layer" data-topo-state="{{ loop.first ? 'ready' : 'loading' }}"{% if aspectRatio %} style="aspect-ratio: {{ aspectRatio }};"{% endif %}>
+						<div class="topo-two-layer__loader" aria-hidden="true">
+							<span class="topo-two-layer__spinner"></span>
+						</div>
 						<img
 							class="topo-two-layer__bg"
 							{% if loop.first %}
@@ -28,6 +31,7 @@
 								{% if srcsetData.sizes %}data-topo-sizes="{{ srcsetData.sizes }}"{% endif %}
 								loading="lazy"
 								fetchpriority="low"
+								data-topo-status="loading"
 							{% endif %}
 							data-topo-image
 							alt="{{ 'topo.image_alt'|trans({ '%topo_name%': topoName, '%rock_name%': (rocks|first).rockName|default(''), '%area_name%': (rocks|first).areaName|default('') }) }}"

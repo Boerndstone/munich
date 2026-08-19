@@ -81,6 +81,7 @@ export default class extends Controller {
     }
 
     image.src = src;
+    image.loading = "eager";
     if (image.dataset.topoSrcset) {
       image.srcset = image.dataset.topoSrcset;
     }

@@ -495,12 +495,12 @@
 		function selectPath(index) {
 			if (index < 0 || index >= drawnPaths.length) return;
 			var model = [];
-			var smooth = true;
-			if (drawnPaths[index].smooth || pathHasCurves(drawnPaths[index].d)) {
+			var smooth = !!drawnPaths[index].smooth || pathHasCurves(drawnPaths[index].d);
+			if (smooth) {
 				model = createPathModelFromD(drawnPaths[index].d);
 			} else {
 				var pts = pathToPoints(drawnPaths[index].d);
-				model = createSmoothModelFromPoints(pts);
+				model = createLinearModelFromPoints(pts);
 			}
 			if (model.length < 2) {
 				document.getElementById('tph-drawStatus').textContent = tphT('draw_status_few_points');

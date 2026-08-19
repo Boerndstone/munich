@@ -2,7 +2,8 @@
 <div class="mx-auto w-full max-w-[1024px] px-2 sm:px-4" {{ stimulus_controller('modal-route-information grade-labels') }}>
 	<div class="w-full md:w-3/4">
 	{% for topoName, topoData in groupedRoutes %}
-		<div class="mt-3 overflow-hidden rounded-none border-0 bg-[var(--theme-bg-lighter)] text-[var(--theme-text)]" id="{{ topoName|custom_replace|lower }}">
+		{% set topo_id = topoName|custom_replace|lower %}
+		<div class="mt-3 overflow-hidden rounded-none border-0 bg-[var(--theme-bg-lighter)] text-[var(--theme-text)]" id="{{ topo_id }}" data-topo-card>
 			<section class="p-0" data-controller="route-information-tooltip">
 				{% if topoData.topoImage is not empty and topoData.topoPathCollection is not empty %}
 					{% set srcsetData = topoData.topoImage|topo_image_srcset %}
@@ -11,7 +12,27 @@
 					{% set pathsSvg = topo_paths_overlay(topoData.topoPathCollection, null) %}
 					{% if pathsSvg is not empty %}
 					<div class="topo-two-layer"{% if aspectRatio %} style="aspect-ratio: {{ aspectRatio }};"{% endif %}>
-						<img class="topo-two-layer__bg" src="{{ srcsetData.src|default(topoData.topoImage) }}"{% if srcsetData.srcset %} srcset="{{ srcsetData.srcset }}" sizes="{{ srcsetData.sizes }}"{% endif %} alt="{{ 'topo.image_alt'|trans({ '%topo_name%': topoName, '%rock_name%': (rocks|first).rockName|default(''), '%area_name%': (rocks|first).areaName|default('') }) }}" loading="lazy" decoding="async">
+						<img
+							class="topo-two-layer__bg"
+							{% if loop.first %}
+								src="{{ srcsetData.src|default(topoData.topoImage) }}"
+								{% if srcsetData.srcset %}srcset="{{ srcsetData.srcset }}"{% endif %}
+								{% if srcsetData.sizes %}sizes="{{ srcsetData.sizes }}"{% endif %}
+								loading="eager"
+								fetchpriority="high"
+								data-topo-loaded="true"
+							{% else %}
+								src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+								data-topo-src="{{ srcsetData.src|default(topoData.topoImage) }}"
+								{% if srcsetData.srcset %}data-topo-srcset="{{ srcsetData.srcset }}"{% endif %}
+								{% if srcsetData.sizes %}data-topo-sizes="{{ srcsetData.sizes }}"{% endif %}
+								loading="lazy"
+								fetchpriority="low"
+							{% endif %}
+							data-topo-image
+							alt="{{ 'topo.image_alt'|trans({ '%topo_name%': topoName, '%rock_name%': (rocks|first).rockName|default(''), '%area_name%': (rocks|first).areaName|default('') }) }}"
+							decoding="async"
+						>
 						<div class="topo-two-layer__overlay" aria-hidden="true">
 							<svg height="100%" width="100%" viewBox="{{ viewBoxValue }}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="h-auto max-w-full preserve-aspect-ratio">
 								{{ pathsSvg|raw }}

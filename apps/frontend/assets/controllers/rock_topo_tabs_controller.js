@@ -18,9 +18,16 @@ export default class extends Controller {
 
     this._onTabClick = this._onTabClick.bind(this);
     this._onWindowScroll = this._onWindowScroll.bind(this);
+    this._topoCards = Array.from(document.querySelectorAll("[data-topo-card]"));
+    this._loadedTopoIds = new Set(
+      this._topoCards
+        .filter((card) => card.querySelector("[data-topo-image][data-topo-loaded='true']"))
+        .map((card) => card.id)
+    );
 
     this._tabsList.addEventListener("click", this._onTabClick);
     window.addEventListener("scroll", this._onWindowScroll, { passive: true });
+    this._activateInitialTopo();
     this._onWindowScroll();
   }
 
@@ -34,8 +41,58 @@ export default class extends Controller {
     this._tabsList = null;
     this._tabsRoot = null;
     this._tabs = null;
+    this._topoCards = null;
+    this._loadedTopoIds = null;
     this._onTabClick = null;
     this._onWindowScroll = null;
+  }
+
+  _activateInitialTopo() {
+    const hashId = window.location.hash ? window.location.hash.slice(1) : "";
+    if (hashId && document.getElementById(hashId)?.hasAttribute("data-topo-card")) {
+      this._activateTopoMedia(hashId);
+      this._syncTabsActive(hashId);
+      return;
+    }
+
+    const firstTab = this._tabs?.[0];
+    const firstId = firstTab?.dataset?.tabId || firstTab?.getAttribute("href")?.slice(1);
+    if (firstId) {
+      this._activateTopoMedia(firstId);
+      this._syncTabsActive(firstId);
+    }
+  }
+
+  _activateTopoMedia(targetId) {
+    if (!targetId || this._loadedTopoIds?.has(targetId) === true) {
+      return;
+    }
+
+    const targetCard = document.getElementById(targetId);
+    const image = targetCard?.querySelector("[data-topo-image]");
+    if (!image) {
+      return;
+    }
+
+    const src = image.dataset.topoSrc;
+    if (!src) {
+      this._loadedTopoIds?.add(targetId);
+      return;
+    }
+
+    image.src = src;
+    if (image.dataset.topoSrcset) {
+      image.srcset = image.dataset.topoSrcset;
+    }
+    if (image.dataset.topoSizes) {
+      image.sizes = image.dataset.topoSizes;
+    }
+    image.dataset.topoLoaded = "true";
+    image.fetchPriority = "high";
+    delete image.dataset.topoSrc;
+    delete image.dataset.topoSrcset;
+    delete image.dataset.topoSizes;
+    this._loadedTopoIds?.add(targetId);
   }
 
   _syncTabsActive(value) {
@@ -83,6 +140,7 @@ export default class extends Controller {
       tab.dataset?.tabId ||
       tab.getAttribute("href")?.slice(1);
     if (!targetId) return;
+    this._activateTopoMedia(targetId);
     const targetCard = document.getElementById(targetId);
     if (targetCard) {
       const cardOffset = targetCard.offsetTop - this._navigationHeight;
@@ -106,6 +164,7 @@ export default class extends Controller {
       const top = targetElement.offsetTop - this._navigationHeight - 200;
       const height = targetElement.offsetHeight;
       if (scrollPos >= top && scrollPos < top + height) {
+        this._activateTopoMedia(targetId);
         this._syncTabsActive(targetId);
         this._centerTab(tab);
       }

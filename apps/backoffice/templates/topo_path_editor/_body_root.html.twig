@@ -34,6 +34,7 @@
 	'routes_dot_anchor': 'topo_editor.routes_dot_anchor'|trans,
 	'routes_fetch_failed': 'topo_path_suggestion.routes_fetch_failed'|trans,
 } %}
+{% set initial_image_url = (topoEdit is defined and topoEdit and topoEdit.imageUrl is defined and topoEdit.imageUrl) ? topoEdit.imageUrl : default_image_base_url|default('') %}
 <div class="topo-path-helper-root {{ frontend_class|default('') }}">
 	<section>
 		<div class="row">
@@ -41,16 +42,18 @@
 				<div class="field-text form-group">
 					<label class="form-control-label" for="tph-drawImageUrl">{{ 'topo_editor.image_url_label'|trans }}</label>
 					<div class="form-widget">
-						<input type="text" id="tph-drawImageUrl" placeholder="{{ 'topo_editor.image_url_placeholder'|trans|e('html_attr') }}" value="{{ (topoEdit is defined and topoEdit and topoEdit.imageUrl is defined) ? topoEdit.imageUrl|e('html_attr') : '' }}" class="form-control">
+						<input type="text" id="tph-drawImageUrl" placeholder="{{ 'topo_editor.image_url_placeholder'|trans|e('html_attr') }}" value="{{ initial_image_url|e('html_attr') }}" class="form-control">
 					</div>
 				</div>
 			</div>
-			<div class="col-12">
-				<div class="field-text form-group">
-					<label class="form-control-label" for="tph-drawImageFile">{{ 'topo_editor.or_choose_file'|trans }}</label>
-					<input type="file" id="tph-drawImageFile" accept="image/*" class="form-control">
+			{% if show_image_upload|default(true) %}
+				<div class="col-12">
+					<div class="field-text form-group">
+						<label class="form-control-label" for="tph-drawImageFile">{{ 'topo_editor.or_choose_file'|trans }}</label>
+						<input type="file" id="tph-drawImageFile" accept="image/*" class="form-control">
+					</div>
 				</div>
-			</div>
+			{% endif %}
 			<div class="col-12">
 				<button type="button" id="tph-drawLoadImage" class="btn btn-secondary">{{ 'topo_editor.load_image'|trans }}</button>
 			</div>
@@ -59,6 +62,7 @@
 		<div class="tph-draw-toolbar">
 			<button type="button" id="tph-drawNewPath" class="btn btn-secondary">{{ 'topo_editor.new_path'|trans }}</button>
 			<button type="button" id="tph-drawUndo" class="btn btn-secondary">{{ 'topo_editor.undo_point'|trans }}</button>
+			<button type="button" id="tph-drawSmooth" class="btn btn-secondary" aria-pressed="false">{{ 'topo_editor.smooth_path'|trans }}</button>
 			<button type="button" id="tph-drawDeselect" class="btn btn-secondary">{{ 'topo_editor.deselect'|trans }}</button>
 			<button type="button" id="tph-drawDeletePath" class="btn btn-secondary">{{ 'topo_editor.delete_selected_path'|trans }}</button>
 		</div>

@@ -22,6 +22,10 @@
 	.topo-path-helper-root .tph-draw-area__overlay svg path.tph-path-hit { cursor: pointer; }
 	.topo-path-helper-root .tph-draw-area__overlay svg circle.point { fill: #E42522; stroke: #fff; stroke-width: 1; }
 	.topo-path-helper-root .tph-draw-area__overlay svg circle.edit-point { cursor: grab; }
+	.topo-path-helper-root .tph-draw-area__overlay svg circle.tph-control-handle { cursor: crosshair; }
+	.topo-path-helper-root .tph-draw-area__overlay svg line.tph-control-guide { stroke-width: 1.5; opacity: 0.65; pointer-events: none; }
+	.topo-path-helper-root .tph-draw-area__overlay svg line.tph-control-guide--draft { opacity: 0.45; }
+	.topo-path-helper-root #tph-drawSmooth[aria-pressed="true"] { background: #198754; border-color: #198754; color: #fff; }
 	.topo-path-helper-root .tph-routes-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 12px; }
 	.topo-path-helper-root .tph-routes-table th,
 	.topo-path-helper-root .tph-routes-table td { border: 1px solid var(--tph-border); padding: 6px 8px; text-align: left; }

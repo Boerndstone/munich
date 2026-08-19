@@ -46,14 +46,6 @@
 					</div>
 				</div>
 			</div>
-			{% if show_image_upload|default(true) %}
-				<div class="col-12">
-					<div class="field-text form-group">
-						<label class="form-control-label" for="tph-drawImageFile">{{ 'topo_editor.or_choose_file'|trans }}</label>
-						<input type="file" id="tph-drawImageFile" accept="image/*" class="form-control">
-					</div>
-				</div>
-			{% endif %}
 			<div class="col-12">
 				<button type="button" id="tph-drawLoadImage" class="btn btn-secondary">{{ 'topo_editor.load_image'|trans }}</button>
 			</div>

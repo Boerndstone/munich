@@ -38,7 +38,7 @@
 		var drawSvg = document.getElementById('tph-drawSvg');
 		var drawnPaths = [];
 		var currentPath = [];
-		var drawSmoothMode = false;
+		var drawSmoothMode = true;
 		var drawW = 1024, drawH = 820;
 
 		function getDrawImageUrl() {
@@ -349,18 +349,14 @@
 		var selectedPathIndex = null;
 		var editingPathPoints = null;
 		var editingPathModel = null;
-		var selectedPathSmooth = false;
+		var selectedPathSmooth = true;
 		var draggingPointIndex = null;
 		var draggingHandle = null;
 		var dragLastPoint = null;
 		var dragStart = null;
 
 		function updateDrawModeButton() {
-			var btn = document.getElementById('tph-drawSmooth');
-			if (!btn) return;
-			var isPressed = selectedPathIndex !== null ? selectedPathSmooth : drawSmoothMode;
-			btn.setAttribute('aria-pressed', isPressed ? 'true' : 'false');
-			btn.classList.toggle('is-active', isPressed);
+			return;
 		}
 
 		function redrawOverlay() {
@@ -498,13 +494,13 @@
 
 		function selectPath(index) {
 			if (index < 0 || index >= drawnPaths.length) return;
-			var model = selectedPathSmooth ? [] : [];
-			var smooth = !!drawnPaths[index].smooth;
-			if (smooth) {
+			var model = [];
+			var smooth = true;
+			if (drawnPaths[index].smooth || pathHasCurves(drawnPaths[index].d)) {
 				model = createPathModelFromD(drawnPaths[index].d);
 			} else {
 				var pts = pathToPoints(drawnPaths[index].d);
-				model = createLinearModelFromPoints(pts);
+				model = createSmoothModelFromPoints(pts);
 			}
 			if (model.length < 2) {
 				document.getElementById('tph-drawStatus').textContent = tphT('draw_status_few_points');
@@ -531,7 +527,7 @@
 			selectedPathIndex = null;
 			editingPathPoints = null;
 			editingPathModel = null;
-			selectedPathSmooth = false;
+			selectedPathSmooth = true;
 			draggingPointIndex = null;
 			draggingHandle = null;
 			dragLastPoint = null;
@@ -549,7 +545,7 @@
 			selectedPathIndex = null;
 			editingPathPoints = null;
 			editingPathModel = null;
-			selectedPathSmooth = false;
+			selectedPathSmooth = true;
 			draggingHandle = null;
 			dragLastPoint = null;
 			pathsUiSync();
@@ -639,32 +635,6 @@
 			});
 		}
 
-		function toggleSmoothMode() {
-			if (selectedPathIndex !== null) {
-				selectedPathSmooth = !selectedPathSmooth;
-				if (editingPathModel && editingPathModel.length >= 2) {
-					if (selectedPathSmooth) {
-						editingPathModel = createSmoothModelFromPoints(editingPathPoints || editingPathModel.map(function(node) { return node.point; }));
-					}
-					syncEditingPointsFromModel();
-					var selectedD = pathModelToD(editingPathModel, selectedPathSmooth);
-					drawnPaths[selectedPathIndex].d = selectedD;
-					drawnPaths[selectedPathIndex].smooth = selectedPathSmooth;
-					if (paths[selectedPathIndex]) {
-						paths[selectedPathIndex].d = selectedD;
-						paths[selectedPathIndex].smooth = selectedPathSmooth;
-					}
-					pathsUiSync();
-				} else {
-					updateDrawModeButton();
-				}
-				return;
-			}
-			drawSmoothMode = !drawSmoothMode;
-			updateDrawModeButton();
-			redrawOverlay();
-		}
-
 		function newPath() {
 			if (currentPath.length >= 2) {
 				drawnPaths.push({ d: buildPathD(currentPath, drawSmoothMode), smooth: drawSmoothMode });
@@ -710,7 +680,6 @@
 		document.getElementById('tph-drawLoadImage').addEventListener('click', loadDrawImage);
 		document.getElementById('tph-drawNewPath').addEventListener('click', newPath);
 		document.getElementById('tph-drawUndo').addEventListener('click', undoLastPoint);
-		document.getElementById('tph-drawSmooth').addEventListener('click', toggleSmoothMode);
 		document.getElementById('tph-drawDeselect').addEventListener('click', deselectPath);
 		document.getElementById('tph-drawDeletePath').addEventListener('click', deleteSelectedPath);
 		document.getElementById('tph-drawCopyToStep1').addEventListener('click', copyPathsToStep1);

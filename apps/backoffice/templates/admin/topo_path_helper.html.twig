@@ -36,7 +36,10 @@
 	</section>
 
 	<div class="content-body">
-		{% include 'topo_path_editor/_body_root.html.twig' %}
+		{% include 'topo_path_editor/_body_root.html.twig' with {
+			show_image_upload: false,
+			default_image_base_url: 'https://www.munichclimbs.de/build/images/topos/',
+		} %}
 	</div>
 
 	<div id="tph-topo-edit" style="display:none" data-json="{{ (topoEdit is defined and topoEdit and topoEditJsonBase64 is defined) ? topoEditJsonBase64|e('html_attr') : '' }}"></div>

@@ -41,6 +41,12 @@
 			default_image_base_url: 'https://www.munichclimbs.de/build/images/topos/',
 		} %}
 	</div>
+	{% if topoEdit is defined and topoEdit %}
+		<div class="tph-mobile-actions">
+			<button type="button" class="btn btn-success tph-save-to-topo" data-csrf-token="{{ csrf_token('topo_save_topo_path_helper')|e('html_attr') }}">{{ 'topo_path_helper.save_changes'|trans }}</button>
+			<a href="{{ topoEdit.backUrl }}" class="btn btn-secondary">{{ 'topo_path_helper.back_to_topo'|trans }}</a>
+		</div>
+	{% endif %}
 
 	<div id="tph-topo-edit" style="display:none" data-json="{{ (topoEdit is defined and topoEdit and topoEditJsonBase64 is defined) ? topoEditJsonBase64|e('html_attr') : '' }}"></div>
 	<script>

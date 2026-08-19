@@ -1,5 +1,61 @@
 // Bootstrap SCSS removed from the public `app` bundle (Tailwind in app.css). Admin uses a separate Encore entry.
 
+@supports (view-transition-name: root) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  :root {
+    --mc-view-transition-duration: 180ms;
+    --mc-view-transition-offset: 3px;
+  }
+
+  :root[data-view-transition-debug="true"] {
+    --mc-view-transition-duration: 900ms;
+    --mc-view-transition-offset: 12px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: var(--mc-view-transition-duration);
+      animation-timing-function: ease;
+    }
+
+    ::view-transition-old(root) {
+      animation-name: mc-view-fade-out;
+    }
+
+    ::view-transition-new(root) {
+      animation-name: mc-view-fade-in;
+    }
+  }
+}
+
+@keyframes mc-view-fade-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0.985;
+    transform: translateY(calc(-1 * var(--mc-view-transition-offset)));
+  }
+}
+
+@keyframes mc-view-fade-in {
+  from {
+    opacity: 0.985;
+    transform: translateY(var(--mc-view-transition-offset));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 // Theme variables
 :root {
   --theme-bg: #ffffff;
@@ -893,6 +949,7 @@ input[data-autocomplete-target="input"]:focus {
     position: relative;
     width: 100%;
     overflow: hidden;
+    background: linear-gradient(135deg, rgba(148, 163, 184, 0.12), rgba(226, 232, 240, 0.22));
 
     .topo-two-layer__bg {
         display: block;
@@ -900,6 +957,7 @@ input[data-autocomplete-target="input"]:focus {
         height: auto;
         object-fit: contain;
         vertical-align: top;
+        transition: opacity 180ms ease;
     }
 
     .topo-two-layer__overlay {
@@ -909,6 +967,7 @@ input[data-autocomplete-target="input"]:focus {
         width: 100%;
         height: 100%;
         pointer-events: none;
+        transition: opacity 180ms ease;
 
         svg {
             position: absolute;
@@ -931,6 +990,55 @@ input[data-autocomplete-target="input"]:focus {
         .route-path-hit {
             pointer-events: stroke;
         }
+    }
+
+    .topo-two-layer__loader {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.12));
+        transition: opacity 180ms ease, visibility 180ms ease;
+    }
+
+    .topo-two-layer__spinner {
+        width: 2.1rem;
+        height: 2.1rem;
+        border-radius: 9999px;
+        border: 2.5px solid rgba(100, 116, 139, 0.22);
+        border-top-color: rgba(14, 116, 144, 0.9);
+        animation: mc-topo-spin 0.85s linear infinite;
+    }
+
+    &[data-topo-state="loading"] {
+        .topo-two-layer__bg {
+            opacity: 0.08;
+        }
+
+        .topo-two-layer__overlay {
+            opacity: 0;
+        }
+    }
+
+    &[data-topo-state="ready"],
+    &[data-topo-state="error"] {
+        .topo-two-layer__loader {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .topo-two-layer__bg,
+        .topo-two-layer__overlay {
+            opacity: 1;
+        }
+    }
+}
+
+@keyframes mc-topo-spin {
+    to {
+        transform: rotate(360deg);
     }
 }
 

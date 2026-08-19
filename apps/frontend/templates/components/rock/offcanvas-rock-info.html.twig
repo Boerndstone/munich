@@ -196,7 +196,7 @@
 										{% for data in jsonData %}
 											<div class="mb-1">
 												<a class="lg-item block" data-target="lg-item" data-src="{{ data.src }}" data-srcset="{{ data.srcset }}" href="{{ data.src }}" role="button">
-													<img src="{{ data.thumb }}" class="mb-1 w-full shadow-md" alt="{{ data.subHtml }}" loading="lazy">
+							<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" data-gallery-thumb="{{ data.thumb }}" class="mb-1 w-full shadow-md" alt="{{ data.subHtml|striptags|e('html_attr') }}" loading="lazy" decoding="async">
 												</a>
 											</div>
 										{% endfor %}

@@ -65,6 +65,7 @@
 				drawSvg.setAttribute('height', '100%');
 				drawSvg.style.pointerEvents = 'all';
 				drawSvg.style.cursor = 'crosshair';
+				drawSvg.style.touchAction = 'none';
 				drawSvg.classList.add('paths-editable');
 				// Always use path list (pathsJson) for overlay — never inject server SVG here to avoid broken content in DOM
 				syncDrawnPathsFromPaths();
@@ -369,7 +370,7 @@
 				var hitPath = document.createElementNS(ns, 'path');
 				hitPath.setAttribute('d', pathD);
 				hitPath.setAttribute('stroke', 'transparent');
-				hitPath.setAttribute('stroke-width', isSelected ? '20' : '16');
+				hitPath.setAttribute('stroke-width', isSelected ? '28' : '22');
 				hitPath.setAttribute('fill', 'none');
 				hitPath.setAttribute('data-path-index', String(idx));
 				hitPath.setAttribute('class', 'tph-path-hit');
@@ -390,7 +391,7 @@
 					circle.setAttribute('class', 'end-dot');
 					circle.setAttribute('cx', end[0]);
 					circle.setAttribute('cy', end[1]);
-					circle.setAttribute('r', '7');
+					circle.setAttribute('r', '8');
 					circle.setAttribute('fill', '#fff');
 					circle.setAttribute('stroke', '#000');
 					circle.setAttribute('stroke-width', '1');
@@ -417,7 +418,7 @@
 								handleCircle.setAttribute('data-handle-kind', kind);
 								handleCircle.setAttribute('cx', handle[0]);
 								handleCircle.setAttribute('cy', handle[1]);
-								handleCircle.setAttribute('r', '4');
+								handleCircle.setAttribute('r', '7');
 								handleCircle.setAttribute('fill', '#fff');
 								handleCircle.setAttribute('stroke', color);
 								handleCircle.setAttribute('stroke-width', '1.5');
@@ -432,7 +433,7 @@
 						circle.setAttribute('data-point-index', String(ptIdx));
 						circle.setAttribute('cx', node.point[0]);
 						circle.setAttribute('cy', node.point[1]);
-						circle.setAttribute('r', '5');
+						circle.setAttribute('r', '8');
 						circle.setAttribute('fill', color);
 						circle.setAttribute('stroke', '#fff');
 						circle.setAttribute('stroke-width', '1');
@@ -468,7 +469,7 @@
 				circle.setAttribute('class', 'point');
 				circle.setAttribute('cx', pt[0]);
 				circle.setAttribute('cy', pt[1]);
-				circle.setAttribute('r', '4');
+				circle.setAttribute('r', '6');
 				circle.setAttribute('fill', '#E42522');
 				circle.setAttribute('stroke', '#fff');
 				circle.setAttribute('stroke-width', '1');
@@ -555,7 +556,7 @@
 				: tphT('draw_status_path_deleted_none');
 		}
 
-		function onDrawSvgMouseDown(ev) {
+		function onDrawSvgPointerDown(ev) {
 			if (selectedPathIndex === null) return;
 			var t = ev.target;
 			if (t.getAttribute('data-point-index') === null || t.getAttribute('data-path-index') === null) return;
@@ -604,11 +605,13 @@
 				draggingPointIndex = null;
 				draggingHandle = null;
 				dragLastPoint = null;
-				document.removeEventListener('mousemove', dragMove);
-				document.removeEventListener('mouseup', dragUp);
+				document.removeEventListener('pointermove', dragMove);
+				document.removeEventListener('pointerup', dragUp);
+				document.removeEventListener('pointercancel', dragUp);
 			};
-			document.addEventListener('mousemove', dragMove);
-			document.addEventListener('mouseup', dragUp);
+			document.addEventListener('pointermove', dragMove);
+			document.addEventListener('pointerup', dragUp);
+			document.addEventListener('pointercancel', dragUp);
 		}
 
 		function onDrawSvgClick(ev) {
@@ -684,7 +687,7 @@
 		document.getElementById('tph-drawDeletePath').addEventListener('click', deleteSelectedPath);
 		document.getElementById('tph-drawCopyToStep1').addEventListener('click', copyPathsToStep1);
 		drawSvg.addEventListener('click', onDrawSvgClick);
-		drawSvg.addEventListener('mousedown', onDrawSvgMouseDown);
+		drawSvg.addEventListener('pointerdown', onDrawSvgPointerDown);
 
 		// --- Steps 1–2 (paths + routes table; no per-path card UI) ---
 		let paths = [];
@@ -1044,14 +1047,21 @@
 		}
 
 		// Save to topo (admin edit) or submit public suggestion (FormData)
-		var saveToTopoBtn = document.getElementById('tph-saveToTopo');
-		if (saveToTopoBtn && window.TOPO_EDIT) {
-			saveToTopoBtn.addEventListener('click', function() {
+		var saveToTopoBtns = Array.prototype.slice.call(document.querySelectorAll('#tph-saveToTopo, .tph-save-to-topo'));
+		if (saveToTopoBtns.length && window.TOPO_EDIT) {
+			function setSaveButtonsDisabled(disabled) {
+				saveToTopoBtns.forEach(function(btn) {
+					btn.disabled = disabled;
+				});
+			}
+
+			saveToTopoBtns.forEach(function(saveToTopoBtn) {
+				saveToTopoBtn.addEventListener('click', function() {
 				var te = window.TOPO_EDIT;
 				var viewBox = '0 0 1024 820';
 				var phpLiteral = getPhpLiteralContent();
 				var csrfToken = (saveToTopoBtn && saveToTopoBtn.getAttribute('data-csrf-token')) || '';
-				saveToTopoBtn.disabled = true;
+				setSaveButtonsDisabled(true);
 
 				if (te.suggestionMode) {
 					var rockEl = document.getElementById('tph-suggestion-rock');
@@ -1082,7 +1092,7 @@
 					})
 					.then(function(r) { return r.json(); })
 					.then(function(data) {
-						saveToTopoBtn.disabled = false;
+						setSaveButtonsDisabled(false);
 						if (data.success && data.redirectUrl) {
 							window.location.href = data.redirectUrl;
 						} else {
@@ -1090,7 +1100,7 @@
 						}
 					})
 					.catch(function() {
-						saveToTopoBtn.disabled = false;
+						setSaveButtonsDisabled(false);
 						showToast(tphT('save_failed'));
 					});
 					return;
@@ -1107,7 +1117,7 @@
 				})
 				.then(function(r) { return r.json(); })
 				.then(function(data) {
-					saveToTopoBtn.disabled = false;
+					setSaveButtonsDisabled(false);
 					if (data.success && data.redirectUrl) {
 						window.location.href = data.redirectUrl;
 					} else {
@@ -1115,8 +1125,9 @@
 					}
 				})
 				.catch(function() {
-					saveToTopoBtn.disabled = false;
+					setSaveButtonsDisabled(false);
 					showToast(tphT('save_failed'));
+				});
 				});
 			});
 		}

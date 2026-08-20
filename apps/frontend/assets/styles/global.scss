@@ -92,6 +92,18 @@
   --purple-light: #DDD6FE;
   --purple-base: #8B5CF6;
   --purple-dark: #4C1D95;
+
+  /* Shared grade scale: easy -> warm -> hard. Reused by charts, topo, and strips. */
+  --grade-bucket-3: #059669;
+  --grade-bucket-4: #16a34a;
+  --grade-bucket-5: #65a30d;
+  --grade-bucket-6: #d97706;
+  --grade-bucket-7: #ea580c;
+  --grade-bucket-8: #c2410c;
+  --grade-bucket-9: #dc2626;
+  --grade-bucket-10: #e11d48;
+  --grade-bucket-11: #4338ca;
+  --grade-project: #334155;
 }
 
 [data-theme="dark"] {
@@ -1043,14 +1055,19 @@ input[data-autocomplete-target="input"]:focus {
 }
 
 .number-circle {
-    r: 19px;
+    r: 18px;
+    filter: drop-shadow(0 1px 2px rgba(15, 23, 42, 0.22));
 }
 
 .number-text {
-    font-size: 22px;
-    font-weight: normal;
+    font-size: 21px;
+    font-weight: 600;
     text-anchor: middle;
     dominant-baseline: middle;
+    letter-spacing: -0.02em;
+    paint-order: stroke;
+    stroke: rgba(15, 23, 42, 0.22);
+    stroke-width: 2px;
 }
 .tooltip-trigger:hover {
     cursor: pointer;
@@ -1065,10 +1082,15 @@ input[data-autocomplete-target="input"]:focus {
 }
 
 .stroke-behavior {
-    stroke-width: 5;
+    stroke-width: 3.25;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 .route-path-border {
-    stroke-width: 6;
+    stroke-width: 5.5;
+    opacity: 0.82;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 @media (min-width: 992px) {
@@ -1079,7 +1101,7 @@ input[data-autocomplete-target="input"]:focus {
         font-size: 18px;
     }
     .stroke-behavior {
-        stroke-width: 4;
+        stroke-width: 3;
     }
     .route-path-border {
         stroke-width: 5;

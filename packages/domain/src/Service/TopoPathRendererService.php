@@ -48,7 +48,7 @@ class TopoPathRendererService
             $borderStroke = $dashed ? 'rgba(255,255,255,0.96)' : 'rgba(15,23,42,0.72)';
             $borderClass = $dashed ? 'route-path-border dashed' : 'route-path-border';
             $parts[] = sprintf(
-                '<path id="border_%d" d="%s" stroke-width="5" stroke="%s" fill="none" class="%s" pointer-events="none"></path>',
+                '<path id="border_%d" d="%s" stroke-width="5.5" stroke="%s" fill="none" class="%s" pointer-events="none"></path>',
                 $id,
                 $this->escapeAttr($d),
                 $borderStroke,

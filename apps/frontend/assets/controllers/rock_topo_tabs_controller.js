@@ -54,6 +54,8 @@ export default class extends Controller {
           }
 
           this._activateTopoMedia(card.id);
+          const image = card.querySelector("[data-topo-image]");
+          if (image instanceof HTMLImageElement) image.fetchPriority = "low";
           this._prefetchObserver?.unobserve(card);
         });
       },

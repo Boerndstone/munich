@@ -32,6 +32,8 @@
 			return div.innerHTML;
 		}
 
+		var TPH_DEFAULT_PATH_COLOR = '#c2410c';
+
 		// --- Step 0: Draw on image ---
 		var drawArea = document.getElementById('tph-drawArea');
 		var drawImg = document.getElementById('tph-drawImg');
@@ -364,7 +366,7 @@
 			var ns = 'http://www.w3.org/2000/svg';
 			while (drawSvg.firstChild) drawSvg.removeChild(drawSvg.firstChild);
 			drawnPaths.forEach(function(p, idx) {
-				var color = p.color || '#E42522';
+				var color = p.color || TPH_DEFAULT_PATH_COLOR;
 				var isSelected = selectedPathIndex === idx;
 				var pathD = (isSelected && editingPathModel && editingPathModel.length >= 2) ? pathModelToD(editingPathModel, selectedPathSmooth) : p.d;
 				var hitPath = document.createElementNS(ns, 'path');
@@ -444,7 +446,7 @@
 			if (currentPath.length >= 2) {
 				var path = document.createElementNS(ns, 'path');
 				path.setAttribute('d', buildPathD(currentPath, drawSmoothMode));
-				path.setAttribute('stroke', '#E42522');
+				path.setAttribute('stroke', TPH_DEFAULT_PATH_COLOR);
 				path.setAttribute('stroke-width', '2');
 				path.setAttribute('fill', 'none');
 				drawSvg.appendChild(path);
@@ -459,7 +461,7 @@
 						guideLine.setAttribute('y1', currentGuide.y1);
 						guideLine.setAttribute('x2', currentGuide.x2);
 						guideLine.setAttribute('y2', currentGuide.y2);
-						guideLine.setAttribute('stroke', '#E42522');
+						guideLine.setAttribute('stroke', TPH_DEFAULT_PATH_COLOR);
 						drawSvg.appendChild(guideLine);
 					}
 				}
@@ -470,7 +472,7 @@
 				circle.setAttribute('cx', pt[0]);
 				circle.setAttribute('cy', pt[1]);
 				circle.setAttribute('r', '6');
-				circle.setAttribute('fill', '#E42522');
+				circle.setAttribute('fill', TPH_DEFAULT_PATH_COLOR);
 				circle.setAttribute('stroke', '#fff');
 				circle.setAttribute('stroke-width', '1');
 				drawSvg.appendChild(circle);
@@ -481,7 +483,7 @@
 			if (typeof paths !== 'undefined' && Array.isArray(paths) && paths.length >= 0) {
 				drawnPaths = paths.map(function(p) {
 					var d = (p && (p.d != null ? p.d : p.path)) || '';
-					return { d: d, color: (p && p.color) || '#E42522', dot: !!(p && p.dot), smooth: !!(p && p.smooth) || pathHasCurves(d) };
+					return { d: d, color: (p && p.color) || TPH_DEFAULT_PATH_COLOR, dot: !!(p && p.dot), smooth: !!(p && p.smooth) || pathHasCurves(d) };
 				}).filter(function(p) { return p.d !== ''; });
 			}
 		}
@@ -834,7 +836,7 @@
 				var pr = prevByD.get(d);
 				return {
 					d: d,
-					color: pr && pr.color ? pr.color : '#E42522',
+					color: pr && pr.color ? pr.color : TPH_DEFAULT_PATH_COLOR,
 					dashed: pr ? pr.dashed : false,
 					dot: pr ? pr.dot : false,
 					smooth: pr ? pr.smooth : pathHasCurves(d),
@@ -880,7 +882,7 @@
 			parsePaths();
 			var lines = paths.map(function(p) {
 				var parts = ["'d' => '" + p.d.replace(/'/g, "\\'") + "'"];
-				if (p.color && p.color !== '#E42522') parts.push("'color' => '" + p.color + "'");
+				if (p.color && p.color !== TPH_DEFAULT_PATH_COLOR) parts.push("'color' => '" + p.color + "'");
 				if (p.dashed) parts.push("'dashed' => true");
 				if (p.dot) parts.push("'dot' => true");
 				return '                [' + parts.join(', ') + ']';
@@ -891,7 +893,7 @@
 		function getPhpLiteralContent() {
 			return paths.map(function(p) {
 				var parts = ["'d' => '" + p.d.replace(/'/g, "\\'") + "'"];
-				if (p.color && p.color !== '#E42522') parts.push("'color' => '" + p.color + "'");
+				if (p.color && p.color !== TPH_DEFAULT_PATH_COLOR) parts.push("'color' => '" + p.color + "'");
 				if (p.dashed) parts.push("'dashed' => true");
 				if (p.dot) parts.push("'dot' => true");
 				return '[' + parts.join(', ') + ']';
@@ -968,7 +970,7 @@
 					paths = Array.isArray(parsed) ? parsed : [];
 					drawnPaths = paths.map(function(p) {
 						var d = (p && (p.d != null ? p.d : p.path)) || '';
-						return { d: d, color: (p && p.color) || '#E42522', dot: !!(p && p.dot) };
+						return { d: d, color: (p && p.color) || TPH_DEFAULT_PATH_COLOR, dot: !!(p && p.dot) };
 					}).filter(function(p) { return p.d !== ''; });
 					autoApplyGradeColorsIfTopoRoutes();
 					pathsUiSync();

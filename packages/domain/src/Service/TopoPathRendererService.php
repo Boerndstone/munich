@@ -31,7 +31,7 @@ class TopoPathRendererService
                 continue;
             }
             $id = $i + 1;
-            $color = $path['color'] ?? '#E42522';
+            $color = $path['color'] ?? '#c2410c';
             $dashed = !empty($path['dashed']);
             $dot = !empty($path['dot']);
             if ($dot) {

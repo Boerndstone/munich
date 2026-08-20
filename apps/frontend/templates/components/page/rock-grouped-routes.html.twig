@@ -11,7 +11,7 @@
 					{% set aspectRatio = viewBoxValue|viewbox_to_aspect_ratio %}
 					{% set pathsSvg = topo_paths_overlay(topoData.topoPathCollection, null) %}
 					{% if pathsSvg is not empty %}
-					<div class="topo-two-layer" data-topo-state="{{ loop.first ? 'ready' : 'loading' }}" aria-busy="{{ loop.first ? 'false' : 'true' }}"{% if aspectRatio %} style="aspect-ratio: {{ aspectRatio }};"{% endif %}>
+					<div class="topo-two-layer" data-topo-state="{{ loop.first ? 'ready' : 'loading' }}" aria-busy="false"{% if aspectRatio %} style="aspect-ratio: {{ aspectRatio }};"{% endif %}>
 						<div class="topo-two-layer__loader" aria-hidden="true">
 							<div class="topo-two-layer__loader-stack">
 								<twig:Skeleton class="topo-two-layer__skeleton topo-two-layer__skeleton--hero" />

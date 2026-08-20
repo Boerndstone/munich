@@ -41,7 +41,7 @@ export default class extends Controller {
       }
     });
 
-    this._prefetchObserver = new IntersectionObserver(
+    this._prefetchObserver = typeof IntersectionObserver === "undefined" ? null : new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) {

@@ -1,0 +1,8 @@
+{# @block content Optional inner content. Usually left empty. #}
+<div
+    data-slot="skeleton"
+    class="{{ ('animate-pulse rounded-md bg-muted/60 dark:bg-muted/40 ' ~ attributes.render('class'))|tailwind_merge }}"
+    {{ attributes.without('class') }}
+>
+    {%- block content %}{% endblock -%}
+</div>

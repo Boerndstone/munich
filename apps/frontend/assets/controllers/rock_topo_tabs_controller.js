@@ -41,6 +41,37 @@ export default class extends Controller {
       }
     });
 
+    this._prefetchObserver = typeof IntersectionObserver === "undefined" ? null : new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          const card = entry.target;
+          if (!(card instanceof HTMLElement) || !card.id) {
+            return;
+          }
+
+          this._activateTopoMedia(card.id);
+          const image = card.querySelector("[data-topo-image]");
+          if (image instanceof HTMLImageElement) image.fetchPriority = "low";
+          this._prefetchObserver?.unobserve(card);
+        });
+      },
+      {
+        root: null,
+        rootMargin: "420px 0px 420px 0px",
+        threshold: 0.01,
+      }
+    );
+
+    this._topoCards.forEach((card) => {
+      if (!this._loadedTopoIds?.has(card.id)) {
+        this._prefetchObserver.observe(card);
+      }
+    });
+
     this._tabsList.addEventListener("click", this._onTabClick);
     window.addEventListener("scroll", this._onWindowScroll, { passive: true });
     this._activateInitialTopo();
@@ -57,6 +88,8 @@ export default class extends Controller {
     this._tabsList = null;
     this._tabsRoot = null;
     this._tabs = null;
+    this._prefetchObserver?.disconnect();
+    this._prefetchObserver = null;
     this._topoCards?.forEach((card) => {
       const image = card.querySelector("[data-topo-image]");
       if (!(image instanceof HTMLImageElement)) {
@@ -139,6 +172,12 @@ export default class extends Controller {
     }
 
     frame.dataset.topoState = state;
+    frame.setAttribute("aria-busy", state === "loading" ? "true" : "false");
+
+    const status = frame.querySelector("[data-topo-loading-status]");
+    if (status instanceof HTMLElement) {
+      status.hidden = state !== "loading";
+    }
   }
 
   _onImageLoad(event) {

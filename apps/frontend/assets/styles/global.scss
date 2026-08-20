@@ -949,7 +949,7 @@ input[data-autocomplete-target="input"]:focus {
     position: relative;
     width: 100%;
     overflow: hidden;
-    background: linear-gradient(135deg, rgba(148, 163, 184, 0.12), rgba(226, 232, 240, 0.22));
+    background: transparent;
 
     .topo-two-layer__bg {
         display: block;
@@ -999,22 +999,51 @@ input[data-autocomplete-target="input"]:focus {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.12));
         transition: opacity 180ms ease, visibility 180ms ease;
     }
 
-    .topo-two-layer__spinner {
-        width: 2.1rem;
-        height: 2.1rem;
+    .topo-two-layer__loader-stack {
+        display: flex;
+        width: min(78%, 27rem);
+        flex-direction: column;
+        gap: 0.75rem;
+        pointer-events: none;
+    }
+
+    .topo-two-layer__skeleton {
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        backdrop-filter: blur(2px);
+    }
+
+    .topo-two-layer__skeleton--hero {
+        aspect-ratio: 16 / 10;
+        width: 100%;
+        border-radius: 1rem;
+    }
+
+    .topo-two-layer__skeleton-lines {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding-inline: 0.25rem;
+    }
+
+    .topo-two-layer__skeleton--line {
         border-radius: 9999px;
-        border: 2.5px solid rgba(100, 116, 139, 0.22);
-        border-top-color: rgba(14, 116, 144, 0.9);
-        animation: mc-topo-spin 0.85s linear infinite;
+        height: 0.8rem;
+    }
+
+    .topo-two-layer__skeleton--line-lg {
+        width: 44%;
+    }
+
+    .topo-two-layer__skeleton--line-sm {
+        width: 26%;
     }
 
     &[data-topo-state="loading"] {
         .topo-two-layer__bg {
-            opacity: 0.08;
+            opacity: 0;
         }
 
         .topo-two-layer__overlay {
@@ -1033,12 +1062,6 @@ input[data-autocomplete-target="input"]:focus {
         .topo-two-layer__overlay {
             opacity: 1;
         }
-    }
-}
-
-@keyframes mc-topo-spin {
-    to {
-        transform: rotate(360deg);
     }
 }
 

@@ -5,31 +5,42 @@ import colors from "tailwindcss/colors";
 Chart.register(...registerables);
 
 const LABELS_GRADES = ["3", "4", "5", "6", "7", "8", "9", "10", "11"];
+const GRADE_FALLBACKS = {
+  3: "#059669",
+  4: "#16a34a",
+  5: "#65a30d",
+  6: "#d97706",
+  7: "#ea580c",
+  8: "#c2410c",
+  9: "#dc2626",
+  10: "#e11d48",
+  11: "#4338ca",
+  project: "#334155",
+};
 
-/** Grade bucket colors (index matches LABELS_GRADES). */
-function gradeColorAt(index, dark) {
-  const c = (scale, lightKey, darkKey) => scale[dark ? darkKey : lightKey];
-  const palette = [
-    c(colors.emerald, 500, 400),
-    c(colors.green, 500, 400),
-    c(colors.lime, 500, 400),
-    c(colors.yellow, 500, 400),
-    c(colors.amber, 500, 400),
-    c(colors.orange, 500, 400),
-    c(colors.red, 500, 400),
-    c(colors.rose, 600, 400),
-    c(colors.rose, 800, 600),
-  ];
-  return palette[index] ?? palette[palette.length - 1];
+function gradeToken(name, fallback) {
+  const value = getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim();
+  return value || fallback;
 }
 
-function colorsForLabels(labels, dark) {
+/** Grade bucket colors (index matches LABELS_GRADES). */
+function gradeColorAt(index) {
+  const label = LABELS_GRADES[index];
+  if (!label) {
+    return GRADE_FALLBACKS[11];
+  }
+  return gradeToken(`--grade-bucket-${label}`, GRADE_FALLBACKS[label]);
+}
+
+function colorsForLabels(labels) {
   return labels.map((label) => {
     if (label === "Proj.") {
-      return dark ? colors.zinc[500] : colors.zinc[800];
+      return gradeToken("--grade-project", GRADE_FALLBACKS.project);
     }
     const idx = LABELS_GRADES.indexOf(label);
-    return gradeColorAt(idx >= 0 ? idx : 0, dark);
+    return gradeColorAt(idx >= 0 ? idx : 0);
   });
 }
 
@@ -198,9 +209,9 @@ export default class extends Controller {
         datasets: [
           {
             data: values,
-            backgroundColor: colorsForLabels(labels, dark),
+            backgroundColor: colorsForLabels(labels),
             borderWidth: 0,
-            borderRadius: 3,
+            borderRadius: 4,
             barPercentage: 0.85,
             categoryPercentage: 0.9,
           },

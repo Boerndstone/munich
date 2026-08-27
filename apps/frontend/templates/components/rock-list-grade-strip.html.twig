@@ -3,15 +3,15 @@
 {% set proj_n = project_count|default(0) %}
 {% set route_total = rock.amountRoutes|default(0) %}
 {% set strip_bg = {
-	3: 'bg-green-500 dark:bg-green-400',
-	4: 'bg-green-600 dark:bg-green-500',
-	5: 'bg-green-700 dark:bg-green-600',
-	6: 'bg-amber-500 dark:bg-amber-400',
-	7: 'bg-amber-600 dark:bg-amber-500',
-	8: 'bg-red-500 dark:bg-red-400',
-	9: 'bg-red-600 dark:bg-red-500',
-	10: 'bg-red-700 dark:bg-red-600',
-	11: 'bg-red-800 dark:bg-red-700',
+	3: 'background-color: var(--grade-bucket-3);',
+	4: 'background-color: var(--grade-bucket-4);',
+	5: 'background-color: var(--grade-bucket-5);',
+	6: 'background-color: var(--grade-bucket-6);',
+	7: 'background-color: var(--grade-bucket-7);',
+	8: 'background-color: var(--grade-bucket-8);',
+	9: 'background-color: var(--grade-bucket-9);',
+	10: 'background-color: var(--grade-bucket-10);',
+	11: 'background-color: var(--grade-bucket-11);',
 } %}
 {% set strip_text_on_color = 'text-white' %}
 {% set segments = [] %}
@@ -58,14 +58,16 @@
 						{% set seg_divider = not loop.first ? ' border-l border-white/25 dark:border-black/20' : '' %}
 						{% if seg.kind == 'grade' %}
 							<div
-								class="flex min-w-0 flex-1 items-center justify-center px-px text-center text-[10px] font-light leading-none tabular-nums{{ seg_divider }} {{ strip_bg[seg.g] }} {{ strip_text_on_color }}"
+								class="flex min-w-0 flex-1 items-center justify-center px-px text-center text-[10px] font-light leading-none tabular-nums{{ seg_divider }} {{ strip_text_on_color }}"
+								style="{{ strip_bg[seg.g] }}"
 								title="Grad {{ seg.g }}: {{ seg.n }}"
 							>
 								{{ seg.g }}
 							</div>
 						{% else %}
 							<div
-								class="flex min-w-0 flex-1 items-center justify-center px-px text-center text-[10px] font-light leading-none{{ seg_divider }} bg-gray-800 text-white dark:bg-gray-500"
+								class="flex min-w-0 flex-1 items-center justify-center px-px text-center text-[10px] font-light leading-none{{ seg_divider }} text-white"
+								style="background-color: var(--grade-project);"
 								title="{{ 'projects'|trans }}: {{ seg.n }}"
 							>
 								Proj.

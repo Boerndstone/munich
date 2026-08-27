@@ -18,9 +18,63 @@ export default class extends Controller {
 
     this._onTabClick = this._onTabClick.bind(this);
     this._onWindowScroll = this._onWindowScroll.bind(this);
+    this._onImageLoad = this._onImageLoad.bind(this);
+    this._onImageError = this._onImageError.bind(this);
+    this._topoCards = Array.from(document.querySelectorAll("[data-topo-card]"));
+    this._loadedTopoIds = new Set(
+      this._topoCards
+        .filter((card) => card.querySelector("[data-topo-image][data-topo-loaded='true']"))
+        .map((card) => card.id)
+    );
+
+    this._topoCards.forEach((card) => {
+      const image = card.querySelector("[data-topo-image]");
+      if (!(image instanceof HTMLImageElement)) {
+        return;
+      }
+
+      image.addEventListener("load", this._onImageLoad);
+      image.addEventListener("error", this._onImageError);
+
+      if (image.complete && image.currentSrc && image.dataset.topoLoaded === "true") {
+        this._setTopoState(card, "ready");
+      }
+    });
+
+    this._prefetchObserver = typeof IntersectionObserver === "undefined" ? null : new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          const card = entry.target;
+          if (!(card instanceof HTMLElement) || !card.id) {
+            return;
+          }
+
+          this._activateTopoMedia(card.id);
+          const image = card.querySelector("[data-topo-image]");
+          if (image instanceof HTMLImageElement) image.fetchPriority = "low";
+          this._prefetchObserver?.unobserve(card);
+        });
+      },
+      {
+        root: null,
+        rootMargin: "420px 0px 420px 0px",
+        threshold: 0.01,
+      }
+    );
+
+    this._topoCards.forEach((card) => {
+      if (!this._loadedTopoIds?.has(card.id)) {
+        this._prefetchObserver.observe(card);
+      }
+    });
 
     this._tabsList.addEventListener("click", this._onTabClick);
     window.addEventListener("scroll", this._onWindowScroll, { passive: true });
+    this._activateInitialTopo();
     this._onWindowScroll();
   }
 
@@ -34,8 +88,108 @@ export default class extends Controller {
     this._tabsList = null;
     this._tabsRoot = null;
     this._tabs = null;
+    this._prefetchObserver?.disconnect();
+    this._prefetchObserver = null;
+    this._topoCards?.forEach((card) => {
+      const image = card.querySelector("[data-topo-image]");
+      if (!(image instanceof HTMLImageElement)) {
+        return;
+      }
+
+      image.removeEventListener("load", this._onImageLoad);
+      image.removeEventListener("error", this._onImageError);
+    });
+    this._topoCards = null;
+    this._loadedTopoIds = null;
     this._onTabClick = null;
     this._onWindowScroll = null;
+    this._onImageLoad = null;
+    this._onImageError = null;
+  }
+
+  _activateInitialTopo() {
+    const hashId = window.location.hash ? window.location.hash.slice(1) : "";
+    if (hashId && document.getElementById(hashId)?.hasAttribute("data-topo-card")) {
+      this._activateTopoMedia(hashId);
+      this._syncTabsActive(hashId);
+      return;
+    }
+
+    const firstTab = this._tabs?.[0];
+    const firstId = firstTab?.dataset?.tabId || firstTab?.getAttribute("href")?.slice(1);
+    if (firstId) {
+      this._activateTopoMedia(firstId);
+      this._syncTabsActive(firstId);
+    }
+  }
+
+  _activateTopoMedia(targetId) {
+    if (!targetId || this._loadedTopoIds?.has(targetId) === true) {
+      return;
+    }
+
+    const targetCard = document.getElementById(targetId);
+    const image = targetCard?.querySelector("[data-topo-image]");
+    if (!image) {
+      return;
+    }
+
+    const src = image.dataset.topoSrc;
+    if (!src) {
+      this._loadedTopoIds?.add(targetId);
+      return;
+    }
+
+    this._setTopoState(targetCard, "loading");
+    image.src = src;
+    image.loading = "eager";
+    if (image.dataset.topoSrcset) {
+      image.srcset = image.dataset.topoSrcset;
+    }
+    if (image.dataset.topoSizes) {
+      image.sizes = image.dataset.topoSizes;
+    }
+    image.dataset.topoLoaded = "true";
+    image.fetchPriority = "high";
+    delete image.dataset.topoSrc;
+    delete image.dataset.topoSrcset;
+    delete image.dataset.topoSizes;
+    this._loadedTopoIds?.add(targetId);
+
+    if (image.complete && image.currentSrc) {
+      this._setTopoState(targetCard, "ready");
+    }
+  }
+
+  _setTopoState(card, state) {
+    if (!card) {
+      return;
+    }
+
+    const frame = card.querySelector(".topo-two-layer");
+    if (!frame) {
+      return;
+    }
+
+    frame.dataset.topoState = state;
+    frame.setAttribute("aria-busy", state === "loading" ? "true" : "false");
+
+    const status = frame.querySelector("[data-topo-loading-status]");
+    if (status instanceof HTMLElement) {
+      status.hidden = state !== "loading";
+    }
+  }
+
+  _onImageLoad(event) {
+    const image = event.currentTarget;
+    const card = image?.closest("[data-topo-card]");
+    this._setTopoState(card, "ready");
+  }
+
+  _onImageError(event) {
+    const image = event.currentTarget;
+    const card = image?.closest("[data-topo-card]");
+    this._setTopoState(card, "error");
   }
 
   _syncTabsActive(value) {
@@ -83,6 +237,7 @@ export default class extends Controller {
       tab.dataset?.tabId ||
       tab.getAttribute("href")?.slice(1);
     if (!targetId) return;
+    this._activateTopoMedia(targetId);
     const targetCard = document.getElementById(targetId);
     if (targetCard) {
       const cardOffset = targetCard.offsetTop - this._navigationHeight;
@@ -106,6 +261,7 @@ export default class extends Controller {
       const top = targetElement.offsetTop - this._navigationHeight - 200;
       const height = targetElement.offsetHeight;
       if (scrollPos >= top && scrollPos < top + height) {
+        this._activateTopoMedia(targetId);
         this._syncTabsActive(targetId);
         this._centerTab(tab);
       }

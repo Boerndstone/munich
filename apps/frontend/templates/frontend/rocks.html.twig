@@ -38,6 +38,8 @@
 	{{ setTitle }}
 {% endblock %}
 
+{% block body_attributes %}data-prefetch-links-idle-selector-value="[data-prefetch-candidate='rock-detail']" data-prefetch-links-max-idle-value="8"{% endblock %}
+
 {% block body %}
 	{{ include('components/layout/navigation.html.twig') }}
 	<main id="main-content">

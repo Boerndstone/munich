@@ -15,7 +15,6 @@ Encore
   .addEntry("rock", "./assets/rock.js")
   .addEntry("routeparams", "./assets/routeparams.js")
   .addEntry("filter", "./assets/filter.js")
-  .addEntry("topo_editor", "./assets/topo_editor.js")
   .copyFiles({
     from: "./assets/images",
     to: "images/[path][name].[ext]",

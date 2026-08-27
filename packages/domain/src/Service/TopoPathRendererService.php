@@ -31,7 +31,7 @@ class TopoPathRendererService
                 continue;
             }
             $id = $i + 1;
-            $color = $path['color'] ?? '#E42522';
+            $color = $path['color'] ?? '#c2410c';
             $dashed = !empty($path['dashed']);
             $dot = !empty($path['dot']);
             if ($dot) {
@@ -45,10 +45,10 @@ class TopoPathRendererService
             $startY = $m[2];
             $startYMinusOne = (float) $startY - 1;
 
-            $borderStroke = $dashed ? '#ffffff' : '#000000';
+            $borderStroke = $dashed ? 'rgba(255,255,255,0.96)' : 'rgba(15,23,42,0.72)';
             $borderClass = $dashed ? 'route-path-border dashed' : 'route-path-border';
             $parts[] = sprintf(
-                '<path id="border_%d" d="%s" stroke-width="4" stroke="%s" fill="none" class="%s" pointer-events="none"></path>',
+                '<path id="border_%d" d="%s" stroke-width="5.5" stroke="%s" fill="none" class="%s" pointer-events="none"></path>',
                 $id,
                 $this->escapeAttr($d),
                 $borderStroke,
@@ -69,10 +69,10 @@ class TopoPathRendererService
                 $this->escapeAttr($d),
                 $id
             );
-            $circleStroke = $dashed ? '#ffffff' : '#000';
+            $circleStroke = $dashed ? 'rgba(255,255,255,0.96)' : 'rgba(15,23,42,0.62)';
             $circleClass = $dashed ? 'number-circle' : 'number-circle tooltip-trigger';
             $parts[] = sprintf(
-                '<circle cx="%s" cy="%s" r="18" fill="%s" stroke="%s" stroke-width="1" class="%s" data-path-id="%d"></circle>',
+                '<circle cx="%s" cy="%s" r="18" fill="%s" stroke="%s" stroke-width="1.5" class="%s" data-path-id="%d"></circle>',
                 $startX,
                 $startYMinusOne,
                 $this->escapeAttr($color),

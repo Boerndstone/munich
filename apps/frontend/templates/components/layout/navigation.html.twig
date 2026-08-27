@@ -18,25 +18,39 @@
 						{% set currentAreaSlug = _route in ['show_rock', 'show_rock_en'] ? app.request.attributes.get('areaSlug') : (_route in ['show_rocks', 'show_rocks_en'] ? app.request.attributes.get('slug') : null) %}
 						{% set currentRockSlug = _route in ['show_rock', 'show_rock_en'] ? app.request.attributes.get('slug') : null %}
 						<ul class="m-0 list-none p-0">
-							{% for area in getSidebarAreas() %}
+							{% for area in getSidebarAreaSummaries() %}
 								{% set isCurrentArea = currentAreaSlug and area.slug == currentAreaSlug %}
+								{% set rocksEndpoint = path(app.request.locale == 'en' ? 'navigation_area_rocks_en' : 'navigation_area_rocks', {
+									slug: area.slug,
+									currentAreaSlug: currentAreaSlug,
+									currentRockSlug: currentRockSlug
+								}) %}
 								<li>
-									<details class="group" {{ isCurrentArea ? 'open' : '' }}>
+									<details
+										class="group"
+										data-controller="lazy-navigation"
+										data-action="toggle->lazy-navigation#toggle"
+										data-lazy-navigation-area-slug-value="{{ area.slug }}"
+										data-lazy-navigation-endpoint-value="{{ rocksEndpoint }}"
+										data-lazy-navigation-loaded-value="{{ isCurrentArea ? 'true' : 'false' }}"
+										{{ isCurrentArea ? 'open' : '' }}
+									>
 										<summary class="flex cursor-pointer list-none items-center gap-2 px-2 py-2 text-sm text-gray-900 marker:hidden [&::-webkit-details-marker]:hidden dark:text-gray-100">
 											<img src="https://www.munichclimbs.de/build/images/navigationThumbs/{{ area.image }}.webp" alt="" class="size-[18px] shrink-0 rounded" loading="lazy">
 											<span class="min-w-0 flex-1 truncate">{{ area.name }}</span>
 											<span class="nav-area-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
 										</summary>
-										{% if area.rocks is not empty %}
-											<ul class="m-0 list-none border-l border-gray-300 py-1 ps-2 dark:border-gray-600" style="margin-left: 8px;">
-												{% for rock in area.rocks %}
-													{% set isCurrentRock = isCurrentArea and currentRockSlug and rock.slug == currentRockSlug %}
-													<li class="rounded px-1 py-0.5 {{ isCurrentRock ? 'bg-black text-white' : '' }}">
-														<a href="{{ rock_path(area.slug, rock.slug) }}" title="{{ 'nav.rock_link_title'|trans({ '%rock%': rock.name }) }}" class="block w-full truncate py-1 ps-2 text-sm no-underline {{ isCurrentRock ? 'text-white' : 'text-gray-800 dark:text-gray-200' }}" data-area="{{ area.name }}" data-rocks-information="{{ rock.name }}" data-banned="0">{{ rock.name }}</a>
-													</li>
-												{% endfor %}
-											</ul>
-										{% endif %}
+										<div data-lazy-navigation-target="content">
+											{% if isCurrentArea %}
+												{{ include('components/layout/_navigation-rocks.html.twig', {
+													rocks: getSidebarRocks(area.slug),
+													areaSlug: area.slug,
+													isCurrentArea: isCurrentArea,
+													currentRockSlug: currentRockSlug
+												}) }}
+											{% endif %}
+										</div>
+									<p data-lazy-navigation-target="status" class="px-2 py-2 text-xs text-gray-500 dark:text-gray-400" role="status" aria-live="polite" hidden></p>
 									</details>
 								</li>
 							{% endfor %}

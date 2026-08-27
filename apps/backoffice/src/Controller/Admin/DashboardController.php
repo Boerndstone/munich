@@ -198,8 +198,8 @@ class DashboardController extends AbstractDashboardController
             'datasets' => [
                 [
                     'label' => 'Schwierigkeiten',
-                    'backgroundColor' => ['#15803d', '#075985', '#b91c1c', 'black'],
-                    'borderColor' => 'rgb(255, 99, 132)',
+                    'backgroundColor' => ['#16a34a', '#ea580c', '#e11d48', '#334155'],
+                    'borderColor' => 'rgba(15, 23, 42, 0.14)',
                     'data' => [$belowSix, $belowEight, $greaterEight, $projects],
                 ],
             ],
@@ -227,8 +227,8 @@ class DashboardController extends AbstractDashboardController
             'datasets' => [
                 [
                     'label' => 'Schwierigkeiten',
-                    'backgroundColor' => ['#b91c1c', '#15803d'],
-                    'borderColor' => 'rgb(255, 99, 132)',
+                    'backgroundColor' => ['#334155', '#16a34a'],
+                    'borderColor' => 'rgba(15, 23, 42, 0.14)',
                     'data' => [$allRoutes, $alreadyClimbed],
                 ],
             ],

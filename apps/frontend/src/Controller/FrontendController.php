@@ -107,6 +107,7 @@ class FrontendController extends AbstractController
     #[Route(path: '/en', name: 'index_en', defaults: ['_locale' => 'en'], priority: 100)]
     public function index(
         FrontendCacheService $frontendCacheService,
+        TopoRepository $topoRepository,
         Request $request,
         TranslatorInterface $translator
     ): Response {
@@ -114,11 +115,13 @@ class FrontendController extends AbstractController
         // Use cached data for better performance
         $latestRoutes = $frontendCacheService->getLatestRoutes();
         $banned = $frontendCacheService->getBannedRocks();
+        $latestTopo = $topoRepository->findLatestPublishedDrawnTopo();
         $searchTerm = $request->query->get('q');
 
         $response = $this->render('frontend/index.html.twig', [
             'latestRoutes' => $latestRoutes,
             'banned' => $banned,
+            'latestTopo' => $latestTopo,
         ]);
 
         // Enable HTTP caching - page can be cached for 5 minutes (300 seconds),

@@ -51,8 +51,9 @@
 					</section>
 					<aside class="grid min-w-0 auto-rows-auto grid-cols-1 items-start gap-6 self-start lg:col-span-4" aria-label="{{ 'index.sidebar_label'|trans({}, 'messages') }}">
 						{{ include('components/home/banned-rocks.html.twig') }}
-						{{ include('components/home/support-project.html.twig') }}
+						{{ include('components/home/latest-topo.html.twig', { latestTopo: latestTopo|default(null) }) }}
 						{{ include('components/home/latest-routes.html.twig') }}
+						{{ include('components/home/support-project.html.twig') }}
 					</aside>
 				</div>
 			</section>

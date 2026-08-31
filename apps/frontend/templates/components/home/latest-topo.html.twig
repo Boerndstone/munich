@@ -1,0 +1,44 @@
+{% if latestTopo is defined and latestTopo is not null %}
+	{% set latestRock = latestTopo.rocks %}
+	{% set latestArea = latestRock ? latestRock.area : null %}
+	{% set topoLink = latestArea and latestRock ? rock_path(latestArea.slug, latestRock.slug) ~ '#' ~ (latestTopo.name|custom_replace|lower) : null %}
+	{% set srcsetData = latestTopo.image ? (latestTopo.image|topo_image_srcset) : null %}
+	<div class="overflow-hidden rounded-lg border border-[var(--grade-bucket-9)] bg-white shadow-md dark:border-[var(--grade-bucket-9)]/70 dark:bg-black">
+		<h3 class="mb-0 bg-[var(--grade-bucket-9)] px-3 py-2 text-lg font-light leading-normal text-white dark:bg-[var(--grade-bucket-9)]">{{ 'home.latest_topo_title'|trans }}</h3>
+		<div class="space-y-3 px-3 py-3 text-sm leading-relaxed text-gray-900 dark:text-gray-100">
+			{% if topoLink %}
+				<a href="{{ topoLink }}" class="group block overflow-hidden rounded-lg no-underline">
+					{% if srcsetData %}
+						<img
+							src="{{ srcsetData.src }}"
+							{% if srcsetData.srcset %}srcset="{{ srcsetData.srcset }}"{% endif %}
+							{% if srcsetData.sizes %}sizes="{{ srcsetData.sizes }}"{% endif %}
+							alt="{{ 'home.latest_topo_image_alt'|trans({
+								'%topo%': latestTopo.name|default(''),
+								'%rock%': latestRock.name|default(''),
+								'%area%': latestArea.name|default('')
+							}) }}"
+							class="aspect-[16/10] w-full rounded-lg object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]"
+							loading="lazy"
+							decoding="async"
+						>
+					{% endif %}
+				</a>
+			{% endif %}
+			<div class="space-y-1">
+				<p class="mb-0 text-base font-semibold text-gray-950 dark:text-white">{{ latestTopo.name }}</p>
+				{% if latestRock or latestArea %}
+					<p class="mb-0 text-sm text-gray-700 dark:text-gray-300">
+						{{ latestRock ? latestRock.name : '' }}{% if latestRock and latestArea %} · {% endif %}{{ latestArea ? latestArea.name : '' }}
+					</p>
+				{% endif %}
+			</div>
+			<hr class="my-2 border-0 border-t border-dotted border-gray-300 dark:border-gray-600">
+			{% if topoLink %}
+				<a class="inline-flex items-center text-sm font-semibold text-black no-underline hover:underline dark:text-indigo-300" href="{{ topoLink }}">
+					<span class="chevron-right" aria-hidden="true"></span>{{ 'home.latest_topo_more'|trans }}
+				</a>
+			{% endif %}
+		</div>
+	</div>
+{% endif %}

@@ -8,6 +8,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TopoRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Topo
 {
     #[ORM\Id]
@@ -126,10 +127,9 @@ class Topo
         return $this;
     }
 
-    /**
-     * @ORM\PreUpdate
-     */
-    public function onPreUpdate()
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function touchUpdatedAt(): void
     {
         $this->updatedAt = new \DateTime();
     }

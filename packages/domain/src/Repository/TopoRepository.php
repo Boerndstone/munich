@@ -90,4 +90,26 @@ class TopoRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findLatestPublishedDrawnTopo(): ?Topo
+    {
+        /** @var Topo|null $topo */
+        $topo = $this->createQueryBuilder('topo')
+            ->innerJoin('topo.rocks', 'rock')
+            ->innerJoin('rock.area', 'area')
+            ->where('topo.updatedAt IS NOT NULL')
+            ->andWhere('topo.image IS NOT NULL')
+            ->andWhere("topo.image <> ''")
+            ->andWhere('topo.pathCollection IS NOT NULL')
+            ->andWhere("topo.pathCollection <> ''")
+            ->andWhere('rock.online = true')
+            ->andWhere('area.online = 1')
+            ->orderBy('topo.updatedAt', 'DESC')
+            ->addOrderBy('topo.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $topo;
+    }
 }

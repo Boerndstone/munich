@@ -10,6 +10,7 @@ use App\Dto\RockImprovementSuggestion;
 use App\Service\FooterAreas;
 use App\Service\FrontendCacheService;
 use App\Service\ImageProcessingService;
+use App\Service\RailwayAccessEstimateService;
 use App\Service\RouteGroupingService;
 use App\Form\ContactFormType;
 use App\Form\RockGalleryUploadType;
@@ -235,6 +236,7 @@ class FrontendController extends AbstractController
         TopoRepository $topoRepository,
         PhotosRepository $photosRepository,
         RouteGroupingService $routeGroupingService,
+        RailwayAccessEstimateService $railwayAccessEstimateService,
         #[MapEntity(
             expr: 'repository.findOneByAreaSlugAndRockSlug(areaSlug, slug)',
             message: 'Die Seite konnte nicht gefunden werden.',
@@ -279,6 +281,7 @@ class FrontendController extends AbstractController
             'nature' => $rockDescription[0]['nature'] ?? null,
             'flowers' => $rockDescription[0]['flowers'] ?? null,
         ];
+        $railwayAccesses = $railwayAccessEstimateService->estimatesForRock($rock);
 
         $hasTranslationDescription = $rockRepository->hasTranslationDescription($slug, $locale);
 
@@ -477,6 +480,7 @@ class FrontendController extends AbstractController
             'access' => $rockDescriptionArray['access'],
             'nature' => $rockDescriptionArray['nature'],
             'flowers' => $rockDescriptionArray['flowers'],
+            'railwayAccesses' => $railwayAccesses,
             'routes' => $routes,
             'groupedRoutes' => $groupedRoutes,
             'routesRepository' => $routesRepository,

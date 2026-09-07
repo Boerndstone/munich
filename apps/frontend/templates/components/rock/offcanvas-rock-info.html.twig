@@ -120,7 +120,7 @@
 								<twig:Accordion:Content class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
 									{% if description is defined and description is not null and description|striptags|trim != '' %}
 										{{ description|raw }}
-									{% else %}
+									{% elseif rock.rockDescription is defined %}
 										{{ rock.rockDescription|raw }}
 									{% endif %}
 								</twig:Accordion:Content>
@@ -149,7 +149,7 @@
 									{% endif %}
 									{% if access is defined and access is not null and access|striptags|trim != '' %}
 										{{ access|raw }}
-									{% else %}
+									{% elseif rock.rockAccess is defined %}
 										{{ rock.rockAccess|raw }}
 									{% endif %}
 								</twig:Accordion:Content>
@@ -177,7 +177,7 @@
 								<twig:Accordion:Content class="border-t border-[var(--theme-border)] px-5 pb-3 pt-2 text-sm leading-relaxed text-[var(--theme-text)] [&_a]:text-sky-700 [&_a]:underline dark:[&_a]:text-sky-400">
 									{% if nature is defined and nature is not null and nature|striptags|trim != '' %}
 										{{ nature|raw }}
-									{% else %}
+									{% elseif rock.rockNature is defined %}
 										{{ rock.rockNature|raw }}
 									{% endif %}
 								</twig:Accordion:Content>

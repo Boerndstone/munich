@@ -3,8 +3,10 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\VideosRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -16,6 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new GetCollection(normalizationContext: ['groups' => ['video:read']]),
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['videoArea.id' => 'exact', 'videoRocks.id' => 'exact', 'videoRoutes.id' => 'exact'])]
 class Videos
 {
     #[ORM\Id]

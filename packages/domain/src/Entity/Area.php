@@ -22,6 +22,7 @@ use ApiPlatform\Metadata\Get;
         new GetCollection(normalizationContext: ['groups' => ['area:read']]), // Collection
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['slug' => 'exact'])]
 
 class Area
 {
@@ -45,6 +46,7 @@ class Area
 
     #[Assert\NotNull(message: 'Die Angabe zur Lage darf nicht leer sein.')]
     #[ORM\Column(type: Types::STRING, length: 25)]
+    #[Groups(['area:read'])]
     private ?string $orientation = null;
 
     #[ORM\OneToMany(mappedBy: 'area', targetEntity: Rock::class, fetch: 'EXTRA_LAZY')]
@@ -70,28 +72,36 @@ class Area
     private ?string $image = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    #[Groups(['area:read'])]
     private ?string $headerImage = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 4, scale: 2, nullable: true)]
+    #[Groups(['area:read'])]
     private ?string $lat = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 4, scale: 2, nullable: true)]
+    #[Groups(['area:read'])]
     private ?string $lng = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    #[Groups(['area:read'])]
     private int $zoom;
 
     /** Driving time from Munich in minutes (OSRM), filled via app:travel-time:import. */
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    #[Groups(['area:read'])]
     private ?int $travelTimeMinutes = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['area:read'])]
     private ?string $rockResponsibility = null;
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
+    #[Groups(['area:read'])]
     private ?array $railwayStation = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['area:read'])]
     private ?string $kletterkonzeption = null;
 
     public function __construct()

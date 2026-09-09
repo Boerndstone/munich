@@ -54,6 +54,11 @@ services:
     tags:
       - { name: kernel.event_subscriber }
 
+  App\ApiPlatform\PublicVisibilityExtension:
+    tags:
+      - { name: api_platform.doctrine.orm.query_extension.collection }
+      - { name: api_platform.doctrine.orm.query_extension.item }
+
   App\Service\TopoSvgParser:
     arguments:
       $baseUrl: "%app.topo_image_base_url%"

@@ -3,8 +3,10 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\PhotosRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -18,6 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(normalizationContext: ['groups' => ['photo:read']]),
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['belongsToArea.id' => 'exact', 'belongsToRock.id' => 'exact', 'belongsToRoute.id' => 'exact'])]
 class Photos
 {
     #[ORM\Id]
@@ -52,7 +55,6 @@ class Photos
     private ?string $photgrapher = null;
 
     #[ORM\Column(length: 20, options: ['default' => 'pending'])]
-    #[Groups(['photo:read'])]
     private string $status = 'pending';
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]

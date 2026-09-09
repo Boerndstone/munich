@@ -3,8 +3,10 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\RoutesRepository;
 use App\Service\GradeTranslationService;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -23,6 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(normalizationContext: ['groups' => ['route:read']]),
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['area.id' => 'exact', 'rock.id' => 'exact', 'topoId' => 'exact', 'grade' => 'exact'])]
 class Routes
 {
     #[ORM\Id]

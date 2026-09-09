@@ -7,6 +7,7 @@ use App\Util\SlugUtil;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -23,6 +24,7 @@ use ApiPlatform\Metadata\Get;
         new GetCollection(normalizationContext: ['groups' => ['rock:read']]), // Collection
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['area.id' => 'exact', 'slug' => 'exact', 'banned' => 'exact'])]
 class Rock
 {
     #[ORM\Id]
@@ -51,57 +53,75 @@ class Rock
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::INTEGER)]
+    #[Groups(['rock:read'])]
     protected ?int $nr = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    #[Groups(['rock:read'])]
     private ?int $zone = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    #[Groups(['rock:read'])]
     private ?int $banned = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['rock:read'])]
     protected ?int $height = null;
 
     #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
+    #[Groups(['rock:read'])]
     private ?string $orientation = null;
 
     #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
+    #[Groups(['rock:read'])]
     private ?string $season = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['rock:read'])]
     private ?bool $childFriendly = null;
 
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    #[Groups(['rock:read'])]
     private ?bool $sunny = null;
 
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    #[Groups(['rock:read'])]
     private ?bool $rain = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    #[Groups(['rock:read'])]
     private ?string $image = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 6, nullable: true)]
+    #[Groups(['rock:read'])]
     private ?string $lat = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 6, nullable: true)]
+    #[Groups(['rock:read'])]
     private ?string $lng = null;
 
     #[ORM\Column(type: Types::BOOLEAN)]
+    #[Groups(['rock:read'])]
     private bool $online = false;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['rock:read'])]
     private ?array $pathCoordinates = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    #[Groups(['rock:read'])]
     private ?int $zoom = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['rock:read'])]
     private ?string $previewImage = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['rock:read'])]
     private ?bool $train = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['rock:read'])]
     private ?bool $bike = null;
 
     #[ORM\OneToMany(mappedBy: 'rock', targetEntity: RockTranslation::class, cascade: ['persist', 'remove'])]

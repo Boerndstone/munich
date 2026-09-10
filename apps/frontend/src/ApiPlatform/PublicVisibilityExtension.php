@@ -57,9 +57,17 @@ final class PublicVisibilityExtension implements QueryCollectionExtensionInterfa
                 ->setParameter('approved_photo_status', 'approved'),
             Topo::class => $queryBuilder
                 ->innerJoin(sprintf('%s.rocks', $root), 'public_topo_rock')
+                ->innerJoin('public_topo_rock.area', 'public_topo_area')
                 ->andWhere('public_topo_rock.online = :public_online')
+                ->andWhere('public_topo_area.online = :public_area_online')
                 ->andWhere(sprintf('%s.withSector = :public_topo_with_sector', $root))
+                ->andWhere(sprintf('%s.image IS NOT NULL', $root))
+                ->andWhere(sprintf('%s.image <> \'\'', $root))
+                ->andWhere(sprintf('%s.pathCollection IS NOT NULL', $root))
+                ->andWhere(sprintf('%s.pathCollection <> \'\'', $root))
+                ->andWhere(sprintf('%s.updatedAt IS NOT NULL', $root))
                 ->setParameter('public_online', true)
+                ->setParameter('public_area_online', 1)
                 ->setParameter('public_topo_with_sector', true),
             Routes::class => $queryBuilder
                 ->innerJoin(sprintf('%s.rock', $root), 'public_route_rock')

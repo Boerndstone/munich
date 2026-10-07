@@ -71,8 +71,11 @@ final class PublicVisibilityExtension implements QueryCollectionExtensionInterfa
                 ->setParameter('public_topo_with_sector', true),
             Routes::class => $queryBuilder
                 ->innerJoin(sprintf('%s.rock', $root), 'public_route_rock')
+                ->innerJoin(sprintf('%s.area', $root), 'public_route_area')
                 ->andWhere('public_route_rock.online = :public_online')
-                ->setParameter('public_online', true),
+                ->andWhere('public_route_area.online = :public_area_online')
+                ->setParameter('public_online', true)
+                ->setParameter('public_area_online', 1),
             Comment::class => $queryBuilder
                 ->innerJoin(sprintf('%s.route', $root), 'public_comment_route')
                 ->innerJoin('public_comment_route.rock', 'public_comment_rock')

@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use App\Repository\RoutesRepository;
 use App\Service\GradeTranslationService;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -26,6 +27,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['area.id' => 'exact', 'rock.id' => 'exact', 'topoId' => 'exact', 'grade' => 'exact'])]
+#[ApiFilter(OrderFilter::class, properties: ['yearFirstAscent' => 'DESC'])]
 class Routes
 {
     #[ORM\Id]

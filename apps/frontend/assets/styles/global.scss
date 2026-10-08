@@ -541,14 +541,6 @@ body {
     height: 22px;
     vertical-align: middle;
 }
-@keyframes grow-shrink {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.15);
-    }
-}
 .home {
     height: 16px;
     width: 16px;
@@ -741,33 +733,10 @@ footer {
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2M7.07 18.28c.43-.9 3.05-1.78 4.93-1.78s4.5.88 4.93 1.78A7.893 7.893 0 0 1 12 20c-1.86 0-3.57-.64-4.93-1.72m11.29-1.45c-1.43-1.74-4.9-2.33-6.36-2.33s-4.93.59-6.36 2.33A7.928 7.928 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8c0 1.82-.62 3.5-1.64 4.83M12 6c-1.94 0-3.5 1.56-3.5 3.5S10.06 13 12 13s3.5-1.56 3.5-3.5S13.94 6 12 6m0 5a1.5 1.5 0 0 1-1.5-1.5A1.5 1.5 0 0 1 12 8a1.5 1.5 0 0 1 1.5 1.5A1.5 1.5 0 0 1 12 11" /></svg>');
 }
 
-.star {
-    @extend .icon-content-size;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="rgb(202 138 4)" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.62L12 2L9.19 8.62L2 9.24l5.45 4.73L5.82 21z" /></svg>'); 
-}
-.exclamation {
-    @extend .icon-content-size;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="rgb(185 28 28)" d="M10 3h4v11h-4zm0 18v-4h4v4z" /></svg>');
-    animation: grow-shrink 4s infinite;
-    animation-timing-function: ease-in-out;
-}
-.skull {
-    @extend .icon-content-size;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a9 9 0 0 0-9 9a8.99 8.99 0 0 0 4 7.47V22h2v-3h2v3h2v-3h2v3h2v-3.54c2.47-1.65 4-4.46 4-7.46a9 9 0 0 0-9-9m-4 9a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m8 0a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m-4 3l1.5 3h-3z" /></svg>');
-    animation: grow-shrink 4s infinite;
-    animation-timing-function: ease-in-out;
-}
 .chart {
     width: 18px;
     height: 18px;
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M17.45 15.18L22 7.31V21H2V3h2v12.54L9.5 6L16 9.78l4.24-7.33l1.73 1l-5.23 9.05l-6.51-3.75L4.31 19h2.26l4.39-7.56z" /></svg>');
-}
-.loose-rock {
-    @extend .icon-content-size;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="rgb(185 28 28)" d="M256 32c-17.7 0-32 14.3-32 32v101.9c0 5.6-4.5 10.1-10.1 10.1c-3.6 0-7-1.9-8.8-5.1l-48-83.9C83 123.5 32 199.8 32 288v64h512v-66.4c-.9-87.2-51.7-162.4-125.1-198.6l-48 83.9c-1.8 3.2-5.2 5.1-8.8 5.1c-5.6 0-10.1-4.5-10.1-10.1V64c0-17.7-14.3-32-32-32zM16.6 384C7.4 384 0 391.4 0 400.6c0 4.7 2 9.2 5.8 11.9C27.5 428.4 111.8 480 288 480s260.5-51.6 282.2-67.5c3.8-2.8 5.8-7.2 5.8-11.9c0-9.2-7.4-16.6-16.6-16.6z" /></svg>');
-    background-repeat: no-repeat;
-    animation: grow-shrink 4s infinite;
-    animation-timing-function: ease-in-out;
 }
 .multi-pitch {
     @extend .icon-content-size;
@@ -777,12 +746,6 @@ footer {
     @extend .icon-content-size;
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M22.11 21.46L2.39 1.73L1.11 3l1.86 1.86c-.25.1-.47.33-.47.64L2 11.79c-.13 2.04.77 3.99 2.35 5.21c-.02-.88.11-1.79.42-2.67L6.8 8.69l1.17 1.17l-1.79 4.98a6.09 6.09 0 0 0 1.72 6.63a6.13 6.13 0 0 0 8.66-.55l1.16-1.31l3.12 3.12zM5 9.84l-.5-.25l.21-2.91V6.6l1.26 1.26zm4.59 3.91l-.43-.38l.61-1.71l.88.88zm5.35-2.01l3.64-4.12c.35-.4.96-.44 1.35-.09c.4.35.44.97.07 1.36l-3.7 4.21zm4.89-1.48c.35-.4.96-.44 1.35-.09c.39.33.44.96.09 1.33L18.2 15l-1.35-1.35zm1.85 3.41c.4.33.43.96.08 1.33l-1.66 1.9l-1.36-1.36l1.58-1.78c.35-.4.96-.44 1.36-.09M15.55 7c.35-.4.95-.44 1.36-.09c.39.35.43.96.09 1.35l-2.6 2.94l-1.36-1.36zm-3.89 1.46l2.3-4.71c.23-.47.81-.67 1.28-.44c.48.23.68.81.44 1.28l-.38.78c-.33.13-.63.36-.87.63L12 8.78zM9.08 5.88L7.64 4.44l1.33-2.7c.23-.48.8-.67 1.28-.44c.47.23.67.8.44 1.28zm.57.57l2.4-4.91a.95.95 0 0 1 1.28-.44c.48.23.67.8.45 1.28l-2.7 5.5z"/></svg>');
 }
-.trash {
-    @extend .icon-content-size;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="m20.37 8.91l-1 1.73l-12.13-7l1-1.73l3.04 1.75l1.36-.37l4.33 2.5l.37 1.37zM6 19V7h5.07L18 11v8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2m2 0h8v-6.8L10.46 9H8z" /></svg>');
-    background-repeat: no-repeat;
-}
-
 .railway-station-icon {
     background-color: rgba(211, 211, 211, 0.7); // Light grey background with 70% opacity
     border-radius: 50%;

@@ -1,3 +1,7 @@
+
+
+
+
 {% if rocks is not empty %}
 	{% set rock = rocks|first %}
 	<dialog id="offcanvasRight" class="rock-info-dialog z-[1055]" aria-labelledby="offcanvasRightLabel" aria-modal="true">
@@ -23,7 +27,7 @@
 						<twig:Accordion:Item value="general">
 							<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
 								<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
-									<div class="rock-general-info text-black me-2 dark:text-gray-100"></div>
+									<twig:ux:icon name="lucide:info" class="size-4" aria-hidden="true" />
 									<span class="min-w-0 flex-1">{{ 'general.information'|trans }}</span>
 								</span>
 							</twig:Accordion:Trigger>
@@ -92,8 +96,29 @@
 									<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
 										<td class="px-3 py-2 align-top">{{ 'show.on.map'|trans }}:</td>
 										<td class="px-3 py-2 align-top">
-											<a href="https://www.google.com/maps?q={{ rock.rockLat }},{{ rock.rockLng }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline decoration-dotted underline-offset-2 hover:text-sky-900 dark:text-sky-400 dark:hover:text-sky-300" aria-label="Open location in Google Maps (opens in new window)"><span class="inline-block -rotate-45" aria-hidden="true">→</span> Google Maps</a>,<br>
-											<a href="https://www.openstreetmap.org/?mlat={{ rock.rockLat }}&mlon={{ rock.rockLng }}&zoom=15" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline decoration-dotted underline-offset-2 hover:text-sky-900 dark:text-sky-400 dark:hover:text-sky-300" aria-label="Open location in OpenStreetMap (opens in new window)"><span class="inline-block -rotate-45" aria-hidden="true">→</span> OpenStreetMap</a>
+											<twig:Button
+												as="a"
+												variant="outline"
+												href="https://www.google.com/maps?q={{ rock.rockLat }},{{ rock.rockLng }}"
+												target="_blank"
+												rel="noopener noreferrer"
+												aria-label="Open location in OpenStreetMap (opens in new window)"
+												class="mb-2"
+											>
+												<twig:ux:icon name="lucide:external-link" class="size-4" aria-hidden="true" />
+												Google Maps
+											</twig:Button>
+											<twig:Button
+												as="a"
+												variant="outline"
+												href="https://www.openstreetmap.org/?mlat={{ rock.rockLat }}&mlon={{ rock.rockLng }}&zoom=15"
+												target="_blank"
+												rel="noopener noreferrer"
+												aria-label="Open location in OpenStreetMap (opens in new window)"
+											>
+												<twig:ux:icon name="lucide:external-link" class="size-4" aria-hidden="true" />
+												OpenStreetMap
+											</twig:Button>
 										</td>
 									</tr>
 									<tr class="border-b border-[var(--theme-border)] odd:bg-[var(--theme-bg-lighter)]/50">
@@ -113,7 +138,7 @@
 							<twig:Accordion:Item value="description">
 								<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
 									<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
-										<div class="rock-general-description text-black me-2 dark:text-gray-100"></div>
+										<twig:ux:icon name="lucide:book-text" class="size-4" aria-hidden="true" />
 										<span class="min-w-0 flex-1">{{ 'description'|trans }}</span>
 									</span>
 								</twig:Accordion:Trigger>
@@ -130,7 +155,7 @@
 							<twig:Accordion:Item value="access">
 								<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
 									<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
-										<div class="rock-general-access text-black me-2 dark:text-gray-100"></div>
+										<twig:ux:icon name="lucide:signpost" class="size-4" aria-hidden="true" />
 										<span class="min-w-0 flex-1">{{ 'arrival.and.access'|trans }}</span>
 									</span>
 								</twig:Accordion:Trigger>
@@ -158,7 +183,7 @@
 						<twig:Accordion:Item value="map" id="rockMapDetails">
 							<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
 								<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
-									<div class="rock-general-map text-black me-2 dark:text-gray-100"></div>
+									<twig:ux:icon name="lucide:map-pin" class="size-4" aria-hidden="true" />
 									<span class="min-w-0 flex-1">{{ 'map'|trans }}</span>
 								</span>
 							</twig:Accordion:Trigger>
@@ -170,7 +195,7 @@
 							<twig:Accordion:Item value="nature">
 								<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
 									<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
-										<div class="rock-general-alert text-black me-2 dark:text-gray-100"></div>
+										<twig:ux:icon name="lucide:triangle-alert" class="size-4" aria-hidden="true" />
 										<span class="min-w-0 flex-1">{{ 'climbing.regulations'|trans }}</span>
 									</span>
 								</twig:Accordion:Trigger>
@@ -187,7 +212,7 @@
 							<twig:Accordion:Item value="flowers">
 								<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
 									<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
-										<div class="rock-general-flowers text-black me-2 dark:text-gray-100"></div>
+										<twig:ux:icon name="lucide:flower" class="size-4" aria-hidden="true" />
 										<span class="min-w-0 flex-1">{{ 'plants'|trans }}</span>
 									</span>
 								</twig:Accordion:Trigger>
@@ -200,7 +225,7 @@
 							<twig:Accordion:Item value="gallery">
 								<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
 									<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
-										<div class="rock-general-images text-black me-2 dark:text-gray-100"></div>
+										<twig:ux:icon name="lucide:camera" class="size-4" aria-hidden="true" />
 										<span class="min-w-0 flex-1">{{ 'images'|trans }}</span>
 									</span>
 								</twig:Accordion:Trigger>
@@ -220,24 +245,29 @@
 						<twig:Accordion:Item value="symbols">
 							<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
 								<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
-									<div class="rock-general-signs text-black me-2 dark:text-gray-100"></div>
+									<twig:ux:icon name="lucide:notepad-text" class="size-4" aria-hidden="true" />
 									<span class="min-w-0 flex-1">{{ 'explanation.symbols'|trans }}</span>
 								</span>
 							</twig:Accordion:Trigger>
 							<twig:Accordion:Content class="border-t border-[var(--theme-border)] px-2 pb-3 pt-2">
 								<div class="mx-0">
 									<table class="w-full border-collapse text-sm font-medium text-[var(--theme-text)] [&>tbody>tr:last-child]:border-b-0">
+										{% macro filled_star() %}
+												<twig:ux:icon name="lucide:star" class="size-4 text-yellow-700 dark:text-yellow-400" aria-hidden="true" />
+										{% endmacro %}
+										{% import _self as icons %}
 										<tr class="border-b border-[var(--theme-border)]">
 											<td class="px-3 py-2  align-middle">
-												<div class="star d-inline-block"></div>
+												<twig:ux:icon name="lucide:star" class="size-4 text-yellow-700 dark:text-yellow-400" aria-hidden="true" />
 											</td>
 											<td class="px-3 py-2  align-middle">{{ 'nice.route'|trans }}</td>
 										</tr>
 										<tr class="border-b border-[var(--theme-border)]">
 											<td class="px-3 py-2  align-middle">
 												<div class="flex">
-													<div class="star d-inline-block"></div>
-													<div class="star d-inline-block"></div>
+													{% for _ in 1..2 %}
+														{{ icons.filled_star() }}
+													{% endfor %}
 												</div>
 											</td>
 											<td class="px-3 py-2  align-middle">{{ 'very.nice.route'|trans }}</td>
@@ -245,46 +275,48 @@
 										<tr class="border-b border-[var(--theme-border)]">
 											<td class="px-3 py-2  align-middle">
 												<div class="flex">
-													<div class="star"></div>
-													<div class="star"></div>
-													<div class="star"></div>
+													<div class="flex">
+														{% for _ in 1..3 %}
+															{{ icons.filled_star() }}
+														{% endfor %}
+													</div>
 												</div>
 											</td>
 											<td class="px-3 py-2  align-middle">{{ 'dream.route'|trans }}</td>
 										</tr>
 										<tr class="border-b border-[var(--theme-border)]">
 											<td class="px-3 py-2  align-middle">
-												<div class="trash"></div>
+												<twig:ux:icon name="lucide:trash" class="size-4" aria-hidden="true" />
 											</td>
 											<td class="px-3 py-2  align-middle">{{ 'shit.route'|trans }}</td>
 										</tr>
 										<tr class="border-b border-[var(--theme-border)]">
 											<td class="px-3 py-2  align-middle">
-												<div class="exclamation d-inline-block"></div>
+												<twig:ux:icon name="lucide:triangle-alert" class="size-4 text-red-700 dark:text-red-400" aria-hidden="true" />
 											</td>
 											<td class="px-3 py-2  align-middle">{{ 'bad.routeprotection'|trans }}</td>
 										</tr>
 										<tr class="border-b border-[var(--theme-border)]">
 											<td class="px-3 py-2  align-middle">
-												<div class="skull d-inline-block"></div>
+												<twig:ux:icon name="lucide:skull" class="size-4" aria-hidden="true" />
 											</td>
 											<td class="px-3 py-2  align-middle">{{ 'dangerous.routeprotection'|trans }}</td>
 										</tr>
 										<tr class="border-b border-[var(--theme-border)]">
 											<td class="px-3 py-2  align-middle">
-												<div class="loose-rock d-inline-block"></div>
+												<twig:ux:icon name="lucide:hard-hat" class="size-4" aria-hidden="true" />
 											</td>
 											<td class="px-3 py-2  align-middle">{{ 'rock.quality'|trans }}</td>
 										</tr>
 										<tr class="border-b border-[var(--theme-border)]">
 											<td class="px-3 py-2  align-middle">
-												<div class="multi-pitch d-inline-block"></div>
+												<twig:ux:icon name="lucide:arrow-up-1-0" class="size-4" aria-hidden="true" />
 											</td>
 											<td class="px-3 py-2  align-middle">{{ 'multi.pitch'|trans }}</td>
 										</tr>
 										<tr class="border-b border-[var(--theme-border)]">
 											<td class="px-3 py-2  align-middle">
-												<div class="crack-climbing d-inline-block"></div>
+												<twig:ux:icon name="lucide:hand-fist" class="size-4" aria-hidden="true" />
 											</td>
 											<td class="px-3 py-2  align-middle">{{ 'crack.climbing'|trans }}</td>
 										</tr>
@@ -295,7 +327,7 @@
 						<twig:Accordion:Item value="improvement">
 							<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
 								<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
-									<div class="rock-general-improvement text-black me-2 dark:text-gray-100"></div>
+									<twig:ux:icon name="lucide:pencil-sparkles" class="size-4" aria-hidden="true" />
 									<span class="min-w-0 flex-1">{{ 'rock_improvement.title'|trans }}</span>
 								</span>
 							</twig:Accordion:Trigger>
@@ -323,10 +355,9 @@
 									{% endfor %}
 									<twig:Tabs defaultValue="{{ mithelfenDefaultTab }}" class="mb-1">
 										<twig:Tabs:List variant="default" class="mb-3 grid w-full grid-cols-2">
-											<twig:Tabs:Trigger value="content"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-line preview-icon"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg> {{ 'rock_improvement.tab.content'|trans }}</twig:Tabs:Trigger>
-											<twig:Tabs:Trigger value="gallery"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image-plus preview-icon"><path d="M16 5h6"/><path d="M19 2v6"/><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/><circle cx="9" cy="9" r="2"/></svg>{{ 'rock_improvement.tab.gallery'|trans }}</twig:Tabs:Trigger>
+											<twig:Tabs:Trigger value="content"><twig:ux:icon name="lucide:pencil-line" class="size-4" aria-hidden="true" /> {{ 'rock_improvement.tab.content'|trans }}</twig:Tabs:Trigger>
+											<twig:Tabs:Trigger value="gallery"><twig:ux:icon name="lucide:image-plus" class="size-4" aria-hidden="true"  /> {{ 'rock_improvement.tab.gallery'|trans }}</twig:Tabs:Trigger>
 										</twig:Tabs:List>
-
 										<twig:Tabs:Content value="content">
 											<p class="mb-3 text-sm text-gray-600 dark:text-gray-400">{{ 'rock_improvement.intro'|trans({ '%rock_name%': rock.rockName }) }}</p>
 											{{ form_start(improvementForm, { action: path(app.request.attributes.get('_route'), { areaSlug: areaSlug, slug: slug }), attr: { class: 'max-w-full text-sm', novalidate: 'novalidate' } }) }}
@@ -337,10 +368,12 @@
 											{{ form_row(improvementForm.grade) }}
 											{{ form_row(improvementForm.firstAscent) }}
 											{{ form_row(improvementForm.comment) }}
-											<button type="submit" class="mt-2 inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium shadow-sm hover:bg-emerald-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900">{{ 'rock_improvement.submit'|trans }}</button>
+											<twig:Button type="submit" class="mt-2" variant="outline">
+												<twig:ux:icon name="lucide:send" class="size-4" aria-hidden="true"  />
+												{{ 'rock_improvement.submit'|trans }}
+											</twig:Button>
 											{{ form_end(improvementForm) }}
 										</twig:Tabs:Content>
-
 										<twig:Tabs:Content value="gallery">
 											<p class="mb-3 text-sm text-gray-600 dark:text-gray-400">{{ 'rock_improvement.gallery_intro'|trans({ '%rock_name%': rock.rockName }) }}</p>
 											{{ form_start(galleryUploadForm, { action: path(app.request.attributes.get('_route'), { areaSlug: areaSlug, slug: slug }), attr: { class: 'max-w-full text-sm', novalidate: 'novalidate', enctype: 'multipart/form-data' } }) }}
@@ -349,9 +382,21 @@
 											{{ form_row(galleryUploadForm.name) }}
 											{{ form_row(galleryUploadForm.email) }}
 											{{ form_row(galleryUploadForm.photographer) }}
-											{{ form_row(galleryUploadForm.image, { help: 'rock_improvement.help.image'|trans }) }}
+											<div class="mb-3">
+												{{ form_label(galleryUploadForm.image) }}
+												{{ form_errors(galleryUploadForm.image) }}
+												{{ form_widget(galleryUploadForm.image, { attr: { class: 'sr-only' } }) }}
+												<twig:Button as="label" for="{{ galleryUploadForm.image.vars.id }}" variant="outline" class="mt-1 w-full justify-start hover:cursor-pointer">
+													<twig:ux:icon name="lucide:image-plus" class="size-4" aria-hidden="true" />
+													{{ 'rock_improvement.choose_image'|trans }}
+												</twig:Button>
+												{{ form_help(galleryUploadForm.image, { help: 'rock_improvement.help.image'|trans }) }}
+											</div>
 											{{ form_row(galleryUploadForm.comment) }}
-											<button type="submit" class="mt-2 inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium shadow-sm hover:bg-emerald-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900">{{ 'rock_improvement.submit_gallery'|trans }}</button>
+											<twig:Button type="submit" class="mt-2" variant="outline">
+												<twig:ux:icon name="lucide:image-up" class="size-4" aria-hidden="true" />
+												{{ 'rock_improvement.submit_gallery'|trans }}
+											</twig:Button>
 											{{ form_end(galleryUploadForm) }}
 										</twig:Tabs:Content>
 									</twig:Tabs>
@@ -361,7 +406,15 @@
 					</twig:Accordion>
 				</div>
 			</div>
-			<button type="button" class="min-h-0 min-w-0 flex-1 cursor-default border-0 bg-black/40 p-0" aria-label="{{ 'close'|trans({}, 'messages') }}" onclick="document.getElementById('offcanvasRight').close()"></button>
+			<twig:Button
+				type="button"
+				variant="ghost"
+				class="h-auto w-auto min-h-0 min-w-0 flex-1 cursor-pointer rounded-none border-0 bg-black/40 p-0 hover:bg-black/50"
+				aria-label="{{ 'close'|trans({}, 'messages') }}"
+				onclick="document.getElementById('offcanvasRight').close()"
+			>
+				<twig:ux:icon name="lucide:x" class="size-4" aria-hidden="true" />
+			</twig:Button>
 		</div>
 	</dialog>
 	{% if mithelfenOpenState %}

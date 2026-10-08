@@ -1,6 +1,7 @@
 ### Icon Library
 
 - Material Design Icons (https://icones.js.org/collection/mdi)
+- https://lucide.dev/icons/
 - Cookie Consent v3 (https://cookieconsent.orestbida.com/)
 
 ### Images

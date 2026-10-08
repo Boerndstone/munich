@@ -63,11 +63,11 @@
 							{% else %}
 								<span class="font-medium text-[var(--theme-text)]">{{ route.name }}</span>
 							{% endif %}
-							<span class="inline-flex shrink-0 leading-none" style="line-height: 0;" data-controller="routeparams" data-routeparams-rating="{{ route.rating }}" data-routeparams-protection="{{ route.protection }}" data-routeparams-route-rock-quality="{{ route.rockQuality }}">
-								<span data-routeparams-target="rating"></span>
-								<span data-routeparams-target="protection"></span>
-								<span data-routeparams-target="route-rock-quality"></span>
-							</span>
+							{{ include('components/route/params-icons.html.twig', {
+								route_rating: route.rating,
+								route_protection: route.protection,
+								route_rock_quality: route.rockQuality,
+							}) }}
 						</div>
 					</twig:Table:Cell>
 					<twig:Table:Cell class="py-2 align-top sm:px-3">

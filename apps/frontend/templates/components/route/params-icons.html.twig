@@ -1,0 +1,24 @@
+{# Expects: route_rating, route_protection, route_rock_quality #}
+{% set rating = route_rating|default(0) %}
+{% set protection = route_protection|default(0) %}
+{% set rock_quality = route_rock_quality|default(0) %}
+
+<span class="inline-flex shrink-0 flex-nowrap items-center gap-x-px leading-none" aria-hidden="true">
+	{% if rating == -1 %}
+		<twig:ux:icon name="lucide:trash" class="size-4" />
+	{% elseif rating > 0 %}
+		{% for _ in 1..rating %}
+			<twig:ux:icon name="lucide:star" class="size-4 text-yellow-700 dark:text-yellow-400" />
+		{% endfor %}
+	{% endif %}
+
+	{% if protection == 2 %}
+		<twig:ux:icon name="lucide:triangle-alert" class="size-4 text-red-700 dark:text-red-400" />
+	{% elseif protection == 3 %}
+		<twig:ux:icon name="lucide:skull" class="size-4" />
+	{% endif %}
+
+	{% if rock_quality == 1 %}
+		<twig:ux:icon name="lucide:hard-hat" class="size-4 text-red-700 dark:text-red-400" />
+	{% endif %}
+</span>

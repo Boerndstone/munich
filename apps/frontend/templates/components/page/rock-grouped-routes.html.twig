@@ -66,11 +66,11 @@
 									<td class="px-2 py-1 align-middle lg:min-w-0 lg:whitespace-nowrap lg:px-2.5">
 										<div class="flex min-w-0 flex-wrap items-center gap-x-1 lg:flex-nowrap lg:gap-y-0">
 											<span class="min-w-0 max-w-full shrink font-medium lg:truncate" title="{{ route.routeName }}">{{ route.routeName }}</span>
-											<span class="inline-flex shrink-0 flex-nowrap items-center gap-x-px leading-none" data-controller="routeparams" data-routeparams-rating="{{ route.routeRating }}" data-routeparams-protection="{{ route.routeProtection }}" data-routeparams-route-rock-quality="{{ route.rockQuality }}">
-												<span data-routeparams-target="rating"></span>
-												<span data-routeparams-target="protection"></span>
-												<span data-routeparams-target="route-rock-quality"></span>
-											</span>
+											{{ include('components/route/params-icons.html.twig', {
+												route_rating: route.routeRating,
+												route_protection: route.routeProtection,
+												route_rock_quality: route.rockQuality,
+											}) }}
 											{% if route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'multi-pitch' in (route.routeClimbingStyle|default('[]')) %}
 												<span class="ms-1 inline-block shrink-0 multi-pitch" title="Mehrseillängen Tour" role="img" aria-label="Mehrseillängen Tour"></span>
 											{% elseif route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'crack' in (route.routeClimbingStyle|default('[]')) %}

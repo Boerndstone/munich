@@ -13,7 +13,6 @@ Encore
   .addEntry("map", "./assets/map.js")
   .addEntry("gallery", "./assets/gallery.js")
   .addEntry("rock", "./assets/rock.js")
-  .addEntry("routeparams", "./assets/routeparams.js")
   .addEntry("filter", "./assets/filter.js")
   .copyFiles({
     from: "./assets/images",

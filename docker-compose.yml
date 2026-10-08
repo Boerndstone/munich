@@ -35,7 +35,7 @@ services:
         APP_PATH: apps/backoffice
         INSTALL_DEV_DEPS: "1"
     ports:
-      - "8082:80"
+      - "8083:80"
     environment:
       APP_ENV: dev
       APP_SECRET: backoffice_dev_secret

@@ -27,13 +27,15 @@
 
 - git pull origin main --rebase
 
-### Command to render Sitemap
--    php bin/console app:generate-sitemap
+### Generate the sitemap
+
+```bash
+docker compose exec frontend php bin/console app:generate-sitemap
+```
 
 ### Running Tests
-php bin/phpunit                                    # Run all tests
-php bin/phpunit tests/Service/                     # Run service tests
-php bin/phpunit tests/Service/FrontendCacheServiceTest.php  # Run specific test
+docker compose exec frontend php bin/phpunit
+docker compose exec frontend php bin/phpunit tests/Service/
 
 ### Start lokal phpMyAdmin
 php -S 127.0.0.1:8080 -t /opt/homebrew/share/phpmyadmin
@@ -57,13 +59,13 @@ Das Projekt kann komplett mit Docker laufen: PHP 8.2 + Apache + MySQL 8.
 
 2. **App im Browser öffnen**
    - **App:** http://localhost:8080
-   - **Backoffice:** http://localhost:8082/admin
+   - **Backoffice:** http://localhost:8083/admin
    - **phpMyAdmin (Datenbank):** http://localhost:8081  
      Login: Benutzer `munich`, Passwort `munich_secret` (oder `root` / `root_secret` für alle Rechte).
 
 3. **Datenbank einrichten** (einmalig nach dem ersten Start)
    ```bash
-   docker compose exec app php bin/console doctrine:migrations:migrate --no-interaction
+   docker compose exec frontend php bin/console doctrine:migrations:migrate --no-interaction
    ```
    Optional: Fixtures laden, falls vorhanden.
 
@@ -76,13 +78,13 @@ Das Projekt kann komplett mit Docker laufen: PHP 8.2 + Apache + MySQL 8.
 5. **Composer / `vendor` im Container**  
    `docker-compose.yml` legt `vendor` in ein **eigenes Docker-Volume** (nicht dein lokaler `./vendor`). Wenn sich `composer.lock` oder `composer.json` ändern (z. B. neues Paket wie `symfony/ux-toolkit`), musst du die Abhängigkeiten **im Container** neu installieren, sonst fehlen Pakete trotz neuem Image:
    ```bash
-   docker compose run --rm app composer install
+   docker compose run --rm frontend composer install
    ```
-   (Alternativ bei laufendem Stack: `docker compose exec app composer install`.)
+   (Alternativ bei laufendem Stack: `docker compose exec frontend composer install`.)
 
 6. **Fahrtzeiten ab München** (optional, für „ca. X Min. ab München“ in der Karten-Popup): Travel-Zeiten liegen in der DB; der Server ruft **kein** OSRM auf.
-   - **Lokal/Docker** (wo HTTPS funktioniert): `php bin/console app:travel-time:export` → erzeugt `var/travel_times.json`.
-   - Datei auf den Live-Server legen (Upload oder im Repo), dann **auf dem Server**: `php bin/console app:travel-time:import`.
+   - **Lokal/Docker** (wo HTTPS funktioniert): `docker compose exec frontend php bin/console app:travel-time:export` → erzeugt `var/travel_times.json`.
+   - Datei auf den Live-Server legen (Upload oder im Repo), dann **auf dem Server**: `docker compose exec frontend php bin/console app:travel-time:import`.
    - So ist kein Outbound-HTTPS und kein SSL-Trick auf dem Host nötig.
 
 ### Nützliche Befehle
@@ -91,10 +93,10 @@ Das Projekt kann komplett mit Docker laufen: PHP 8.2 + Apache + MySQL 8.
 |--------|--------------|
 | `docker compose up -d` | Container starten (im Hintergrund) |
 | `docker compose down` | Container stoppen und entfernen |
-| `docker compose exec app php bin/console …` | Symfony-Kommando im App-Container ausführen (DB: Host `mysql`) |
-| `docker compose exec app bash` | Shell im App-Container öffnen |
+| `docker compose exec frontend php bin/console …` | Symfony-Kommando im Frontend-Container ausführen (DB: Host `mysql`) |
+| `docker compose exec frontend bash` | Shell im Frontend-Container öffnen |
 | `docker compose logs -f app` | Logs der App anzeigen |
-| `docker compose run --rm app composer install` | `vendor`-Volume nach Lock-Änderungen aktualisieren (s. Schritt 5) |
+| `docker compose run --rm frontend composer install` | Frontend-`vendor`-Volume nach Lock-Änderungen aktualisieren |
 | **http://localhost:8081** | phpMyAdmin (Datenbank-Verwaltung) |
 
 ### Konfiguration
@@ -114,7 +116,7 @@ Das Projekt kann komplett mit Docker laufen: PHP 8.2 + Apache + MySQL 8.
 
 - **Eigene Werte:** Passwörter und Ports kannst du in `docker-compose.yml` unter `environment` bzw. `ports` anpassen.
 
-- **Assets (npm/Encore):** Auf dem Host ausführen (`npm install`, `npm run build` oder `npm run watch`). Die gebauten Dateien liegen in `public/build` und werden per Volume in den Container übernommen.
+- **Assets (npm/Encore):** In the relevant app run `npm install`, `npm run build`, or `npm run watch`. Build output is written to that app's `public/build` directory.
 
 ### Hinweis
 Die Datenbank-Daten liegen im Docker-Volume `mysql_data`. Bei `docker compose down -v` werden Volumes gelöscht – dann ist die DB leer und Migrations müssen erneut laufen.

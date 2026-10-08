@@ -1,9 +1,0 @@
-controllers:
-  resource:
-    path: ../src/Controller/
-    namespace: App\Controller
-  type: attribute
-
-gallery_data:
-  path: /gallery-data
-  controller: App\Controller\GalleryController::galleryData

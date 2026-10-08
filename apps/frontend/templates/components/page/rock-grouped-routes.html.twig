@@ -114,24 +114,22 @@
 														</twig:Button>
 													</twig:Dialog:Trigger>
 													<twig:Dialog:Content class="w-full max-w-lg">
-														<twig:Dialog:Header class="border-b border-[var(--theme-border)] pb-3">
+														<twig:Dialog:Header class="border-b border-[var(--theme-border)] pb-3 text-left">
 															<twig:Dialog:Title>{{ route.routeName }}{% if rg %} ({{ rg }}){% endif %}</twig:Dialog:Title>
-															<twig:Dialog:Description>
-																{% if route.routefirstAscent or route.routeyearFirstAscent %}
+															{% if route.routefirstAscent or route.routeyearFirstAscent %}
+																<twig:Dialog:Description>
 																	{{ 'rock.routes_table.first_ascent'|trans }}: {{ route.routefirstAscent }}{% if route.routeyearFirstAscent %} {{ route.routeyearFirstAscent }}{% endif %}
-																{% endif %}
-															</twig:Dialog:Description>
+																</twig:Dialog:Description>
+															{% endif %}
 														</twig:Dialog:Header>
-														<div class="max-h-[min(70vh,28rem)] overflow-y-auto text-sm text-[var(--theme-text)]">
+														<div class="max-h-[min(70vh,28rem)] overflow-y-auto text-left text-sm text-[var(--theme-text)]">
 															{% for comment in route.routeComment %}
 																<p class="mt-2 font-normal">{{ comment.comment|raw }}</p>
 																{% if comment.username %}
 																	<p class="mt-2 font-normal italic text-gray-600 dark:text-gray-400">{{ comment.username }}{% if comment.date %} {{ comment.date|date('d.m.Y') }}{% endif %}</p>
 																{% endif %}
-																{% if comment > 1%}
 																{% if not loop.last %}
 																	<hr class="my-3 border-0 border-t border-[var(--theme-border)]">
-																{% endif %}
 																{% endif %}
 															{% endfor %}
 														</div>

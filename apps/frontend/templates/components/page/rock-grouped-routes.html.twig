@@ -1,5 +1,5 @@
 {# Expects: groupedRoutes, rocks (for topo image alt) #}
-<div class="mx-auto w-full max-w-[1024px] px-2 sm:px-4" {{ stimulus_controller('modal-route-information grade-labels') }}>
+<div class="mx-auto w-full max-w-[1024px] px-2 sm:px-4" {{ stimulus_controller('grade-labels') }}>
 	<div class="w-full md:w-3/4">
 	{% for topoName, topoData in groupedRoutes %}
 		{% set topo_id = topoName|custom_replace|lower %}
@@ -72,13 +72,13 @@
 												route_rock_quality: route.rockQuality,
 											}) }}
 											{% if route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'multi-pitch' in (route.routeClimbingStyle|default('[]')) %}
-												<span class="ms-1 inline-block shrink-0 multi-pitch" title="Mehrseillängen Tour" role="img" aria-label="Mehrseillängen Tour"></span>
+												<twig:ux:icon name="lucide:arrow-up-1-0" class="size-4" aria-hidden="true" title="Mehrseillängen Tour" aria-label="Mehrseillängen Tour" />
 											{% elseif route.routeClimbingStyle is defined and route.routeClimbingStyle is not null and 'crack' in (route.routeClimbingStyle|default('[]')) %}
 												<span class="ms-1 inline-block shrink-0 crack-climbing" title="Riss" role="img" aria-label="Riss"></span>
 											{% endif %}
 											{% if route.videoLink is not empty %}
 												<a href="{{ route.videoLink }}" class="ms-0.5 inline-flex shrink-0 text-[var(--theme-text)] hover:opacity-80" title="Video von Route {{ route.routeName }} " target="_blank" rel="noopener noreferrer">
-													<svg xmlns="http://www.w3.org/2000/svg" class="size-[18px]" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15 8v8H5V8h10m1-2H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4V7c0-.55-.45-1-1-1z"/></svg>
+													<twig:ux:icon name="lucide:tv-minimal-play" class="size-4" aria-hidden="true" />
 												</a>
 											{% endif %}
 										</div>
@@ -101,21 +101,42 @@
 									<td class="box-border w-11 min-w-11 max-w-11 shrink-0 px-2 py-1 align-middle lg:w-12 lg:min-w-12 lg:max-w-12">
 										<div class="flex h-7 items-center justify-end">
 											{% if route.routeComment is not empty %}
-												{# Native <button>: long JSON in data-* works; twig:Button was stripping it. Tailwind ≈ shadcn ghost icon-sm (no Bootstrap). #}
-												<button
-													type="button"
-													class="m-0 inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-[var(--theme-text)] shadow-none hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)] focus-visible:ring-offset-0"
-													aria-label="{{ 'route.info_dialog_label'|trans({ '%name%': route.routeName }, 'messages') }}"
-													data-action="modal-route-information#openModal"
-													data-modal-route-information-name-value="{{ route.routeName }}"
-													data-modal-route-information-grade-stored-value="{{ rg|e('html_attr') }}"
-													data-modal-route-information-grade-fixed-value="{{ isFontGrade ? '1' : '0' }}"
-													data-modal-route-information-first-ascent-value="{{ route.routefirstAscent }}"
-													data-modal-route-information-year-first-ascent-value="{{ route.routeyearFirstAscent }}"
-													data-modal-route-information-comments-value="{{ route.routeComment|json_encode|e('html_attr') }}"
-												>
-													<twig:ux:icon name="lucide:info" class="size-5 shrink-0 text-gray-700 dark:text-gray-200" aria-hidden="true" />
-												</button>
+												<twig:Dialog id="route-information-{{ topo_id }}-{{ loop.index }}">
+													<twig:Dialog:Trigger>
+														<twig:Button
+															type="button"
+															variant="ghost"
+															size="icon-sm"
+															class="m-0 shrink-0 rounded-full text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)]"
+															aria-label="{{ 'route.info_dialog_label'|trans({ '%name%': route.routeName }, 'messages') }}"
+														>
+															<twig:ux:icon name="lucide:info" class="size-4" aria-hidden="true" />
+														</twig:Button>
+													</twig:Dialog:Trigger>
+													<twig:Dialog:Content class="w-full max-w-lg">
+														<twig:Dialog:Header class="border-b border-[var(--theme-border)] pb-3">
+															<twig:Dialog:Title>{{ route.routeName }}{% if rg %} ({{ rg }}){% endif %}</twig:Dialog:Title>
+															<twig:Dialog:Description>
+																{% if route.routefirstAscent or route.routeyearFirstAscent %}
+																	{{ 'rock.routes_table.first_ascent'|trans }}: {{ route.routefirstAscent }}{% if route.routeyearFirstAscent %} {{ route.routeyearFirstAscent }}{% endif %}
+																{% endif %}
+															</twig:Dialog:Description>
+														</twig:Dialog:Header>
+														<div class="max-h-[min(70vh,28rem)] overflow-y-auto text-sm text-[var(--theme-text)]">
+															{% for comment in route.routeComment %}
+																<p class="mt-2 font-normal">{{ comment.comment|raw }}</p>
+																{% if comment.username %}
+																	<p class="mt-2 font-normal italic text-gray-600 dark:text-gray-400">{{ comment.username }}{% if comment.date %} {{ comment.date|date('d.m.Y') }}{% endif %}</p>
+																{% endif %}
+																{% if comment > 1%}
+																{% if not loop.last %}
+																	<hr class="my-3 border-0 border-t border-[var(--theme-border)]">
+																{% endif %}
+																{% endif %}
+															{% endfor %}
+														</div>
+													</twig:Dialog:Content>
+												</twig:Dialog>
 											{% endif %}
 										</div>
 									</td>
@@ -128,5 +149,4 @@
 		</div>
 	{% endfor %}
 	</div>
-	{{ include('components/page/rock-shared-route-modal.html.twig') }}
 </div>

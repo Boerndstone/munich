@@ -2,8 +2,8 @@ import { Controller } from "@hotwired/stimulus";
 import L from "leaflet";
 import { createMapPinIcon } from "../map/icons.js";
 
-function readParkingIconHtml() {
-  const el = document.getElementById("rock-map-parking-icon-json");
+function readMapIconHtml(id) {
+  const el = document.getElementById(id);
   if (!el?.textContent) {
     return "";
   }
@@ -27,11 +27,41 @@ function createParkingMapIcon(innerHtml) {
   });
 }
 
+function createRockMapIcon(innerHtml) {
+  if (!innerHtml) {
+    return createMapPinIcon();
+  }
+  return L.divIcon({
+    html: `<div class="rock-map-target-marker">${innerHtml}</div>`,
+    className: "",
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+    popupAnchor: [0, -20],
+  });
+}
+
+function findPathStartCoordinate(geoJson) {
+  const items = Array.isArray(geoJson) ? geoJson : [geoJson];
+
+  for (const item of items) {
+    const geometry = item?.geometry ?? item;
+    if (geometry?.type === "LineString") {
+      return geometry.coordinates?.[0] ?? null;
+    }
+    if (geometry?.type === "MultiLineString") {
+      return geometry.coordinates?.[0]?.[0] ?? null;
+    }
+  }
+
+  return null;
+}
+
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
   connect() {
     this._mapOwner = Symbol("rock-map");
-    const parkingIconHtml = readParkingIconHtml();
+    const parkingIconHtml = readMapIconHtml("rock-map-parking-icon-json");
+    const rockIconHtml = readMapIconHtml("rock-map-target-icon-json");
 
     const raw = this.element.dataset.rockMapPayload;
     if (!raw) {
@@ -75,16 +105,45 @@ export default class extends Controller {
     const popupHtml = markersRock[3];
 
     if (markerObject) {
-      L.geoJSON(markerObject).addTo(this.map);
-      L.marker(markerObject[0].coordinates.slice().reverse(), {
-        icon: createParkingMapIcon(parkingIconHtml),
-        zIndexOffset: 550,
+      // Keep approach lines/polygons from the GeoJSON, but do not let Leaflet
+      // create its default blue marker for point features. The parking point
+      // below is rendered with the custom Lucide parking marker instead.
+      L.geoJSON(markerObject, {
+        filter: (feature) => {
+          const geometryType = feature?.geometry?.type ?? feature?.type;
+          return !["Point", "MultiPoint"].includes(geometryType);
+        },
+        style: (feature) => {
+          const geometryType = feature?.geometry?.type ?? feature?.type;
+          if (["LineString", "MultiLineString"].includes(geometryType)) {
+            return {
+              color: "#dc2626",
+              weight: 5,
+              opacity: 0.9,
+              dashArray: "1 8",
+              lineCap: "round",
+            };
+          }
+
+          return {};
+        },
       }).addTo(this.map);
-      const nameMarker = L.marker(markerObject[2].coordinates.slice().reverse(), {
-        icon: createMapPinIcon(),
-        zIndexOffset: 600,
-      }).addTo(this.map);
-      nameMarker.bindPopup(popupHtml).openPopup();
+      const parkingCoordinates = findPathStartCoordinate(markerObject) ?? markerObject[0]?.coordinates;
+      const parkingMarker = parkingCoordinates
+        ? L.marker(parkingCoordinates.slice().reverse(), {
+          icon: createParkingMapIcon(parkingIconHtml),
+          zIndexOffset: 550,
+        }).addTo(this.map)
+        : null;
+      const targetCoordinates = markerObject[2]?.coordinates;
+      if (targetCoordinates) {
+        L.marker(targetCoordinates.slice().reverse(), {
+          icon: createRockMapIcon(rockIconHtml),
+          zIndexOffset: 600,
+        }).addTo(this.map).bindPopup(popupHtml).openPopup();
+      } else if (parkingMarker) {
+        parkingMarker.bindPopup(popupHtml).openPopup();
+      }
     } else {
       const pointCoordinates = [lng, lat];
       L.geoJSON({

@@ -137,11 +137,6 @@ body {
   color: var(--theme-text);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
-// Sidebar area toggle: arrow right when collapsed, down when expanded
-.nav-area-chevron {
-    transition: transform 0.2s ease;
-    display: inline-block;
-}
 hr {
     border-color: var(--theme-border) !important;
     opacity: 1 !important;

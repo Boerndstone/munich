@@ -2,16 +2,12 @@
 	<nav class="mx-auto flex h-full max-w-[1024px] items-stretch px-2" aria-label="{{ 'nav.main_aria'|trans }}">
 		<twig:Sheet class="contents">
 		<twig:Sheet:Content id="navOffcanvas" side="left" aria-labelledby="navOffcanvasTitle">
-			<div class="flex h-full min-h-0 w-full">
-				<div class="flex h-full min-h-0 w-[min(100vw,20rem)] max-w-full flex-col overflow-y-auto bg-[var(--theme-bg)] shadow-xl" onclick="event.stopPropagation()">
 					<div class="flex shrink-0 items-center justify-between border-b border-[var(--theme-border)] px-3 py-2">
 						<a class="chelsea-market-regular text-lg text-[var(--theme-text)] no-underline" id="navOffcanvasTitle" href="{{ index_path() }}">munichclimbs</a>
-						<button type="button" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--theme-text)] opacity-70 hover:bg-[var(--theme-bg-lighter)] hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" data-action="click->sheet#close" aria-label="{{ 'close_navigation'|trans({}, 'messages') }}">
+						<twig:Button type="button" variant="ghost" size="icon" data-action="click->sheet#close" aria-label="{{ 'close_navigation'|trans({}, 'messages') }}">
 							<span class="sr-only">{{ 'close_navigation'|trans({}, 'messages') }}</span>
-							<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-								<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-							</svg>
-						</button>
+							<twig:ux:icon name="lucide:x" class="size-5" aria-hidden="true" />
+						</twig:Button>
 					</div>
 					<div class="min-h-0 flex-1 overflow-y-auto pe-2 ps-1 mt-2">
 						{% set _route = app.request.attributes.get('_route') %}
@@ -38,7 +34,7 @@
 										<summary class="flex cursor-pointer list-none items-center gap-2 px-2 py-2 text-sm text-gray-900 marker:hidden [&::-webkit-details-marker]:hidden dark:text-gray-100">
 											<img src="https://www.munichclimbs.de/build/images/navigationThumbs/{{ area.image }}.webp" alt="" class="size-[18px] shrink-0 rounded" loading="lazy">
 											<span class="min-w-0 flex-1 truncate">{{ area.name }}</span>
-											<span class="nav-area-chevron single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out" aria-hidden="true"></span>
+											<span class="single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out group-open:rotate-90" aria-hidden="true"></span>
 										</summary>
 										<div data-lazy-navigation-target="content">
 											{% if isCurrentArea %}
@@ -80,9 +76,6 @@
 							</li>
 						</ul>
 					</div>
-				</div>
-				<button type="button" class="min-h-0 min-w-0 flex-1 cursor-default border-0 bg-black/40 p-0" aria-label="{{ 'close_navigation'|trans({}, 'messages') }}" data-action="click->sheet#close"></button>
-			</div>
 		</twig:Sheet:Content>
 		<div class="flex w-full max-w-[1024px] flex-1 items-center gap-2 px-0">
 			<div class="flex shrink-0 items-center gap-1 ps-0 md:w-1/4 md:gap-2 md:ps-1">

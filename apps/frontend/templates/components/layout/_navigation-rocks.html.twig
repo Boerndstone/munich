@@ -1,12 +1,37 @@
-{% if rocks is not empty %}
-	<ul class="m-0 list-none border-l border-gray-300 py-1 ps-2 dark:border-gray-600" style="margin-left: 8px;">
+{% set area_overview_path = path(app.request.locale == 'en' ? 'show_rocks_en' : 'show_rocks', { slug: areaSlug }) %}
+{% set isCurrentOverview = isCurrentArea and not currentRockSlug %}
+
+<ul class="m-0 list-none border-l border-gray-300 py-1 ps-2 dark:border-gray-600" style="margin-left: 8px;">
+	<li class="rounded px-1 py-0.5 {{ isCurrentOverview ? 'bg-black text-white' : '' }}">
+		<a href="{{ area_overview_path }}" class="flex w-full items-center gap-2 truncate py-1 ps-2 text-sm no-underline {{ isCurrentOverview ? 'text-white' : 'text-gray-800 dark:text-gray-200' }}" data-area-slug="{{ areaSlug }}">
+			<twig:ux:icon name="lucide:layout-list" class="size-4 shrink-0" aria-hidden="true" />
+			<span class="truncate">{{ 'nav.area_overview'|trans }}</span>
+		</a>
+	</li>
+	{% if rocks is not empty %}
 		{% for rock in rocks %}
 			{% set isCurrentRock = isCurrentArea and currentRockSlug and rock.slug == currentRockSlug %}
 			<li class="rounded px-1 py-0.5 {{ isCurrentRock ? 'bg-black text-white' : '' }}">
 				<a href="{{ rock_path(areaSlug, rock.slug) }}" title="{{ 'nav.rock_link_title'|trans({ '%rock%': rock.name }) }}" class="block w-full truncate py-1 ps-2 text-sm no-underline {{ isCurrentRock ? 'text-white' : 'text-gray-800 dark:text-gray-200' }}" data-area-slug="{{ areaSlug }}" data-rock-slug="{{ rock.slug }}">
-					{{ rock.name }}
+					<span class="flex min-w-0 items-center gap-2">
+						{% if rock.previewImage is not empty %}
+							<img
+								src="https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}.webp"
+								alt=""
+								width="24"
+								height="24"
+								loading="lazy"
+								decoding="async"
+								fetchpriority="low"
+								class="size-6 shrink-0 rounded object-cover"
+							>
+						{% else %}
+							<twig:ux:icon name="lucide:mountain" class="size-5 shrink-0" aria-hidden="true" />
+						{% endif %}
+						<span class="truncate">{{ rock.name }}</span>
+					</span>
 				</a>
 			</li>
 		{% endfor %}
-	</ul>
-{% endif %}
+	{% endif %}
+</ul>

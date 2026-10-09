@@ -1,0 +1,8 @@
+{# @block content A collection of related multi-select toggles. #}
+<div
+    role="group"
+    class="{{ ('flex flex-wrap items-center gap-2 ' ~ attributes.render('class'))|tailwind_merge }}"
+    {{ attributes }}
+>
+    {%- block content %}{% endblock -%}
+</div>

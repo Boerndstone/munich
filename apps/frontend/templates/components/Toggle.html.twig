@@ -1,0 +1,10 @@
+{#
+  A shadcn-style multi-select toggle. The native checkbox preserves the
+  semantics and works with Stimulus form/filter targets.
+#}
+<label class="{{ ('inline-flex cursor-pointer ' ~ attributes.render('class'))|tailwind_merge }}">
+    <input type="checkbox" class="peer sr-only" {{ attributes.without('class') }}>
+    <span class="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-input bg-transparent px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-disabled:pointer-events-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0">
+        {%- block content %}{% endblock -%}
+    </span>
+</label>

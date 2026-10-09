@@ -1,11 +1,12 @@
 {# @prop id string HTML id on the native `<dialog>` (pair with `aria-controls` on the trigger). #}
-{# @prop side 'left'|'right'|'top'|'bottom' Reserved for layout tokens (nav uses left panel). Defaults to `left` #}
-{# @block content Sheet body (e.g. panel + dimmer) #}
+{# @prop side 'left'|'right' The side from which the Sheet panel opens. Defaults to `left` #}
+{# @block content Sheet panel content #}
 {%- props id, side = 'left' -%}
+{%- set side_classes = side == 'right' ? 'right-0 border-l' : 'left-0 border-r' -%}
 
 <dialog
 	id="{{ id }}"
-	class="{{ ('nav-offcanvas-dialog z-[1055] ' ~ attributes.render('class'))|tailwind_merge }}"
+	class="fixed inset-0 z-[1055] m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-transparent p-0 open:block open:backdrop:bg-black/40"
 	{{ attributes.defaults({
 		'aria-modal': 'true',
 		'data-sheet-target': 'dialog',
@@ -13,5 +14,10 @@
 		'data-side': side,
 	}).without('class', 'id') }}
 >
-	{%- block content %}{% endblock -%}
+	<aside
+		class="{{ ('absolute inset-y-0 flex w-[min(100vw,20rem)] max-w-full flex-col overflow-y-auto bg-background text-foreground shadow-xl ' ~ side_classes ~ ' ' ~ attributes.render('class'))|tailwind_merge }}"
+		data-sheet-panel
+	>
+		{%- block content %}{% endblock -%}
+	</aside>
 </dialog>

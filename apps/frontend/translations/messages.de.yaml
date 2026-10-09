@@ -24,6 +24,7 @@ nav.toggle: "Navigation ein- und ausblenden"
 nav.home_aria: "Startseite munichclimbs"
 nav.search_open_aria: "Suche öffnen"
 nav.rock_link_title: "Link zum Fels: %rock%"
+nav.area_overview: "Übersicht"
 
 contact.flash.success: "Deine Nachricht wurde erfolgreich versendet!"
 contact.flash.error: "Deine Nachricht konnte nicht versendet werden."

@@ -58,12 +58,12 @@ class RockRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<int, array{name: string, slug: string, areaSlug: string}>
+     * @return array<int, array{name: string, slug: string, areaSlug: string, previewImage: ?string}>
      */
     public function findSidebarRocksByAreaSlug(string $areaSlug): array
     {
         return $this->createQueryBuilder('rock')
-            ->select('rock.name AS name', 'rock.slug AS slug', 'area.slug AS areaSlug')
+            ->select('rock.name AS name', 'rock.slug AS slug', 'rock.previewImage AS previewImage', 'area.slug AS areaSlug')
             ->innerJoin('rock.area', 'area')
             ->where('area.slug = :areaSlug')
             ->andWhere('area.online = 1')

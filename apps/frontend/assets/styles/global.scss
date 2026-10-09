@@ -137,11 +137,6 @@ body {
   color: var(--theme-text);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
-// Sidebar area toggle: arrow right when collapsed, down when expanded
-.nav-area-chevron {
-    transition: transform 0.2s ease;
-    display: inline-block;
-}
 hr {
     border-color: var(--theme-border) !important;
     opacity: 1 !important;
@@ -548,20 +543,6 @@ a {
     z-index: 3060;
 }
 
-input[data-autocomplete-target="input"]:focus {
-    box-shadow: none;
-}
-.list-group-item {
-    li:focus-visible {
-        outline: none;
-    }
-    a:-webkit-any-link:focus-visible {
-        outline-offset: 0px;
-    }
-    :focus-visible {
-        outline: none;
-    }
-}
 @media (min-width: 992px) {
     .lg-img-wrap {
         .lg-object {

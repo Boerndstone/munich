@@ -172,35 +172,6 @@
     background-color: rgb(0 0 0 / 0.45);
 }
 
-/* Mobile nav drawer: split panel + dimmer (no Bootstrap offcanvas). */
-.nav-offcanvas-dialog:not([open]) {
-    display: none !important;
-}
-
-.nav-offcanvas-dialog[open] {
-    display: flex !important;
-    box-sizing: border-box;
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    max-width: none;
-    height: 100vh;
-    height: 100dvh;
-    max-height: none;
-    margin: 0;
-    padding: 0;
-    border: none;
-    background: transparent;
-}
-
-.nav-offcanvas-dialog::backdrop {
-    background: transparent;
-}
-
-.nav-offcanvas-dialog details[open] .nav-area-chevron {
-    transform: rotate(90deg);
-}
-
 /* Rock page info drawer (right panel); same fullscreen flex shell as nav dialog. */
 .rock-info-dialog:not([open]) {
     display: none !important;
@@ -305,4 +276,3 @@ body:has(.rock-info-dialog[open]) {
         height: 120px;
     }
 }
-

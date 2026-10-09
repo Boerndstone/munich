@@ -94,7 +94,7 @@ class AreasService
             return time();
         });
 
-        $cacheKey = sprintf('areas_sidebar_rocks_%d_%s', $epoch, $areaSlug);
+        $cacheKey = sprintf('areas_sidebar_rocks_v2_%d_%s', $epoch, $areaSlug);
 
         return $this->cache->get($cacheKey, function (ItemInterface $item) use ($areaSlug): array {
             $item->expiresAfter(self::CACHE_TTL);

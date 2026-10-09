@@ -89,9 +89,9 @@ rocks.filter.rain_shelter: "Rain shelter"
 rocks.filter_results_suffix: "rocks"
 
 area.hero.more_menu_aria: "More information"
-area.hero.kletterkonzeption: "Climbing management plan – %name%"
-area.hero.top100: "Top 100 – %name%"
-area.hero.overview_map: "Overview map %name%"
+area.hero.kletterkonzeption: "Climbing management plan"
+area.hero.top100: "Top 100"
+area.hero.overview_map: "Overview map"
 
 neueste_routes.page_title: "Latest routes | Munichclimbs"
 

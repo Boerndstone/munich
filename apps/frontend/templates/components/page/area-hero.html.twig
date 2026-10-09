@@ -29,23 +29,23 @@
 								{% if areaKletterkonzeption %}
 									<li role="none">
 										<button type="button" class="flex w-full cursor-pointer items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1.5 text-left text-sm text-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground" role="menuitem" onclick="document.getElementById('areaHeroMoreMenu').removeAttribute('open'); document.getElementById('kletterkonzeptionModal').showModal()">
-											<twig:ux:icon name="lucide:info" class="size-[22px] shrink-0 text-popover-foreground" aria-hidden="true" />
-											{{ 'area.hero.kletterkonzeption'|trans({'%name%': areaName}) }}
+											<twig:ux:icon name="lucide:info" class="size-4 shrink-0 text-popover-foreground" aria-hidden="true" />
+											{{ 'area.hero.kletterkonzeption'|trans() }}
 										</button>
 									</li>
 								{% endif %}
 								{% if top100Routes is not empty %}
 									<li role="none">
 										<button type="button" class="flex w-full cursor-pointer items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1.5 text-left text-sm text-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground" role="menuitem" onclick="document.getElementById('areaHeroMoreMenu').removeAttribute('open'); document.getElementById('top100RoutesModal').showModal()">
-											<span class="top-100 shrink-0" aria-hidden="true"></span>
-											{{ 'area.hero.top100'|trans({'%name%': areaName}) }}
+											<twig:ux:icon name="lucide:database-arrow-up" class="size-4 shrink-0" aria-hidden="true" />
+											{{ 'area.hero.top100'|trans() }}
 										</button>
 									</li>
 								{% endif %}
 								<li role="none">
 									<button type="button" class="flex w-full cursor-pointer items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1.5 text-left text-sm text-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground" role="menuitem" onclick="document.getElementById('areaHeroMoreMenu').removeAttribute('open'); document.getElementById('modalAreaMap').showModal()">
 										<twig:ux:icon name="lucide:map" class="size-4 shrink-0" aria-hidden="true" />
-										{{ 'area.hero.overview_map'|trans({'%name%': areaName}) }}
+										{{ 'area.hero.overview_map'|trans() }}
 									</button>
 								</li>
 							</ul>

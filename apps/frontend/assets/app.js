@@ -7,6 +7,9 @@
 
 // Tailwind (app.css) then site SCSS (legacy + third-party) — one bundle avoids split CSS ordering issues.
 import "./styles/app.css";
+import "lightgallery/scss/lightgallery.scss";
+import "lightgallery/scss/lg-thumbnail.scss";
+import "vanilla-cookieconsent/dist/cookieconsent.css";
 import "./styles/global.scss";
 
 // Symfony Stimulus bridge (assets/bootstrap.js — not the Bootstrap CSS framework)

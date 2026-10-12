@@ -10,7 +10,7 @@
 >
 	<div class="relative flex max-h-[min(92vh,52rem)] w-full min-w-0 max-w-3xl flex-col self-center overflow-hidden overflow-x-hidden rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] text-[var(--theme-text)] shadow-xl" onclick="event.stopPropagation()">
 		<header class="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--theme-border)] px-4 py-2">
-			<h2 id="searchModalLabel" class="stay-black m-0 min-w-0 flex-1 text-base font-semibold leading-tight text-[var(--theme-text)]">{{ 'search_modal.title'|trans }}</h2>
+			<h2 id="searchModalLabel" class="m-0 min-w-0 flex-1 text-base font-semibold leading-tight text-[var(--theme-text)]">{{ 'search_modal.title'|trans }}</h2>
 			<button
 				type="button"
 				class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--theme-text)] opacity-70 hover:bg-[var(--theme-bg-lighter)] hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]"
@@ -35,7 +35,7 @@
 				<twig:Tabs:Content value="name">
 					<label for="searchModalNameInput" class="sr-only">{{ 'search_modal.name_label_sr'|trans }}</label>
 					<div class="flex min-w-0 items-center gap-2 rounded-md border border-black/20 bg-[var(--theme-bg-lighter)] px-2 py-1.5 text-[var(--theme-text)] dark:border-white/20">
-						<i class="fas fa-search magnifier shrink-0 text-base text-gray-500 opacity-80 dark:text-gray-400" aria-hidden="true"></i>
+						<twig:ux:icon name="lucide:search" class="size-4 shrink-0 text-gray-500 opacity-80 dark:text-gray-400" aria-hidden="true" />
 						<twig:Input
 							type="search"
 							id="searchModalNameInput"
@@ -51,7 +51,7 @@
 				<twig:Tabs:Content value="firstascent">
 					<label for="searchModalFirstAscentInput" class="sr-only">{{ 'search_modal.first_ascent_label_sr'|trans }}</label>
 					<div class="flex min-w-0 items-center gap-2 rounded-md border border-black/20 bg-[var(--theme-bg-lighter)] px-2 py-1.5 text-[var(--theme-text)] dark:border-white/20">
-						<i class="fas fa-search magnifier shrink-0 text-base text-gray-500 opacity-80 dark:text-gray-400" aria-hidden="true"></i>
+						<twig:ux:icon name="lucide:search" class="size-4 shrink-0 text-gray-500 opacity-80 dark:text-gray-400" aria-hidden="true" />
 						<twig:Input
 							type="search"
 							id="searchModalFirstAscentInput"
@@ -89,7 +89,7 @@
 						</div>
 						<div class="md:col-span-2">
 							<button class="inline-flex items-center gap-2 rounded-md border border-[var(--theme-border)] bg-transparent px-3 py-1.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" type="button" data-action="click->search-modal#searchByGrade">
-								<i class="fas fa-search text-xs opacity-80" aria-hidden="true"></i>
+								<twig:ux:icon name="lucide:search" class="size-3 shrink-0 opacity-80" aria-hidden="true" />
 								{{ 'search_modal.search_by_grade'|trans }}
 							</button>
 						</div>
@@ -140,7 +140,7 @@
 						</div>
 						<div class="md:col-span-2">
 							<button class="inline-flex items-center gap-2 rounded-md border border-[var(--theme-border)] bg-transparent px-3 py-1.5 text-sm font-medium text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" type="button" data-action="click->search-modal#searchByAttributes">
-								<i class="fas fa-search text-xs opacity-80" aria-hidden="true"></i>
+								<twig:ux:icon name="lucide:search" class="size-3 shrink-0 opacity-80" aria-hidden="true" />
 								{{ 'search_modal.search_by_attributes'|trans }}
 							</button>
 						</div>

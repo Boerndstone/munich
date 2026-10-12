@@ -1,5 +1,5 @@
 /* Bootstrap bridge for admin/EasyAdmin screens only.
- * Keep public styles in global.scss Tailwind-first.
+ * Keep admin-specific overrides here; public frontend styles live in apps/frontend.
  *
  * Scope rules under `body.ea .wrapper` so the Symfony Web Debug Toolbar (injected as a
  * sibling of `.wrapper`) is not affected by broad selectors like `.btn` and `.table`.

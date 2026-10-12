@@ -36,7 +36,7 @@
 			<hr class="my-2 border-0 border-t border-dotted border-gray-300 dark:border-gray-600">
 			{% if topoLink %}
 				<a class="inline-flex items-center text-sm font-semibold text-black no-underline hover:underline dark:text-indigo-300" href="{{ topoLink }}">
-					<span class="chevron-right" aria-hidden="true"></span>{{ 'home.latest_topo_more'|trans }}
+					<twig:ux:icon name="lucide:chevrons-right" class="me-1 size-5 shrink-0" aria-hidden="true" />{{ 'home.latest_topo_more'|trans }}
 				</a>
 			{% endif %}
 		</div>

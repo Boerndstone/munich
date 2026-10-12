@@ -13,23 +13,7 @@
 			{% set isCurrentRock = isCurrentArea and currentRockSlug and rock.slug == currentRockSlug %}
 			<li class="rounded px-1 py-0.5 {{ isCurrentRock ? 'bg-black text-white' : '' }}">
 				<a href="{{ rock_path(areaSlug, rock.slug) }}" title="{{ 'nav.rock_link_title'|trans({ '%rock%': rock.name }) }}" class="block w-full truncate py-1 ps-2 text-sm no-underline {{ isCurrentRock ? 'text-white' : 'text-gray-800 dark:text-gray-200' }}" data-area-slug="{{ areaSlug }}" data-rock-slug="{{ rock.slug }}">
-					<span class="flex min-w-0 items-center gap-2">
-						{% if rock.previewImage is not empty %}
-							<img
-								src="https://www.munichclimbs.de/build/images/rock/{{ rock.previewImage }}.webp"
-								alt=""
-								width="24"
-								height="24"
-								loading="lazy"
-								decoding="async"
-								fetchpriority="low"
-								class="size-6 shrink-0 rounded object-cover"
-							>
-						{% else %}
-							<twig:ux:icon name="lucide:mountain" class="size-5 shrink-0" aria-hidden="true" />
-						{% endif %}
-						<span class="truncate">{{ rock.name }}</span>
-					</span>
+					{{ rock.name }}
 				</a>
 			</li>
 		{% endfor %}

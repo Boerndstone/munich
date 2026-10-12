@@ -2,122 +2,148 @@
 	<nav class="mx-auto flex h-full max-w-[1024px] items-stretch px-2" aria-label="{{ 'nav.main_aria'|trans }}">
 		<twig:Sheet class="contents">
 		<twig:Sheet:Content id="navOffcanvas" side="left" aria-labelledby="navOffcanvasTitle">
-					<div class="flex shrink-0 items-center justify-between border-b border-[var(--theme-border)] px-3 py-2">
-						<a class="chelsea-market-regular text-lg text-[var(--theme-text)] no-underline" id="navOffcanvasTitle" href="{{ index_path() }}">munichclimbs</a>
-						<twig:Button type="button" variant="ghost" size="icon" data-action="click->sheet#close" aria-label="{{ 'close_navigation'|trans({}, 'messages') }}">
-							<span class="sr-only">{{ 'close_navigation'|trans({}, 'messages') }}</span>
-							<twig:ux:icon name="lucide:x" class="size-5" aria-hidden="true" />
-						</twig:Button>
-					</div>
-					<div class="min-h-0 flex-1 overflow-y-auto pe-2 ps-1 mt-2">
-						{% set _route = app.request.attributes.get('_route') %}
-						{% set currentAreaSlug = _route in ['show_rock', 'show_rock_en'] ? app.request.attributes.get('areaSlug') : (_route in ['show_rocks', 'show_rocks_en'] ? app.request.attributes.get('slug') : null) %}
-						{% set currentRockSlug = _route in ['show_rock', 'show_rock_en'] ? app.request.attributes.get('slug') : null %}
-						<ul class="m-0 list-none p-0">
-							{% for area in getSidebarAreaSummaries() %}
-								{% set isCurrentArea = currentAreaSlug and area.slug == currentAreaSlug %}
-								{% set rocksEndpoint = path(app.request.locale == 'en' ? 'navigation_area_rocks_en' : 'navigation_area_rocks', {
-									slug: area.slug,
-									currentAreaSlug: currentAreaSlug,
-									currentRockSlug: currentRockSlug
-								}) %}
-								<li>
-									<details
-										class="group"
-										data-controller="lazy-navigation"
-										data-action="toggle->lazy-navigation#toggle"
-										data-lazy-navigation-area-slug-value="{{ area.slug }}"
-										data-lazy-navigation-endpoint-value="{{ rocksEndpoint }}"
-										data-lazy-navigation-loaded-value="{{ isCurrentArea ? 'true' : 'false' }}"
-										{{ isCurrentArea ? 'open' : '' }}
-									>
-										<summary class="flex cursor-pointer list-none items-center gap-2 px-2 py-2 text-sm text-gray-900 marker:hidden [&::-webkit-details-marker]:hidden dark:text-gray-100">
-											<img src="https://www.munichclimbs.de/build/images/navigationThumbs/{{ area.image }}.webp" alt="" class="size-[18px] shrink-0 rounded" loading="lazy">
-											<span class="min-w-0 flex-1 truncate">{{ area.name }}</span>
-											<span class="single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out group-open:rotate-90" aria-hidden="true"></span>
-										</summary>
-										<div data-lazy-navigation-target="content">
-											{% if isCurrentArea %}
-												{{ include('components/layout/_navigation-rocks.html.twig', {
-													rocks: getSidebarRocks(area.slug),
-													areaSlug: area.slug,
-													isCurrentArea: isCurrentArea,
-													currentRockSlug: currentRockSlug
-												}) }}
-											{% endif %}
-										</div>
-									<p data-lazy-navigation-target="status" class="px-2 py-2 text-xs text-gray-500 dark:text-gray-400" role="status" aria-live="polite" hidden></p>
-									</details>
-								</li>
-							{% endfor %}
-						</ul>
-						<hr class="my-2 border-gray-200 dark:border-gray-700" />
-						<ul class="m-0 list-none p-0 pb-4">
-							<li>
-								<div class="truncate px-2 py-2 text-sm text-gray-600 dark:text-gray-400">{{ 'nav.contact_section'|trans }}</div>
-							</li>
-							<li>
-								<a class="flex items-center gap-2 px-2 py-2 text-sm text-gray-900 no-underline hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800" href="{{ path(app.request.locale == 'en' ? 'datenschutz_en' : 'datenschutz') }}">
-									<span class="chart inline-block shrink-0" aria-hidden="true"></span>
-									<span class="truncate">{{ 'nav.datenschutz'|trans }}</span>
-								</a>
-							</li>
-							<li>
-								<a class="flex items-center gap-2 px-2 py-2 text-sm text-gray-900 no-underline hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800" href="{{ path(app.request.locale == 'en' ? 'impressum_en' : 'impressum') }}">
-									<span class="chart inline-block shrink-0" aria-hidden="true"></span>
-									<span class="truncate">{{ 'nav.impressum'|trans }}</span>
-								</a>
-							</li>
-							<li>
-								<a class="flex items-center gap-2 px-2 py-2 text-sm text-gray-900 no-underline hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800" href="{{ path(app.request.locale == 'en' ? 'free_climbing_grade_comparison_en' : 'free_climbing_grade_comparison') }}">
-									<span class="chart inline-block shrink-0" aria-hidden="true"></span>
-									<span class="truncate">{{ 'grade_comparison_free_climbing.nav_link'|trans }}</span>
-								</a>
-							</li>
-						</ul>
-					</div>
+			<div class="flex shrink-0 items-center justify-between border-b border-[var(--theme-border)] px-3 py-2">
+				<a class="chelsea-market-regular text-lg text-[var(--theme-text)] no-underline" id="navOffcanvasTitle" href="{{ index_path() }}">munichclimbs</a>
+				<twig:Button type="button" variant="ghost" size="icon" data-action="click->sheet#close" aria-label="{{ 'close_navigation'|trans({}, 'messages') }}">
+					<span class="sr-only">{{ 'close_navigation'|trans({}, 'messages') }}</span>
+					<twig:ux:icon name="lucide:x" class="size-5" aria-hidden="true" />
+				</twig:Button>
+			</div>
+			<div class="min-h-0 flex-1 overflow-y-auto pe-2 ps-1 mt-2">
+				{% set _route = app.request.attributes.get('_route') %}
+				{% set currentAreaSlug = _route in ['show_rock', 'show_rock_en'] ? app.request.attributes.get('areaSlug') : (_route in ['show_rocks', 'show_rocks_en'] ? app.request.attributes.get('slug') : null) %}
+				{% set currentRockSlug = _route in ['show_rock', 'show_rock_en'] ? app.request.attributes.get('slug') : null %}
+				<ul class="m-0 list-none p-0">
+					{% for area in getSidebarAreaSummaries() %}
+						{% set isCurrentArea = currentAreaSlug and area.slug == currentAreaSlug %}
+						{% set rocksEndpoint = path(app.request.locale == 'en' ? 'navigation_area_rocks_en' : 'navigation_area_rocks', {
+							slug: area.slug,
+							currentAreaSlug: currentAreaSlug,
+							currentRockSlug: currentRockSlug
+						}) %}
+						<li>
+							<details
+								class="group"
+								data-controller="lazy-navigation"
+								data-action="toggle->lazy-navigation#toggle"
+								data-lazy-navigation-area-slug-value="{{ area.slug }}"
+								data-lazy-navigation-endpoint-value="{{ rocksEndpoint }}"
+								data-lazy-navigation-loaded-value="{{ isCurrentArea ? 'true' : 'false' }}"
+								{{ isCurrentArea ? 'open' : '' }}
+							>
+								<summary class="flex cursor-pointer list-none items-center gap-2 px-2 py-2 text-sm text-gray-900 marker:hidden [&::-webkit-details-marker]:hidden dark:text-gray-100">
+									<img src="https://www.munichclimbs.de/build/images/navigationThumbs/{{ area.image }}.webp" alt="" class="size-[18px] shrink-0 rounded" loading="lazy">
+									<span class="min-w-0 flex-1 truncate">{{ area.name }}</span>
+									<span class="single-chevron-right ms-1 shrink-0 transition-transform duration-200 ease-out group-open:rotate-90" aria-hidden="true"></span>
+								</summary>
+								<div data-lazy-navigation-target="content">
+									{% if isCurrentArea %}
+										{{ include('components/layout/_navigation-rocks.html.twig', {
+											rocks: getSidebarRocks(area.slug),
+											areaSlug: area.slug,
+											isCurrentArea: isCurrentArea,
+											currentRockSlug: currentRockSlug
+										}) }}
+									{% endif %}
+								</div>
+							<p data-lazy-navigation-target="status" class="px-2 py-2 text-xs text-gray-500 dark:text-gray-400" role="status" aria-live="polite" hidden></p>
+							</details>
+						</li>
+					{% endfor %}
+				</ul>
+				<hr class="my-2 border-gray-200 dark:border-gray-700" />
+				<ul class="m-0 list-none p-0 pb-4">
+					<li>
+						<div class="truncate px-2 py-2 text-sm text-gray-600 dark:text-gray-400">{{ 'nav.further_informations_section'|trans }}</div>
+					</li>
+					<li>
+						<a class="flex items-center gap-2 px-2 py-2 text-sm text-gray-900 no-underline hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800" href="{{ path(app.request.locale == 'en' ? 'free_climbing_grade_comparison_en' : 'free_climbing_grade_comparison') }}">
+							<twig:ux:icon name="lucide:table" class="size-4 shrink-0" />
+							<span class="truncate">{{ 'grade_comparison_free_climbing.nav_link'|trans }}</span>
+						</a>
+					</li>
+				</ul>
+				<hr class="my-2 border-gray-200 dark:border-gray-700" />
+				<ul class="m-0 list-none p-0 pb-4">
+					<li>
+						<div class="truncate px-2 py-2 text-sm text-gray-600 dark:text-gray-400">{{ 'nav.contact_section'|trans }}</div>
+					</li>
+					<li>
+						<a class="flex items-center gap-2 px-2 py-2 text-sm text-gray-900 no-underline hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800" href="{{ path(app.request.locale == 'en' ? 'datenschutz_en' : 'datenschutz') }}">
+							<twig:ux:icon name="lucide:shield-alert" class="size-4 shrink-0" />
+							<span class="truncate">{{ 'nav.datenschutz'|trans }}</span>
+						</a>
+					</li>
+					<li>
+						<a class="flex items-center gap-2 px-2 py-2 text-sm text-gray-900 no-underline hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800" href="{{ path(app.request.locale == 'en' ? 'impressum_en' : 'impressum') }}">
+							<twig:ux:icon name="lucide:book-alert" class="size-4 shrink-0" />
+							<span class="truncate">{{ 'nav.impressum'|trans }}</span>
+						</a>
+					</li>
+				</ul>
+			</div>
 		</twig:Sheet:Content>
-		<div class="flex w-full max-w-[1024px] flex-1 items-center gap-2 px-0">
-			<div class="flex shrink-0 items-center gap-1 ps-0 md:w-1/4 md:gap-2 md:ps-1">
-				<twig:Sheet:Trigger>
-				<button class="inline-flex shrink-0 cursor-pointer border-0 bg-transparent p-0 shadow-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]" type="button" aria-controls="navOffcanvas" aria-label="{{ 'nav.toggle'|trans }}">
-					<div class="menu" aria-hidden="true"></div>
-				</button>
-				</twig:Sheet:Trigger>
-				<a href="{{ index_path() }}" aria-label="{{ 'nav.home_aria'|trans }}" class="munich chelsea-market-regular ms-2 pb-1 text-xl leading-tight no-underline">
-					<span class="max-md:hidden md:inline-block">munichclimbs</span>
-				</a>
-			</div>
-			<div class="min-w-0 flex-1 md:w-2/3">
-				<div class="flex cursor-pointer items-center rounded-md border border-[var(--theme-border)] bg-[var(--theme-bg-lighter)] px-2 py-1.5 text-sm text-[var(--theme-text)] shadow-sm focus-within:ring-2 focus-within:ring-[var(--theme-border)]" data-action="click->search-modal#open keydown.enter->search-modal#open" role="button" tabindex="0" aria-label="{{ 'nav.search_open_aria'|trans }}">
-					<i class="fas fa-search magnifier me-2 shrink-0 opacity-60" aria-hidden="true"></i>
-					<span class="truncate opacity-80">{{ 'search'|trans }}</span>
+			<div class="flex w-full max-w-[1024px] flex-1 items-center gap-2 px-0">
+				<div class="flex shrink-0 items-center gap-1 ps-0 md:w-1/4 md:gap-2 md:ps-1">
+					<twig:Button
+						type="button"
+						variant="ghost"
+						size="icon-sm"
+						class="shrink-0 text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)]"
+						data-action="click->sheet#open"
+						data-sheet-target="trigger"
+						aria-controls="navOffcanvas"
+						aria-expanded="false"
+						aria-haspopup="dialog"
+						aria-label="{{ 'nav.toggle'|trans }}"
+					>
+						<twig:ux:icon name="lucide:menu" class="size-5 shrink-0" aria-hidden="true" />
+					</twig:Button>
+					<a href="{{ index_path() }}" aria-label="{{ 'nav.home_aria'|trans }}" class="munich chelsea-market-regular ms-2 pb-1 text-xl leading-tight no-underline">
+						<span class="max-md:hidden md:inline-block">munichclimbs</span>
+					</a>
 				</div>
-			</div>
-			{% set nav_settings_route = app.request.attributes.get('_route') %}
-			{% set nav_settings_is_rock_page = nav_settings_route in ['show_rock', 'show_rock_en'] %}
-			<details class="relative shrink-0 ps-1">
-				<summary class="inline-flex h-9 w-9 list-none cursor-pointer items-center justify-center rounded-md text-[var(--theme-text)] outline-none hover:bg-[var(--theme-bg-lighter)] focus-visible:ring-2 focus-visible:ring-[var(--theme-border)] [&::-webkit-details-marker]:hidden" aria-label="{{ 'nav.settings_toggle_aria'|trans }}" title="{{ 'nav.settings_toggle_aria'|trans }}">
-					<twig:ux:icon name="lucide:settings" class="size-[18px] shrink-0" aria-hidden="true" />
-				</summary>
-				<div class="absolute end-0 top-[calc(100%+6px)] z-[1070] w-max min-w-0 rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] py-1 text-[var(--theme-text)] shadow-lg ring-1 ring-black/5 dark:ring-white/10" role="menu" aria-orientation="vertical" onclick="event.stopPropagation()">
-					<div class="flex flex-wrap items-center gap-3 px-2 py-2">
-						{{ include('components/layout/language-switch.html.twig', { switch_id: 'languageSwitchNavMenu' }) }}
-						<span class="inline-block h-5 w-px shrink-0 self-center bg-[var(--theme-border)]" aria-hidden="true"></span>
-						{{ include('components/layout/theme-switcher.html.twig', { variant: 'menu_row' }) }}
+				<div class="min-w-0 flex-1 md:w-2/3">
+					<div class="flex cursor-pointer items-center rounded-md border border-[var(--theme-border)] bg-[var(--theme-bg-lighter)] px-2 py-1.5 text-sm text-[var(--theme-text)] shadow-sm focus-within:ring-2 focus-within:ring-[var(--theme-border)]" data-action="click->search-modal#open keydown.enter->search-modal#open" role="button" tabindex="0" aria-label="{{ 'nav.search_open_aria'|trans }}">
+						<twig:ux:icon name="lucide:search" class="me-2 size-4 shrink-0 opacity-60" aria-hidden="true" />
+						<span class="truncate opacity-80">{{ 'search'|trans }}</span>
 					</div>
-					{% if nav_settings_is_rock_page %}
-						<hr class="mx-0 border-0 border-t border-[var(--theme-border)]" />
-						<div class="px-2 pb-2 pt-2" role="group" aria-label="{{ 'nav.grade_display_group_aria'|trans|e('html_attr') }}">
-							<p id="gradeDisplaySwitchNavMenu-heading" class="mb-2 text-[10px] font-semibold uppercase leading-tight tracking-wide text-[var(--theme-text)]/75">{{ 'nav.settings_grade_switch_headline'|trans }}</p>
-							<div class="flex items-center justify-start">
-								{{ include('components/layout/grade-display-switch.html.twig', { grade_switch_id: 'gradeDisplaySwitchNavMenu', grade_display_heading_id: 'gradeDisplaySwitchNavMenu-heading' }) }}
-							</div>
-						</div>
-					{% endif %}
 				</div>
-			</details>
-		</div>
+				{% set nav_settings_route = app.request.attributes.get('_route') %}
+				{% set nav_settings_is_rock_page = nav_settings_route in ['show_rock', 'show_rock_en'] %}
+				<div class="shrink-0 ps-1">
+					<twig:Button 
+						id="nav-settings-trigger" 
+						type="button" 
+						variant="outline" 
+						size="sm" 
+						class="shrink-0" 
+						popovertarget="nav-settings-menu" 
+						aria-haspopup="menu" 
+						aria-label="{{ 'nav.settings_toggle_aria'|trans }}" 
+						title="{{ 'nav.settings_toggle_aria'|trans }}" 
+						style="anchor-name: --nav-settings-trigger;"
+					>
+						<twig:ux:icon name="lucide:settings" class="size-4 shrink-0" aria-hidden="true" />
+					</twig:Button>
+					<div id="nav-settings-menu" popover="auto" class="m-0 w-max min-w-0 max-w-[calc(100vw-1rem)] rounded-lg border border-[var(--theme-border)] bg-[var(--theme-bg)] py-1 text-[var(--theme-text)] shadow-lg ring-1 ring-black/5 dark:ring-white/10" role="menu" aria-orientation="vertical" style="position-anchor: --nav-settings-trigger; position-area: block-end span-inline-end; margin-top: 6px;">
+						<div class="flex flex-wrap items-center gap-3 p-1">
+							{{ include('components/layout/language-switch.html.twig', { switch_id: 'languageSwitchNavMenu' }) }}
+							<span class="inline-block h-5 w-px shrink-0 self-center bg-[var(--theme-border)]" aria-hidden="true"></span>
+							{{ include('components/layout/theme-switcher.html.twig', { variant: 'menu_row' }) }}
+						</div>
+						{% if nav_settings_is_rock_page %}
+							<hr class="mx-0 border-0 border-t border-[var(--theme-border)]" />
+							<div class="px-2 pb-2 pt-2" role="group" aria-label="{{ 'nav.grade_display_group_aria'|trans|e('html_attr') }}">
+								<p id="gradeDisplaySwitchNavMenu-heading" class="mb-2 text-[10px] font-semibold uppercase leading-tight tracking-wide text-[var(--theme-text)]/75">{{ 'nav.settings_grade_switch_headline'|trans }}</p>
+								<div class="flex items-center justify-start">
+									{{ include('components/layout/grade-display-switch.html.twig', { grade_switch_id: 'gradeDisplaySwitchNavMenu', grade_display_heading_id: 'gradeDisplaySwitchNavMenu-heading' }) }}
+								</div>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
 		</twig:Sheet>
 	</nav>
 </header>

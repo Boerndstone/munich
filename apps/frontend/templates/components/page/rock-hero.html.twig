@@ -16,7 +16,7 @@
 			<div class="flex items-center justify-between rounded-md bg-white/60 p-3 shadow-md">
 				<div class="flex w-full flex-col">
 					<div class="flex items-center justify-between gap-2">
-						<h1 class="stay-black mb-0 text-xl font-medium md:text-2xl">
+						<h1 class="mb-0 text-xl font-medium text-black md:text-2xl">
 							{{ rock.rockName }}
 						</h1>
 						<twig:Button
@@ -46,11 +46,11 @@
 							</twig:Breadcrumb:Item>
 							<twig:Breadcrumb:Separator />
 							<twig:Breadcrumb:Item>
-								<twig:Breadcrumb:Link class="stay-black text-black hover:underline" href="{{ area_path(rock.areaSlug) }}">{{ rock.areaName }}</twig:Breadcrumb:Link>
+								<twig:Breadcrumb:Link class="text-black hover:underline" href="{{ area_path(rock.areaSlug) }}">{{ rock.areaName }}</twig:Breadcrumb:Link>
 							</twig:Breadcrumb:Item>
 							<twig:Breadcrumb:Separator />
 							<twig:Breadcrumb:Item>
-								<twig:Breadcrumb:Page class="stay-black text-black">{{ rock.rockName }}</twig:Breadcrumb:Page>
+								<twig:Breadcrumb:Page class="text-black">{{ rock.rockName }}</twig:Breadcrumb:Page>
 							</twig:Breadcrumb:Item>
 						</twig:Breadcrumb:List>
 					</twig:Breadcrumb>

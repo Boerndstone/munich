@@ -131,6 +131,7 @@
 body {
   background-color: var(--theme-bg);
   color: var(--theme-text);
+  min-height: 100%;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 .badge-opacity {
@@ -315,20 +316,8 @@ body {
 [data-theme="dark"] .bg-theme {
     background-color: white !important;
 }
-html {
-    height: 100%;
-}
-body {
-    font-family: 'Inter', sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    height: 100%!important;
-}
-
-// General
-
 .chelsea-market-regular {
-    font-family: "Chelsea Market", system-ui;
+    font-family: var(--font-munich-brand);
     font-weight: 400;
     font-style: normal;
     font-size: 20px;

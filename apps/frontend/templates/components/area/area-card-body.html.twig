@@ -1,4 +1,4 @@
-<div class="{{ compact_chart|default(false) and fill_chart_panel|default(false) ? 'flex h-full min-h-0 min-w-0 flex-col' : (compact_chart|default(false) ? '' : 'mt-auto') }}">
+<div class="{{ compact_chart|default(false) and fill_chart_panel|default(false) ? 'flex h-full min-h-0 min-w-0 flex-col' : (compact_chart|default(false) or vertically_centered|default(false) ? '' : 'mt-auto') }}">
 	{% set chart_aria_prefix = aria_label_prefix|default(
 		(area.name is defined and area.name is not empty) ? ('Klettergebiet ' ~ area.name ~ '. ') : ''
 	) %}

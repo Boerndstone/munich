@@ -42,14 +42,7 @@
 {% block body %}
 	{{ include('components/layout/navigation.html.twig') }}
 	<main id="main-content">
-		{{ include('components/page/area-hero.html.twig', {
-			setTitle: setTitle,
-			areaName: areaName,
-			areaImage: areaImage,
-			areaKletterkonzeption: areaKletterkonzeption,
-			top100Routes: top100Routes
-		}) }}
-		<div class="mx-auto my-4 w-full max-w-[1024px] px-2 sm:px-4">
+		<div class="mx-auto my-3 w-full max-w-[1024px] px-2 sm:px-4">
 			<section>
 				{# Modals must live outside .image-container so fixed backdrop/dialog stack above the hero (z-index context) #}
 				{% if areaKletterkonzeption %}
@@ -60,7 +53,19 @@
 				{% endif %}
 				{{ include('components/page/area-map-modal.html.twig', { areaName: areaName }) }}
 				<div class="grid grid-cols-1 gap-3" data-controller="filter">
-					{{ include('components/rocks-sticky-filter.html.twig') }}
+					<twig:Card class="shadow-sm lg:sticky lg:top-[55px] lg:z-[1000]">
+						<twig:Card:Content class="flex min-w-0 flex-col gap-2 !p-2.5">
+							{{ include('components/page/area-hero.html.twig', {
+								areaName: areaName,
+								areaKletterkonzeption: areaKletterkonzeption,
+								top100Routes: top100Routes
+							}) }}
+							<div class="border-t border-border pt-2">
+								{{ include('components/rocks-sticky-filter.html.twig') }}
+							</div>
+							<p class="sr-only" id="resultsCounter" aria-live="polite"><span id="resultsCount">0</span> {{ 'rocks.filter_results_suffix'|trans }}</p>
+						</twig:Card:Content>
+					</twig:Card>
 					<div class="flex flex-col">
 						{% for rock in rocks %}
 							{{ include('components/rock-area-list-item.html.twig', { rock: rock, areaName: areaName, currentDate: currentDate }) }}

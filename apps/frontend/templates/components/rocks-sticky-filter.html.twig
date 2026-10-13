@@ -31,9 +31,7 @@
     },
 ] %}
 
-<div class="mb-2 rounded-lg border border-border bg-card px-3 py-2 text-card-foreground shadow-sm lg:sticky lg:top-[55px] lg:z-[1000]">
-	<h2 class="mb-2 text-base font-medium leading-tight text-foreground" id="resultsCounter"><span id="resultsCount">0</span> {{ 'rocks.filter_results_suffix'|trans }}</h2>
-	<twig:ToggleGroup aria-label="{{ 'rocks.filter_results_suffix'|trans }}">
+	<twig:ToggleGroup class="justify-start gap-1" aria-label="{{ 'rocks.filter_results_suffix'|trans }}">
 		{% for f in rock_filter_switches %}
 			<twig:Toggle
 				id="{{ f.id }}"
@@ -51,4 +49,3 @@
 			</twig:Toggle>
 		{% endfor %}
 	</twig:ToggleGroup>
-</div>

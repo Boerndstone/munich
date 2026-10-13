@@ -52,3 +52,10 @@ services:
     arguments:
       # Only used by app:travel-time:export. Set OSRM_SSL_VERIFY=0 in .env if export fails with cURL error 35.
       $osrmSslVerify: "%env(bool:default:OSRM_SSL_VERIFY:1)%"
+
+  # All public API reads must hide unpublished/editor-only data even though this
+  # application also hosts the authenticated backoffice.
+  App\ApiPlatform\PublicVisibilityExtension:
+    tags:
+      - { name: api_platform.doctrine.orm.query_extension.collection }
+      - { name: api_platform.doctrine.orm.query_extension.item }

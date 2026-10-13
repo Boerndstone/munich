@@ -27,7 +27,12 @@ use Symfony\Component\Validator\Constraints as Assert;
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['area.id' => 'exact', 'rock.id' => 'exact', 'topoId' => 'exact', 'grade' => 'exact'])]
-#[ApiFilter(OrderFilter::class, properties: ['yearFirstAscent' => 'DESC'])]
+#[ApiFilter(OrderFilter::class, properties: [
+    'yearFirstAscent' => 'DESC',
+    'topoId' => 'ASC',
+    'nr' => 'ASC',
+    'name' => 'ASC',
+])]
 class Routes
 {
     #[ORM\Id]

@@ -76,7 +76,6 @@ final class PublicVisibilityExtension implements QueryCollectionExtensionInterfa
                 ->andWhere(sprintf('%s.image <> \'\'', $root))
                 ->andWhere(sprintf('%s.pathCollection IS NOT NULL', $root))
                 ->andWhere(sprintf('%s.pathCollection <> \'\'', $root))
-                ->andWhere(sprintf('%s.updatedAt IS NOT NULL', $root))
                 ->setParameter('public_online', true)
                 ->setParameter('public_area_online', 1)
                 ->setParameter('public_topo_with_sector', true),

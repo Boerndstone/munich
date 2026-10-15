@@ -20,7 +20,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new GetCollection(normalizationContext: ['groups' => ['comment:read']]),
     ]
 )]
-#[ApiFilter(SearchFilter::class, properties: ['route.id' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['route.id' => 'exact', 'route.rock.id' => 'exact'])]
 class Comment
 {
     #[ORM\Id]

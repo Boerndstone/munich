@@ -30,6 +30,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
@@ -249,7 +250,8 @@ class FrontendController extends AbstractController
         TranslatorInterface $translator,
         EntityManagerInterface $entityManager,
         SluggerInterface $slugger,
-        ImageProcessingService $imageProcessingService
+        ImageProcessingService $imageProcessingService,
+        RateLimiterFactoryInterface $publicContributionLimiter,
     ): Response {
 
         $rockId = $rockRepository->getRockId($slug);
@@ -347,7 +349,22 @@ class FrontendController extends AbstractController
         ]);
         $galleryUploadForm->handleRequest($request);
 
-        if ($improvementForm->isSubmitted() && $improvementForm->isValid()) {
+        // The public forms intentionally permit anonymous contributions. Limit
+        // both write paths together by client IP and rock, before validation or
+        // processing, so repeated invalid submissions cannot bypass the limit.
+        $submissionAllowed = true;
+        if ($improvementForm->isSubmitted() || $galleryUploadForm->isSubmitted()) {
+            $limiterKey = sprintf('%s:%s', $request->getClientIp() ?? 'unknown', $rock->getId() ?? 'unknown');
+            $limit = $publicContributionLimiter->create($limiterKey)->consume();
+            if (!$limit->isAccepted()) {
+                $submissionAllowed = false;
+                $openMithelfen = true;
+                $mithelfenTab = $galleryUploadForm->isSubmitted() ? 'gallery' : 'content';
+                $this->addFlash('mithelfen_error', $translator->trans('rock_improvement.rate_limited'));
+            }
+        }
+
+        if ($submissionAllowed && $improvementForm->isSubmitted() && $improvementForm->isValid()) {
             /** @var RockImprovementSuggestion $data */
             $data = $improvementForm->getData();
             $email = (new TemplatedEmail())
@@ -384,7 +401,7 @@ class FrontendController extends AbstractController
             $mithelfenTab = 'content';
         }
 
-        if ($galleryUploadForm->isSubmitted() && $galleryUploadForm->isValid()) {
+        if ($submissionAllowed && $galleryUploadForm->isSubmitted() && $galleryUploadForm->isValid()) {
             /** @var RockImprovementSuggestion $data */
             $data = $galleryUploadForm->getData();
             $uploadDir = (string) $this->getParameter('app.gallery_upload_dir');

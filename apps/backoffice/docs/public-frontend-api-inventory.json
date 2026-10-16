@@ -22,8 +22,7 @@
       "descriptionSource": "rocks.meta_description_prefix plus rock names",
       "jsonLd": "none",
       "data": ["area", "rocks", "routes", "top100 routes"],
-      "api": ["GET /areas?slug={areaSlug}", "GET /rocks?area.id={id}", "GET /routes?area.id={id}"],
-      "gap": "Top-100 composition is deferred; it can be derived from routes ordered by gradeNo once the consumer contract is defined."
+      "api": ["GET /areas?slug={areaSlug}", "GET /rocks?area.id={id}", "GET /routes?area.id={id}", "GET /areas/{id}/top-routes"]
     },
     {
       "paths": ["/{areaSlug}/{rockSlug}", "/en/{areaSlug}/{rockSlug}"],
@@ -33,7 +32,7 @@
       "descriptionSource": "rock name, area name, route/topo/first-ascent content",
       "jsonLd": "none",
       "data": ["rock", "area", "routes", "topos", "comments", "translations", "photos", "videos"],
-      "api": ["GET /rocks?area.id={id}&slug={rockSlug}", "GET /routes?rock.id={id}", "GET /topos?rocks.id={id}", "GET /comments?route.id={id}", "GET /rock_translations?rock.id={id}&locale={locale}", "GET /photos?belongsToRock.id={id}", "GET /videos?videoRocks.id={id}"]
+      "api": ["GET /rocks?area.id={id}&slug={rockSlug}", "GET /routes?rock.id={id}", "GET /topos?rocks.id={id}", "GET /comments?route.id={id}", "GET /rock_translations?rock.id={id}&locale={locale}", "GET /photos?belongsToRock.id={id}", "GET /videos?videoRocks.id={id}", "GET /rocks/{id}/railway-access"]
     },
     {
       "paths": ["/search"],
@@ -77,7 +76,7 @@
     }
   ],
   "publicReadEndpoints": [
-    "/areas", "/rocks", "/routes", "/topos", "/comments", "/photos", "/rock_translations", "/videos", "/search"
+    "/areas", "/rocks", "/routes", "/topos", "/comments", "/photos", "/rock_translations", "/videos", "/search", "/areas/{id}/top-routes", "/rocks/{id}/railway-access"
   ],
   "nonPageRoutes": [
     {
@@ -120,8 +119,8 @@
     },
     {
       "area": "public writes",
-      "status": "not exposed",
-      "detail": "Contact, rock-improvement and gallery upload flows remain Symfony-owned until a separately authenticated and rate-limited API contract is designed."
+      "status": "retained in Symfony",
+      "detail": "Next.js remains read-only. Rock-improvement messages and gallery uploads stay on the CSRF-protected Symfony rock forms, with a five-per-hour per-IP/per-rock contribution limit and pending-photo admin moderation. See ../munichclimbs/docs/protected-write-contract.md."
     }
   ],
   "security": {

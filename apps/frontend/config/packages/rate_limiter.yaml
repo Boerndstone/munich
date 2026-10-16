@@ -1,0 +1,9 @@
+framework:
+  rate_limiter:
+    # Anonymous contribution forms share a small per-IP/per-rock budget. Both
+    # improvement messages and gallery uploads consume this limiter so an
+    # attacker cannot bypass it by alternating form types.
+    public_contribution:
+      policy: fixed_window
+      limit: 5
+      interval: '1 hour'

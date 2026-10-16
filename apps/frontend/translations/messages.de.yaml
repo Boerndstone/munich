@@ -187,6 +187,7 @@ multi.pitch: "Mehrseillängen-Tour"
 crack.climbing: "Risskletterei"
 
 # Rock improvement / contribute form
+rock_improvement.rate_limited: "Zu viele Beiträge für diesen Fels. Bitte versuchen Sie es in einer Stunde erneut."
 rock_improvement.title: "Mithelfen"
 rock_improvement.intro: "Neue Routen, Korrekturen oder aktuelle Infos zu „%rock_name%“? Schick sie uns – dein Beitrag hilft der Community."
 rock_improvement.gallery_intro: "Du hast ein Bild zu „%rock_name%“? Lade es hier hoch, wir prüfen es und schalten es danach frei."

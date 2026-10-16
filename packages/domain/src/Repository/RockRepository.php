@@ -175,6 +175,7 @@ class RockRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('rock')
             ->select(
+                'rock.id AS rockId',
                 'rock.lat AS lat',
                 'rock.lng AS lng',
                 'rock.name AS rockName',

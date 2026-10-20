@@ -3,6 +3,88 @@ import L from "leaflet";
 import "leaflet.markercluster";
 import { createMapPinIcon, rockMarkerClusterGroupOptions } from "../map/icons.js";
 
+const INFORMATION_ICON_PATHS = {
+  bed: '<path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/>',
+  train: '<rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16M12 3v8M8 19l-2 3M16 19l2 3M8 15h.01M16 15h.01"/>',
+  waves: '<path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5S12 7 14.5 7 17 5 19.5 5c1.3 0 1.9.5 2.5 1M2 12c.6.5 1.2 1 2.5 1C7 13 7 11 9.5 11s2.5 2 5 2 2.5-2 5-2c1.3 0 1.9.5 2.5 1M2 18c.6.5 1.2 1 2.5 1C7 19 7 17 9.5 17s2.5 2 5 2 2.5-2 5-2c1.3 0 1.9.5 2.5 1"/>',
+  landmark: '<path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2l9 5H3z"/>',
+};
+
+function createInformationIcon(name) {
+  const paths = INFORMATION_ICON_PATHS[name] || INFORMATION_ICON_PATHS.landmark;
+  return L.divIcon({
+    html: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`,
+    className: "railway-station-icon",
+    iconSize: [40, 40],
+    iconAnchor: [20, 20],
+  });
+}
+
+function appendPopupDetail(content, label, value) {
+  if (typeof value !== "string" || !value.trim()) return;
+
+  const row = document.createElement("p");
+  row.className = "mt-1 text-sm";
+  const heading = document.createElement("span");
+  heading.className = "font-medium";
+  heading.textContent = `${label}: `;
+  const valueElement = document.createElement("span");
+  valueElement.className = "whitespace-pre-line";
+  valueElement.textContent = value.trim();
+  row.append(heading, valueElement);
+  content.appendChild(row);
+}
+
+function createInformationPopup(point, labels) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "w-[250px] overflow-visible rounded-xl";
+  const content = document.createElement("div");
+  content.className = "px-3.5 py-3";
+  const heading = document.createElement("h3");
+  heading.className = "mb-2 text-base font-semibold";
+  heading.textContent = (typeof point.name === "string" && point.name.trim()) || labels.category;
+  content.appendChild(heading);
+
+  appendPopupDetail(content, labels.address, point.address);
+  appendPopupDetail(content, labels.description, point.description);
+  appendPopupDetail(content, labels.openingHours, point.openingHours);
+
+  if (typeof point.phone === "string" && point.phone.trim()) {
+    const phone = document.createElement("p");
+    phone.className = "mt-1 text-sm";
+    const phoneLabel = document.createElement("span");
+    phoneLabel.className = "font-medium";
+    phoneLabel.textContent = `${labels.phone}: `;
+    const phoneLink = document.createElement("a");
+    phoneLink.href = `tel:${point.phone.trim().replace(/[^+\d*#,;]/g, "")}`;
+    phoneLink.textContent = point.phone.trim();
+    phone.append(phoneLabel, phoneLink);
+    content.appendChild(phone);
+  }
+
+  if (typeof point.link === "string" && point.link.trim()) {
+    let externalUrl;
+    try {
+      const parsedUrl = new URL(point.link.trim(), window.location.origin);
+      if (["http:", "https:"].includes(parsedUrl.protocol)) externalUrl = parsedUrl.href;
+    } catch {
+      // Ignore malformed URLs from the editable infrastructure JSON.
+    }
+    if (externalUrl) {
+      const link = document.createElement("a");
+      link.className = "mt-2 inline-block break-all text-sm underline underline-offset-2";
+      link.href = externalUrl;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = (typeof point.linkLabel === "string" && point.linkLabel.trim()) || labels.website;
+      content.appendChild(link);
+    }
+  }
+
+  wrapper.appendChild(content);
+  return wrapper;
+}
+
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
   static targets = ["map", "layerBtn", "attrFilterBtn"];
@@ -11,7 +93,7 @@ export default class extends Controller {
     this._cleanupExistingMap();
     const markersArea = JSON.parse(this.data.get("markersArea"));
     const zoom = JSON.parse(this.data.get("zoom"));
-    const information = JSON.parse(this.data.get("railwayStations"));
+    const information = JSON.parse(this.data.get("railwayStations")) || {};
     this._mapOwner = Symbol("area-map-owner");
     this.areaMap = L.map(this.mapTarget).setView([zoom[0], zoom[1]], zoom[2]);
     this.mapTarget.__leafletMapInstance = this.areaMap;
@@ -24,53 +106,36 @@ export default class extends Controller {
       maxZoom: 18,
     }).addTo(this.areaMap);
 
-    const trainStationIcon = L.divIcon({
-      html: `<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2c-4 0-8 .5-8 4v9.5A3.5 3.5 0 0 0 7.5 19L6 20.5v.5h2.23l2-2H14l2 2h2v-.5L16.5 19a3.5 3.5 0 0 0 3.5-3.5V6c0-3.5-3.58-4-8-4M7.5 17A1.5 1.5 0 0 1 6 15.5A1.5 1.5 0 0 1 7.5 14A1.5 1.5 0 0 1 9 15.5A1.5 1.5 0 0 1 7.5 17m3.5-7H6V6h5zm2 0V6h5v4zm3.5 7a1.5 1.5 0 0 1-1.5-1.5a1.5 1.5 0 0 1 1.5-1.5a1.5 1.5 0 0 1-1.5 1.5"/></svg>`,
-      className: "railway-station-icon",
-      iconSize: [40, 40],
-      iconAnchor: [20, 20],
-    });
+    this.informationMarkers = new Map();
+    this.layerBtnTargets.forEach((btn) => {
+      const layer = btn.dataset.layer;
+      if (!layer || layer === "rocks") return;
 
-    const campingIcon = L.divIcon({
-      html: `<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="currentColor" d="M19 7h-8v7H3V5H1v15h2v-3h18v3h2v-9a4 4 0 0 0-4-4M7 13a3 3 0 0 0 3-3a3 3 0 0 0-3-3a3 3 0 0 0-3 3a3 3 0 0 0 3 3"/></svg>`,
-      className: "railway-station-icon",
-      iconSize: [40, 40],
-      iconAnchor: [20, 20],
-    });
-
-    this.trainMarkers = [];
-    if (information.trainStations && information.trainStations.length > 0) {
-      information.trainStations.forEach((trainStation) => {
-        if (trainStation) {
-          const latLng = [trainStation.lat, trainStation.lng];
-          const marker = L.marker(latLng, { icon: trainStationIcon })
-            .bindPopup(
-              `<div class="w-[250px] overflow-visible rounded-xl"><div class="px-3.5 py-3"><h3 class="mb-2 text-base font-semibold">Haltestelle ${trainStation.name}</h3>${
-                trainStation.link
-                  ? `<a href="${trainStation.link}" target="_blank" rel="noopener noreferrer">Link zum Fahrplan</a>`
-                  : ""
-              }</div></div>`
-            )
-            .addTo(this.areaMap);
-          this.trainMarkers.push(marker);
-        }
+      const keys = (btn.dataset.informationKeys || "").split(",").filter(Boolean);
+      const points = keys.flatMap((key) => {
+        const locations = information[key];
+        if (Array.isArray(locations)) return locations;
+        return locations && typeof locations === "object" ? [locations] : [];
       });
-    }
+      const labels = {
+        category: btn.dataset.popupLabel || "Information",
+        address: btn.dataset.popupAddressLabel || "Address",
+        description: btn.dataset.popupDescriptionLabel || "Details",
+        openingHours: btn.dataset.popupOpeningHoursLabel || "Opening hours",
+        phone: btn.dataset.popupPhoneLabel || "Phone",
+        website: btn.dataset.popupLinkLabel || "Website",
+      };
+      const markers = points.flatMap((point) => {
+        const lat = Number(point?.lat);
+        const lng = Number(point?.lng);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return [];
 
-    this.campingMarkers = [];
-    if (information.campingSites && information.campingSites.length > 0) {
-      information.campingSites.forEach((campingSite) => {
-        if (campingSite) {
-          const latLng = [campingSite.lat, campingSite.lng];
-          const marker = L.marker(latLng, { icon: campingIcon })
-            .bindPopup(
-              `<div class="w-[250px] overflow-visible rounded-xl"><div class="px-3.5 py-3"><h3 class="mb-2 text-base font-semibold">Campingplatz ${campingSite.name}</h3><a href="${campingSite.link}" target="_blank" rel="noopener noreferrer">${campingSite.link}</a></div></div>`
-            )
-            .addTo(this.areaMap);
-          this.campingMarkers.push(marker);
-        }
+        const marker = L.marker([lat, lng], { icon: createInformationIcon(btn.dataset.markerIcon) }).bindPopup(createInformationPopup(point, labels));
+        if (btn.classList.contains("active")) marker.addTo(this.areaMap);
+        return [marker];
       });
-    }
+      this.informationMarkers.set(layer, markers);
+    });
 
     this.rocksClusterGroup = L.markerClusterGroup(rockMarkerClusterGroupOptions());
 
@@ -197,7 +262,7 @@ export default class extends Controller {
       this.applyRockVisibility();
     } else {
       const visible = btn.classList.contains("active");
-      const markers = layer === "railway" ? this.trainMarkers : layer === "camping" ? this.campingMarkers : null;
+      const markers = this.informationMarkers?.get(layer);
       if (markers) {
         markers.forEach((marker) => {
           if (visible) marker.addTo(this.areaMap);

@@ -3,17 +3,17 @@ import L from "leaflet";
 import "leaflet.markercluster";
 import { createMapPinIcon, rockMarkerClusterGroupOptions } from "../map/icons.js";
 
-const INFORMATION_ICON_PATHS = {
-  bed: '<path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/>',
-  train: '<rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16M12 3v8M8 19l-2 3M16 19l2 3M8 15h.01M16 15h.01"/>',
-  waves: '<path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5S12 7 14.5 7 17 5 19.5 5c1.3 0 1.9.5 2.5 1M2 12c.6.5 1.2 1 2.5 1C7 13 7 11 9.5 11s2.5 2 5 2 2.5-2 5-2c1.3 0 1.9.5 2.5 1M2 18c.6.5 1.2 1 2.5 1C7 19 7 17 9.5 17s2.5 2 5 2 2.5-2 5-2c1.3 0 1.9.5 2.5 1"/>',
-  landmark: '<path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2l9 5H3z"/>',
-};
+function createInformationIcon(sourceIcon) {
+  if (!sourceIcon) return null;
 
-function createInformationIcon(name) {
-  const paths = INFORMATION_ICON_PATHS[name] || INFORMATION_ICON_PATHS.landmark;
+  const icon = sourceIcon.cloneNode(true);
+  icon.classList.remove("size-4");
+  icon.classList.add("size-6");
+  icon.setAttribute("width", "24");
+  icon.setAttribute("height", "24");
+
   return L.divIcon({
-    html: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`,
+    html: icon.outerHTML,
     className: "railway-station-icon",
     iconSize: [40, 40],
     iconAnchor: [20, 20],
@@ -130,7 +130,9 @@ export default class extends Controller {
         const lng = Number(point?.lng);
         if (!Number.isFinite(lat) || !Number.isFinite(lng)) return [];
 
-        const marker = L.marker([lat, lng], { icon: createInformationIcon(btn.dataset.markerIcon) }).bindPopup(createInformationPopup(point, labels));
+        const markerIcon = createInformationIcon(btn.querySelector("svg"));
+        if (!markerIcon) return [];
+        const marker = L.marker([lat, lng], { icon: markerIcon }).bindPopup(createInformationPopup(point, labels));
         if (btn.classList.contains("active")) marker.addTo(this.areaMap);
         return [marker];
       });

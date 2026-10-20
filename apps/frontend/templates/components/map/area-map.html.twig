@@ -77,7 +77,6 @@
 		layer: 'sleep',
 		data_keys: 'campingSites,accommodationSites,sleepingSites',
 		icon: 'lucide:bed-double',
-		marker_icon: 'bed',
 		trans_key: 'map.infrastructure.sleep',
 		available: railwayStation.campingSites|default([]) is not empty or railwayStation.accommodationSites|default([]) is not empty or railwayStation.sleepingSites|default([]) is not empty,
 	},
@@ -85,7 +84,6 @@
 		layer: 'railway',
 		data_keys: 'trainStations',
 		icon: 'lucide:train-front',
-		marker_icon: 'train',
 		trans_key: 'map.infrastructure.railway',
 		available: railwayStation.trainStations|default([]) is not empty,
 	},
@@ -93,7 +91,6 @@
 		layer: 'swimming',
 		data_keys: 'swimmingSites',
 		icon: 'lucide:waves',
-		marker_icon: 'waves',
 		trans_key: 'map.infrastructure.swimming',
 		available: railwayStation.swimmingSites|default([]) is not empty,
 	},
@@ -101,7 +98,6 @@
 		layer: 'museum',
 		data_keys: 'museumSites',
 		icon: 'lucide:landmark',
-		marker_icon: 'landmark',
 		trans_key: 'map.infrastructure.museum',
 		available: railwayStation.museumSites|default([]) is not empty,
 	},
@@ -154,7 +150,6 @@
 								data-map-target="layerBtn"
 								data-layer="{{ filter.layer }}"
 								data-information-keys="{{ filter.data_keys }}"
-								data-marker-icon="{{ filter.marker_icon }}"
 								data-popup-label="{{ filter_label }}"
 								data-popup-address-label="{{ 'map.details.address'|trans }}"
 								data-popup-description-label="{{ 'map.details.description'|trans }}"

@@ -153,10 +153,10 @@ class AreaCrudController extends AbstractCrudController
         yield CodeEditorField::new('railway_station')
             ->setFormType(JsonFieldType::class)
             ->setLanguage('js')
-            ->setLabel('Bahnhof')
+            ->setLabel('Karten-Infrastruktur')
             ->hideOnIndex()
             ->hideOnDetail()
             ->setColumns('col-12')
-            ->setHelp('Längen- und Breitengrad werden als Json Objekt gespeichert [lat, lng].');
+            ->setHelp('Kategorien: trainStations, campingSites, accommodationSites, sleepingSites, swimmingSites, museumSites. Felder: name, lat, lng, address, description, openingHours, phone, link, linkLabel (alle außer lat/lng optional). Beispiel: {"swimmingSites":[{"name":"Freibad","lat":48.8,"lng":11.1,"address":"Musterstraße 1, 85000 Ort","openingHours":"Mai–September","link":"https://example.org"}]}');
     }
 }

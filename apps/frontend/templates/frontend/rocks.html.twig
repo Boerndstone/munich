@@ -47,8 +47,8 @@
 				{% endif %}
 				{{ include('components/page/area-map-modal.html.twig', { areaName: areaName, areaSlug: areaSlug }) }}
 				<div class="grid grid-cols-1 gap-3" data-controller="filter">
-					<twig:Card class="shadow-sm lg:sticky lg:top-[55px] lg:z-[1000]">
-						<twig:Card:Content class="flex min-w-0 flex-col gap-2 !p-2.5">
+					<twig:Card class="sticky top-[55px] z-[1000] border-0 shadow-none rounded-none">
+						<twig:Card:Content class="flex min-w-0 flex-col gap-2 p-0">
 							{{ include('components/page/area-hero.html.twig', {
 								areaName: areaName,
 								areaKletterkonzeption: areaKletterkonzeption,

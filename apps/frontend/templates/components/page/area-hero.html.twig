@@ -19,7 +19,7 @@
 	icon: 'lucide:map',
 	label: 'area.hero.overview_map',
 	modal: 'modalAreaMap',
-	lazy_map: true
+	load_map: true
 }]) %}
 
 	<div class="flex min-w-0 flex-1 items-center justify-between gap-3">
@@ -40,7 +40,9 @@
 								size="sm"
 								class="h-auto w-full justify-start rounded-sm border-0 bg-transparent px-2 py-1.5 text-left text-sm text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground"
 								role="menuitem"
-								onclick="document.getElementById('areaHeroMoreMenu').removeAttribute('open'); document.getElementById('{{ action.modal }}').showModal(){% if action.lazy_map|default(false) %}; window.MunichMapLoader?.loadAreaMap(){% endif %}"
+								data-modal-id="{{ action.modal }}"
+								data-load-map="{{ action.load_map|default(false) ? 'true' : 'false' }}"
+								onclick="document.getElementById('areaHeroMoreMenu').removeAttribute('open'); document.getElementById(this.dataset.modalId).showModal(); if (this.dataset.loadMap === 'true') window.MunichMapLoader?.loadAreaMap()"
 							>
 								<twig:ux:icon name="{{ action.icon }}" class="size-4 shrink-0" aria-hidden="true" />
 								{{ action.label|trans() }}

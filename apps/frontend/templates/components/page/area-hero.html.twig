@@ -1,4 +1,27 @@
 {# Compact header for area rock listings. Detailed area information stays in the existing menu/dialogs. #}
+
+{% set areaHeroActions = [] %}
+{% if areaKletterkonzeption %}
+	{% set areaHeroActions = areaHeroActions|merge([{
+		icon: 'lucide:info',
+		label: 'area.hero.kletterkonzeption',
+		modal: 'kletterkonzeptionModal'
+	}]) %}
+{% endif %}
+{% if top100Routes is not empty %}
+	{% set areaHeroActions = areaHeroActions|merge([{
+		icon: 'lucide:database-arrow-up',
+		label: 'area.hero.top100',
+		modal: 'top100RoutesModal'
+	}]) %}
+{% endif %}
+{% set areaHeroActions = areaHeroActions|merge([{
+	icon: 'lucide:map',
+	label: 'area.hero.overview_map',
+	modal: 'modalAreaMap',
+	lazy_map: true
+}]) %}
+
 	<div class="flex min-w-0 flex-1 items-center justify-between gap-3">
 		<h1 class="m-0 min-w-0 truncate text-2xl font-medium tracking-tight sm:text-3xl">
 			{{ areaName }}
@@ -9,28 +32,21 @@
 			</summary>
 			<div class="absolute end-0 z-[1080] mt-1 min-w-[12rem] rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none" role="menu" aria-orientation="vertical">
 				<ul class="m-0 list-none p-0">
-					{% if areaKletterkonzeption %}
+					{% for action in areaHeroActions %}
 						<li role="none">
-							<button type="button" class="flex w-full cursor-pointer items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1.5 text-left text-sm text-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground" role="menuitem" onclick="document.getElementById('areaHeroMoreMenu').removeAttribute('open'); document.getElementById('kletterkonzeptionModal').showModal()">
-								<twig:ux:icon name="lucide:info" class="size-4 shrink-0" aria-hidden="true" />
-								{{ 'area.hero.kletterkonzeption'|trans() }}
-							</button>
+							<twig:Button
+								type="button"
+								variant="ghost"
+								size="sm"
+								class="h-auto w-full justify-start rounded-sm border-0 bg-transparent px-2 py-1.5 text-left text-sm text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground"
+								role="menuitem"
+								onclick="document.getElementById('areaHeroMoreMenu').removeAttribute('open'); document.getElementById('{{ action.modal }}').showModal(){% if action.lazy_map|default(false) %}; window.MunichMapLoader?.loadAreaMap(){% endif %}"
+							>
+								<twig:ux:icon name="{{ action.icon }}" class="size-4 shrink-0" aria-hidden="true" />
+								{{ action.label|trans() }}
+							</twig:Button>
 						</li>
-					{% endif %}
-					{% if top100Routes is not empty %}
-						<li role="none">
-							<button type="button" class="flex w-full cursor-pointer items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1.5 text-left text-sm text-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground" role="menuitem" onclick="document.getElementById('areaHeroMoreMenu').removeAttribute('open'); document.getElementById('top100RoutesModal').showModal()">
-								<twig:ux:icon name="lucide:database-arrow-up" class="size-4 shrink-0" aria-hidden="true" />
-								{{ 'area.hero.top100'|trans() }}
-							</button>
-						</li>
-					{% endif %}
-					<li role="none">
-						<button type="button" class="flex w-full cursor-pointer items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1.5 text-left text-sm text-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground" role="menuitem" onclick="document.getElementById('areaHeroMoreMenu').removeAttribute('open'); document.getElementById('modalAreaMap').showModal()">
-							<twig:ux:icon name="lucide:map" class="size-4 shrink-0" aria-hidden="true" />
-							{{ 'area.hero.overview_map'|trans() }}
-						</button>
-					</li>
+					{% endfor %}
 				</ul>
 			</div>
 		</details>

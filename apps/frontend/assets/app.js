@@ -13,4 +13,14 @@ import "vanilla-cookieconsent/dist/cookieconsent.css";
 import "./styles/global.scss";
 
 // Symfony Stimulus bridge (assets/bootstrap.js — not the Bootstrap CSS framework)
-import "./bootstrap";
+import { app } from "./bootstrap";
+
+// The area listing keeps Leaflet out of its initial download. Register the
+// area-map controller and its CSS only when the visitor opens the map.
+let areaMapLoad;
+window.MunichMapLoader = {
+  loadAreaMap() {
+    areaMapLoad ??= import(/* webpackChunkName: "area-map-lazy" */ "./map/lazy-area-map");
+    return areaMapLoad;
+  },
+};

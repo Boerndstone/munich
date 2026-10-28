@@ -259,10 +259,16 @@ body:has(.rock-info-dialog[open]) {
     padding: 1rem;
     border: none;
     background: transparent;
+    overscroll-behavior: contain;
 }
 
 .shared-route-dialog::backdrop {
     background-color: rgb(0 0 0 / 0.45);
+}
+
+html:has(.shared-route-dialog[open]),
+body:has(.shared-route-dialog[open]) {
+    overflow: hidden;
 }
 
 /* Explicit focus rings for rock area list links (Twig conditionals can hide utilities from scanner). */

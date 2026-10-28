@@ -31,7 +31,7 @@
     },
 ] %}
 
-	<twig:ToggleGroup class="justify-start gap-1" aria-label="{{ 'rocks.filter_results_suffix'|trans }}">
+	<twig:ToggleGroup class="justify-start gap-1 my-3" aria-label="{{ 'rocks.filter_results_suffix'|trans }}">
 		{% for f in rock_filter_switches %}
 			<twig:Toggle
 				id="{{ f.id }}"

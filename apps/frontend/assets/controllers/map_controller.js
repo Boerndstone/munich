@@ -87,13 +87,12 @@ function createInformationPopup(point, labels) {
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
-  static targets = ["map", "layerBtn", "attrFilterBtn"];
+  static targets = ["map", "layerBtn", "attrFilterBtn", "error", "errorMessage", "retry"];
+  static values = { dataUrl: String, zoom: Array };
 
-  connect() {
+  async connect() {
     this._cleanupExistingMap();
-    const markersArea = JSON.parse(this.data.get("markersArea"));
-    const zoom = JSON.parse(this.data.get("zoom"));
-    const information = JSON.parse(this.data.get("railwayStations")) || {};
+    const zoom = this.zoomValue;
     this._mapOwner = Symbol("area-map-owner");
     this.areaMap = L.map(this.mapTarget).setView([zoom[0], zoom[1]], zoom[2]);
     this.mapTarget.__leafletMapInstance = this.areaMap;
@@ -107,56 +106,10 @@ export default class extends Controller {
     }).addTo(this.areaMap);
 
     this.informationMarkers = new Map();
-    this.layerBtnTargets.forEach((btn) => {
-      const layer = btn.dataset.layer;
-      if (!layer || layer === "rocks") return;
-
-      const keys = (btn.dataset.informationKeys || "").split(",").filter(Boolean);
-      const points = keys.flatMap((key) => {
-        const locations = information[key];
-        if (Array.isArray(locations)) return locations;
-        return locations && typeof locations === "object" ? [locations] : [];
-      });
-      const labels = {
-        category: btn.dataset.popupLabel || "Information",
-        address: btn.dataset.popupAddressLabel || "Address",
-        description: btn.dataset.popupDescriptionLabel || "Details",
-        openingHours: btn.dataset.popupOpeningHoursLabel || "Opening hours",
-        phone: btn.dataset.popupPhoneLabel || "Phone",
-        website: btn.dataset.popupLinkLabel || "Website",
-      };
-      const markers = points.flatMap((point) => {
-        const lat = Number(point?.lat);
-        const lng = Number(point?.lng);
-        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return [];
-
-        const markerIcon = createInformationIcon(btn.querySelector("svg"));
-        if (!markerIcon) return [];
-        const marker = L.marker([lat, lng], { icon: markerIcon }).bindPopup(createInformationPopup(point, labels));
-        if (btn.classList.contains("active")) marker.addTo(this.areaMap);
-        return [marker];
-      });
-      this.informationMarkers.set(layer, markers);
-    });
-
     this.rocksClusterGroup = L.markerClusterGroup(rockMarkerClusterGroupOptions());
-
     this.areaMarkers = [];
     this.areaMarkerData = [];
-    markersArea.forEach((markerData) => {
-      const lat = parseFloat(markerData[0]);
-      const lng = parseFloat(markerData[1]);
-      if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-        return;
-      }
-      const marker = L.marker([lat, lng], { icon: createMapPinIcon() }).bindPopup(markerData[2]);
-      this.areaMarkers.push(marker);
-      this.areaMarkerData.push(markerData);
-      this.rocksClusterGroup.addLayer(marker);
-    });
-
     this.areaMap.addLayer(this.rocksClusterGroup);
-    this.applyRockVisibility();
 
     if (this.hasLayerBtnTarget) {
       this.layerBtnTargets.forEach((btn) => {
@@ -184,6 +137,36 @@ export default class extends Controller {
         attributeFilter: ["open"],
       });
     }
+
+    await this._loadMapData();
+  }
+
+  async _loadMapData() {
+    this._mapDataAbortController?.abort();
+    this._mapDataAbortController = new AbortController();
+    this.errorTarget?.classList.add("hidden");
+    try {
+      const response = await fetch(this.dataUrlValue, {
+        headers: { Accept: "application/json" },
+        signal: this._mapDataAbortController.signal,
+      });
+      if (!response.ok) throw new Error(`Map data request failed (${response.status})`);
+      const data = await response.json();
+      if (!this.areaMap) return;
+      this._addInformationMarkers(data.railwayStations || {});
+      this._addRockMarkers(data.markers || []);
+      this.applyRockVisibility();
+    } catch (error) {
+      if (error.name === "AbortError") return;
+      if (!this.hasErrorTarget) return;
+      this.errorMessageTarget.textContent = this.element.dataset.mapErrorText || "Map data could not be loaded.";
+      this.retryTarget.textContent = this.element.dataset.mapRetryText || "Retry";
+      this.errorTarget.classList.remove("hidden");
+    }
+  }
+
+  retryData() {
+    return this._loadMapData();
   }
 
   disconnect() {
@@ -224,6 +207,52 @@ export default class extends Controller {
     }
 
     this._dialogOpenObserver?.disconnect();
+    this._mapDataAbortController?.abort();
+  }
+
+  _addInformationMarkers(information) {
+    this.layerBtnTargets.forEach((btn) => {
+      const layer = btn.dataset.layer;
+      if (!layer || layer === "rocks") return;
+
+      const keys = (btn.dataset.informationKeys || "").split(",").filter(Boolean);
+      const points = keys.flatMap((key) => {
+        const locations = information[key];
+        if (Array.isArray(locations)) return locations;
+        return locations && typeof locations === "object" ? [locations] : [];
+      });
+      const labels = {
+        category: btn.dataset.popupLabel || "Information",
+        address: btn.dataset.popupAddressLabel || "Address",
+        description: btn.dataset.popupDescriptionLabel || "Details",
+        openingHours: btn.dataset.popupOpeningHoursLabel || "Opening hours",
+        phone: btn.dataset.popupPhoneLabel || "Phone",
+        website: btn.dataset.popupLinkLabel || "Website",
+      };
+      const markers = points.flatMap((point) => {
+        const lat = Number(point?.lat);
+        const lng = Number(point?.lng);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return [];
+        const markerIcon = createInformationIcon(btn.querySelector("svg"));
+        if (!markerIcon) return [];
+        const marker = L.marker([lat, lng], { icon: markerIcon }).bindPopup(createInformationPopup(point, labels));
+        if (btn.classList.contains("active")) marker.addTo(this.areaMap);
+        return [marker];
+      });
+      this.informationMarkers.set(layer, markers);
+    });
+  }
+
+  _addRockMarkers(markersArea) {
+    markersArea.forEach((markerData) => {
+      const lat = Number.parseFloat(markerData[0]);
+      const lng = Number.parseFloat(markerData[1]);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+      const marker = L.marker([lat, lng], { icon: createMapPinIcon() }).bindPopup(markerData[2]);
+      this.areaMarkers.push(marker);
+      this.areaMarkerData.push(markerData);
+      this.rocksClusterGroup.addLayer(marker);
+    });
   }
 
   _safeInvalidateSize() {

@@ -3,13 +3,7 @@
 {% set currentDate =  "now"|date("z") %}
 
 {% block page_javascripts %}
-	{{ encore_entry_script_tags('map') }}
 	{{ encore_entry_script_tags('filter') }}
-{% endblock %}
-
-{% block leaflet %}
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
-	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
 {% endblock %}
 
 {% block meta_tags %}
@@ -37,19 +31,12 @@
 	{{ setTitle }}
 {% endblock %}
 
-{% block body_attributes %}data-prefetch-links-idle-selector-value="[data-prefetch-candidate='rock-detail']" data-prefetch-links-max-idle-value="8"{% endblock %}
+{# Preserve hover/focus prefetching, but don't download several detail pages in the background. #}
 
 {% block body %}
 	{{ include('components/layout/navigation.html.twig') }}
 	<main id="main-content">
-		{{ include('components/page/area-hero.html.twig', {
-			setTitle: setTitle,
-			areaName: areaName,
-			areaImage: areaImage,
-			areaKletterkonzeption: areaKletterkonzeption,
-			top100Routes: top100Routes
-		}) }}
-		<div class="mx-auto my-4 w-full max-w-[1024px] px-2 sm:px-4">
+		<div class="mx-auto my-3 w-full max-w-[1024px] px-2 sm:px-4">
 			<section>
 				{# Modals must live outside .image-container so fixed backdrop/dialog stack above the hero (z-index context) #}
 				{% if areaKletterkonzeption %}
@@ -58,9 +45,19 @@
 				{% if top100Routes is not empty %}
 					{{ include('components/modals/modal-top100-routes.html.twig') }}
 				{% endif %}
-				{{ include('components/page/area-map-modal.html.twig', { areaName: areaName }) }}
+				{{ include('components/page/area-map-modal.html.twig', { areaName: areaName, areaSlug: areaSlug }) }}
 				<div class="grid grid-cols-1 gap-3" data-controller="filter">
-					{{ include('components/rocks-sticky-filter.html.twig') }}
+					<twig:Card class="shadow-sm lg:sticky lg:top-[55px] lg:z-[1000]">
+						<twig:Card:Content class="flex min-w-0 flex-col gap-2 !p-2.5">
+							{{ include('components/page/area-hero.html.twig', {
+								areaName: areaName,
+								areaKletterkonzeption: areaKletterkonzeption,
+								top100Routes: top100Routes
+							}) }}
+							{{ include('components/rocks-sticky-filter.html.twig') }}
+							<p class="sr-only" id="resultsCounter" aria-live="polite"><span id="resultsCount">0</span> {{ 'rocks.filter_results_suffix'|trans }}</p>
+						</twig:Card:Content>
+					</twig:Card>
 					<div class="flex flex-col">
 						{% for rock in rocks %}
 							{{ include('components/rock-area-list-item.html.twig', { rock: rock, areaName: areaName, currentDate: currentDate }) }}

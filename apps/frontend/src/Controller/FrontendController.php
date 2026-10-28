@@ -37,6 +37,31 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class FrontendController extends AbstractController
 {
+    #[Route('/map/area/{slug}/data', name: 'area_map_data', defaults: ['_locale' => 'de'], priority: 340)]
+    #[Route('/en/map/area/{slug}/data', name: 'area_map_data_en', defaults: ['_locale' => 'en'], priority: 340)]
+    public function areaMapData(
+        AreaRepository $areaRepository,
+        FrontendCacheService $frontendCacheService,
+        string $slug
+    ): Response {
+        $area = $areaRepository->findOneBy(['slug' => $slug, 'online' => true]);
+        if (!$area instanceof Area) {
+            return $this->json(['error' => 'Area not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $rocks = $frontendCacheService->getRocksForArea($slug);
+        $response = new Response($this->renderView('components/map/area-map-marker-data.json.twig', [
+            'rocks' => $rocks,
+            'areaName' => $area->getName(),
+            'areaRailwayStation' => $area->getRailwayStation() ?? [],
+        ]));
+        $response->headers->set('Content-Type', 'application/json; charset=UTF-8');
+        $response->setSharedMaxAge(300);
+        $response->headers->set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=60');
+
+        return $response;
+    }
+
     #[Route(
         '/navigation/area/{slug}/rocks',
         name: 'navigation_area_rocks',

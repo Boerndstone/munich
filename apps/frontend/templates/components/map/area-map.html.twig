@@ -1,49 +1,3 @@
-{% set marker = [] %}
-{% for rock in rocks %}
-	{% set rockLink = rock_path(rock.areaSlug, rock.rockSlug) %}
-	{% set rockCardArea = {
-		routes: rock.amountRoutes|default(0),
-		amountEasy: rock.amountEasy|default(0),
-		amountMiddle: rock.amountMiddle|default(0),
-		amountHard: rock.amountHard|default(0),
-		amountProjects: rock.amountProjects|default(0),
-		grade_chart_3: rock.grade_chart_3|default(0),
-		grade_chart_4: rock.grade_chart_4|default(0),
-		grade_chart_5: rock.grade_chart_5|default(0),
-		grade_chart_6: rock.grade_chart_6|default(0),
-		grade_chart_7: rock.grade_chart_7|default(0),
-		grade_chart_8: rock.grade_chart_8|default(0),
-		grade_chart_9: rock.grade_chart_9|default(0),
-		grade_chart_10: rock.grade_chart_10|default(0),
-		grade_chart_11: rock.grade_chart_11|default(0)
-	} %}
-	{% set popupBody = include('components/area/area-card-body.html.twig', {
-		area: rockCardArea,
-		ulClass: 'mt-2',
-		showTravelTime: false,
-		showRocksCount: false,
-		aria_label_prefix: 'Klettergebiet ' ~ areaName ~ ', Fels ' ~ rock.rockName ~ '. ',
-		compact_chart: true,
-		fill_chart_panel: true,
-		hide_y_axis: true
-	}) %}
-	{% set rockName = include('components/map/rock-map-popup.html.twig', {
-		rock: rock,
-		areaName: areaName,
-		rockLink: rockLink,
-		popupBody: popupBody
-	})|trim %}
-
-	{% set rockImage = '' %}
-	{% set childFriendly = rock.rockChild is defined and rock.rockChild == 1 %}
-	{% set sunny = rock.rockSunny is defined and rock.rockSunny %}
-	{% set rain = rock.rockRain is defined and rock.rockRain %}
-	{% set train = rock.rockTrain is defined and rock.rockTrain == 1 %}
-	{% set bike = rock.rockBike is defined and rock.rockBike == 1 %}
-	{% set marker = marker|merge([[ rock.rockLat, rock.rockLng, rockName, rockImage, childFriendly, sunny, rain, train, bike ]]) %}
-{% endfor %}
-{% set intialZoom = [] %}
-{% set intialZoom = intialZoom|merge([areaLat, areaLng, areaZoom]) %}
 {% set railwayStation = areaRailwayStation %}
 {% set map_attribute_filters = [
 	{
@@ -104,11 +58,12 @@
 ] %}
 
 <div 
-	class="main-map-container flex min-h-0 flex-1 flex-col" 
+	class="main-map-container relative flex min-h-0 flex-1 flex-col"
 	data-controller="map" 
-	data-map-markers-area="{{ marker|json_encode|e('html_attr') }}" 
-	data-map-zoom="{{ intialZoom|json_encode|e('html_attr') }}" 
-	data-map-railway-stations="{{ railwayStation|json_encode|e('html_attr') }}"
+	data-map-data-url-value="{{ path(app.request.locale == 'en' ? 'area_map_data_en' : 'area_map_data', { slug: areaSlug }) }}"
+	data-map-zoom-value="{{ [areaLat, areaLng, areaZoom]|json_encode|e('html_attr') }}"
+	data-map-error-text="{{ 'map.data_load_error'|trans|e('html_attr') }}"
+	data-map-retry-text="{{ 'map.retry'|trans|e('html_attr') }}"
 >
 	<div class="area-map-filters shrink-0 space-y-1.5 px-3 py-2">
 		<div class="main-map-filters-scroll" role="group" aria-labelledby="area-map-rock-filters-label">
@@ -167,6 +122,10 @@
 				{% endfor %}
 			</ul>
 		</div>
+	</div>
+	<div class="absolute inset-x-3 top-3 z-[1000] hidden rounded-md border border-border bg-background p-3 text-sm text-foreground shadow-md" data-map-target="error" role="status" aria-live="polite">
+		<p class="mb-2" data-map-target="errorMessage"></p>
+		<button type="button" class="rounded-md border border-border bg-background px-3 py-1.5 font-medium hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" data-map-target="retry" data-action="click->map#retryData">{{ 'map.retry'|trans }}</button>
 	</div>
 	<div class="min-h-0 flex-1" data-map-target="map"></div>
 </div>

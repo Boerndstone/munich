@@ -4,6 +4,7 @@
  */
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import "leaflet/dist/leaflet.css";
 import { app } from "./bootstrap";
 import MapController from "./controllers/map_controller";
 import MainMapController from "./controllers/main_map_controller";

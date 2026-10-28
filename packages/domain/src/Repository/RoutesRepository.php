@@ -118,6 +118,41 @@ class RoutesRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Read model for the public latest-routes page. Keeping this projection
+     * explicit avoids exposing an entity graph and keeps route URLs stable.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function latestRoutesPageForPublicApi(int $fromYear): array
+    {
+        return $this->createQueryBuilder('routes')
+            ->select(
+                'routes.id',
+                'routes.name',
+                'routes.grade',
+                'routes.firstAscent',
+                'routes.yearFirstAscent',
+                'routes.rating',
+                'routes.protection',
+                'rock.name AS rockName',
+                'rock.slug AS rockSlug',
+                'area.slug AS areaSlug'
+            )
+            ->innerJoin('routes.rock', 'rock')
+            ->innerJoin('routes.area', 'area')
+            ->where('routes.yearFirstAscent >= :fromYear')
+            ->andWhere('rock.online = 1')
+            ->andWhere('area.online = 1')
+            ->andWhere('rock.slug IS NOT NULL')
+            ->andWhere('area.slug IS NOT NULL')
+            ->setParameter('fromYear', $fromYear)
+            ->orderBy('routes.yearFirstAscent', 'DESC')
+            ->addOrderBy('routes.id', 'DESC')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
     public function getGrades($area, $gradeLow, $gradeHigh)
     {
         return $this->createQueryBuilder('routes')

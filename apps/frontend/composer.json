@@ -65,7 +65,8 @@
         "twig/html-extra": "^3.24",
         "twig/inky-extra": "^3.23",
         "twig/markdown-extra": "^3.24",
-        "twig/twig": "^3.12"
+        "twig/twig": "^3.12",
+        "symfony/rate-limiter": "^7.4"
     },
     "require-dev": {
         "rector/rector": "^1.2",

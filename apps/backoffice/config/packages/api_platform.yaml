@@ -1,8 +1,10 @@
 api_platform:
   title: Munichclimbs API
+  description: Read-only public climbing data for MunichClimbs.
   version: 1.0.0
   formats:
     jsonld: ["application/ld+json"]
+    json: ["application/json"]
   docs_formats:
     jsonld: ["application/ld+json"]
     jsonopenapi: ["application/vnd.openapi+json"]
@@ -15,6 +17,11 @@ api_platform:
       standard_put: true
       rfc_7807_compliant_errors: true
   use_symfony_listeners: true
+  mapping:
+    # Public API resources are declared on the shared domain entities. Backoffice
+    # owns the database, so it is the API host for the future Next.js frontend.
+    paths:
+      - "%kernel.project_dir%/../../packages/domain/src/Entity"
   # Set hydra_prefix to true to keep the current behavior
   serializer:
     hydra_prefix: true

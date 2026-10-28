@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json.schemastore.org/json-schema.json",
+  "version": 1,
+  "source": "apps/frontend Symfony controllers and Twig data dependencies",
+  "apiBasePath": "/api/v1",
+  "publicRouteFamilies": [
+    {
+      "paths": ["/", "/en"],
+      "status": 200,
+      "canonical": "/ or /en",
+      "titleSource": "frontend/index.html.twig",
+      "descriptionSource": "index.meta_description_intro plus public area names",
+      "jsonLd": "WebSite/ItemList supplied by components/seo/json-ld.html.twig",
+      "data": ["areas", "rocks", "routes", "topos"],
+      "api": ["GET /areas", "GET /rocks", "GET /routes", "GET /topos"]
+    },
+    {
+      "paths": ["/{areaSlug}", "/en/{areaSlug}"],
+      "status": 200,
+      "canonical": "same locale path",
+      "titleSource": "rocks.page_title",
+      "descriptionSource": "rocks.meta_description_prefix plus rock names",
+      "jsonLd": "none",
+      "data": ["area", "rocks", "routes", "top100 routes"],
+      "api": ["GET /areas?slug={areaSlug}", "GET /rocks?area.id={id}", "GET /routes?area.id={id}", "GET /areas/{id}/top-routes"]
+    },
+    {
+      "paths": ["/{areaSlug}/{rockSlug}", "/en/{areaSlug}/{rockSlug}"],
+      "status": 200,
+      "canonical": "same locale path",
+      "titleSource": "rock name and area name",
+      "descriptionSource": "rock name, area name, route/topo/first-ascent content",
+      "jsonLd": "none",
+      "data": ["rock", "area", "routes", "topos", "comments", "translations", "photos", "videos"],
+      "api": ["GET /rocks?area.id={id}&slug={rockSlug}", "GET /routes?rock.id={id}", "GET /topos?rocks.id={id}", "GET /comments?route.id={id}", "GET /rock_translations?rock.id={id}&locale={locale}", "GET /photos?belongsToRock.id={id}", "GET /videos?videoRocks.id={id}", "GET /rocks/{id}/railway-access"]
+    },
+    {
+      "paths": ["/search"],
+      "status": 200,
+      "canonical": "not indexed",
+      "titleSource": "not a standalone page",
+      "descriptionSource": "not applicable",
+      "jsonLd": "none",
+      "data": ["rocks", "routes", "grade filters", "attribute filters"],
+      "api": ["GET /search"]
+    },
+    {
+      "paths": ["/neuesteRouten", "/en/latest-routes"],
+      "status": 200,
+      "canonical": "same locale path",
+      "titleSource": "neueste_routes.page_title",
+      "descriptionSource": "page content",
+      "jsonLd": "none",
+      "data": ["recent routes"],
+      "api": ["GET /routes?order[yearFirstAscent]=desc"]
+    },
+    {
+      "paths": ["/Datenschutz", "/en/privacy", "/Impressum", "/en/impressum", "/Gradvergleich-Freiklettern", "/en/free-climbing-grade-comparison"],
+      "status": 200,
+      "canonical": "same locale path",
+      "titleSource": "static Twig content",
+      "descriptionSource": "static Twig content",
+      "jsonLd": "none",
+      "data": [],
+      "api": []
+    },
+    {
+      "paths": ["/Gradvergleich-Bouldern", "/en/bouldering-grade-comparison", "/upload-photo", "/Foto-hochladen", "/en/upload-photo"],
+      "status": 301,
+      "canonical": "redirect target",
+      "titleSource": "not applicable",
+      "descriptionSource": "not applicable",
+      "jsonLd": "none",
+      "data": [],
+      "api": []
+    }
+  ],
+  "publicReadEndpoints": [
+    "/areas", "/rocks", "/routes", "/topos", "/comments", "/photos", "/rock_translations", "/videos", "/search", "/areas/{id}/top-routes", "/rocks/{id}/railway-access"
+  ],
+  "nonPageRoutes": [
+    {
+      "path": "/navigation/area/{slug}/rocks",
+      "localeVariant": "/en/navigation/area/{slug}/rocks",
+      "status": 200,
+      "contentType": "application/json",
+      "purpose": "legacy navigation HTML fragment; replace with API-driven React navigation"
+    },
+    {
+      "path": "/gallery-data/{rock}",
+      "status": 200,
+      "contentType": "application/json",
+      "purpose": "legacy gallery payload; replace with GET /photos?belongsToRock.id={id}"
+    },
+    {
+      "path": "/change-locale/{locale}",
+      "status": 302,
+      "contentType": "text/html",
+      "purpose": "session-based locale redirect; replace with locale-aware Next.js links"
+    },
+    {
+      "path": "/Database",
+      "localeVariant": "/en/database",
+      "status": 200,
+      "contentType": "text/html",
+      "purpose": "internal database query page; do not migrate as a public Next.js route"
+    }
+  ],
+  "knownGaps": [
+    {
+      "area": "composed page payloads",
+      "status": "deferred by design",
+      "detail": "Area and rock pages can be assembled from the read resources above. Introduce a composed endpoint only after measuring the request waterfall in Next.js."
+    },
+    {
+      "area": "Next.js search attributes",
+      "status": "requires migration work",
+      "detail": "The current Next.js UI uses slab/overhang/crack/wall/boulder, while the legacy public contract supports childFriendly/sunny/rainProtected/train/bike. The UI and API contract must be reconciled in the search migration phase."
+    },
+    {
+      "area": "public writes",
+      "status": "retained in Symfony",
+      "detail": "Next.js remains read-only. Rock-improvement messages and gallery uploads stay on the CSRF-protected Symfony rock forms, with a five-per-hour per-IP/per-rock contribution limit and pending-photo admin moderation. See ../munichclimbs/docs/protected-write-contract.md."
+    }
+  ],
+  "security": {
+    "writes": "not exposed",
+    "visibility": "unpublished areas/rocks, pending photos, unpublished routes/comments, related translations/videos and incomplete topoes are filtered by PublicVisibilityExtension"
+  }
+}

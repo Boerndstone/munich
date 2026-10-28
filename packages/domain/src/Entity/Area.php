@@ -96,6 +96,13 @@ class Area
     #[Groups(['area:read'])]
     private ?string $rockResponsibility = null;
 
+    /**
+     * Map infrastructure grouped by category (trainStations, campingSites,
+     * accommodationSites, sleepingSites, swimmingSites, museumSites, etc.).
+     * Each location can provide coordinates and optional descriptive/contact details.
+     *
+     * @var array<string, list<array{lat: int|float, lng: int|float, name?: string, address?: string, description?: string, openingHours?: string, phone?: string, link?: string, linkLabel?: string}>>|null
+     */
     #[ORM\Column(type: Types::JSON, nullable: true)]
     #[Groups(['area:read'])]
     private ?array $railwayStation = null;

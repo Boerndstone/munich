@@ -45,6 +45,63 @@
 {% set intialZoom = [] %}
 {% set intialZoom = intialZoom|merge([areaLat, areaLng, areaZoom]) %}
 {% set railwayStation = areaRailwayStation %}
+{% set map_attribute_filters = [
+	{
+		attr: 'childFriendly',
+		icon: 'lucide:baby',
+		trans_key: 'rocks.filter.child_friendly',
+	},
+	{
+		attr: 'sunny',
+		icon: 'lucide:sun',
+		trans_key: 'rocks.filter.sunny',
+	},
+	{
+		attr: 'rain',
+		icon: 'lucide:umbrella',
+		trans_key: 'rocks.filter.rain_shelter',
+	},
+	{
+		attr: 'train',
+		icon: 'lucide:train-front',
+		trans_key: 'train.reachable',
+	},
+	{
+		attr: 'bike',
+		icon: 'lucide:bike',
+		trans_key: 'bike.reachable',
+	},
+] %}
+{% set map_infrastructure_filters = [
+	{
+		layer: 'sleep',
+		data_keys: 'campingSites,accommodationSites,sleepingSites',
+		icon: 'lucide:bed-double',
+		trans_key: 'map.infrastructure.sleep',
+		available: railwayStation.campingSites|default([]) is not empty or railwayStation.accommodationSites|default([]) is not empty or railwayStation.sleepingSites|default([]) is not empty,
+	},
+	{
+		layer: 'railway',
+		data_keys: 'trainStations',
+		icon: 'lucide:train-front',
+		trans_key: 'map.infrastructure.railway',
+		available: railwayStation.trainStations|default([]) is not empty,
+	},
+	{
+		layer: 'swimming',
+		data_keys: 'swimmingSites',
+		icon: 'lucide:waves',
+		trans_key: 'map.infrastructure.swimming',
+		available: railwayStation.swimmingSites|default([]) is not empty,
+	},
+	{
+		layer: 'museum',
+		data_keys: 'museumSites',
+		icon: 'lucide:landmark',
+		trans_key: 'map.infrastructure.museum',
+		available: railwayStation.museumSites|default([]) is not empty,
+	},
+] %}
 
 <div 
 	class="main-map-container flex min-h-0 flex-1 flex-col" 
@@ -53,18 +110,61 @@
 	data-map-zoom="{{ intialZoom|json_encode|e('html_attr') }}" 
 	data-map-railway-stations="{{ railwayStation|json_encode|e('html_attr') }}"
 >
-	<div class="area-map-filters shrink-0 px-3 py-2">
-		<div class="main-map-filters-scroll">
+	<div class="area-map-filters shrink-0 space-y-1.5 px-3 py-2">
+		<div class="main-map-filters-scroll" role="group" aria-labelledby="area-map-rock-filters-label">
 			<ul class="main-map-filters-list">
-				<li class="main-map-filters-label">Filter:</li>
-				<li><button type="button" class="py-1 main-map-filter-tab active" data-map-target="layerBtn" data-layer="rocks" aria-pressed="true">Felsen</button></li>
-				<li><button type="button" class="py-1 main-map-filter-tab active" data-map-target="layerBtn" data-layer="railway" aria-pressed="true">Bahnhöfe</button></li>
-				<li><button type="button" class="py-1 main-map-filter-tab active" data-map-target="layerBtn" data-layer="camping" aria-pressed="true">Übernachtung</button></li>
-				<li><button type="button" class="flex items-center justify-center py-1 main-map-filter-tab main-map-filter-tab-icon" data-map-target="attrFilterBtn" data-attr="childFriendly" aria-pressed="false" title="Kinderfreundlich" aria-label="Kinderfreundlich"><twig:ux:icon name="lucide:baby" class="size-4 shrink-0" aria-hidden="true" /></button></li>
-				<li><button type="button" class="flex items-center justify-center py-1 main-map-filter-tab main-map-filter-tab-icon" data-map-target="attrFilterBtn" data-attr="sunny" aria-pressed="false" title="Sonnig" aria-label="Sonnig"><twig:ux:icon name="lucide:sun" class="size-4 shrink-0" aria-hidden="true" /></button></li>
-				<li><button type="button" class="flex items-center justify-center py-1 main-map-filter-tab main-map-filter-tab-icon" data-map-target="attrFilterBtn" data-attr="rain" aria-pressed="false" title="Regenschutz" aria-label="Regenschutz"><twig:ux:icon name="lucide:umbrella" class="size-4 shrink-0" aria-hidden="true" /></button></li>
-				<li><button type="button" class="flex items-center justify-center py-1 main-map-filter-tab main-map-filter-tab-icon" data-map-target="attrFilterBtn" data-attr="train" aria-pressed="false" title="{{ 'train.reachable'|trans }}" aria-label="{{ 'train.reachable'|trans }}"><twig:ux:icon name="lucide:train-front" class="size-4 shrink-0" aria-hidden="true" /></button></li>
-				<li><button type="button" class="flex items-center justify-center py-1 main-map-filter-tab main-map-filter-tab-icon" data-map-target="attrFilterBtn" data-attr="bike" aria-pressed="false" title="{{ 'bike.reachable'|trans }}" aria-label="{{ 'bike.reachable'|trans }}"><twig:ux:icon name="lucide:bike" class="size-4 shrink-0" aria-hidden="true" /></button></li>
+				<li id="area-map-rock-filters-label" class="main-map-filters-label">{{ 'map.filters.rocks'|trans }}:</li>
+				<li>
+					<button type="button" class="flex items-center justify-center py-1 main-map-filter-tab main-map-filter-tab-icon active" data-map-target="layerBtn" data-layer="rocks" aria-pressed="true" title="{{ 'map.rocks.all'|trans }}" aria-label="{{ 'map.rocks.all'|trans }}">
+						<twig:ux:icon name="lucide:mountain" class="size-4 shrink-0" aria-hidden="true" />
+					</button>
+				</li>
+				{% for filter in map_attribute_filters %}
+					{% set filter_label = filter.trans_key|trans %}
+					<li>
+						<button
+							type="button"
+							class="flex items-center justify-center py-1 main-map-filter-tab main-map-filter-tab-icon"
+							data-map-target="attrFilterBtn"
+							data-attr="{{ filter.attr }}"
+							aria-pressed="false"
+							title="{{ filter_label }}"
+							aria-label="{{ filter_label }}"
+						>
+							<twig:ux:icon name="{{ filter.icon }}" class="size-4 shrink-0" aria-hidden="true" />
+						</button>
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+		<div class="main-map-filters-scroll" role="group" aria-labelledby="area-map-infrastructure-filters-label">
+			<ul class="main-map-filters-list">
+				<li id="area-map-infrastructure-filters-label" class="main-map-filters-label">{{ 'map.filters.infrastructure'|trans }}:</li>
+				{% for filter in map_infrastructure_filters %}
+					{% if filter.available %}
+						{% set filter_label = filter.trans_key|trans %}
+						<li>
+							<button
+								type="button"
+								class="flex items-center justify-center py-1 main-map-filter-tab main-map-filter-tab-icon"
+								data-map-target="layerBtn"
+								data-layer="{{ filter.layer }}"
+								data-information-keys="{{ filter.data_keys }}"
+								data-popup-label="{{ filter_label }}"
+								data-popup-address-label="{{ 'map.details.address'|trans }}"
+								data-popup-description-label="{{ 'map.details.description'|trans }}"
+								data-popup-opening-hours-label="{{ 'map.details.opening_hours'|trans }}"
+								data-popup-phone-label="{{ 'map.details.phone'|trans }}"
+								data-popup-link-label="{{ 'map.details.website'|trans }}"
+								aria-pressed="false"
+								title="{{ filter_label }}"
+								aria-label="{{ filter_label }}"
+							>
+								<twig:ux:icon name="{{ filter.icon }}" class="size-4 shrink-0" aria-hidden="true" />
+							</button>
+						</li>
+					{% endif %}
+				{% endfor %}
 			</ul>
 		</div>
 	</div>

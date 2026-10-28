@@ -23,7 +23,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['rocks.id' => 'exact'])]
-#[ApiFilter(OrderFilter::class, properties: ['updatedAt' => 'DESC'])]
+#[ApiFilter(OrderFilter::class, properties: [
+    'updatedAt' => 'DESC',
+    'number' => 'ASC',
+])]
 class Topo
 {
     #[ORM\Id]

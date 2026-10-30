@@ -619,6 +619,18 @@ footer {
     letter-spacing: -0.04em;
     pointer-events: auto;
 }
+
+.route-number-badge {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+@media (max-width: 767px) {
+    .route-number-badge {
+        transform: scale(1.15);
+    }
+}
+
 .tooltip-trigger:hover {
     cursor: pointer;
 }

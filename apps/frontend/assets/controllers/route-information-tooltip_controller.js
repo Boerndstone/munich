@@ -95,63 +95,6 @@ export default class extends Controller {
     });
 
     /** @type {Map<string, Element>} */
-    const badgeGroupByPathId = new Map();
-    this.element.querySelectorAll("g.route-number-badge[data-path-id]").forEach((el) => {
-      const id = el.getAttribute("data-path-id");
-      if (id) {
-        badgeGroupByPathId.set(id, el);
-      }
-    });
-
-    const resizeBadgesForTouch = () => {
-      const svg = this.element.querySelector(".topo-two-layer svg");
-      if (!svg || !window.matchMedia("(pointer: coarse)").matches) {
-        badgeGroupByPathId.forEach((group) => group.removeAttribute("transform"));
-        this.element.querySelectorAll("text.badge-number-text").forEach((text) => {
-          text.style.fontSize = "";
-        });
-        this.element.querySelectorAll("text.grade-text").forEach((text) => {
-          text.style.fontSize = "";
-        });
-        return;
-      }
-
-      const viewBoxWidth = svg.viewBox.baseVal.width;
-      const renderedWidth = svg.getBoundingClientRect().width;
-      if (!viewBoxWidth || !renderedWidth) return;
-
-      const scale = renderedWidth / viewBoxWidth;
-      // Keep the mobile badge compact (about 30px square) while rendering its
-      // number and grade at approximately 14px and 12px respectively.
-      const touchBadgeScale = 0.75;
-      const inverseScale = touchBadgeScale / scale;
-      this.element.querySelectorAll("text.badge-number-text").forEach((text) => {
-        text.style.fontSize = `${14 / touchBadgeScale}px`;
-      });
-      this.element.querySelectorAll("text.grade-text").forEach((text) => {
-        text.style.fontSize = `${12 / touchBadgeScale}px`;
-      });
-      badgeGroupByPathId.forEach((group) => {
-        const x = Number(group.getAttribute("data-badge-x"));
-        const y = Number(group.getAttribute("data-badge-y"));
-        group.setAttribute(
-          "transform",
-          `translate(${x} ${y}) scale(${inverseScale}) translate(${-x} ${-y})`,
-        );
-      });
-    };
-
-    this._resizeBadgesForTouch = resizeBadgesForTouch;
-    this._badgeScaleResizeObserver = typeof ResizeObserver === "undefined"
-      ? null
-      : new ResizeObserver(resizeBadgesForTouch);
-    this.element.querySelectorAll(".topo-two-layer svg").forEach((svg) => {
-      this._badgeScaleResizeObserver?.observe(svg);
-    });
-    window.addEventListener("resize", resizeBadgesForTouch);
-    resizeBadgesForTouch();
-
-    /** @type {Map<string, Element>} */
     const textByPathId = new Map();
     this.element.querySelectorAll("text.number-text[data-path-id]").forEach((el) => {
       const id = el.getAttribute("data-path-id");
@@ -367,10 +310,6 @@ export default class extends Controller {
       this.element.removeEventListener("click", this._pathClickHandler);
       this._pathClickHandler = null;
     }
-    window.removeEventListener("resize", this._resizeBadgesForTouch);
-    this._badgeScaleResizeObserver?.disconnect();
-    this._badgeScaleResizeObserver = null;
-    this._resizeBadgesForTouch = null;
     if (this._tooltipPathId && this._setNumberBadgeAppearance) {
       this._setNumberBadgeAppearance(this._tooltipPathId);
     }

@@ -107,6 +107,12 @@ export default class extends Controller {
       const svg = this.element.querySelector(".topo-two-layer svg");
       if (!svg || !window.matchMedia("(pointer: coarse)").matches) {
         badgeGroupByPathId.forEach((group) => group.removeAttribute("transform"));
+        this.element.querySelectorAll("text.badge-number-text").forEach((text) => {
+          text.style.fontSize = "";
+        });
+        this.element.querySelectorAll("text.grade-text").forEach((text) => {
+          text.style.fontSize = "";
+        });
         return;
       }
 
@@ -115,7 +121,16 @@ export default class extends Controller {
       if (!viewBoxWidth || !renderedWidth) return;
 
       const scale = renderedWidth / viewBoxWidth;
-      const inverseScale = 1 / scale;
+      // Keep the mobile badge compact (about 30px square) while rendering its
+      // number and grade at approximately 14px and 12px respectively.
+      const touchBadgeScale = 0.75;
+      const inverseScale = touchBadgeScale / scale;
+      this.element.querySelectorAll("text.badge-number-text").forEach((text) => {
+        text.style.fontSize = `${14 / touchBadgeScale}px`;
+      });
+      this.element.querySelectorAll("text.grade-text").forEach((text) => {
+        text.style.fontSize = `${12 / touchBadgeScale}px`;
+      });
       badgeGroupByPathId.forEach((group) => {
         const x = Number(group.getAttribute("data-badge-x"));
         const y = Number(group.getAttribute("data-badge-y"));

@@ -59,6 +59,30 @@ function findPathStartCoordinate(geoJson) {
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
   connect() {
+    const accordionItem = this.element.closest('[data-accordion-target="item"]');
+    if (accordionItem && accordionItem.dataset.open !== "true") {
+      this._lazyOpenObserver = new MutationObserver(() => {
+        if (accordionItem.dataset.open === "true") {
+          this._lazyOpenObserver.disconnect();
+          this._lazyOpenObserver = null;
+          this._initializeMap();
+        }
+      });
+      this._lazyOpenObserver.observe(accordionItem, {
+        attributes: true,
+        attributeFilter: ["data-open"],
+      });
+      return;
+    }
+
+    this._initializeMap();
+  }
+
+  _initializeMap() {
+    if (this.map || !this.element?.isConnected) {
+      return;
+    }
+
     this._mapOwner = Symbol("rock-map");
     const parkingIconHtml = readMapIconHtml("rock-map-parking-icon-json");
     const rockIconHtml = readMapIconHtml("rock-map-target-icon-json");
@@ -179,6 +203,8 @@ export default class extends Controller {
   }
 
   disconnect() {
+    this._lazyOpenObserver?.disconnect();
+    this._lazyOpenObserver = null;
     const rockMapDetails = document.getElementById("rockMapDetails");
     if (rockMapDetails && this._onDetailsToggle) {
       rockMapDetails.removeEventListener("toggle", this._onDetailsToggle);

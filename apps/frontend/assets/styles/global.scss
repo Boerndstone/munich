@@ -511,7 +511,8 @@ footer {
         /* Re-enable pointer events for interactive path elements (tooltips) */
         .stroke-behavior,
         .route-path-hit,
-        .number-circle,
+        .number-square-top,
+        .number-square-bottom,
         .number-text,
         .tooltip-trigger {
             pointer-events: auto;
@@ -595,8 +596,7 @@ footer {
     }
 }
 
-.number-circle {
-    r: 18px;
+.number-square-bottom {
     filter: drop-shadow(0 1px 2px rgba(15, 23, 42, 0.22));
 }
 
@@ -609,6 +609,20 @@ footer {
     paint-order: stroke;
     stroke: rgba(15, 23, 42, 0.22);
     stroke-width: 2px;
+}
+
+.number-text.badge-number-text {
+    font-size: 12px;
+    stroke-width: 1px;
+}
+
+.grade-text {
+    font-size: 12px;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    letter-spacing: -0.04em;
+    pointer-events: auto;
 }
 .tooltip-trigger:hover {
     cursor: pointer;
@@ -635,11 +649,11 @@ footer {
 }
 
 @media (min-width: 992px) {
-    .number-circle {
-        r: 17px;
-    }
     .number-text {
         font-size: 18px;
+    }
+    .number-text.badge-number-text {
+        font-size: 12px;
     }
     .stroke-behavior {
         stroke-width: 3;

@@ -9,7 +9,11 @@
 					{% set srcsetData = topoData.topoImage|topo_image_srcset %}
 					{% set viewBoxValue = '0 0 1024 820' %}
 					{% set aspectRatio = viewBoxValue|viewbox_to_aspect_ratio %}
-					{% set pathsSvg = topo_paths_overlay(topoData.topoPathCollection, null) %}
+					{% set topoRouteGrades = [] %}
+					{% for route in topoData.routes %}
+						{% set topoRouteGrades = topoRouteGrades|merge([route.routeGrade|default('')]) %}
+					{% endfor %}
+					{% set pathsSvg = topo_paths_overlay(topoData.topoPathCollection, null, topoRouteGrades) %}
 					{% if pathsSvg is not empty %}
 					<div class="topo-two-layer" data-topo-state="{{ loop.first ? 'ready' : 'loading' }}" aria-busy="false"{% if aspectRatio %} style="aspect-ratio: {{ aspectRatio }};"{% endif %}>
 						<div class="topo-two-layer__loader" aria-hidden="true">
@@ -59,7 +63,7 @@
 							{% for route in topoData.routes %}
 								{% set rg = route.routeGrade|default('') %}
 								{% set isFontGrade = rg|trim|upper|slice(0, 3) == 'FB ' %}
-								<tr id="{{ route.routeName|replace({' ': ''})|lower }}" class="border-b border-[var(--theme-border)] transition-colors hover:bg-[var(--theme-bg)]/50" data-route-id="{{ loop.index }}" data-route-name="{{ route.routeName|e('html_attr') }}" data-route-grade-stored="{{ rg|e('html_attr') }}"{% if isFontGrade %} data-route-grade-fixed="1"{% endif %}>
+								<tr id="{{ route.routeName|replace({' ': ''})|lower }}" class="border-b border-[var(--theme-border)] transition-colors hover:bg-[var(--theme-bg)]/50" data-route-id="{{ loop.index }}" data-route-name="{{ route.routeName|e('html_attr') }}" data-route-grade-stored="{{ rg|e('html_attr') }}" data-route-first-ascent="{{ route.routefirstAscent|default('')|e('html_attr') }}" data-route-first-ascent-year="{{ route.routeyearFirstAscent|default('')|e('html_attr') }}" data-route-first-ascent-label="{{ 'rock.routes_table.first_ascent'|trans|e('html_attr') }}"{% if isFontGrade %} data-route-grade-fixed="1"{% endif %}>
 									<td class="px-2 py-1 align-middle lg:px-2.5">
 										<span>{{ loop.index }}</span>
 									</td>

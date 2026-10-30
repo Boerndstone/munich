@@ -7,11 +7,15 @@ import {
 function routeTooltipTextFromRow(tr) {
   if (!tr) return "";
   const name = tr.getAttribute("data-route-name") || "";
+  const grade = routeGradeFromRow(tr);
+  return grade ? `${name} (${grade})`.trim() : name.trim();
+}
+
+function routeGradeFromRow(tr) {
+  if (!tr) return "";
   const stored = tr.getAttribute("data-route-grade-stored") || "";
   const fixed = tr.getAttribute("data-route-grade-fixed") === "1";
-  const grade = fixed ? stored : labelForPreference(stored, getGradeDisplayMode());
-  const g = grade || stored;
-  return g ? `${name} (${g})`.trim() : name.trim();
+  return fixed ? stored : labelForPreference(stored, getGradeDisplayMode()) || stored;
 }
 
 export default class extends Controller {
@@ -82,67 +86,42 @@ export default class extends Controller {
     });
 
     /** @type {Map<string, Element>} */
-    const circleByPathId = new Map();
-    this.element.querySelectorAll("circle[data-path-id]").forEach((el) => {
+    const badgeTopByPathId = new Map();
+    this.element.querySelectorAll("rect.number-square-top[data-path-id], circle[data-path-id]").forEach((el) => {
       const id = el.getAttribute("data-path-id");
       if (id) {
-        circleByPathId.set(id, el);
+        badgeTopByPathId.set(id, el);
       }
     });
 
     /** @type {Map<string, Element>} */
     const textByPathId = new Map();
-    this.element.querySelectorAll("text[data-path-id]").forEach((el) => {
+    this.element.querySelectorAll("text.number-text[data-path-id]").forEach((el) => {
       const id = el.getAttribute("data-path-id");
       if (id) {
         textByPathId.set(id, el);
       }
     });
 
-    /**
-     * Active: white circle fill, number uses the route circle color.
-     * Inactive: restore saved fills from data attributes.
-     * @param {string} pathId
-     * @param {boolean} active
-     */
-    const setNumberBadgeActive = (pathId, active) => {
-      const circle = circleByPathId.get(pathId);
-      const text = textByPathId.get(pathId);
-      if (!circle) {
-        return;
+    /** @type {Map<string, Element>} */
+    const gradeTextByPathId = new Map();
+    this.element.querySelectorAll("text.grade-text[data-path-id]").forEach((el) => {
+      const id = el.getAttribute("data-path-id");
+      if (id) {
+        gradeTextByPathId.set(id, el);
       }
+    });
 
-      if (active) {
-        if (!circle.dataset.topoSavedFill) {
-          circle.dataset.topoSavedFill = circle.getAttribute("fill") || "";
-        }
-        if (text && !text.dataset.topoSavedFill) {
-          text.dataset.topoSavedFill = text.getAttribute("fill") || "#ffffff";
-        }
-        const routeColor = circle.dataset.topoSavedFill || "";
-        circle.setAttribute("fill", "#ffffff");
-        if (text && routeColor) {
-          text.setAttribute("fill", routeColor);
-        }
-      } else {
-        const cFill = circle.dataset.topoSavedFill;
-        if (cFill !== undefined && cFill !== "") {
-          circle.setAttribute("fill", cFill);
-        }
-        delete circle.dataset.topoSavedFill;
-        if (text) {
-          const tFill = text.dataset.topoSavedFill;
-          if (tFill !== undefined && tFill !== "") {
-            text.setAttribute("fill", tFill);
-          }
-          delete text.dataset.topoSavedFill;
-        }
-      }
+    /** Keep route numbers white while preserving the topo's grade-colored badge fill. */
+    const setNumberBadgeAppearance = (pathId) => {
+      const text = textByPathId.get(pathId);
+      text?.setAttribute("fill", "#ffffff");
     };
 
-    this._setNumberBadgeActive = setNumberBadgeActive;
+    this._setNumberBadgeAppearance = setNumberBadgeAppearance;
 
     this._tooltipEl = null;
+    this._tooltipRepositionHandler = null;
     /** @type {string|null} */
     this._tooltipPathId = null;
     let activeStrokeElement = null;
@@ -152,6 +131,11 @@ export default class extends Controller {
         this._tooltipEl.remove();
         this._tooltipEl = null;
       }
+      if (this._tooltipRepositionHandler) {
+        document.removeEventListener("scroll", this._tooltipRepositionHandler, true);
+        window.removeEventListener("resize", this._tooltipRepositionHandler);
+        this._tooltipRepositionHandler = null;
+      }
       this._tooltipPathId = null;
     };
 
@@ -160,27 +144,51 @@ export default class extends Controller {
      * @param {HTMLElement} anchorEl
      * @param {string} text
      */
-    const showTooltip = (pathId, anchorEl, text) => {
+    const showTooltip = (pathId, anchorEl, row) => {
       hideTooltip();
-      if (!text) return;
+      if (!row) return;
       const tip = document.createElement("div");
-      tip.className = "route-path-tooltip fixed z-[10600] max-w-xs rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-900 shadow-lg dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100";
+      tip.className = "route-path-tooltip fixed z-[10600] max-w-xs border border-gray-900 bg-white px-2.5 py-2 text-xs text-gray-900 shadow-lg dark:border-gray-300 dark:bg-gray-900 dark:text-gray-100";
       tip.setAttribute("role", "tooltip");
-      tip.textContent = text;
-      document.body.appendChild(tip);
-      const rect = anchorEl.getBoundingClientRect();
-      const tw = tip.offsetWidth;
-      const th = tip.offsetHeight;
-      let left = rect.left + rect.width / 2 - tw / 2;
-      left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
-      let top = rect.top - th - 8;
-      if (top < 8) {
-        top = rect.bottom + 8;
+
+      const title = document.createElement("div");
+      title.className = "font-semibold leading-snug";
+      title.textContent = routeTooltipTextFromRow(row);
+      tip.appendChild(title);
+
+      const firstAscent = row.getAttribute("data-route-first-ascent")?.trim() || "";
+      const rawFirstAscentYear = row.getAttribute("data-route-first-ascent-year")?.trim() || "";
+      const firstAscentYear = rawFirstAscentYear === "0" ? "" : rawFirstAscentYear;
+      if (firstAscent || firstAscentYear) {
+        const details = document.createElement("div");
+        details.className = "mt-1 border-t border-gray-300 pt-1 text-gray-700 dark:border-gray-600 dark:text-gray-300";
+        const label = row.getAttribute("data-route-first-ascent-label") || "First ascent";
+        details.textContent = `${label}: ${[firstAscent, firstAscentYear].filter(Boolean).join(" ")}`;
+        tip.appendChild(details);
       }
-      tip.style.left = `${left}px`;
-      tip.style.top = `${top}px`;
+
+      document.body.appendChild(tip);
       this._tooltipEl = tip;
       this._tooltipPathId = pathId;
+
+      // The tooltip is fixed to the viewport, so recalculate its position as
+      // the badge moves during page or nested-container scrolling.
+      this._tooltipRepositionHandler = () => {
+        if (!tip.isConnected || !anchorEl.isConnected) {
+          hideTooltip();
+          return;
+        }
+        const rect = anchorEl.getBoundingClientRect();
+        const tw = tip.offsetWidth;
+        const th = tip.offsetHeight;
+        const left = Math.max(8, Math.min(rect.left + rect.width / 2 - tw / 2, window.innerWidth - tw - 8));
+        const top = Math.max(8, rect.top - th - 8);
+        tip.style.left = `${left}px`;
+        tip.style.top = `${top}px`;
+      };
+      document.addEventListener("scroll", this._tooltipRepositionHandler, true);
+      window.addEventListener("resize", this._tooltipRepositionHandler);
+      this._tooltipRepositionHandler();
     };
 
     const refreshPathDataInfo = () => {
@@ -188,6 +196,10 @@ export default class extends Controller {
         const row = routeRowByPathId.get(path.pathId);
         const text = row ? routeTooltipTextFromRow(row) : "";
         path.element.setAttribute("data-info", text);
+        const gradeBadge = gradeTextByPathId.get(path.pathId);
+        if (gradeBadge) {
+          gradeBadge.textContent = row ? routeGradeFromRow(row) : "";
+        }
       });
     };
     refreshPathDataInfo();
@@ -196,12 +208,38 @@ export default class extends Controller {
 
     /** Clicks on wide hit path, number circle, or label — all share data-path-id. */
     this._pathClickHandler = (event) => {
-      const hit = event.target.closest("[data-path-id]");
-      if (!hit || !this.element.contains(hit)) {
-        return;
+      const target = event.target instanceof Element ? event.target : null;
+      const hit = target?.closest("[data-path-id]");
+      let pathId = hit && this.element.contains(hit)
+        ? hit.getAttribute("data-path-id")
+        : null;
+
+      // Topo SVG coordinates scale down with the image, making the visible
+      // badge too small to tap on phones. Give each badge a 48px screen-space
+      // target without changing its rendered size.
+      const clickedTopo = target?.closest(".topo-two-layer");
+      if (clickedTopo && window.matchMedia("(pointer: coarse)").matches) {
+        const x = event.clientX;
+        const y = event.clientY;
+        let nearestBadgePathId = null;
+        let nearestBadgeDistance = 24;
+
+        badgeTopByPathId.forEach((badge, badgePathId) => {
+          const rect = badge.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height * 1.5;
+          const distance = Math.max(Math.abs(x - centerX), Math.abs(y - centerY));
+          if (distance <= nearestBadgeDistance) {
+            nearestBadgeDistance = distance;
+            nearestBadgePathId = badgePathId;
+          }
+        });
+
+        if (nearestBadgePathId) {
+          pathId = nearestBadgePathId;
+        }
       }
 
-      const pathId = hit.getAttribute("data-path-id");
       if (!pathId) {
         return;
       }
@@ -221,7 +259,7 @@ export default class extends Controller {
 
       if (closingSamePath) {
         hideTooltip();
-        setNumberBadgeActive(pathId, false);
+        setNumberBadgeAppearance(pathId);
         if (strokeEl) {
           strokeEl.style.stroke = "";
           if (activeStrokeElement === strokeEl) {
@@ -237,11 +275,11 @@ export default class extends Controller {
         activeStrokeElement.style.stroke = "";
         activeStrokeElement = null;
       }
-      showTooltip(pathId, hit, tipText);
+      showTooltip(pathId, badgeTopByPathId.get(pathId) || hit, row);
       if (prevPathForBadge && prevPathForBadge !== pathId) {
-        setNumberBadgeActive(prevPathForBadge, false);
+        setNumberBadgeAppearance(prevPathForBadge);
       }
-      setNumberBadgeActive(pathId, true);
+      setNumberBadgeAppearance(pathId);
       if (strokeEl) {
         strokeEl.style.stroke = "white";
         activeStrokeElement = strokeEl;
@@ -253,7 +291,7 @@ export default class extends Controller {
       const pid = this._tooltipPathId;
       hideTooltip();
       if (pid) {
-        setNumberBadgeActive(pid, false);
+        setNumberBadgeAppearance(pid);
       }
       if (activeStrokeElement) {
         activeStrokeElement.style.stroke = "";
@@ -270,14 +308,19 @@ export default class extends Controller {
       this.element.removeEventListener("click", this._pathClickHandler);
       this._pathClickHandler = null;
     }
-    if (this._tooltipPathId && this._setNumberBadgeActive) {
-      this._setNumberBadgeActive(this._tooltipPathId, false);
+    if (this._tooltipPathId && this._setNumberBadgeAppearance) {
+      this._setNumberBadgeAppearance(this._tooltipPathId);
     }
     if (this._tooltipEl) {
       this._tooltipEl.remove();
       this._tooltipEl = null;
     }
+    if (this._tooltipRepositionHandler) {
+      document.removeEventListener("scroll", this._tooltipRepositionHandler, true);
+      window.removeEventListener("resize", this._tooltipRepositionHandler);
+      this._tooltipRepositionHandler = null;
+    }
     this._tooltipPathId = null;
-    this._setNumberBadgeActive = null;
+    this._setNumberBadgeAppearance = null;
   }
 }

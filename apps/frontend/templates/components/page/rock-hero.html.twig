@@ -1,51 +1,46 @@
 {# Expects: rock, setTitle #}
-<div class="image-container">
-	<div class="image-container-media min-h-28 bg-[var(--theme-bg-lighter)]" aria-hidden="true"></div>
-	<div class="absolute inset-x-0 top-0 mx-auto my-3 w-full max-w-[1024px] px-2 sm:px-4">
-		<div class="rounded pb-3">
-				<div class="flex items-center justify-between rounded-md bg-[var(--theme-bg)] p-3 text-[var(--theme-text)] shadow-md">
-				<div class="flex w-full flex-col">
-					<div class="flex items-center justify-between gap-2">
-						<h1 class="mb-0 text-xl font-medium text-[var(--theme-text)] md:text-2xl">
-							{{ rock.rockName }}
-						</h1>
-						<twig:Button
-							type="button"
-							variant="outline"
-							size="sm"
-							class="shrink-0"
-							onclick="document.getElementById('offcanvasRight').showModal()"
-							aria-controls="offcanvasRight"
-							aria-label="Fels-Informationen anzeigen"
-						>
-							<twig:ux:icon
-								name="lucide:info"
-								class="size-4 shrink-0"
-								aria-hidden="true"
-							/>
-							<span class="hidden md:inline">{{ 'rock'|trans }}</span>
-						</twig:Button>
-					</div>
-					<twig:Breadcrumb class="mt-1">
-						<twig:Breadcrumb:List>
-							<twig:Breadcrumb:Item>
-								<twig:Breadcrumb:Link class="inline-flex shrink-0 items-center text-[var(--theme-text)] hover:underline" href="{{ index_path() }}">
-									<twig:ux:icon name="lucide:house" class="size-4 shrink-0" aria-hidden="true" />
-									<span class="sr-only">{{ 'nav.breadcrumb_home'|trans }}</span>
-								</twig:Breadcrumb:Link>
-							</twig:Breadcrumb:Item>
-							<twig:Breadcrumb:Separator />
-							<twig:Breadcrumb:Item>
-								<twig:Breadcrumb:Link class="text-[var(--theme-text)] hover:underline" href="{{ area_path(rock.areaSlug) }}">{{ rock.areaName }}</twig:Breadcrumb:Link>
-							</twig:Breadcrumb:Item>
-							<twig:Breadcrumb:Separator />
-							<twig:Breadcrumb:Item>
-								<twig:Breadcrumb:Page class="text-[var(--theme-text)]">{{ rock.rockName }}</twig:Breadcrumb:Page>
-							</twig:Breadcrumb:Item>
-						</twig:Breadcrumb:List>
-					</twig:Breadcrumb>
-				</div>
+<div class="mx-auto w-full max-w-[1024px] p-2 sm:p-4">
+	<div class="flex items-center justify-between text-[var(--theme-text)]">
+		<div class="flex w-full flex-col">
+			<div class="flex items-center justify-between gap-2">
+				<h1 class="mb-0 text-xl font-medium text-[var(--theme-text)] md:text-2xl">
+					{{ rock.rockName }}
+				</h1>
+				<twig:Button
+					type="button"
+					variant="outline"
+					size="sm"
+					class="shrink-0"
+					onclick="document.getElementById('offcanvasRight').showModal()"
+					aria-controls="offcanvasRight"
+					aria-label="Fels-Informationen anzeigen"
+				>
+					<twig:ux:icon
+						name="lucide:info"
+						class="size-4 shrink-0"
+						aria-hidden="true"
+					/>
+					{# <span class="hidden md:inline">{{ 'rock'|trans }}</span> #}
+				</twig:Button>
 			</div>
+			<twig:Breadcrumb class="mt-1">
+				<twig:Breadcrumb:List>
+					<twig:Breadcrumb:Item>
+						<twig:Breadcrumb:Link class="inline-flex shrink-0 items-center text-[var(--theme-text)] hover:underline" href="{{ index_path() }}">
+							<twig:ux:icon name="lucide:house" class="size-4 shrink-0" aria-hidden="true" />
+							<span class="sr-only">{{ 'nav.breadcrumb_home'|trans }}</span>
+						</twig:Breadcrumb:Link>
+					</twig:Breadcrumb:Item>
+					<twig:Breadcrumb:Separator />
+					<twig:Breadcrumb:Item>
+						<twig:Breadcrumb:Link class="text-[var(--theme-text)] hover:underline" href="{{ area_path(rock.areaSlug) }}">{{ rock.areaName }}</twig:Breadcrumb:Link>
+					</twig:Breadcrumb:Item>
+					<twig:Breadcrumb:Separator />
+					<twig:Breadcrumb:Item>
+						<twig:Breadcrumb:Page class="text-[var(--theme-text)]">{{ rock.rockName }}</twig:Breadcrumb:Page>
+					</twig:Breadcrumb:Item>
+				</twig:Breadcrumb:List>
+			</twig:Breadcrumb>
 		</div>
 	</div>
 </div>

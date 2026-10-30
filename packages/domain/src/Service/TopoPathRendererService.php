@@ -74,6 +74,12 @@ class TopoPathRendererService
             $badgeX = (float) $startX - 20;
             $badgeTop = (float) $startYMinusOne - 20;
             $parts[] = sprintf(
+                '<g class="route-number-badge" data-path-id="%d" data-badge-x="%s" data-badge-y="%s">',
+                $id,
+                $startX,
+                $startYMinusOne
+            );
+            $parts[] = sprintf(
                 '<rect x="%s" y="%s" width="40" height="20" fill="%s" stroke="%s" stroke-width="1.5" class="%s" data-path-id="%d"></rect>',
                 $badgeX,
                 $badgeTop,
@@ -97,12 +103,13 @@ class TopoPathRendererService
                 $id
             );
             $parts[] = sprintf(
-                '<text x="%s" y="%s" fill="#000000" font-size="12px" class="grade-text tooltip-trigger" data-path-id="%d">%s</text>',
+                '<text x="%s" y="%s" fill="#000000" font-size="14px" class="grade-text tooltip-trigger" data-path-id="%d">%s</text>',
                 $startX,
                 (float) $startYMinusOne + 10,
                 $id,
                 htmlspecialchars((string) ($routeGrades[$id - 1] ?? ''), ENT_QUOTES | ENT_XML1, 'UTF-8')
             );
+            $parts[] = '</g>';
             if ($dot) {
                 $end = $this->calculateEndpoint($d);
                 $parts[] = sprintf('<circle cx="%s" cy="%s" r="7" fill="#fff" class="end-dot"></circle>', $end[0], $end[1]);
@@ -323,6 +330,9 @@ class TopoPathRendererService
             'refY'          => true,
             'markerUnits'   => true,
             'data-path-id'  => true,
+            'data-badge-x'  => true,
+            'data-badge-y'  => true,
+            'transform'     => true,
         ];
 
         $xpath = new \DOMXPath($dom);
@@ -358,13 +368,19 @@ class TopoPathRendererService
                 $bottomRect->setAttribute('fill', '#ffffff');
                 $bottomRect->setAttribute('stroke', '#000000');
                 $bottomRect->setAttribute('class', 'number-square-bottom tooltip-trigger');
-                $parent = $node->parentNode;
-                $parent?->replaceChild($topRect, $node);
-                $parent?->insertBefore($bottomRect, $topRect->nextSibling);
-
                 $pathId = $node->getAttribute('data-path-id');
+                $parent = $node->parentNode;
+                $badge = $dom->createElement('g');
+                $badge->setAttribute('class', 'route-number-badge');
                 if ($pathId !== '') {
-                    $numberText = null;
+                    $badge->setAttribute('data-path-id', $pathId);
+                }
+                $badge->setAttribute('data-badge-x', (string) $cx);
+                $badge->setAttribute('data-badge-y', (string) $cy);
+
+                $numberText = null;
+                $gradeText = null;
+                if ($pathId !== '') {
                     foreach ($parent?->childNodes ?? [] as $sibling) {
                         if ($sibling instanceof \DOMElement && $sibling->tagName === 'text' && str_contains(' ' . $sibling->getAttribute('class') . ' ', ' number-text ') && $sibling->getAttribute('data-path-id') === $pathId) {
                             $sibling->setAttribute('y', (string) ($cy - ($radius / 2)));
@@ -379,11 +395,16 @@ class TopoPathRendererService
                     $gradeText->setAttribute('class', 'grade-text tooltip-trigger');
                     $gradeText->setAttribute('data-path-id', $pathId);
                     $gradeText->textContent = (string) ($routeGrades[(int) $pathId - 1] ?? '');
-                    if ($numberText?->parentNode !== null) {
-                        $numberText->parentNode->insertBefore($gradeText, $numberText->nextSibling);
-                    } else {
-                        $parent?->appendChild($gradeText);
-                    }
+                }
+
+                $parent?->replaceChild($badge, $node);
+                $badge->appendChild($topRect);
+                $badge->appendChild($bottomRect);
+                if ($numberText !== null) {
+                    $badge->appendChild($numberText);
+                }
+                if ($gradeText !== null) {
+                    $badge->appendChild($gradeText);
                 }
                 continue;
             }

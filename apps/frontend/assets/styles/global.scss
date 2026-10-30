@@ -612,12 +612,12 @@ footer {
 }
 
 .number-text.badge-number-text {
-    font-size: 12px;
+    font-size: 16px;
     stroke-width: 1px;
 }
 
 .grade-text {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     text-anchor: middle;
     dominant-baseline: middle;
@@ -651,9 +651,6 @@ footer {
 @media (min-width: 992px) {
     .number-text {
         font-size: 18px;
-    }
-    .number-text.badge-number-text {
-        font-size: 12px;
     }
     .stroke-behavior {
         stroke-width: 3;

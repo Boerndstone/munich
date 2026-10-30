@@ -90,14 +90,14 @@ class TopoPathRendererService
                 $id
             );
             $parts[] = sprintf(
-                '<text x="%s" y="%s" fill="#fff" class="number-text tooltip-trigger" data-path-id="%d">%d</text>',
+                '<text x="%s" y="%s" fill="#fff" class="number-text badge-number-text tooltip-trigger" data-path-id="%d">%d</text>',
                 $startX,
                 (float) $startYMinusOne - 10,
                 $id,
                 $id
             );
             $parts[] = sprintf(
-                '<text x="%s" y="%s" fill="#000000" font-size="16px" class="grade-text tooltip-trigger" data-path-id="%d">%s</text>',
+                '<text x="%s" y="%s" fill="#000000" class="grade-text tooltip-trigger" data-path-id="%d">%s</text>',
                 $startX,
                 (float) $startYMinusOne + 10,
                 $id,

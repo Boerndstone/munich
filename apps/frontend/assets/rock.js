@@ -8,7 +8,6 @@ import RockTopoTabsController from "./controllers/rock_topo_tabs_controller";
 import AutoDismissAlertController from "./controllers/auto_dismiss_alert_controller";
 import FlashDismissController from "./controllers/flash_dismiss_controller";
 import AccordionController from "./controllers/accordion_controller";
-import RockMapController from "./controllers/rock_map_controller";
 import GradeLabelsController from "./controllers/grade_labels_controller";
 
 // Reuse the shared Stimulus app initialized by the main frontend entry.
@@ -21,4 +20,3 @@ application.register("rock-topo-tabs", RockTopoTabsController);
 application.register("auto-dismiss-alert", AutoDismissAlertController);
 application.register("flash-dismiss", FlashDismissController);
 application.register("accordion", AccordionController);
-application.register("rock-map", RockMapController);

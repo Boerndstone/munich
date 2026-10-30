@@ -111,6 +111,11 @@ export default class extends Controller {
 
         // Apply open state with CSS Grid
         content.style.gridTemplateRows = '1fr';
+
+        item.dispatchEvent(new CustomEvent('accordion:opened', {
+            bubbles: true,
+            detail: { value: item.dataset.value },
+        }));
     }
 
     /**

@@ -191,8 +191,8 @@ class AppExtension extends AbstractExtension
      * otherwise renders from path config (pathCollection or path as JSON array).
      * Returns safe HTML to put inside <svg> (defs + path/circle/text).
      */
-    public function topoPathsOverlay(?string $pathCollection, $pathData = null): string
+    public function topoPathsOverlay(?string $pathCollection, $pathData = null, array $routeGrades = []): string
     {
-        return $this->topoPathRenderer->resolvePathsOverlay($pathCollection ?? '', $pathData);
+        return $this->topoPathRenderer->resolvePathsOverlay($pathCollection ?? '', $pathData, $routeGrades);
     }
 }

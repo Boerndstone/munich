@@ -4,7 +4,7 @@ namespace App\Service;
 
 /**
  * Renders topo path config arrays (d, color, dot, dashed) into SVG markup
- * matching the admin Topo Path Helper output: border path, main path, number circle, text, optional end-dot.
+ * matching the admin Topo Path Helper output: border path, main path, number square, text, optional end-dot.
  */
 class TopoPathRendererService
 {
@@ -13,11 +13,11 @@ class TopoPathRendererService
     /**
      * Renders path config array to SVG inner content (no outer <svg>).
      * Each path config: d (string), color (string, optional), dot (bool, optional), dashed (bool, optional).
-     * Returns defs + path/circle/text elements. Include in <svg viewBox="..."> and ensure defs only once.
+     * Returns defs + path/rect/text elements. Include in <svg viewBox="..."> and ensure defs only once.
      *
      * @param array<int, array{d?: string, color?: string, dot?: bool, dashed?: bool}> $paths
      */
-    public function renderPathsToSvg(array $paths): string
+    public function renderPathsToSvg(array $paths, array $routeGrades = []): string
     {
         if (empty($paths)) {
             return '';
@@ -69,23 +69,39 @@ class TopoPathRendererService
                 $this->escapeAttr($d),
                 $id
             );
-            $circleStroke = $dashed ? 'rgba(255,255,255,0.96)' : 'rgba(15,23,42,0.62)';
-            $circleClass = $dashed ? 'number-circle' : 'number-circle tooltip-trigger';
+            $badgeStroke = '#000000';
+            $badgeClass = 'number-square-top tooltip-trigger';
+            $badgeX = (float) $startX - 20;
+            $badgeTop = (float) $startYMinusOne - 20;
             $parts[] = sprintf(
-                '<circle cx="%s" cy="%s" r="18" fill="%s" stroke="%s" stroke-width="1.5" class="%s" data-path-id="%d"></circle>',
-                $startX,
-                $startYMinusOne,
+                '<rect x="%s" y="%s" width="40" height="20" fill="%s" stroke="%s" stroke-width="1.5" class="%s" data-path-id="%d"></rect>',
+                $badgeX,
+                $badgeTop,
                 $this->escapeAttr($color),
-                $circleStroke,
-                $circleClass,
+                $badgeStroke,
+                $badgeClass,
                 $id
             );
             $parts[] = sprintf(
-                '<text x="%s" y="%s" fill="#fff" font-size="16px" class="number-text tooltip-trigger" data-path-id="%d">%d</text>',
+                '<rect x="%s" y="%s" width="40" height="20" fill="#ffffff" stroke="%s" stroke-width="1.5" class="number-square-bottom tooltip-trigger" data-path-id="%d"></rect>',
+                $badgeX,
+                (float) $startYMinusOne,
+                $badgeStroke,
+                $id
+            );
+            $parts[] = sprintf(
+                '<text x="%s" y="%s" fill="#fff" font-size="16px" class="number-text badge-number-text tooltip-trigger" data-path-id="%d">%d</text>',
                 $startX,
-                $startY,
+                (float) $startYMinusOne - 10,
                 $id,
                 $id
+            );
+            $parts[] = sprintf(
+                '<text x="%s" y="%s" fill="#000000" font-size="12px" class="grade-text tooltip-trigger" data-path-id="%d">%s</text>',
+                $startX,
+                (float) $startYMinusOne + 10,
+                $id,
+                htmlspecialchars((string) ($routeGrades[$id - 1] ?? ''), ENT_QUOTES | ENT_XML1, 'UTF-8')
             );
             if ($dot) {
                 $end = $this->calculateEndpoint($d);
@@ -207,15 +223,15 @@ class TopoPathRendererService
      * otherwise decode pathCollection or path as JSON array and render.
      * Returns HTML-safe string (defs + path/circle/text) to put inside <svg>.
      */
-    public function resolvePathsOverlay(?string $pathCollection, $pathData): string
+    public function resolvePathsOverlay(?string $pathCollection, $pathData, array $routeGrades = []): string
     {
         $pathCollection = $pathCollection !== null ? trim($pathCollection) : '';
         // Do not treat JavaScript source (e.g. from Step 5 textarea) as raw SVG
         $looksLikeJsSource = str_contains($pathCollection, "' + ") || str_contains($pathCollection, 'escapeHtml(')
             || str_contains($pathCollection, "' + w + '") || str_contains($pathCollection, "' + h + '");
-        if ($pathCollection !== '' && !$looksLikeJsSource && (str_contains($pathCollection, '<path') || str_contains($pathCollection, '<circle'))) {
+        if ($pathCollection !== '' && !$looksLikeJsSource && (str_contains($pathCollection, '<path') || str_contains($pathCollection, '<circle') || str_contains($pathCollection, '<rect'))) {
             $content = $this->stripOuterSvgIfPresent($pathCollection);
-            $content = $this->sanitizeSvgContent($content);
+            $content = $this->sanitizeSvgContent($content, $routeGrades);
             return $this->ensureDefsInContent($content);
         }
         $paths = $this->decodePathData($pathCollection, $pathData);
@@ -224,17 +240,17 @@ class TopoPathRendererService
                 return '';
             }
             $content = $this->stripOuterSvgIfPresent($pathCollection);
-            $content = $this->sanitizeSvgContent($content);
+            $content = $this->sanitizeSvgContent($content, $routeGrades);
             return $this->ensureDefsInContent($content);
         }
-        return $this->renderPathsToSvg($paths);
+        return $this->renderPathsToSvg($paths, $routeGrades);
     }
 
     /**
      * Sanitize SVG inner content by allowing only a safe subset of elements and attributes.
      * This is used for pre-rendered path collections that are later rendered with |raw.
      */
-    private function sanitizeSvgContent(string $content): string
+    private function sanitizeSvgContent(string $content, array $routeGrades = []): string
     {
         $trimmed = trim($content);
         if ($trimmed === '') {
@@ -264,6 +280,7 @@ class TopoPathRendererService
             'g'      => true,
             'path'   => true,
             'circle' => true,
+            'rect'   => true,
             'text'   => true,
             'defs'   => true,
             'marker' => true,
@@ -285,6 +302,10 @@ class TopoPathRendererService
             'cx'            => true,
             'cy'            => true,
             'r'             => true,
+            'width'         => true,
+            'height'        => true,
+            'rx'            => true,
+            'ry'            => true,
             'x'             => true,
             'y'             => true,
             'dx'            => true,
@@ -301,12 +322,72 @@ class TopoPathRendererService
             'refX'          => true,
             'refY'          => true,
             'markerUnits'   => true,
+            'data-path-id'  => true,
         ];
 
         $xpath = new \DOMXPath($dom);
         /** @var \DOMElement $node */
         foreach ($xpath->query('//*') as $node) {
             $tagName = $node->tagName;
+
+            // Convert saved legacy route-number circles at render time so old
+            // topo SVGs get stacked number/grade badges without requiring a resave.
+            if ($tagName === 'circle' && str_contains(' ' . $node->getAttribute('class') . ' ', ' number-circle ')) {
+                $cx = (float) $node->getAttribute('cx');
+                $cy = (float) $node->getAttribute('cy');
+                $radius = (float) ($node->getAttribute('r') ?: 18);
+                $topRect = $dom->createElement('rect');
+                $bottomRect = $dom->createElement('rect');
+                foreach (iterator_to_array($node->attributes) as $attribute) {
+                    if (!\in_array($attribute->nodeName, ['cx', 'cy', 'r'], true)) {
+                        $topRect->setAttribute($attribute->nodeName, $attribute->nodeValue ?? '');
+                        $bottomRect->setAttribute($attribute->nodeName, $attribute->nodeValue ?? '');
+                    }
+                }
+                $halfHeight = $radius;
+                $topRect->setAttribute('x', (string) ($cx - $radius));
+                $topRect->setAttribute('y', (string) ($cy - $radius));
+                $topRect->setAttribute('width', (string) ($radius * 2));
+                $topRect->setAttribute('height', (string) $halfHeight);
+                $topRect->setAttribute('stroke', '#000000');
+                $topRect->setAttribute('class', str_replace('number-circle', 'number-square-top', $node->getAttribute('class')));
+                $bottomRect->setAttribute('x', (string) ($cx - $radius));
+                $bottomRect->setAttribute('y', (string) $cy);
+                $bottomRect->setAttribute('width', (string) ($radius * 2));
+                $bottomRect->setAttribute('height', (string) $halfHeight);
+                $bottomRect->setAttribute('fill', '#ffffff');
+                $bottomRect->setAttribute('stroke', '#000000');
+                $bottomRect->setAttribute('class', 'number-square-bottom tooltip-trigger');
+                $parent = $node->parentNode;
+                $parent?->replaceChild($topRect, $node);
+                $parent?->insertBefore($bottomRect, $topRect->nextSibling);
+
+                $pathId = $node->getAttribute('data-path-id');
+                if ($pathId !== '') {
+                    $numberText = null;
+                    foreach ($parent?->childNodes ?? [] as $sibling) {
+                        if ($sibling instanceof \DOMElement && $sibling->tagName === 'text' && str_contains(' ' . $sibling->getAttribute('class') . ' ', ' number-text ') && $sibling->getAttribute('data-path-id') === $pathId) {
+                            $sibling->setAttribute('y', (string) ($cy - ($radius / 2)));
+                            $sibling->setAttribute('class', trim($sibling->getAttribute('class') . ' badge-number-text'));
+                            $numberText = $sibling;
+                        }
+                    }
+                    $gradeText = $dom->createElement('text');
+                    $gradeText->setAttribute('x', (string) $cx);
+                    $gradeText->setAttribute('y', (string) ($cy + ($radius / 2)));
+                    $gradeText->setAttribute('fill', '#000000');
+                    $gradeText->setAttribute('class', 'grade-text tooltip-trigger');
+                    $gradeText->setAttribute('data-path-id', $pathId);
+                    $gradeText->textContent = (string) ($routeGrades[(int) $pathId - 1] ?? '');
+                    if ($numberText?->parentNode !== null) {
+                        $numberText->parentNode->insertBefore($gradeText, $numberText->nextSibling);
+                    } else {
+                        $parent?->appendChild($gradeText);
+                    }
+                }
+                continue;
+            }
+
             if (!isset($allowedElements[$tagName])) {
                 if ($node->parentNode !== null) {
                     $node->parentNode->removeChild($node);
@@ -338,6 +419,17 @@ class TopoPathRendererService
 
             foreach ($attrsToRemove as $attrName) {
                 $node->removeAttribute($attrName);
+            }
+
+            if ($tagName === 'text' && str_contains(' ' . $node->getAttribute('class') . ' ', ' number-text ')) {
+                $node->setAttribute('fill', '#ffffff');
+            }
+            if ($tagName === 'text' && str_contains(' ' . $node->getAttribute('class') . ' ', ' grade-text ')) {
+                $node->setAttribute('fill', '#000000');
+                $pathId = $node->getAttribute('data-path-id');
+                if ($pathId !== '' && array_key_exists((int) $pathId - 1, $routeGrades)) {
+                    $node->textContent = (string) $routeGrades[(int) $pathId - 1];
+                }
             }
         }
 

@@ -23,6 +23,7 @@ class TopoPathRendererService
             return '';
         }
         $parts = [self::DEFS_MARKER];
+        $badgeParts = [];
         $needsDefs = false;
         foreach ($paths as $i => $path) {
             $path = is_array($path) ? $path : [];
@@ -73,8 +74,9 @@ class TopoPathRendererService
             $badgeClass = 'number-square-top tooltip-trigger';
             $badgeX = (float) $startX - 20;
             $badgeTop = (float) $startYMinusOne - 20;
-            $parts[] = sprintf(
-                '<rect x="%s" y="%s" width="40" height="20" fill="%s" class="%s" data-path-id="%d"></rect>',
+            $badgeParts[] = sprintf('<g class="route-number-badge" data-path-id="%d">', $id);
+            $badgeParts[] = sprintf(
+                '<rect x="%s" y="%s" width="40" height="20" fill="%s" stroke="%s" stroke-width="1.5" class="%s" data-path-id="%d"></rect>',
                 $badgeX,
                 $badgeTop,
                 $this->escapeAttr($color),
@@ -82,31 +84,35 @@ class TopoPathRendererService
                 $badgeClass,
                 $id
             );
-            $parts[] = sprintf(
-                '<rect x="%s" y="%s" width="40" height="20" fill="#ffffff" class="number-square-bottom tooltip-trigger" data-path-id="%d"></rect>',
+            $badgeParts[] = sprintf(
+                '<rect x="%s" y="%s" width="40" height="20" fill="#ffffff" stroke="%s" stroke-width="1.5" class="number-square-bottom tooltip-trigger" data-path-id="%d"></rect>',
                 $badgeX,
                 (float) $startYMinusOne,
                 $badgeStroke,
                 $id
             );
-            $parts[] = sprintf(
-                '<text x="%s" y="%s" fill="#fff" class="number-text badge-number-text tooltip-trigger" data-path-id="%d">%d</text>',
+            $badgeParts[] = sprintf(
+                '<text x="%s" y="%s" fill="#fff" font-size="16px" class="number-text badge-number-text tooltip-trigger" data-path-id="%d">%d</text>',
                 $startX,
                 (float) $startYMinusOne - 10,
                 $id,
                 $id
             );
-            $parts[] = sprintf(
-                '<text x="%s" y="%s" fill="#000000" class="grade-text tooltip-trigger" data-path-id="%d">%s</text>',
+            $badgeParts[] = sprintf(
+                '<text x="%s" y="%s" fill="#000000" font-size="16px" class="grade-text tooltip-trigger" data-path-id="%d">%s</text>',
                 $startX,
                 (float) $startYMinusOne + 10,
                 $id,
                 htmlspecialchars((string) ($routeGrades[$id - 1] ?? ''), ENT_QUOTES | ENT_XML1, 'UTF-8')
             );
+            $badgeParts[] = '</g>';
             if ($dot) {
                 $end = $this->calculateEndpoint($d);
                 $parts[] = sprintf('<circle cx="%s" cy="%s" r="7" fill="#fff" class="end-dot"></circle>', $end[0], $end[1]);
             }
+        }
+        if ($badgeParts !== []) {
+            array_push($parts, ...$badgeParts);
         }
         if (!$needsDefs) {
             $parts[0] = '';
@@ -360,10 +366,14 @@ class TopoPathRendererService
                 $bottomRect->setAttribute('class', 'number-square-bottom tooltip-trigger');
                 $pathId = $node->getAttribute('data-path-id');
                 $parent = $node->parentNode;
-                $parent?->replaceChild($topRect, $node);
-                $parent?->insertBefore($bottomRect, $topRect->nextSibling);
+                $badge = $dom->createElement('g');
+                $badge->setAttribute('class', 'route-number-badge');
                 if ($pathId !== '') {
-                    $numberText = null;
+                    $badge->setAttribute('data-path-id', $pathId);
+                }
+                $numberText = null;
+                $gradeText = null;
+                if ($pathId !== '') {
                     foreach ($parent?->childNodes ?? [] as $sibling) {
                         if ($sibling instanceof \DOMElement && $sibling->tagName === 'text' && str_contains(' ' . $sibling->getAttribute('class') . ' ', ' number-text ') && $sibling->getAttribute('data-path-id') === $pathId) {
                             $sibling->setAttribute('y', (string) ($cy - ($radius / 2)));
@@ -379,12 +389,17 @@ class TopoPathRendererService
                     $gradeText->setAttribute('class', 'grade-text tooltip-trigger');
                     $gradeText->setAttribute('data-path-id', $pathId);
                     $gradeText->textContent = (string) ($routeGrades[(int) $pathId - 1] ?? '');
-                    if ($numberText?->parentNode !== null) {
-                        $numberText->parentNode->insertBefore($gradeText, $numberText->nextSibling);
-                    } else {
-                        $parent?->appendChild($gradeText);
-                    }
                 }
+                $parent?->removeChild($node);
+                $badge->appendChild($topRect);
+                $badge->appendChild($bottomRect);
+                if ($numberText !== null) {
+                    $badge->appendChild($numberText);
+                }
+                if (isset($gradeText)) {
+                    $badge->appendChild($gradeText);
+                }
+                $parent?->appendChild($badge);
                 continue;
             }
 

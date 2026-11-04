@@ -1,10 +1,10 @@
-{# Expects: topos — Shadcn line tabs (Symfony UX); scroll/hash behaviour: rock-topo-tabs controller #}
+{# Expects: topos — Shadcn tabs (Symfony UX); scroll/hash behaviour: rock-topo-tabs controller #}
 {% if topos is not empty %}
 	{% set first_topo_id = (topos|first).topoName|custom_replace|lower %}
-	<div class="sticky top-[50px] z-[1000] border-b border-[var(--theme-border)] bg-[var(--theme-bg)]">
-		<div class="scrollable-tabs-container relative mx-auto max-w-[1024px] overflow-x-hidden bg-[var(--theme-bg)] px-2" {{ stimulus_controller('rock-topo-tabs') }}>
+	<div class="sticky top-[50px] z-[1000] border-b border-black bg-[var(--theme-bg)]">
+		<div class="scrollable-tabs-container relative mx-auto max-w-[1024px] overflow-x-hidden bg-[var(--theme-bg)] px-3" {{ stimulus_controller('rock-topo-tabs') }}>
 			<twig:Tabs defaultValue="{{ first_topo_id }}" class="w-full gap-0 data-[orientation=horizontal]:flex-col">
-				<twig:Tabs:List variant="line" aria-label="Topo navigation">
+				<twig:Tabs:List variant="default" class="bg-transparent justify-start" aria-label="Topo navigation">
 					{% for topo in topos %}
 						{% set topo_id = topo.topoName|custom_replace|lower %}
 						<twig:Tabs:Trigger value="{{ topo_id }}">{{ topo.topoName }}</twig:Tabs:Trigger>

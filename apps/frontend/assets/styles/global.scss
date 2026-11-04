@@ -365,7 +365,12 @@ footer {
     color: black;
 }
 
-// Rock topo tabs: layout and scrollbar styling live in rock-topo-tabs.html.twig (Tailwind).
+.scrollable-tabs-container [data-slot="tabs-trigger"][data-state="active"] {
+    background-color: #000;
+    color: #fff;
+    opacity: 1;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+}
 
 .error {
     #Polygon-1,

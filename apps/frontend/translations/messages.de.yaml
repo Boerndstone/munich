@@ -230,6 +230,13 @@ rock_improvement.image_success: "Danke! Dein Bild wurde hochgeladen und wartet a
 rock_improvement.image_upload_failed: "Das Bild konnte nicht verarbeitet werden: %error%"
 rock_improvement.validation_error: "Bitte versuch es erneut."
 
+nearby_rocks.title: "Felsen in der Nähe"
+nearby_rocks.carousel_label: "Felsen innerhalb von 5 Kilometern"
+nearby_rocks.previous: "Vorherige Felsen"
+nearby_rocks.next: "Nächste Felsen"
+nearby_rocks.slide: "Fels %current% von %total%"
+nearby_rocks.card_aria: "%rock% in %area%, %distance% Kilometer entfernt"
+
 # Grade distribution chart
 grade_chart.total_routes: "%count% Touren"
 grade_chart.aria_total_prefix: "Insgesamt %count% Touren. "

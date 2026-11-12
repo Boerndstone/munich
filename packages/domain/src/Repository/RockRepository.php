@@ -221,6 +221,69 @@ class RockRepository extends ServiceEntityRepository
         return $qb->getQuery()->getArrayResult();
     }
 
+    /**
+     * Find published crags within a radius of a given coordinate.
+     * A bounding-box query keeps the database work small; the Haversine
+     * calculation then applies the exact radius and orders nearest first.
+     *
+     * @return list<array{rockId: int, rockName: string, rockSlug: string, rockLat: string, rockLng: string, previewImage: string|null, areaName: string, areaSlug: string, distanceKm: float}>
+     */
+    public function findNearbyRocks(float $latitude, float $longitude, int $excludeRockId, float $radiusKm = 5.0): array
+    {
+        if ($radiusKm <= 0 || $latitude < -90 || $latitude > 90 || $longitude < -180 || $longitude > 180) {
+            return [];
+        }
+
+        $latitudeDelta = $radiusKm / 110.574;
+        $longitudeDelta = $radiusKm / (111.320 * max(abs(cos(deg2rad($latitude))), 0.01));
+
+        $candidates = $this->createQueryBuilder('rock')
+            ->select(
+                'rock.id AS rockId',
+                'rock.name AS rockName',
+                'rock.slug AS rockSlug',
+                'rock.lat AS rockLat',
+                'rock.lng AS rockLng',
+                'rock.previewImage AS previewImage',
+                'area.name AS areaName',
+                'area.slug AS areaSlug'
+            )
+            ->innerJoin('rock.area', 'area')
+            ->where('rock.online = :online')
+            ->andWhere('area.online = :online')
+            ->andWhere('rock.id != :excludeRockId')
+            ->andWhere('rock.lat BETWEEN :minLat AND :maxLat')
+            ->andWhere('rock.lng BETWEEN :minLng AND :maxLng')
+            ->setParameter('online', true)
+            ->setParameter('excludeRockId', $excludeRockId)
+            ->setParameter('minLat', $latitude - $latitudeDelta)
+            ->setParameter('maxLat', $latitude + $latitudeDelta)
+            ->setParameter('minLng', $longitude - $longitudeDelta)
+            ->setParameter('maxLng', $longitude + $longitudeDelta)
+            ->getQuery()
+            ->getArrayResult();
+
+        $nearby = [];
+        foreach ($candidates as $candidate) {
+            $candidateLat = (float) $candidate['rockLat'];
+            $candidateLng = (float) $candidate['rockLng'];
+            $deltaLat = deg2rad($candidateLat - $latitude);
+            $deltaLng = deg2rad($candidateLng - $longitude);
+            $haversine = sin($deltaLat / 2) ** 2
+                + cos(deg2rad($latitude)) * cos(deg2rad($candidateLat)) * sin($deltaLng / 2) ** 2;
+            $distanceKm = 6371 * 2 * atan2(sqrt($haversine), sqrt(1 - $haversine));
+
+            if ($distanceKm <= $radiusKm) {
+                $candidate['distanceKm'] = round($distanceKm, 1);
+                $nearby[] = $candidate;
+            }
+        }
+
+        usort($nearby, static fn (array $left, array $right): int => $left['distanceKm'] <=> $right['distanceKm']);
+
+        return $nearby;
+    }
+
     public function getRocksInformation($areaSlug)
     {
         $qb = $this->createQueryBuilder('rock')

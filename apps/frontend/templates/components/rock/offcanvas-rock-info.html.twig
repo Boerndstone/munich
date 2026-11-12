@@ -21,6 +21,7 @@
 					{% set hasRailwayAccess = railwayAccesses is defined and railwayAccesses is not empty %}
 					{% set hasAccess = (access is defined and access is not null and access|striptags|trim != '') or (rock.rockAccess is defined and rock.rockAccess is not null and rock.rockAccess|striptags|trim != '') or hasRailwayAccess %}
 					{% set hasNature = (nature is defined and nature is not null and nature|striptags|trim != '') or (rock.rockNature is defined and rock.rockNature is not null and rock.rockNature|striptags|trim != '') %}
+					{% set nearbyRocks = nearbyRocks|default([]) %}
 					{% set mithelfenOpenState = mithelfenOpen|default(false) %}
 					{% set mithelfenTabState = mithelfenTab|default('content') %}
 					<twig:Accordion id="rock-offcanvas-accordion" defaultValue="{{ mithelfenOpenState ? 'improvement' : 'general' }}">
@@ -191,6 +192,56 @@
 								{{ include('components/map/rock-map.html.twig') }}
 							</twig:Accordion:Content>
 						</twig:Accordion:Item>
+						{% if nearbyRocks is not empty %}
+							<twig:Accordion:Item value="nearby-rocks">
+								<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">
+									<span class="flex min-w-0 flex-1 items-center gap-2 text-left">
+										<twig:ux:icon name="lucide:mountain" class="size-4" aria-hidden="true" />
+										<span class="min-w-0 flex-1">{{ 'nearby_rocks.title'|trans }}</span>
+									</span>
+								</twig:Accordion:Trigger>
+								<twig:Accordion:Content class="border-t border-[var(--theme-border)] px-0 pb-3 pt-0">
+									<div data-nearby-carousel role="region" aria-roledescription="carousel" aria-label="{{ 'nearby_rocks.carousel_label'|trans }}" class="px-3 py-3">
+										<div class="mb-2 flex items-center justify-end gap-2">
+											{% if nearbyRocks|length > 1 %}
+												<twig:Button type="button" variant="outline" size="icon-sm" aria-label="{{ 'nearby_rocks.previous'|trans }}" onclick="this.closest('[data-nearby-carousel]').querySelector('[data-nearby-track]').scrollBy({ left: -240, behavior: 'smooth' })">
+													<twig:ux:icon name="lucide:chevron-left" class="size-4" aria-hidden="true" />
+												</twig:Button>
+												<twig:Button type="button" variant="outline" size="icon-sm" aria-label="{{ 'nearby_rocks.next'|trans }}" onclick="this.closest('[data-nearby-carousel]').querySelector('[data-nearby-track]').scrollBy({ left: 240, behavior: 'smooth' })">
+													<twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true" />
+												</twig:Button>
+											{% endif %}
+										</div>
+										<div data-nearby-track class="-ml-2 flex snap-x snap-mandatory gap-0 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:thin]">
+											{% for nearbyRock in nearbyRocks %}
+														<div role="group" aria-roledescription="slide" aria-label="{{ 'nearby_rocks.slide'|trans({ '%current%': loop.index, '%total%': nearbyRocks|length }) }}" class="w-[150px] shrink-0 snap-start pl-2">
+													<a href="{{ rock_path(nearbyRock.areaSlug, nearbyRock.rockSlug) }}" aria-label="{{ 'nearby_rocks.card_aria'|trans({ '%rock%': nearbyRock.rockName, '%area%': nearbyRock.areaName, '%distance%': nearbyRock.distanceKm|number_format(1, ',', '.') }) }}" class="group block h-full rounded-lg text-[var(--theme-text)] no-underline outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-border)]">
+																<twig:Card class="h-full w-full overflow-hidden border-[var(--theme-border)] bg-[var(--theme-bg)] shadow-sm transition-shadow group-hover:shadow-md">
+																	<div class="relative w-full max-h-[150px] overflow-hidden bg-[var(--theme-bg-lighter)]">
+																{% if nearbyRock.previewImage %}
+																		<img src="https://www.munichclimbs.de/build/images/rock/{{ nearbyRock.previewImage }}.webp" alt="" loading="lazy" decoding="async" class="block h-[150px] max-h-[150px] w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]">
+																{% else %}
+																	<div class="flex h-[150px] items-center justify-center text-[var(--theme-text)]/60">
+																		<twig:ux:icon name="lucide:mountain" class="size-8" aria-hidden="true" />
+																	</div>
+																{% endif %}
+															</div>
+														<twig:Card:Content class="p-3">
+															<div class="truncate text-sm font-semibold">{{ nearbyRock.rockName }}</div>
+															<div class="mt-1 flex items-center justify-between gap-2 text-xs text-[var(--theme-text)]/70">
+																<span class="truncate">{{ nearbyRock.areaName }}</span>
+																<span class="shrink-0">{{ nearbyRock.distanceKm|number_format(1, ',', '.') }} km</span>
+															</div>
+														</twig:Card:Content>
+													</twig:Card>
+													</a>
+												</div>
+											{% endfor %}
+										</div>
+									</div>
+								</twig:Accordion:Content>
+							</twig:Accordion:Item>
+						{% endif %}
 						{% if hasNature %}
 							<twig:Accordion:Item value="nature">
 								<twig:Accordion:Trigger class="rounded-none border-0 px-5 py-3 text-sm font-semibold text-[var(--theme-text)] hover:bg-[var(--theme-bg-lighter)] hover:no-underline **:data-[slot=accordion-trigger-icon]:text-[var(--theme-text)]">

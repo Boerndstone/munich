@@ -230,6 +230,13 @@ rock_improvement.image_success: "Thanks! Your image has been uploaded and is wai
 rock_improvement.image_upload_failed: "The image could not be processed: %error%"
 rock_improvement.validation_error: "Please try again."
 
+nearby_rocks.title: "Nearby crags"
+nearby_rocks.carousel_label: "Crags within 5 kilometres"
+nearby_rocks.previous: "Previous crags"
+nearby_rocks.next: "Next crags"
+nearby_rocks.slide: "Crag %current% of %total%"
+nearby_rocks.card_aria: "%rock% in %area%, %distance% kilometres away"
+
 # Grade distribution chart
 grade_chart.total_routes: "%count% routes"
 grade_chart.aria_total_prefix: "Total %count% routes. "

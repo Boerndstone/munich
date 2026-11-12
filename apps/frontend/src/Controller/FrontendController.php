@@ -309,6 +309,9 @@ class FrontendController extends AbstractController
             'flowers' => $rockDescription[0]['flowers'] ?? null,
         ];
         $railwayAccesses = $railwayAccessEstimateService->estimatesForRock($rock);
+        $nearbyRocks = null !== $rockLat && null !== $rockLng
+            ? $rockRepository->findNearbyRocks($rockLat, $rockLng, (int) $rock->getId(), 5.0)
+            : [];
 
         $hasTranslationDescription = $rockRepository->hasTranslationDescription($slug, $locale);
 
@@ -523,6 +526,7 @@ class FrontendController extends AbstractController
             'nature' => $rockDescriptionArray['nature'],
             'flowers' => $rockDescriptionArray['flowers'],
             'railwayAccesses' => $railwayAccesses,
+            'nearbyRocks' => $nearbyRocks,
             'routes' => $routes,
             'groupedRoutes' => $groupedRoutes,
             'routesRepository' => $routesRepository,
